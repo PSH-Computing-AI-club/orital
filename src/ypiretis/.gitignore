@@ -1,0 +1,11 @@
+.DS_Store
+
+.env.*
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.tsbuildinfo
+
+/.react-router/
+/build/
+/node_modules/

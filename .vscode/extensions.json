@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "AdonisJS.vscode-edge",
+        "esbenp.prettier-vscode",
+        "jripouteau.adonis-vscode-extension",
+        "jripouteau.japa-vscode"
+    ]
+}

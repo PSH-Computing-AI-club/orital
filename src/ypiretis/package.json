@@ -1,0 +1,51 @@
+{
+    "private": true,
+    "type": "module",
+    "name": "orital-ypiretis",
+    "version": "0.0.0",
+    "scripts": {
+        "app:build": "NODE_ENV=production bunx --bun react-router build",
+        "app:dev": "NODE_ENV=development bunx --bun vite",
+        "app:start": "NODE_ENV=production bun ./build/server/index.js",
+        "check:types": "react-router typegen && tsc -b",
+        "db:migrations:generate": "NODE_ENV=development bunx --bun drizzle-kit generate",
+        "db:migrations:run": "NODE_ENV=development bun run ./scripts/db.migrations.run.ts"
+    },
+    "dependencies": {
+        "@chakra-ui/react": "^3.19.1",
+        "@emotion/cache": "^11.14.0",
+        "@emotion/react": "^11.14.0",
+        "@emotion/server": "^11.11.0",
+        "@js-temporal/polyfill": "^0.5.1",
+        "@microsoft/fetch-event-source": "^2.0.1",
+        "@react-router/fs-routes": "^7.6.1",
+        "croner": "^9.0.0",
+        "drizzle-orm": "^0.43.1",
+        "fastq": "^1.19.1",
+        "html-to-text": "^9.0.5",
+        "isbot": "^5.1.27",
+        "nodemailer": "^7.0.3",
+        "pixelarticons": "^1.8.1",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-router": "^7.5.3",
+        "react-router-hono-server": "^2.13.0",
+        "remix-utils": "^8.7.0",
+        "ulid": "^3.0.0",
+        "valibot": "^1.1.0"
+    },
+    "devDependencies": {
+        "@react-router/dev": "^7.5.3",
+        "@types/html-to-text": "^9.0.4",
+        "@types/morgan": "^1.9.9",
+        "@types/node": "^20",
+        "@types/nodemailer": "^6.4.17",
+        "@types/react": "^19.1.2",
+        "@types/react-dom": "^19.1.2",
+        "bun-types": "^1.2.14",
+        "drizzle-kit": "^0.31.1",
+        "typescript": "^5.8.3",
+        "vite": "^6.3.3",
+        "vite-tsconfig-paths": "^5.1.4"
+    }
+}

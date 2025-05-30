@@ -1,0 +1,18 @@
+@font-face {
+    src: url("/fonts/PixeloidSans.ttf") format("truetype");
+
+    font-family: "PixeloidSans";
+}
+
+@font-face {
+    src: url("/fonts/PixeloidSans-Bold.ttf") format("truetype");
+
+    font-family: "PixeloidSans";
+    font-weight: bold;
+}
+
+@font-face {
+    src: url("/fonts/Pixeloid-Mono.ttf") format("truetype");
+
+    font-family: "Pixeloid-Mono";
+}

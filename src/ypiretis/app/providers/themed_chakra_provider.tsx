@@ -15,11 +15,95 @@ const THEME_CONFIG = defineConfig({
                 // **SOURCE:** https://brand.psu.edu/design-toolkit/design-essentials
 
                 beaverblue: {
-                    600: {value: "#1E407C"},
+                    50: {
+                        value: "#e9ecf2",
+                    },
+
+                    100: {
+                        value: "#c7cfde",
+                    },
+
+                    200: {
+                        value: "#a5b3cb",
+                    },
+
+                    300: {
+                        value: "#8396b7",
+                    },
+
+                    400: {
+                        value: "#6279a3",
+                    },
+
+                    500: {
+                        value: "#405d90",
+                    },
+
+                    600: {
+                        value: "#1E407C",
+                    },
+
+                    700: {
+                        value: "#1e407c",
+                    },
+
+                    800: {
+                        value: "#1a3669",
+                    },
+
+                    900: {
+                        value: "#152d57",
+                    },
+
+                    950: {
+                        value: "#112344",
+                    },
                 },
 
                 nittanynavy: {
-                    600: {value: "#001E44"},
+                    50: {
+                        value: "#e6e9ec",
+                    },
+
+                    100: {
+                        value: "#bfc7d0",
+                    },
+
+                    200: {
+                        value: "#99a5b4",
+                    },
+
+                    300: {
+                        value: "#738398",
+                    },
+
+                    400: {
+                        value: "#4d627c",
+                    },
+
+                    500: {
+                        value: "#264060",
+                    },
+
+                    600: {
+                        value: "#001E44",
+                    },
+
+                    700: {
+                        value: "#001a3a",
+                    },
+
+                    800: {
+                        value: "#001a3a",
+                    },
+
+                    900: {
+                        value: "#001530",
+                    },
+
+                    950: {
+                        value: "#001125",
+                    },
                 },
             }),
 

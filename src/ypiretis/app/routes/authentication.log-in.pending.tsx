@@ -6,19 +6,16 @@ import {data, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
+import {lookupAccountID} from "~/.server/services/directory_service";
 import {
     deleteOne as deleteOneGrantToken,
     requireTokenBearer,
 } from "~/.server/services/grant_tokens_service";
-import {lookupAccountID} from "~/.server/services/directory_service";
-import {
-    commitSession,
-    getSession,
-} from "~/.server/services/persistent_session_service";
 import {
     findOneByAccountID as findOneUserByAccountID,
     insertOne as insertOneUser,
     requireGuestSession,
+    getGrantHeader,
 } from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
@@ -69,12 +66,8 @@ export function loader(loaderArgs: Route.LoaderArgs) {
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
-    await requireGuestSession(request);
-
     const {accountID, id: grantTokenID} = await requireTokenBearer(request);
-
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
+    const {session} = await requireGuestSession(request);
 
     let user = await findOneUserByAccountID(accountID);
 
@@ -90,7 +83,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     session.set("userID", user.id);
 
-    const cookie = await commitSession(session);
+    const cookie = await getGrantHeader(request, session);
 
     await deleteOneGrantToken(grantTokenID);
 

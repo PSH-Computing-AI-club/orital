@@ -39,8 +39,8 @@ export default function PromptShell(props: IPromptShellProps) {
                 bg="bg.inverted"
                 color="fg.inverted"
                 padding="10"
-                maxInlineSize="80"
-                minInlineSize="80"
+                maxInlineSize="96"
+                minInlineSize="96"
             >
                 <Image src="/images/logo.prompt.png" marginBlockStart="auto" />
 

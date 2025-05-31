@@ -121,7 +121,7 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
     const navigation = useNavigation();
 
     return (
-        <PromptShell title={TITLE} query={QUERY}>
+        <PromptShell title={TITLE} query={QUERY} color="beaverblue.solid">
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to

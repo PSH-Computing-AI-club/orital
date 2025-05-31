@@ -29,7 +29,7 @@ export default function PromptShell(props: IPromptShellProps) {
 
     return (
         <Flex
-            direction={{base: "row", mdDown: "column"}}
+            direction={{base: "row", lgDown: "column"}}
             align="stretch"
             width="dvw"
             height="dvh"

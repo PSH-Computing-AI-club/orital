@@ -11,6 +11,18 @@ import type {PropsWithChildren} from "react";
 const THEME_CONFIG = defineConfig({
     theme: {
         tokens: {
+            colors: defineTokens.colors({
+                // **SOURCE:** https://brand.psu.edu/design-toolkit/design-essentials
+
+                beaverblue: {
+                    600: {value: "#1E407C"},
+                },
+
+                nittanynavy: {
+                    600: {value: "#001E44"},
+                },
+            }),
+
             fonts: defineTokens.fonts({
                 heading: {
                     value: "PixeloidSans",
@@ -66,6 +78,22 @@ const THEME_CONFIG = defineConfig({
                     value: 0,
                 },
             }),
+        },
+
+        semanticTokens: {
+            colors: {
+                beaverblue: {
+                    solid: {
+                        value: "{colors.beaverblue.600}",
+                    },
+                },
+
+                nittanyblue: {
+                    solid: {
+                        value: "{colors.nittanyblue.600}",
+                    },
+                },
+            },
         },
     },
 });

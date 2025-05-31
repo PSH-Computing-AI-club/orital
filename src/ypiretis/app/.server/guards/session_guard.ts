@@ -100,8 +100,6 @@ export default function makeSessionGuard<
             const cookie = headers.get("Cookie");
             const session = await getSession(cookie);
 
-            console.log(cookie, session, {idKey, data: session.data});
-
             // **HACK:** See comment in `requireAuthenticatedSession`.
             if (cookie && session.has(idKey as string)) {
                 throw data("Forbidden", {

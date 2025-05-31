@@ -4,13 +4,13 @@ import type {ITokensTable} from "../database/tables/tokens_table";
 
 import type {IToken, ITokensService} from "../services/tokens_service";
 
-import {IGuardFunc} from "./guard";
+import {IGuardRequisiteFunc} from "./guard";
 
 export default function makeTokenBearerGuard<
     T extends ITokensTable,
     S extends ITokensService<T> = ITokensService<T>,
     V extends IToken<T> = IToken<T>,
->(tokensService: S): IGuardFunc<V> {
+>(tokensService: S): IGuardRequisiteFunc<V> {
     const {findOneByToken} = tokensService;
 
     return async (request) => {

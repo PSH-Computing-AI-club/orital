@@ -101,7 +101,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     const consentTokenData = await findOneConsentTokenByToken(consentToken);
 
     if (consentTokenData === null) {
-        return redirect("/authentication/consent/unauthorized");
+        throw data("Unauthorized", 401);
     }
 
     const {accountID, callbackTokenID} = consentTokenData;

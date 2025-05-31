@@ -66,9 +66,11 @@ export default function PromptShell(props: IPromptShellProps) {
                     )}
                 </Heading>
 
-                <Card.Root maxInlineSize="prose" minInlineSize="prose">
-                    <Card.Body gap="4">{children}</Card.Body>
-                </Card.Root>
+                <Flex justifyContent="center" alignSelf="stretch">
+                    <Card.Root size="lg" flexGrow="1" maxInlineSize="prose">
+                        <Card.Body gap="4">{children}</Card.Body>
+                    </Card.Root>
+                </Flex>
             </VStack>
         </Flex>
     );

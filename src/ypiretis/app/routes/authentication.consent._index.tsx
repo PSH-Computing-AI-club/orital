@@ -217,7 +217,7 @@ export default function AuthenticationConsent() {
                                 value={consentToken}
                             />
 
-                            <Group grow>
+                            <Group gap="4" grow>
                                 <Button
                                     disabled={navigation.state !== "idle"}
                                     variant="ghost"
@@ -242,7 +242,7 @@ export default function AuthenticationConsent() {
                         </>
                     ) : (
                         <>
-                            <Group grow>
+                            <Group gap="4" grow>
                                 <Button
                                     variant="ghost"
                                     colorPalette="red"

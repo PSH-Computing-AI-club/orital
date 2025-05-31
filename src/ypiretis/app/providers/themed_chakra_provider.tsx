@@ -3,12 +3,19 @@ import {
     createSystem,
     defaultConfig,
     defineConfig,
+    defineGlobalStyles,
     defineTokens,
 } from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
 const THEME_CONFIG = defineConfig({
+    globalCss: defineGlobalStyles({
+        html: {
+            bg: "bg.muted",
+        },
+    }),
+
     theme: {
         tokens: {
             colors: defineTokens.colors({

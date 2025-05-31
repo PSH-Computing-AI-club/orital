@@ -7,7 +7,7 @@ import {
 } from "~/.server/services/consent_tokens_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
-import type {Route} from "./+types/authentication.log-in.events";
+import type {Route} from "./+types/authentication.log-in_.events";
 
 export type ILoginEventNames = "authorized" | "revoked";
 

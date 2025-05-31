@@ -37,11 +37,17 @@ export const meta = ((metaArgs) => {
                 case 401:
                     title = ERROR_401_TITLE;
 
+                    break;
+
                 case 403:
                     title = ERROR_403_TITLE;
 
+                    break;
+
                 case 404:
                     title = ERROR_404_TITLE;
+
+                    break;
             }
         }
     }
@@ -89,10 +95,18 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
         switch (error.status) {
             case 401:
                 Component = Error401;
+
+                break;
+
             case 403:
                 Component = Error403;
+
+                break;
+
             case 404:
                 Component = Error404;
+
+                break;
         }
     }
 

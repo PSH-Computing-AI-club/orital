@@ -79,6 +79,8 @@ export async function action(actionArgs: Route.ActionArgs) {
         });
     }
 
+    session.set("userID", user.id);
+
     const cookie = await commitSession(session);
 
     await deleteOneGrantToken(grantTokenID);

@@ -18,7 +18,7 @@ export type IUserInsert = Omit<
 >;
 
 export interface IUserSessionData extends SessionData {
-    readonly userID: string;
+    readonly userID: number;
 }
 
 const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUserSessionData>(

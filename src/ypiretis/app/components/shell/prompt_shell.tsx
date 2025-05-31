@@ -1,6 +1,14 @@
 import type {SystemProperties} from "node_modules/@chakra-ui/react/dist/types/styled-system/generated/system.gen";
 
-import {Flex, Heading, Highlight, Text, VStack} from "@chakra-ui/react";
+import {
+    Card,
+    Flex,
+    Heading,
+    Highlight,
+    Image,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 
 import {PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
 
@@ -34,7 +42,21 @@ export default function PromptShell(props: IPromptShellProps) {
                 maxInlineSize="80"
                 minInlineSize="80"
             >
-                <Heading size="4xl" marginBlockStart="auto" textAlign="center">
+                <Image src="/images/logo.prompt.png" marginBlockStart="auto" />
+
+                <Text marginBlockStart="auto" marginBlockEnd="-10">
+                    {PACKAGE_NAME} v{PACKAGE_VERSION}
+                </Text>
+            </VStack>
+
+            <VStack
+                gap="16"
+                align="center"
+                justify="center"
+                padding="10"
+                width="full"
+            >
+                <Heading size="4xl">
                     {query ? (
                         <Highlight query={query} styles={{color}}>
                             {title}
@@ -44,19 +66,9 @@ export default function PromptShell(props: IPromptShellProps) {
                     )}
                 </Heading>
 
-                <Text marginBlockStart="auto" marginBlockEnd="-10">
-                    {PACKAGE_NAME} v{PACKAGE_VERSION}
-                </Text>
-            </VStack>
-
-            <VStack
-                gap="4"
-                align="left"
-                justify="center"
-                padding="10"
-                width="full"
-            >
-                {children}
+                <Card.Root maxInlineSize="prose" minInlineSize="prose">
+                    <Card.Body gap="4">{children}</Card.Body>
+                </Card.Root>
             </VStack>
         </Flex>
     );

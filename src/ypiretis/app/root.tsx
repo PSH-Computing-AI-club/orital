@@ -11,6 +11,7 @@ import {
 } from "react-router";
 
 import Error401, {TITLE as ERROR_401_TITLE} from "~/errors/error_401";
+import Error403, {TITLE as ERROR_403_TITLE} from "~/errors/error_403";
 import Error404, {TITLE as ERROR_404_TITLE} from "~/errors/error_404";
 import Error500, {TITLE as ERROR_500_TITLE} from "~/errors/error_500";
 
@@ -35,6 +36,9 @@ export const meta = ((metaArgs) => {
             switch (error.status) {
                 case 401:
                     title = ERROR_401_TITLE;
+
+                case 403:
+                    title = ERROR_403_TITLE;
 
                 case 404:
                     title = ERROR_404_TITLE;
@@ -85,6 +89,8 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
         switch (error.status) {
             case 401:
                 Component = Error401;
+            case 403:
+                Component = Error403;
             case 404:
                 Component = Error404;
         }

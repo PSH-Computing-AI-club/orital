@@ -17,6 +17,7 @@ import {queueEmail} from "~/.server/services/email_service";
 
 import {insertOne as insertOneCallbackToken} from "~/.server/services/callback_tokens_service";
 import {insertOne as insertOneConsentToken} from "~/.server/services/consent_tokens_service";
+import {requireGuestSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
@@ -47,8 +48,17 @@ export const meta = wrapMetaFunction(() => {
     ];
 });
 
+export function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    return requireGuestSession(request);
+}
+
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
+
+    await requireGuestSession(request);
+
     const formData = await request.formData();
 
     const {

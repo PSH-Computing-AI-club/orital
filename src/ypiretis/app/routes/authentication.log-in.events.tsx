@@ -5,6 +5,7 @@ import {
     EVENT_CONSENT_AUTHORIZED,
     EVENT_CONSENT_REVOKED,
 } from "~/.server/services/consent_tokens_service";
+import {requireGuestSession} from "~/.server/services/users_service";
 
 import type {Route} from "./+types/authentication.log-in.events";
 
@@ -20,6 +21,9 @@ export type ILoginRevokedEvent = null;
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
+
+    await requireGuestSession(request);
+
     const {signal} = request;
 
     const {id} = await requireTokenBearer(request);

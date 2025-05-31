@@ -10,8 +10,8 @@ import {
     EVENT_CONSENT_REVOKED,
     findOneByToken as findOneConsentTokenByToken,
 } from "~/.server/services/consent_tokens_service";
-
 import {insertOne as insertOneGrantToken} from "~/.server/services/grant_tokens_service";
+import {requireGuestSession} from "~/.server/services/users_service";
 
 import SearchIcon from "~/components/icons/search_icon";
 import UserPlusIcon from "~/components/icons/user_plus_icon";
@@ -61,6 +61,12 @@ export const meta = wrapMetaFunction(() => {
     ];
 });
 
+export function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    return requireGuestSession(request);
+}
+
 const useHashLoader = withHashLoader((hash) => {
     const searchParams = new URLSearchParams(hash);
 
@@ -71,9 +77,10 @@ const useHashLoader = withHashLoader((hash) => {
 });
 
 export async function action(actionArgs: Route.ActionArgs) {
-    console.log("hello");
-
     const {request} = actionArgs;
+
+    await requireGuestSession(request);
+
     const formData = await request.formData();
 
     const {

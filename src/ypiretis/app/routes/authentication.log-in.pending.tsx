@@ -18,6 +18,7 @@ import {
 import {
     findOneByAccountID as findOneUserByAccountID,
     insertOne as insertOneUser,
+    requireGuestSession,
 } from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
@@ -59,8 +60,16 @@ export const meta = wrapMetaFunction(() => {
     ];
 });
 
+export function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    return requireGuestSession(request);
+}
+
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
+
+    await requireGuestSession(request);
 
     const {accountID, id: grantTokenID} = await requireTokenBearer(request);
 

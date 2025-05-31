@@ -1,10 +1,14 @@
 import {Strong, Text} from "@chakra-ui/react";
 
+import {requireGuestSession} from "~/.server/services/users_service";
+
 import PromptShell from "~/components/shell/prompt_shell";
 
 import {APP_NAME} from "~/utils/constants";
 
 import {wrapMetaFunction} from "~/utils/meta";
+
+import type {Route} from "./+types/authentication.consent.revoked";
 
 const TITLE = "Login Revoked.";
 
@@ -17,6 +21,12 @@ export const meta = wrapMetaFunction(() => {
         },
     ];
 });
+
+export function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    return requireGuestSession(request);
+}
 
 export default function AuthenticationConsentRevoked() {
     return (

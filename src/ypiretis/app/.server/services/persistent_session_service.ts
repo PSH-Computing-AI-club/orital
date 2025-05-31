@@ -1,3 +1,4 @@
+import type {SessionData} from "react-router";
 import {createCookieSessionStorage} from "react-router";
 
 import ENVIRONMENT from "../configuration/environment";
@@ -5,10 +6,6 @@ import ENVIRONMENT from "../configuration/environment";
 import {UNIX_EPOCH} from "../utils/temporal";
 
 const {APP_URL, SECRET_KEY, SESSION_PERSISTENT_TTL} = ENVIRONMENT;
-
-export interface SessionData {
-    readonly userID: string;
-}
 
 const {
     getSession: _getSession,

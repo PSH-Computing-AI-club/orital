@@ -42,7 +42,7 @@ export default function PromptShell(props: IPromptShellProps) {
                 maxInlineSize="96"
                 minInlineSize="96"
             >
-                <Image src="/images/logo.prompt.png" marginBlockStart="auto" />
+                <Image src="/images/logo.prompt.webp" marginBlockStart="auto" />
 
                 <Text marginBlockStart="auto" marginBlockEnd="-10">
                     {PACKAGE_NAME} v{PACKAGE_VERSION}

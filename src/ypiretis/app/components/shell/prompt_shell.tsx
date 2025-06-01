@@ -48,12 +48,7 @@ export default function PromptShell(props: IPromptShellProps) {
                 zIndex="-1"
             />
 
-            <Flex
-                direction={{base: "row", lgDown: "column"}}
-                align="stretch"
-                width="dvw"
-                height="dvh"
-            >
+            <Flex align="stretch" width="dvw" height="dvh">
                 <VStack
                     justify="center"
                     bg="bg.inverted"
@@ -79,7 +74,7 @@ export default function PromptShell(props: IPromptShellProps) {
                     align="center"
                     justify="center"
                     flexGrow="1"
-                    padding={{base: "10", mdDown: "5"}}
+                    padding={{lgTo2xl: "10", mdOnly: "5"}}
                     width="full"
                     background={{
                         //lgDown: "color-mix(in srgb, var(--chakra-colors-bg-inverted), transparent 95%)",
@@ -110,7 +105,7 @@ export default function PromptShell(props: IPromptShellProps) {
                     <Text
                         hideFrom="lg"
                         marginBlockStart="auto"
-                        marginBlockEnd={{base: "-10", mdDown: "-5"}}
+                        marginBlockEnd={{lgTo2xl: "-10", mdOnly: "-5"}}
                     >
                         {PACKAGE_NAME} v{PACKAGE_VERSION}
                     </Text>

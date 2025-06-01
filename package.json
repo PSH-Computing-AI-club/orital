@@ -1,6 +1,9 @@
 {
     "private": true,
     "name": "orital",
+    "workspaces": [
+        "packages/*"
+    ],
     "devDependencies": {
         "prettier": "^3.5.3"
     },

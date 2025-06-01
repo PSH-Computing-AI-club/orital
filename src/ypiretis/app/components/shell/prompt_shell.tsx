@@ -86,7 +86,11 @@ export default function PromptShell(props: IPromptShellProps) {
                         lgDown: "rgba(9, 9, 11, 0.15)",
                     }}
                 >
-                    <Heading size="4xl" maxInlineSize={{smDown: "min"}}>
+                    <Heading
+                        size="4xl"
+                        marginBlockStart={{lgDown: "auto"}}
+                        maxInlineSize={{smDown: "min"}}
+                    >
                         {query ? (
                             <Highlight query={query} styles={{color}}>
                                 {title}
@@ -101,6 +105,14 @@ export default function PromptShell(props: IPromptShellProps) {
                             <Card.Body gap="4">{children}</Card.Body>
                         </Card.Root>
                     </Flex>
+
+                    <Text
+                        hideFrom="lg"
+                        marginBlockStart="auto"
+                        marginBlockEnd={{base: "-10", mdDown: "-5"}}
+                    >
+                        {PACKAGE_NAME} v{PACKAGE_VERSION}
+                    </Text>
                 </VStack>
             </Flex>
         </>

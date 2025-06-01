@@ -25,7 +25,7 @@
         "moduleResolution": "Bundler",
 
         "lib": ["DOM", "DOM.Iterable", "ES2022"],
-        "types": ["@react-router/node", "vite/client"],
+        "types": ["bun-types", "@react-router/node", "vite/client"],
 
         "isolatedModules": true,
         "esModuleInterop": true

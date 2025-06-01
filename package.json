@@ -2,14 +2,9 @@
     "private": true,
     "name": "orital",
     "devDependencies": {
-        "@types/bun": "^1.2.14",
-        "drizzle-kit": "^0.31.1",
         "prettier": "^3.5.3"
     },
     "peerDependencies": {
         "typescript": "^5"
-    },
-    "dependencies": {
-        "drizzle-orm": "^0.43.1"
     }
 }

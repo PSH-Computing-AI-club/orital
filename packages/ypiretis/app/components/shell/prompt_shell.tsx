@@ -26,8 +26,6 @@ export type IPromptShellProps = PropsWithChildren<{
 export default function PromptShell(props: IPromptShellProps) {
     const {children, color = "cyan.solid", query, title} = props;
 
-    // **TODO:** Fix reponsive layout for mobile / tablet.
-
     return (
         <>
             <Image

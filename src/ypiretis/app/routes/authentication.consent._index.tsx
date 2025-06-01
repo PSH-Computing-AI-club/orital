@@ -1,4 +1,13 @@
-import {Button, Code, Flex, Group, List, Strong, Text} from "@chakra-ui/react";
+import {
+    Button,
+    Code,
+    Flex,
+    Group,
+    List,
+    Span,
+    Strong,
+    Text,
+} from "@chakra-ui/react";
 
 import {Form, data, redirect, useNavigate, useNavigation} from "react-router";
 
@@ -168,13 +177,12 @@ export default function AuthenticationConsent() {
                 </Text>
             </noscript>
 
-            <Group>
-                <Text>You are about to log-in with the account:</Text>
-
-                <Code variant="solid" fontWeight="bold">
+            <Text>
+                You are about to log-in with the account:
+                <Code variant="solid" fontWeight="bold" marginInlineStart="2">
                     {accountID}@{ACCOUNT_PROVIDER_DOMAIN}
                 </Code>
-            </Group>
+            </Text>
 
             <Text>
                 This will <Strong color="green.solid">authorize</Strong>{" "}
@@ -182,25 +190,34 @@ export default function AuthenticationConsent() {
             </Text>
 
             <List.Root gap="4" variant="plain" align="center">
-                <List.Item>
+                <List.Item gap="2">
                     <List.Indicator color="green.solid" asChild>
                         <Flex alignItems="center">
                             <UserPlusIcon />
                         </Flex>
                     </List.Indicator>
-                    Create a&nbsp;
-                    <Strong color="cyan.solid">{APP_NAME} account</Strong>, if
-                    one does not exist.
+
+                    <Span>
+                        Create a&nbsp;
+                        <Strong color="cyan.solid">{APP_NAME} account</Strong>,
+                        if one does not exist.
+                    </Span>
                 </List.Item>
 
-                <List.Item>
+                <List.Item gap="2">
                     <List.Indicator color="green.solid" asChild>
                         <Flex alignItems="center">
                             <SearchIcon />
                         </Flex>
                     </List.Indicator>
-                    Retrieve your full name from&nbsp;
-                    <Strong color="cyan.solid">{ACCOUNT_PROVIDER_NAME}</Strong>.
+
+                    <Span>
+                        Retrieve your full name from&nbsp;
+                        <Strong color="cyan.solid">
+                            {ACCOUNT_PROVIDER_NAME}
+                        </Strong>
+                        .
+                    </Span>
                 </List.Item>
             </List.Root>
 

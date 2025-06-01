@@ -71,6 +71,7 @@ Finally, start the web application development start by running `bun app:dev`. Y
 | `bun run app:build`                   | Uses the [React Router](https://reactrouter.com) CLI to build the production web application server.                                                                 |
 | `bun run app:dev`                     | Uses the [Vite](https://vite.dev) CLI to start the local-development web application server.                                                                         |
 | `bun run app:start`                   | Uses the [Bun](https://bun.sh) CLI to run the previously built production web application server.                                                                    |
+| `bun run check:format`                | Uses the [Prettier](https://prettier.io) CLI to check code formatting across the package.                                                                            |
 | `bun run check:types`                 | Generates all needed types and then uses the [TypeScript](https://www.typescriptlang.org) compiler to run check type checking.                                       |
 | `bun run db:migrations:generate`      | Uses the [Drizzle Kit](https://orm.drizzle.team) CLI to generate [SQLite3](https://www.sqlite.org) migration scripts.                                                |
 | `bun run db:migrations:run`           | Uses a helper script that utilizes the [Drizzle ORM](https://orm.drizzle.team) to run the previously generated migration scripts.                                    |

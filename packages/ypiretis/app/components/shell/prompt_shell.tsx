@@ -1,4 +1,5 @@
-import type {SystemProperties} from "node_modules/@chakra-ui/react/dist/types/styled-system/generated/system.gen";
+// **HACK:** *cough* *cough* don't think about it...
+import type {SystemProperties} from "../../../../../node_modules/@chakra-ui/react/dist/types/styled-system/generated/system.gen";
 
 import {
     Card,

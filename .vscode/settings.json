@@ -7,11 +7,6 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
 
-    "[edge]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.html-language-features"
-    },
-
     "[html]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode"

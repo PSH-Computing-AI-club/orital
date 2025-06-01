@@ -7,7 +7,7 @@
         "app:build": "NODE_ENV=production bunx --bun react-router build",
         "app:dev": "NODE_ENV=development bunx --bun vite",
         "app:start": "NODE_ENV=production bun ./build/server/index.js",
-        "check:types": "react-router typegen && tsc -b",
+        "check:types": "bunx --bun react-router typegen && tsc -b",
         "db:migrations:generate": "NODE_ENV=development bunx --bun drizzle-kit generate",
         "db:migrations:run": "NODE_ENV=development bun run ./scripts/db.migrations.run.ts"
     },

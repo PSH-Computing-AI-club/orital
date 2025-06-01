@@ -5,6 +5,7 @@
         "packages/*"
     ],
     "devDependencies": {
+        "bun-types": "^1.2.15",
         "prettier": "^3.5.3"
     },
     "peerDependencies": {

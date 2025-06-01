@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": false,
+        "skipLibCheck": true,
+
+        "types": ["bun-types"],
+
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+
+        "suppressExcessPropertyErrors": false,
+        "suppressImplicitAnyIndexErrors": false,
+        "useUnknownInCatchVariables": true,
+
+        "keyofStringsOnly": false,
+        "noErrorTruncation": false,
+        "noFallthroughCasesInSwitch": false,
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": false,
+        "noImplicitThis": true,
+        "noStrictGenericChecks": false,
+        "noUncheckedIndexedAccess": false,
+
+        "jsx": "react-jsx"
+    }
+}

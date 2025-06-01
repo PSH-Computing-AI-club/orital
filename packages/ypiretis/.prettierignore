@@ -1,0 +1,14 @@
+*.env
+*.tsbuildinfo
+
+/.react-router
+/build
+/public
+/tmp
+
+/app/.server/database/migrations
+
+.dockerignore
+.gitignore
+.prettierignore
+Dockerfile

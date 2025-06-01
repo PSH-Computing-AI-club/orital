@@ -7,10 +7,10 @@
         "app:build": "NODE_ENV=production bunx --bun react-router build",
         "app:dev": "NODE_ENV=development bunx --bun vite",
         "app:start": "NODE_ENV=production bun ./build/server/index.js",
-        "check:types": "bun run types:react-router && tsc -b",
+        "check:types": "bun run types:generate:react-router && tsc -b",
         "db:migrations:generate": "NODE_ENV=development bunx --bun drizzle-kit generate",
         "db:migrations:run": "NODE_ENV=development bun run ./scripts/db.migrations.run.ts",
-        "types:react-router": "bunx --bun react-router typegen"
+        "types:generate:react-router": "bunx --bun react-router typegen"
     },
     "dependencies": {
         "@chakra-ui/react": "^3.19.1",

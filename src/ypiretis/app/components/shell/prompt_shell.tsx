@@ -90,6 +90,7 @@ export default function PromptShell(props: IPromptShellProps) {
                         size="4xl"
                         marginBlockStart={{lgDown: "auto"}}
                         maxInlineSize={{smDown: "min"}}
+                        textAlign={{smDown: "center"}}
                     >
                         {query ? (
                             <Highlight query={query} styles={{color}}>

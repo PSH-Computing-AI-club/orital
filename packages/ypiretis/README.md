@@ -22,7 +22,7 @@ Below is the table of software required to develop this software:
 
 | Software                                 | Tested Version |
 | ---------------------------------------- | -------------- |
-| [Bun JavaScript Runtime](https://bun.sh) | `>1.2.X`       |
+| [Bun JavaScript Runtime](https://bun.sh) | `>=1.2.X`      |
 
 ### 1. Clone
 

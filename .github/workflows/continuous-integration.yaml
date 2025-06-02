@@ -37,6 +37,9 @@ jobs:
             - name: Check Format
               run: bun run check:format
 
+            - name: Check Linting
+              run: bun run check:lint
+
             - name: Check Types
               run: bun run check:types
 

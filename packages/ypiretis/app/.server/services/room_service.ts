@@ -1,3 +1,5 @@
+import type {DeepReadonly} from "../utils/types";
+
 import type {IUser} from "./users_service";
 
 export const ATTENDEE_STATES = {
@@ -61,16 +63,18 @@ export interface IDisplayWindow extends IEntity<IDisplayEvents> {}
 
 export interface IPresenterUser extends IRoomUser<IPresenterEvents> {}
 
-export interface IRoom {
-    readonly attendees: readonly IAttendeeUser[];
+interface IInternalRoom {
+    attendees: IAttendeeUser[];
 
-    readonly displays: readonly IDisplayWindow[];
+    displays: IDisplayWindow[];
 
-    readonly pin: string;
+    pin: string;
 
-    readonly presenter: IPresenterUser;
+    presenter: IPresenterUser;
 
-    readonly title: string;
+    title: string;
 
-    readonly state: IRoomStates;
+    state: IRoomStates;
 }
+
+export interface IRoom extends DeepReadonly<IInternalRoom> {}

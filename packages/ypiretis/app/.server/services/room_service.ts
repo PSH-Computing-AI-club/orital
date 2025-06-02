@@ -62,9 +62,9 @@ export interface IDisplayWindow extends IEntity<IDisplayEvents> {}
 export interface IPresenterUser extends IRoomUser<IPresenterEvents> {}
 
 export interface IRoom {
-    readonly attendees: IAttendeeUser[];
+    readonly attendees: readonly IAttendeeUser[];
 
-    readonly displays: IDisplayWindow[];
+    readonly displays: readonly IDisplayWindow[];
 
     readonly pin: string;
 
@@ -73,12 +73,4 @@ export interface IRoom {
     readonly title: string;
 
     readonly state: IRoomStates;
-
-    broadcastToAttendees(event: IAttendeeEvents): void;
-
-    broadcastToDisplays(event: IDisplayEvents): void;
-
-    kickAttendee(userID: number): void;
-
-    kickAttendees(): void;
 }

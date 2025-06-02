@@ -33,7 +33,7 @@ All code formatting is delegated to [Prettier](https://prettier.io) and the conf
 ### Linting
 
 > [!NOTE]
-> If you are using [VS Code](https://code.visualstudio.com) and have the recommended extensions installed, then VS Code will enforce warn about linting errors on type.
+> If you are using [VS Code](https://code.visualstudio.com) and have the recommended extensions installed, then VS Code will warn about linting errors on type.
 
 All code linting is delegated to [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) and the configuration is found in [`.oxlintrc.json`](./.oxlintrc.json).
 

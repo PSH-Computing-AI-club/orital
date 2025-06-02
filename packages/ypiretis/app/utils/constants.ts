@@ -1,3 +1,6 @@
+// **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
+// imported by server-only modules.
+
 export const APP_IS_PRODUCTION = __APP_IS_PRODUCTION__;
 
 export const APP_NAME = __APP_NAME__;

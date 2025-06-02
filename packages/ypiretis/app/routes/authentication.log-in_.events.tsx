@@ -30,7 +30,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     return eventStream(signal, (send, abort) => {
         const authorizedSubscription = EVENT_CONSENT_AUTHORIZED.subscribe(
-            async (event) => {
+            (event) => {
                 const {callbackTokenID, grantToken, grantTokenExpiresAt} =
                     event;
 

@@ -23,12 +23,19 @@ Each package within the Orital Club Portal Solution has its own sets of commands
 
 External contributions are not accepted. Consider this repository read-only for all non-club members.
 
-## Formatting
+### Formatting
 
 > [!NOTE]
 > If you are using [VS Code](https://code.visualstudio.com) and have the recommended extensions installed, then VS Code will enforce formatting on save.
 
 All code formatting is delegated to [Prettier](https://prettier.io) and the configuration is found in [`.prettierrc`](./.prettierrc).
+
+### Linting
+
+> [!NOTE]
+> If you are using [VS Code](https://code.visualstudio.com) and have the recommended extensions installed, then VS Code will enforce warn about linting errors on type.
+
+All code linting is delegated to [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) and the configuration is found in [`.oxlintrc.json`](./.oxlintrc.json).
 
 ## Support
 

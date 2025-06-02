@@ -57,14 +57,14 @@ export interface IAttendeeUser extends IRoomUser<IAttendeeEvents> {
     readonly state: IAttendeeStates;
 }
 
-export interface IDisplayEntity extends IEntity<IDisplayEvents> {}
+export interface IDisplayWindow extends IEntity<IDisplayEvents> {}
 
 export interface IPresenterUser extends IRoomUser<IPresenterEvents> {}
 
 export interface IRoom {
     readonly attendees: IAttendeeUser[];
 
-    readonly displays: IDisplayEntity[];
+    readonly displays: IDisplayWindow[];
 
     readonly pin: string;
 

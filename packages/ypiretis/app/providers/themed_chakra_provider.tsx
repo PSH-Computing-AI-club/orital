@@ -13,6 +13,7 @@ const THEME_CONFIG = defineConfig({
     globalCss: defineGlobalStyles({
         html: {
             bg: "bg.muted",
+            fontSize: "16px",
         },
     }),
 

@@ -22,7 +22,6 @@ import {APP_NAME} from "~/utils/constants";
 import type {Route} from "./+types/root";
 
 import "~/styles/fonts.css";
-import "~/styles/document.css";
 
 export const meta = ((metaArgs) => {
     const {error} = metaArgs;

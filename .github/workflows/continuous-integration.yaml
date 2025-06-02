@@ -7,12 +7,6 @@ on:
     pull_request:
         branches: [main]
 
-env:
-    BUN_VERSION: 1.2.13
-    OS_VERSION_MACOS: macOS-14
-    OS_VERSION_LINUX: ubuntu-22.04
-    OS_VERSION_WINDOWS: windows-2022
-
 jobs:
     checkYpiretis:
         runs-on: ${{ matrix.os }}
@@ -20,9 +14,9 @@ jobs:
             fail-fast: false
             matrix:
                 os:
-                    - ${{ env.OS_VERSION_LINUX }}
-                    - ${{ env.OS_VERSION_WINDOWS }}
-                    - ${{ env.OS_VERSION_MACOS }}
+                    - ubuntu-22.04
+                    - windows-2022
+                    - macOS-14
 
         steps:
             - name: Clone Repository
@@ -31,7 +25,7 @@ jobs:
             - name: Configure Bun
               uses: oven-sh/setup-bun@v2
               with:
-                  bun-version: ${{ env.BUN_VERSION }}
+                  bun-version: 1.2.13
 
             - name: Change Directory
               run: cd ./packages/ypiretis
@@ -53,9 +47,9 @@ jobs:
             fail-fast: false
             matrix:
                 os:
-                    - ${{ env.OS_VERSION_LINUX }}
-                    - ${{ env.OS_VERSION_WINDOWS }}
-                    - ${{ env.OS_VERSION_MACOS }}
+                    - ubuntu-22.04
+                    - windows-2022
+                    - macOS-14
 
         steps:
             - name: Clone Repository
@@ -64,7 +58,7 @@ jobs:
             - name: Configure Bun
               uses: oven-sh/setup-bun@v2
               with:
-                  bun-version: ${{ env.BUN_VERSION }}
+                  bun-version: 1.2.13
 
             - name: Change Directory
               run: cd ./packages/ypiretis

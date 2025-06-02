@@ -1,0 +1,76 @@
+name: Continuous Integration
+
+on:
+    push:
+        branches: [main]
+
+    pull_request:
+        branches: [main]
+
+env:
+    BUN_VERSION: 1.2.13
+    OS_VERSION_MACOS: macOS-14
+    OS_VERSION_LINUX: ubuntu-22.04
+    OS_VERSION_WINDOWS: windows-2022
+
+jobs:
+    checkYpiretis:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os:
+                    - ${{ env.OS_VERSION_LINUX }}
+                    - ${{ env.OS_VERSION_WINDOWS }}
+                    - ${{ env.OS_VERSION_MACOS }}
+
+        steps:
+            - name: Clone Repository
+              uses: actions/checkout@v4
+
+            - name: Configure Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: ${{ env.BUN_VERSION }}
+
+            - name: Change Directory
+              run: cd ./packages/ypiretis
+
+            - name: Install Dependencies
+              run: bun run deps:cache
+
+            - name: Check Format
+              run: bun run check:format
+
+            - name: Check Types
+              run: bun run check:types
+
+    buildYpiretis:
+        needs: checkYpiretis
+
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os:
+                    - ${{ env.OS_VERSION_LINUX }}
+                    - ${{ env.OS_VERSION_WINDOWS }}
+                    - ${{ env.OS_VERSION_MACOS }}
+
+        steps:
+            - name: Clone Repository
+              uses: actions/checkout@v4
+
+            - name: Configure Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: ${{ env.BUN_VERSION }}
+
+            - name: Change Directory
+              run: cd ./packages/ypiretis
+
+            - name: Install Dependencies
+              run: bun run deps:cache
+
+            - name: Build Application
+              run: bun run app:build

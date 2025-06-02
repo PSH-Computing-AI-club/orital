@@ -57,7 +57,7 @@ export default function useEventSource(
         return () => {
             abortController.abort();
         };
-    }, [enabled, eventName, init, url]);
+    }, [enabled, eventName, init, url, openWhenHidden]);
 
     return message;
 }

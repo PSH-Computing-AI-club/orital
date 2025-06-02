@@ -6,6 +6,6 @@ export const meta = wrapMetaFunction(() => {
     return [{title: "New React Router App"}];
 });
 
-export default function Index(props: Route.ComponentProps) {
+export default function Index(_props: Route.ComponentProps) {
     return <h1>Hello world!</h1>;
 }

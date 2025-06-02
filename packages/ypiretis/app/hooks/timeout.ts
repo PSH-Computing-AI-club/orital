@@ -26,5 +26,5 @@ export default function useTimeout(
                 clearTimeout(identifier);
             };
         }
-    }, [callback, duration, hash, pathname]);
+    }, [enabled, callback, duration, hash, pathname]);
 }

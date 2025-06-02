@@ -164,7 +164,7 @@ export default function AuthenticationConsent() {
 
         {
             duration: (consentTokenExpiresAt ?? 0) - Date.now(),
-            enabled: false && !!consentTokenExpiresAt,
+            enabled: !!consentTokenExpiresAt,
         },
     );
 

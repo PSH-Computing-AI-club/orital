@@ -49,7 +49,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             },
         );
 
-        const revokedSubscription = EVENT_CONSENT_REVOKED.subscribe((event) => {
+        const revokedSubscription = EVENT_CONSENT_REVOKED.subscribe(() => {
             send({
                 event: "revoked" satisfies ILoginEventNames,
                 data: JSON.stringify(null satisfies ILoginRevokedEvent),

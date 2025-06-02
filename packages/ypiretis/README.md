@@ -34,10 +34,10 @@ git clone https://github.com/PSH-Computing-AI-club/orital
 
 ### 2. Install Dependencies
 
-Install all dependencies via [Bun](https://bun.sh):
+Install all dependencies via terminal. This command will install dependencies by strictly versions found in [`bun.lock`](../../bun.lock):
 
 ```shell
-bun install --frozen-lockfile
+bun run deps:cache
 ```
 
 ### 3. Open VS Code
@@ -75,4 +75,5 @@ Finally, start the web application development start by running `bun app:dev`. Y
 | `bun run check:types`                 | Generates all needed types and then uses the [TypeScript](https://www.typescriptlang.org) compiler to run check type checking.                                       |
 | `bun run db:migrations:generate`      | Uses the [Drizzle Kit](https://orm.drizzle.team) CLI to generate [SQLite3](https://www.sqlite.org) migration scripts.                                                |
 | `bun run db:migrations:run`           | Uses a helper script that utilizes the [Drizzle ORM](https://orm.drizzle.team) to run the previously generated migration scripts.                                    |
+| `bun run deps:cache`                  | Uses the [Bun](https://bun.sh) CLI to install all deps strictly by versions found in `bun.lock`.                                                                     |
 | `bun run types:generate:react-router` | Uses the [React Router](https://reactrouter.com) CLI to generate [TypeScript](https://www.typescriptlang.org) typings of the routes in [`app/routes`](./app/routes). |

@@ -8,6 +8,7 @@
         "app:dev": "NODE_ENV=development bunx --bun vite",
         "app:start": "NODE_ENV=production bun ./build/server/index.js",
         "check:format": "prettier --config ../../.prettierrc --check ./",
+        "check:lint": "oxlint --config ../../.oxlintrc.json --tsconfig ./tsconfig.json ./",
         "check:types": "bun run types:generate:react-router && tsc -b",
         "deps:cache": "bun install --frozen-lockfile",
         "db:migrations:generate": "NODE_ENV=development bunx --bun drizzle-kit generate",

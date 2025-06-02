@@ -18,6 +18,10 @@ jobs:
                     - windows-2022
                     - macOS-14
 
+        defaults:
+            run:
+                working-directory: ./packages/ypiretis
+
         steps:
             - name: Clone Repository
               uses: actions/checkout@v4
@@ -26,9 +30,6 @@ jobs:
               uses: oven-sh/setup-bun@v2
               with:
                   bun-version: 1.2.13
-
-            - name: Change Directory
-              run: cd ./packages/ypiretis
 
             - name: Install Dependencies
               run: bun run deps:cache
@@ -51,6 +52,10 @@ jobs:
                     - windows-2022
                     - macOS-14
 
+        defaults:
+            run:
+                working-directory: ./packages/ypiretis
+
         steps:
             - name: Clone Repository
               uses: actions/checkout@v4
@@ -59,9 +64,6 @@ jobs:
               uses: oven-sh/setup-bun@v2
               with:
                   bun-version: 1.2.13
-
-            - name: Change Directory
-              run: cd ./packages/ypiretis
 
             - name: Install Dependencies
               run: bun run deps:cache

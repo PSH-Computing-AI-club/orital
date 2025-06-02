@@ -57,6 +57,7 @@ jobs:
 
         defaults:
             run:
+                shell: bash
                 working-directory: ./packages/ypiretis
 
         steps:
@@ -70,6 +71,9 @@ jobs:
 
             - name: Install Dependencies
               run: bun run deps:cache
+
+            - name: Load Sample Environment
+              run: mv ./.sample.env ./.env.production
 
             - name: Build Application
               run: bun run app:build

@@ -26,13 +26,13 @@ interface IInternalRoom {
 
     displays: Set<IDisplayEntity>;
 
-    pin: string;
+    readonly pin: string;
 
-    presenter: IPresenterUser;
+    readonly presenter: IPresenterUser;
 
-    title: string;
+    readonly title: string;
 
-    state: IRoomStates;
+    readonly state: IRoomStates;
 
     _entityDisposed(entity: IGenericEntity): void;
 

@@ -185,7 +185,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         updatePIN() {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
-                    `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed.)`,
+                    `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed)`,
                 );
             }
 
@@ -203,7 +203,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         updateState(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
-                    `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed.)`,
+                    `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed)`,
                 );
             }
 
@@ -213,7 +213,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         updateTitle(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
-                    `bad dispatch to 'IRoom.updateTitle' (room '${pin}' was previously disposed.)`,
+                    `bad dispatch to 'IRoom.updateTitle' (room '${pin}' was previously disposed)`,
                 );
             }
 

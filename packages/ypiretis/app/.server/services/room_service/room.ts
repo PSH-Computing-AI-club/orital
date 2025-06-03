@@ -1,3 +1,4 @@
+import {generatePIN} from "../../utils/crypto";
 import type {DeepReadonly} from "../../utils/types";
 
 import type {IAttendeeUser} from "./attendee_user";
@@ -39,13 +40,42 @@ interface IInternalRoom {
     dispose(): void;
 }
 
-export default function makeRoom(): IRoom {
+export interface IRoomOptions {
+    readonly presenter: IPresenterUser;
+
+    readonly state?: IRoomStates;
+
+    readonly title: string;
+}
+
+export default function makeRoom(options: IRoomOptions): IRoom {
+    const {presenter} = options;
+    let {state = ROOM_STATES.staging, title} = options;
+
+    let pin = generatePIN();
+
     const attendees = new Set<IAttendeeUser>();
     const displays = new Set<IDisplayEntity>();
 
     const room = {
         attendees,
         displays,
+
+        get pin() {
+            return pin;
+        },
+
+        get presenter() {
+            return presenter;
+        },
+
+        get state() {
+            return state;
+        },
+
+        get title() {
+            return title;
+        },
 
         _entityDisposed(entity) {
             if (isAttendeeUser(entity)) {

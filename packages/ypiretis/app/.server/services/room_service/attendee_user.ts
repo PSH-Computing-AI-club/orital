@@ -20,8 +20,6 @@ export interface IAttendeeUser extends IUser<IAttendeeEvents, IAttendeeStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
 }
 
-export type IPresenterEvents = null;
-
 export function isAttendeeUser(value: unknown): value is IAttendeeUser {
     return (
         value !== null &&

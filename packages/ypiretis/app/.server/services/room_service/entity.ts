@@ -24,13 +24,16 @@ export type IEntityEventData =
     | {[key: number | string]: IEntityEventData};
 
 export type IGenericEntity = IEntity<
-    IEntityEvent<string, IEntityEventData>,
+    IEntityNetworkEvent<string, IEntityEventData>,
     IEntityStates,
     string,
     IEntityEventData
 >;
 
-export interface IEntityEvent<N extends string, D extends IEntityEventData> {
+export interface IEntityNetworkEvent<
+    N extends string,
+    D extends IEntityEventData,
+> {
     readonly event: N;
 
     readonly data: D;
@@ -49,7 +52,7 @@ export interface IEntityOptions {
 }
 
 export interface IEntity<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
@@ -86,7 +89,7 @@ export class InvalidEntityTypeError extends Error {
 }
 
 export function isEntity<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
@@ -99,7 +102,7 @@ export function isEntity<
 }
 
 export default function makeEntity<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,

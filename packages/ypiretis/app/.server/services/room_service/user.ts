@@ -2,7 +2,7 @@ import type {IUser as IServiceUser} from "../users_service";
 
 import type {
     IEntity,
-    IEntityEvent,
+    IEntityNetworkEvent,
     IEntityEventData,
     IEntityOptions,
     IEntityStates,
@@ -16,7 +16,7 @@ export interface IUserOptions extends IEntityOptions {
 }
 
 export interface IUser<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
@@ -27,7 +27,7 @@ export interface IUser<
 }
 
 export function isUser<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
@@ -40,7 +40,7 @@ export function isUser<
 }
 
 export default function makeUser<
-    T extends IEntityEvent<N, D>,
+    T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,

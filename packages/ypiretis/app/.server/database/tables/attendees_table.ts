@@ -16,7 +16,7 @@ const ATTENDEES_TABLE = sqliteTable("attendees", {
         .unique()
         .references(() => ROOMS_TABLE.id, {onDelete: "cascade"}),
 
-    accountID: text("account_id")
+    userID: text("user_id")
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
@@ -31,7 +31,7 @@ export const ATTENDEES_RELATIONS = relations(
     ({one}) => {
         return {
             account: one(USERS_TABLE, {
-                fields: [ATTENDEES_TABLE.accountID],
+                fields: [ATTENDEES_TABLE.userID],
                 references: [USERS_TABLE.id],
             }),
 

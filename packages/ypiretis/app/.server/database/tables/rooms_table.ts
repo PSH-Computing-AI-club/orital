@@ -17,7 +17,7 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .unique()
         .$defaultFn(() => generatePIN()),
 
-    ownerAccountID: text("owner_account_id")
+    ownerUserID: text("owner_user_id")
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
@@ -34,7 +34,7 @@ export const ROOMS_RELATIONS = relations(
     ({one}) => {
         return {
             ownerAccount: one(USERS_TABLE, {
-                fields: [ROOMS_TABLE.ownerAccountID],
+                fields: [ROOMS_TABLE.ownerUserID],
                 references: [USERS_TABLE.id],
             }),
         };

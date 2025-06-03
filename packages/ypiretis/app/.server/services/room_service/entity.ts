@@ -4,6 +4,14 @@ import {IRoom} from "./room";
 
 const SYMBOL_ENTITY_BRAND: unique symbol = Symbol();
 
+export const ENTITY_STATE = {
+    connected: "STATE_CONNECTED",
+
+    disposed: "STATE_DISPOSED",
+} as const;
+
+export type IEntityStates = (typeof ENTITY_STATE)[keyof typeof ENTITY_STATE];
+
 export type IEntityEventData =
     | boolean
     | number
@@ -32,7 +40,7 @@ export interface IEntity<
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
-    readonly isConnected: boolean;
+    readonly state: IEntityStates;
 
     _disconnect(): void;
 
@@ -81,8 +89,8 @@ export default function makeEntity<
     return {
         [SYMBOL_ENTITY_BRAND]: true,
 
-        get isConnected() {
-            return !!connection;
+        get state() {
+            return connection ? ENTITY_STATE.connected : ENTITY_STATE.disposed;
         },
 
         _disconnect() {

@@ -12,6 +12,8 @@ import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
 import {isPresenterUser} from "./presenter_user";
 
+let idCounter = -1;
+
 export const ROOM_STATES = {
     disposed: "STATE_DISPOSED",
 
@@ -57,6 +59,8 @@ export interface IRoom {
 
     readonly EVENT_TITLE_UPDATE: IEvent<IRoomTitleUpdateEvent>;
 
+    readonly id: number;
+
     readonly pin: string;
 
     readonly presenter: IPresenterUser;
@@ -94,6 +98,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const {presenter} = options;
     let {state = ROOM_STATES.staging, title = "A Presentation Room"} = options;
 
+    const id = ++idCounter;
     let pin = generatePIN();
 
     const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();
@@ -121,6 +126,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         attendees,
         displays,
+        id,
 
         get pin() {
             return pin;

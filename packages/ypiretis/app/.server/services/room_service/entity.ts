@@ -49,6 +49,14 @@ export class EntityConnectionClosedError extends Error {
     }
 }
 
+export class InvalidEntityTypeError extends Error {
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
+
+        this.name = InvalidEntityTypeError.name;
+    }
+}
+
 export function isEntity<
     T extends IEntityEvent<N, D>,
     N extends string = string,

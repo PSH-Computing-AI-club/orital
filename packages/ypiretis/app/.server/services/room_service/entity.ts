@@ -93,7 +93,6 @@ export default function makeEntity<
             }
 
             connection.abort();
-            room._entityDisposed(this);
 
             connection = null;
         },

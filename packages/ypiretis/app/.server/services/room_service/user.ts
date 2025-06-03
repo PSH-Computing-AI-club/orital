@@ -47,13 +47,13 @@ export default function makeUser<
 >(options: IUserOptions): IUser<T, S, N, D> {
     const {user} = options;
 
-    const Entity = makeEntity<T, S, N, D>(options);
+    const entity = makeEntity<T, S, N, D>(options);
 
     return {
         [SYMBOL_USER_BRAND]: true,
 
         user,
 
-        ...Entity,
+        ...entity,
     };
 }

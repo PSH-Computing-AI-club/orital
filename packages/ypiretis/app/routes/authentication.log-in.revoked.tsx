@@ -4,21 +4,7 @@ import {requireGuestSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import {wrapMetaFunction} from "~/utils/meta";
-
 import type {Route} from "./+types/authentication.log-in.expired";
-
-const TITLE = "Login Revoked.";
-
-const QUERY = "Revoked";
-
-export const meta = wrapMetaFunction(() => {
-    return [
-        {
-            title: TITLE,
-        },
-    ];
-});
 
 export function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
@@ -28,7 +14,7 @@ export function loader(loaderArgs: Route.LoaderArgs) {
 
 export default function AuthenticationLogInExpired() {
     return (
-        <PromptShell title={TITLE} query={QUERY} color="red.solid">
+        <PromptShell title="Login Revoked." query="Revoked" color="red.solid">
             <Text>
                 The login you were trying to handle was{" "}
                 <Strong color="red.solid">revoked</Strong>.

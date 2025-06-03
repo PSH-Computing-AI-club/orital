@@ -11,7 +11,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import {PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
+import {APP_NAME, PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
 
 import type {PropsWithChildren} from "react";
 
@@ -28,6 +28,13 @@ export default function PromptShell(props: IPromptShellProps) {
 
     return (
         <>
+            {
+                // **HACK:** React's special handling of the `<title>` element
+                // requires that it has no child elements. That is, it is only
+                // a singular primitive value.
+            }
+            <title>{`${title} :: ${APP_NAME}`}</title>
+
             <Image
                 src="/images/logo.prompt.webp"
                 hideFrom="lg"

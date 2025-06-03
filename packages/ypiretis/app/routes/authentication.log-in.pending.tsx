@@ -25,7 +25,6 @@ import useEventSource from "~/hooks/event_source";
 import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
 
-import {wrapMetaFunction} from "~/utils/meta";
 import {token} from "~/utils/valibot";
 
 import type {
@@ -35,10 +34,6 @@ import type {
 
 import {Route} from "./+types/authentication.log-in.pending";
 
-const TITLE = "Log-In Pending.";
-
-const QUERY = "Pending";
-
 const CLIENT_LOADER_SCHEMA = v.object({
     callbackToken: v.pipe(v.string(), token("TCLB")),
 
@@ -47,14 +42,6 @@ const CLIENT_LOADER_SCHEMA = v.object({
         v.transform((value) => parseInt(value, 10)),
         v.number(),
     ),
-});
-
-export const meta = wrapMetaFunction(() => {
-    return [
-        {
-            title: TITLE,
-        },
-    ];
 });
 
 export function loader(loaderArgs: Route.LoaderArgs) {
@@ -202,7 +189,7 @@ export default function AuthenticationLogInPending() {
     }, [message]);
 
     return (
-        <PromptShell title={TITLE} query={QUERY}>
+        <PromptShell title="Log-In Pending." query="Pending">
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to

@@ -4,10 +4,6 @@ import {isRouteErrorResponse} from "react-router";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-export const TITLE = "Server Error.";
-
-const QUERY = "Error";
-
 export type IError500Props = {
     error: unknown;
 };
@@ -24,7 +20,7 @@ export default function Error500(props: IError500Props) {
     }
 
     return (
-        <PromptShell title={TITLE} query={QUERY}>
+        <PromptShell title="Server Error." query="Error">
             <Text>The server had an error while loading this page.</Text>
             <Code>{message}</Code>
         </PromptShell>

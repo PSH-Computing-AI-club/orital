@@ -35,14 +35,9 @@ import {
     ACCOUNT_PROVIDER_NAME,
     APP_NAME,
 } from "~/utils/constants";
-import {wrapMetaFunction} from "~/utils/meta";
 import {alphanumerical, token} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication.consent._index";
-
-const TITLE = "Authorize Login?";
-
-const QUERY = "Login";
 
 const ACTION_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["authorize", "revoke"])),
@@ -60,14 +55,6 @@ const CLIENT_LOADER_SCHEMA = v.object({
         v.transform((value) => parseInt(value, 10)),
         v.number(),
     ),
-});
-
-export const meta = wrapMetaFunction(() => {
-    return [
-        {
-            title: TITLE,
-        },
-    ];
 });
 
 export function loader(loaderArgs: Route.LoaderArgs) {
@@ -169,7 +156,7 @@ export default function AuthenticationConsent() {
     );
 
     return (
-        <PromptShell title={TITLE} query={QUERY}>
+        <PromptShell title="Authorized Login?" query="Login">
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to

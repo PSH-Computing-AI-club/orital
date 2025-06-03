@@ -25,27 +25,14 @@ import {
     ACCOUNT_PROVIDER_DOMAIN,
     ACCOUNT_PROVIDER_NAME,
 } from "~/utils/constants";
-import {wrapMetaFunction} from "~/utils/meta";
 import {alphanumerical} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication.log-in._index";
-
-const TITLE = `Log-In via ${ACCOUNT_PROVIDER_NAME}.`;
-
-const QUERY = ACCOUNT_PROVIDER_NAME;
 
 const ACTION_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
 
     action: v.pipe(v.string(), v.picklist(["log-in"])),
-});
-
-export const meta = wrapMetaFunction(() => {
-    return [
-        {
-            title: TITLE,
-        },
-    ];
 });
 
 export function loader(loaderArgs: Route.LoaderArgs) {
@@ -121,7 +108,11 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
     const navigation = useNavigation();
 
     return (
-        <PromptShell title={TITLE} query={QUERY} color="beaverblue.solid">
+        <PromptShell
+            title={`Log-In via ${ACCOUNT_PROVIDER_NAME}.`}
+            query={ACCOUNT_PROVIDER_NAME}
+            color="beaverblue.solid"
+        >
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to

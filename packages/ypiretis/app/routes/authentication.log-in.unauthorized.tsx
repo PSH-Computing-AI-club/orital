@@ -4,27 +4,17 @@ import {data} from "react-router";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import {wrapMetaFunction} from "~/utils/meta";
-
-const TITLE = "Login Unauthorized.";
-
-const QUERY = "Unauthorized";
-
-export const meta = wrapMetaFunction(() => {
-    return [
-        {
-            title: TITLE,
-        },
-    ];
-});
-
 export function loader() {
     return data("Unauthorized", 401);
 }
 
 export default function AuthenticationLogInUnauthorized() {
     return (
-        <PromptShell title={TITLE} query={QUERY} color="red.solid">
+        <PromptShell
+            title="Login Unauthorized."
+            query="Unauthorized"
+            color="red.solid"
+        >
             <Text>
                 The login you are trying to handle has{" "}
                 <Strong color="red.solid">already expired</Strong> or{" "}

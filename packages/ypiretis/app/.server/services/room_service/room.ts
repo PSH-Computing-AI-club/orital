@@ -1,5 +1,4 @@
 import {generatePIN} from "../../utils/crypto";
-import type {DeepReadonly} from "../../utils/types";
 
 import type {IAttendeeUser} from "./attendee_user";
 import {isAttendeeUser} from "./attendee_user";
@@ -22,9 +21,7 @@ export const ROOM_STATES = {
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
 
-export type IRoom = DeepReadonly<IInternalRoom>;
-
-interface IInternalRoom {
+export interface IRoom {
     attendees: Set<IAttendeeUser>;
 
     displays: Set<IDisplayEntity>;
@@ -59,7 +56,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const attendees = new Set<IAttendeeUser>();
     const displays = new Set<IDisplayEntity>();
 
-    const room = {
+    return {
         attendees,
         displays,
 
@@ -96,7 +93,5 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         dispose() {
             state = ROOM_STATES.disposed;
         },
-    } satisfies IInternalRoom;
-
-    return room;
+    };
 }

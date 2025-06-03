@@ -47,7 +47,7 @@ export interface IRoomOptions {
 
     readonly state?: IRoomStates;
 
-    readonly title: string;
+    readonly title?: string;
 }
 
 export interface IRoom {
@@ -92,7 +92,7 @@ export class RoomDisposedError extends Error {
 
 export default function makeRoom(options: IRoomOptions): IRoom {
     const {presenter} = options;
-    let {state = ROOM_STATES.staging, title} = options;
+    let {state = ROOM_STATES.staging, title = "A Presentation Room"} = options;
 
     let pin = generatePIN();
 

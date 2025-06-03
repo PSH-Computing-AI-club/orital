@@ -12,3 +12,9 @@ export interface ISendFunctionArgs {
 
     readonly id?: string;
 }
+
+export interface IConnection {
+    readonly abort: IAbortFunction;
+
+    readonly send: ISendFunction;
+}

@@ -112,8 +112,6 @@ export default function makeEntity<
             }
 
             connection.abort();
-
-            connection = null;
         },
 
         _dispatch(event) {

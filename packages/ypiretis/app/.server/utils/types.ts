@@ -1,5 +1,5 @@
 export type DeepReadonly<T> = {
-    readonly [P in keyof T]: DeepReadonly<T[P]>;
+    readonly [P in keyof T]: T[P] extends Function ? T[P] : DeepReadonly<T[P]>;
 };
 
 export type OmitViaRemap<T extends object, K> = {

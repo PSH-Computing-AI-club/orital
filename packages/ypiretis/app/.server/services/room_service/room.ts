@@ -37,6 +37,14 @@ export interface IRoom {
     _entityDisposed(entity: IGenericEntity): void;
 
     dispose(): void;
+
+    updatePIN(): Promise<string>;
+
+    updateState(
+        state: Exclude<IRoomStates, (typeof ROOM_STATES)["disposed"]>,
+    ): Promise<void>;
+
+    updateTitle(title: string): Promise<void>;
 }
 
 export interface IRoomOptions {
@@ -45,6 +53,14 @@ export interface IRoomOptions {
     readonly state?: IRoomStates;
 
     readonly title: string;
+}
+
+export class RoomDisposedError extends Error {
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
+
+        this.name = RoomDisposedError.name;
+    }
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {
@@ -92,6 +108,38 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         dispose() {
             state = ROOM_STATES.disposed;
+        },
+
+        async updatePIN() {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed.)`,
+                );
+            }
+
+            pin = generatePIN();
+
+            return pin;
+        },
+
+        async updateState(value) {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed.)`,
+                );
+            }
+
+            state = value;
+        },
+
+        async updateTitle(value) {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.updateTitle' (room '${pin}' was previously disposed.)`,
+                );
+            }
+
+            title = value;
         },
     };
 }

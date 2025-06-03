@@ -153,6 +153,12 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         },
 
         dispose() {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.dispose' (room '${pin}' was previously disposed)`,
+                );
+            }
+
             for (const attendee of attendees) {
                 const {state} = attendee;
 

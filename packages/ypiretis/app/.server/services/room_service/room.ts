@@ -156,8 +156,21 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             for (const attendee of attendees) {
                 const {state} = attendee;
 
-                if (state === ENTITY_STATES.connected) {
+                if (state !== ENTITY_STATES.disposed) {
+                    attendee._disconnect();
                 }
+            }
+
+            for (const display of displays) {
+                const {state} = display;
+
+                if (state !== ENTITY_STATES.disposed) {
+                    display._disconnect();
+                }
+            }
+
+            if (presenter.state !== ENTITY_STATES.disposed) {
+                presenter._disconnect();
             }
 
             _updateState(ROOM_STATES.disposed);
@@ -198,7 +211,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
-            const oldTitle = value;
+            const oldTitle = title;
             title = value;
 
             EVENT_TITLE_UPDATE.dispatch({

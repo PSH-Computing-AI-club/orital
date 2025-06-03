@@ -11,10 +11,10 @@ import USERS_TABLE from "./users_table";
 const ATTENDEES_TABLE = sqliteTable("attendees", {
     id: integer("id").primaryKey({autoIncrement: true}),
 
-    roomID: text("pin")
+    roomID: text("room_id")
         .notNull()
         .unique()
-        .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
+        .references(() => ROOMS_TABLE.id, {onDelete: "cascade"}),
 
     accountID: text("account_id")
         .notNull()

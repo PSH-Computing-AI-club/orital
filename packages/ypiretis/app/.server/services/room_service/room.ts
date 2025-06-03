@@ -46,13 +46,13 @@ export interface IRoom {
 
     dispose(): void;
 
-    updatePIN(): Promise<string>;
+    updatePIN(): string;
 
     updateState(
         state: Exclude<IRoomStates, (typeof ROOM_STATES)["disposed"]>,
-    ): Promise<void>;
+    ): void;
 
-    updateTitle(title: string): Promise<void>;
+    updateTitle(title: string): void;
 }
 
 export class RoomDisposedError extends Error {
@@ -110,7 +110,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             state = ROOM_STATES.disposed;
         },
 
-        async updatePIN() {
+        updatePIN() {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
                     `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed.)`,
@@ -122,7 +122,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             return pin;
         },
 
-        async updateState(value) {
+        updateState(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
                     `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed.)`,
@@ -132,7 +132,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             state = value;
         },
 
-        async updateTitle(value) {
+        updateTitle(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
                     `bad dispatch to 'IRoom.updateTitle' (room '${pin}' was previously disposed.)`,

@@ -34,11 +34,11 @@ export interface IEntity<
 
     readonly isConnected: boolean;
 
-    _dispose(): void;
+    _disconnect(): void;
 
     _dispatch(event: T): void;
 
-    _disconnect(): void;
+    _dispose(): void;
 }
 
 export class EntityConnectionClosedError extends Error {
@@ -85,18 +85,6 @@ export default function makeEntity<
             return !!connection;
         },
 
-        _dispose() {
-            if (!connection) {
-                throw new EntityConnectionClosedError(
-                    `bad dispatch to 'IEntity.dispose' (the connection to the entity was already closed)`,
-                );
-            }
-
-            room._entityDisposed(this);
-
-            connection = null;
-        },
-
         _disconnect() {
             if (!connection) {
                 throw new EntityConnectionClosedError(
@@ -123,6 +111,18 @@ export default function makeEntity<
                 event: name,
                 data: JSON.stringify(data),
             });
+        },
+
+        _dispose() {
+            if (!connection) {
+                throw new EntityConnectionClosedError(
+                    `bad dispatch to 'IEntity.dispose' (the connection to the entity was already closed)`,
+                );
+            }
+
+            room._entityDisposed(this);
+
+            connection = null;
         },
     };
 }

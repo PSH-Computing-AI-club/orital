@@ -4,13 +4,13 @@ import {IRoom} from "./room";
 
 const SYMBOL_ENTITY_BRAND: unique symbol = Symbol();
 
-export const ENTITY_STATE = {
+export const ENTITY_STATES = {
     connected: "STATE_CONNECTED",
 
     disposed: "STATE_DISPOSED",
 } as const;
 
-export type IEntityStates = (typeof ENTITY_STATE)[keyof typeof ENTITY_STATE];
+export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
 export type IEntityEventData =
     | boolean
@@ -90,7 +90,9 @@ export default function makeEntity<
         [SYMBOL_ENTITY_BRAND]: true,
 
         get state() {
-            return connection ? ENTITY_STATE.connected : ENTITY_STATE.disposed;
+            return connection
+                ? ENTITY_STATES.connected
+                : ENTITY_STATES.disposed;
         },
 
         _disconnect() {

@@ -11,6 +11,8 @@ import type {IPresenterUser} from "./presenter_user";
 import {isPresenterUser} from "./presenter_user";
 
 export const ROOM_STATES = {
+    disposed: "STATE_DISPOSED",
+
     open: "STATE_OPEN",
 
     permissive: "STATE_PERMISSIVE",
@@ -91,7 +93,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             }
         },
 
-        dispose() {},
+        dispose() {
+            state = ROOM_STATES.disposed;
+        },
     } satisfies IInternalRoom;
 
     return room;

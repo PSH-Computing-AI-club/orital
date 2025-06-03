@@ -28,9 +28,10 @@ export interface IUser<
 
 export function isUser<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
->(value: unknown): value is IEntity<T> {
+>(value: unknown): value is IUser<T, S> {
     return (
         value !== null &&
         typeof value === "object" &&

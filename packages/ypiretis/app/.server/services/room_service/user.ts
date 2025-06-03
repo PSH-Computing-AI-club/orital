@@ -41,12 +41,13 @@ export function isUser<
 
 export default function makeUser<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
->(options: IUserOptions) {
+>(options: IUserOptions): IUser<T, S, N, D> {
     const {user} = options;
 
-    const Entity = makeEntity<T>(options);
+    const Entity = makeEntity<T, S, N, D>(options);
 
     return {
         [SYMBOL_USER_BRAND]: true,

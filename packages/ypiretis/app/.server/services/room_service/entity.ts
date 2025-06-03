@@ -11,6 +11,8 @@ export type IEntityEventData =
     | IEntityEventData[]
     | {[key: number | string]: IEntityEventData};
 
+export type IGenericEntity = IEntity<any, any, any>;
+
 export interface IEntityEvent<N extends string, D extends IEntityEventData> {
     readonly event: N;
 

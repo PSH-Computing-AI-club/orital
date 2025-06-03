@@ -57,10 +57,6 @@ export interface IRoom {
 
     readonly EVENT_TITLE_UPDATE: IEvent<IRoomTitleUpdateEvent>;
 
-    attendees: Set<IAttendeeUser>;
-
-    displays: Set<IDisplayEntity>;
-
     readonly pin: string;
 
     readonly presenter: IPresenterUser;
@@ -68,6 +64,10 @@ export interface IRoom {
     readonly title: string;
 
     readonly state: IRoomStates;
+
+    attendees: Set<IAttendeeUser>;
+
+    displays: Set<IDisplayEntity>;
 
     _entityDisposed(entity: IGenericEntity): void;
 

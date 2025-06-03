@@ -21,6 +21,14 @@ export const ROOM_STATES = {
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
 
+export interface IRoomOptions {
+    readonly presenter: IPresenterUser;
+
+    readonly state?: IRoomStates;
+
+    readonly title: string;
+}
+
 export interface IRoom {
     attendees: Set<IAttendeeUser>;
 
@@ -45,14 +53,6 @@ export interface IRoom {
     ): Promise<void>;
 
     updateTitle(title: string): Promise<void>;
-}
-
-export interface IRoomOptions {
-    readonly presenter: IPresenterUser;
-
-    readonly state?: IRoomStates;
-
-    readonly title: string;
 }
 
 export class RoomDisposedError extends Error {

@@ -1,3 +1,6 @@
+import type {IEvent} from "../../../utils/event";
+import makeEvent from "../../../utils/event";
+
 import type {IConnection} from "../../utils/event_stream";
 import type {ExtendLiterals} from "../../utils/types";
 
@@ -33,6 +36,12 @@ export interface IEntityEvent<N extends string, D extends IEntityEventData> {
     readonly data: D;
 }
 
+export interface IEntityStateUpdateEvent<S extends string> {
+    readonly oldState: ExtendLiterals<S, IEntityStates>;
+
+    readonly newState: ExtendLiterals<S, IEntityStates>;
+}
+
 export interface IEntityOptions {
     readonly connection: IConnection;
 
@@ -46,6 +55,10 @@ export interface IEntity<
     D extends IEntityEventData = IEntityEventData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
+
+    readonly EVENT_STATE_UPDATE: IEvent<
+        IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
+    >;
 
     readonly state: ExtendLiterals<S, IEntityStates>;
 
@@ -93,15 +106,32 @@ export default function makeEntity<
 >(options: IEntityOptions): IEntity<T, S> {
     const {room} = options;
 
+    const EVENT_STATE_UPDATE =
+        makeEvent<IEntityStateUpdateEvent<IEntityStates>>();
+
     let connection: IConnection | null = options.connection;
+    let state: IEntityStates = ENTITY_STATES.connected;
+
+    function _updateState(value: IEntityStates): void {
+        const oldState = state;
+
+        state = value;
+
+        EVENT_STATE_UPDATE.dispatch({
+            oldState,
+            newState: value,
+        });
+    }
 
     return {
         [SYMBOL_ENTITY_BRAND]: true,
 
+        EVENT_STATE_UPDATE: EVENT_STATE_UPDATE as unknown as IEvent<
+            IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
+        >,
+
         get state() {
-            return (
-                connection ? ENTITY_STATES.connected : ENTITY_STATES.disposed
-            ) as ExtendLiterals<S, IEntityStates>;
+            return state as ExtendLiterals<S, IEntityStates>;
         },
 
         _disconnect() {
@@ -139,6 +169,7 @@ export default function makeEntity<
             room._entityDisposed(this as unknown as IGenericEntity);
 
             connection = null;
+            _updateState(ENTITY_STATES.disposed);
         },
     };
 }

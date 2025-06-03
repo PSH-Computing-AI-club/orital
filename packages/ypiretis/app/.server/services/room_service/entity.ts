@@ -1,4 +1,5 @@
 import type {IConnection} from "../../utils/event_stream";
+import type {ExtendLiterals} from "../../utils/types";
 
 import {IRoom} from "./room";
 
@@ -19,7 +20,12 @@ export type IEntityEventData =
     | IEntityEventData[]
     | {[key: number | string]: IEntityEventData};
 
-export type IGenericEntity = IEntity<any, any, any>;
+export type IGenericEntity = IEntity<
+    IEntityEvent<string, IEntityEventData>,
+    IEntityStates,
+    string,
+    IEntityEventData
+>;
 
 export interface IEntityEvent<N extends string, D extends IEntityEventData> {
     readonly event: N;
@@ -35,12 +41,13 @@ export interface IEntityOptions {
 
 export interface IEntity<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
-    readonly state: IEntityStates;
+    readonly state: ExtendLiterals<S, IEntityStates>;
 
     _disconnect(): void;
 
@@ -67,9 +74,10 @@ export class InvalidEntityTypeError extends Error {
 
 export function isEntity<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
->(value: unknown): value is IEntity<T> {
+>(value: unknown): value is IEntity<T, S> {
     return (
         value !== null &&
         typeof value === "object" &&
@@ -79,9 +87,10 @@ export function isEntity<
 
 export default function makeEntity<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
->(options: IEntityOptions): IEntity<T> {
+>(options: IEntityOptions): IEntity<T, S> {
     const {room} = options;
 
     let connection: IConnection | null = options.connection;
@@ -90,9 +99,9 @@ export default function makeEntity<
         [SYMBOL_ENTITY_BRAND]: true,
 
         get state() {
-            return connection
-                ? ENTITY_STATES.connected
-                : ENTITY_STATES.disposed;
+            return (
+                connection ? ENTITY_STATES.connected : ENTITY_STATES.disposed
+            ) as ExtendLiterals<S, IEntityStates>;
         },
 
         _disconnect() {
@@ -129,7 +138,7 @@ export default function makeEntity<
                 );
             }
 
-            room._entityDisposed(this);
+            room._entityDisposed(this as unknown as IGenericEntity);
 
             connection = null;
         },

@@ -8,7 +8,7 @@ import {isAttendeeUser} from "./attendee_user";
 import type {IDisplayEntity} from "./display_entity";
 import {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
-import {InvalidEntityTypeError} from "./entity";
+import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
 import {isPresenterUser} from "./presenter_user";
 
@@ -153,6 +153,13 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         },
 
         dispose() {
+            for (const attendee of attendees) {
+                const {state} = attendee;
+
+                if (state === ENTITY_STATES.connected) {
+                }
+            }
+
             _updateState(ROOM_STATES.disposed);
         },
 

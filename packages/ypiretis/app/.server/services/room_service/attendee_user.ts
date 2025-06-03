@@ -1,8 +1,11 @@
+import {ENTITY_STATES} from "./entity";
 import type {IUser} from "./user";
 
 const SYMBOL_ATTENDEE_USER_BRAND: unique symbol = Symbol();
 
 export const ATTENDEE_STATES = {
+    ...ENTITY_STATES,
+
     awaiting: "STATE_AWAITING",
 
     permitted: "STATE_PERMITTED",
@@ -13,10 +16,8 @@ export type IAttendeeStates =
 
 export type IAttendeeEvents = null;
 
-export interface IAttendeeUser extends IUser<IAttendeeEvents> {
+export interface IAttendeeUser extends IUser<IAttendeeEvents, IAttendeeStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
-
-    readonly state: IAttendeeStates;
 }
 
 export type IPresenterEvents = null;

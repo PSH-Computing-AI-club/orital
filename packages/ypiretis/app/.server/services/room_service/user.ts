@@ -5,6 +5,7 @@ import type {
     IEntityEvent,
     IEntityEventData,
     IEntityOptions,
+    IEntityStates,
 } from "./entity";
 import makeEntity from "./entity";
 
@@ -16,9 +17,10 @@ export interface IUserOptions extends IEntityOptions {
 
 export interface IUser<
     T extends IEntityEvent<N, D>,
+    S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityEventData = IEntityEventData,
-> extends IEntity<T> {
+> extends IEntity<T, S> {
     [SYMBOL_USER_BRAND]: true;
 
     readonly user: IServiceUser;

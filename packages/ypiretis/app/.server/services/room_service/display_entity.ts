@@ -1,10 +1,13 @@
-import type {IEntity} from "./entity";
+import type {IEntity, IEntityOptions} from "./entity";
+import makeEntity from "./entity";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 
-export type IDisplayEvents = null;
+export type IDisplayEntityEvents = null;
 
-export interface IDisplayEntity extends IEntity<IDisplayEvents> {
+export interface IDisplayEntityOptions extends IEntityOptions {}
+
+export interface IDisplayEntity extends IEntity<IDisplayEntityEvents> {
     [SYMBOL_DISPLAY_ENTITY_BRAND]: true;
 }
 
@@ -14,4 +17,16 @@ export function isDisplayEntity(value: unknown): value is IDisplayEntity {
         typeof value === "object" &&
         SYMBOL_DISPLAY_ENTITY_BRAND in value
     );
+}
+
+export default function makeDisplayEntity(
+    options: IDisplayEntityOptions,
+): IDisplayEntity {
+    const entity = makeEntity<IDisplayEntityEvents>(options);
+
+    return {
+        [SYMBOL_DISPLAY_ENTITY_BRAND]: true,
+
+        ...entity,
+    };
 }

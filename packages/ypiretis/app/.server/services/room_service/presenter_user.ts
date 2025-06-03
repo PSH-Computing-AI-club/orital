@@ -1,10 +1,13 @@
-import type {IUser} from "./user";
+import type {IUser, IUserOptions} from "./user";
+import makeUser from "./user";
 
 const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 
-export type IPresenterEvents = null;
+export type IPresenterUserEvents = null;
 
-export interface IPresenterUser extends IUser<IPresenterEvents> {
+export interface IPresenterUserOptions extends IUserOptions {}
+
+export interface IPresenterUser extends IUser<IPresenterUserEvents> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
 }
 
@@ -14,4 +17,16 @@ export function isPresenterUser(value: unknown): value is IPresenterUser {
         typeof value === "object" &&
         SYMBOL_PRESENTER_USER_BRAND in value
     );
+}
+
+export default function makePresenterUser(
+    options: IPresenterUserOptions,
+): IPresenterUser {
+    const user = makeUser<IPresenterUserEvents>(options);
+
+    return {
+        [SYMBOL_PRESENTER_USER_BRAND]: true,
+
+        ...user,
+    };
 }

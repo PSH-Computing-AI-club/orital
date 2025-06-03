@@ -5,7 +5,7 @@ import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
 
-import ROOMS_TABLE from "./room_table";
+import ROOMS_TABLE from "./rooms_table";
 import USERS_TABLE from "./users_table";
 
 const ATTENDEES_TABLE = sqliteTable("attendees", {

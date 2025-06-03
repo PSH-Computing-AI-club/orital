@@ -1,3 +1,6 @@
+import type {IEvent} from "../../../utils/event";
+import makeEvent from "../../../utils/event";
+
 import {generatePIN} from "../../utils/crypto";
 
 import type {IAttendeeUser} from "./attendee_user";
@@ -21,6 +24,24 @@ export const ROOM_STATES = {
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
 
+export interface IRoomPINUpdateEvent {
+    readonly oldPIN: string;
+
+    readonly newPIN: string;
+}
+
+export interface IRoomStateUpdateEvent {
+    readonly oldState: IRoomStates;
+
+    readonly newState: IRoomStates;
+}
+
+export interface IRoomTitleUpdateEvent {
+    readonly oldTitle: string;
+
+    readonly newTitle: string;
+}
+
 export interface IRoomOptions {
     readonly presenter: IPresenterUser;
 
@@ -30,6 +51,12 @@ export interface IRoomOptions {
 }
 
 export interface IRoom {
+    readonly EVENT_PIN_UPDATE: IEvent<IRoomPINUpdateEvent>;
+
+    readonly EVENT_STATE_UPDATE: IEvent<IRoomStateUpdateEvent>;
+
+    readonly EVENT_TITLE_UPDATE: IEvent<IRoomTitleUpdateEvent>;
+
     attendees: Set<IAttendeeUser>;
 
     displays: Set<IDisplayEntity>;
@@ -69,10 +96,29 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     let pin = generatePIN();
 
+    const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();
+    const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
+    const EVENT_TITLE_UPDATE = makeEvent<IRoomTitleUpdateEvent>();
+
     const attendees = new Set<IAttendeeUser>();
     const displays = new Set<IDisplayEntity>();
 
+    function _updateState(value: IRoomStates): void {
+        const oldState = state;
+
+        state = value;
+
+        EVENT_STATE_UPDATE.dispatch({
+            oldState,
+            newState: value,
+        });
+    }
+
     return {
+        EVENT_PIN_UPDATE,
+        EVENT_STATE_UPDATE,
+        EVENT_TITLE_UPDATE,
+
         attendees,
         displays,
 
@@ -107,7 +153,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         },
 
         dispose() {
-            state = ROOM_STATES.disposed;
+            _updateState(ROOM_STATES.disposed);
         },
 
         updatePIN() {
@@ -117,7 +163,13 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
+            const oldPIN = pin;
             pin = generatePIN();
+
+            EVENT_PIN_UPDATE.dispatch({
+                oldPIN,
+                newPIN: pin,
+            });
 
             return pin;
         },
@@ -129,7 +181,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
-            state = value;
+            _updateState(value);
         },
 
         updateTitle(value) {
@@ -139,7 +191,13 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
+            const oldTitle = value;
             title = value;
+
+            EVENT_TITLE_UPDATE.dispatch({
+                oldTitle,
+                newTitle: value,
+            });
         },
     };
 }

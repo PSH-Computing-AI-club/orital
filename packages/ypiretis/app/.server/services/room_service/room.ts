@@ -1,16 +1,18 @@
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
-
+import type {IConnection} from "../../utils/event_stream";
 import {generatePIN} from "../../utils/crypto";
 
+import {IUser} from "../users_service";
+
 import type {IAttendeeUser} from "./attendee_user";
-import {isAttendeeUser} from "./attendee_user";
+import makeAttendeeUser, {isAttendeeUser} from "./attendee_user";
 import type {IDisplayEntity} from "./display_entity";
-import {isDisplayEntity} from "./display_entity";
+import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
 import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
-import {isPresenterUser} from "./presenter_user";
+import makePresenterUser, {isPresenterUser} from "./presenter_user";
 
 let idCounter = -1;
 
@@ -45,7 +47,9 @@ export interface IRoomTitleUpdateEvent {
 }
 
 export interface IRoomOptions {
-    readonly presenter: IPresenterUser;
+    readonly presenter: IUser;
+
+    readonly presenterConnection: IConnection;
 
     readonly state?: IRoomStates;
 
@@ -75,6 +79,10 @@ export interface IRoom {
 
     _entityDisposed(entity: IGenericEntity): void;
 
+    addAttendee(connection: IConnection, user: IUser): void;
+
+    addDisplay(connection: IConnection): void;
+
     dispose(): void;
 
     updatePIN(): string;
@@ -95,9 +103,12 @@ export class RoomDisposedError extends Error {
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {
-    const {presenter} = options;
+    const {presenter: presenterUser, presenterConnection} = options;
     let {state = ROOM_STATES.staging, title = "A Presentation Room"} = options;
 
+    let presenter: IPresenterUser;
+
+    // **TODO:** Pull from options object when DB integration is ready
     const id = ++idCounter;
     let pin = generatePIN();
 
@@ -119,7 +130,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         });
     }
 
-    return {
+    const room = {
         EVENT_PIN_UPDATE,
         EVENT_STATE_UPDATE,
         EVENT_TITLE_UPDATE,
@@ -156,6 +167,39 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                     "bad argument #0 to 'IRoom._entityDisposed' (entity is not a recognized entity type)",
                 );
             }
+        },
+
+        addAttendee(connection, user) {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.addAttendee' (room '${pin}' was previously disposed)`,
+                );
+            }
+
+            const attendee = makeAttendeeUser({
+                connection,
+                user,
+
+                room: this,
+            });
+
+            attendees.add(attendee);
+        },
+
+        addDisplay(connection) {
+            if (state === ROOM_STATES.disposed) {
+                throw new RoomDisposedError(
+                    `bad dispatch to 'IRoom.addDisplay' (room '${pin}' was previously disposed)`,
+                );
+            }
+
+            const display = makeDisplayEntity({
+                connection,
+
+                room: this,
+            });
+
+            displays.add(display);
         },
 
         dispose() {
@@ -231,5 +275,14 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 newTitle: value,
             });
         },
-    };
+    } satisfies IRoom;
+
+    presenter = makePresenterUser({
+        room,
+
+        connection: presenterConnection,
+        user: presenterUser,
+    });
+
+    return room;
 }

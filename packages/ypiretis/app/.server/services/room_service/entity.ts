@@ -85,7 +85,9 @@ export default function makeEntity<
             }
 
             connection.abort();
-            this.dispose();
+            room._entityDisposed(this);
+
+            connection = null;
         },
 
         dispose() {
@@ -95,9 +97,7 @@ export default function makeEntity<
                 );
             }
 
-            room.EVENT_ENTITY_DISPOSED.dispatch({
-                entity: this,
-            });
+            room._entityDisposed(this);
 
             connection = null;
         },

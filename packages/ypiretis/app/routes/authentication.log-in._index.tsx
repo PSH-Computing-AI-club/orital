@@ -35,10 +35,10 @@ const ACTION_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["log-in"])),
 });
 
-export function loader(loaderArgs: Route.LoaderArgs) {
+export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
-    return requireGuestSession(request);
+    await requireGuestSession(request);
 }
 
 export async function action(actionArgs: Route.ActionArgs) {

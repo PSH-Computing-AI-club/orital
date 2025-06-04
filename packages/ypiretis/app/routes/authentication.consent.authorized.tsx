@@ -8,10 +8,10 @@ import {APP_NAME} from "~/utils/constants";
 
 import type {Route} from "./+types/authentication.consent.authorized";
 
-export function loader(loaderArgs: Route.LoaderArgs) {
+export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
-    return requireGuestSession(request);
+    await requireGuestSession(request);
 }
 
 export default function AuthenticationConsentAuthorized() {

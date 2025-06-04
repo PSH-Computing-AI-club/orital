@@ -6,10 +6,10 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 import type {Route} from "./+types/authentication.log-in.expired";
 
-export function loader(loaderArgs: Route.LoaderArgs) {
+export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
-    return requireGuestSession(request);
+    await requireGuestSession(request);
 }
 
 export default function AuthenticationLogInExpired() {

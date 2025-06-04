@@ -57,10 +57,10 @@ const CLIENT_LOADER_SCHEMA = v.object({
     ),
 });
 
-export function loader(loaderArgs: Route.LoaderArgs) {
+export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
-    return requireGuestSession(request);
+    await requireGuestSession(request);
 }
 
 const useHashLoader = withHashLoader((hash) => {

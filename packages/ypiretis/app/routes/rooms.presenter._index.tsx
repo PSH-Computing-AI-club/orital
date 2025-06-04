@@ -20,7 +20,7 @@ export function HydrateFallback() {
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to
-                    log-in.
+                    use the presenter portal.
                 </Text>
             </noscript>
 

@@ -1,7 +1,6 @@
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
 import type {IConnection} from "../../utils/event_stream";
-import {generatePIN} from "../../utils/crypto";
 
 import {IUser} from "../users_service";
 
@@ -13,8 +12,6 @@ import type {IGenericEntity} from "./entity";
 import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
 import makePresenterUser, {isPresenterUser} from "./presenter_user";
-
-let idCounter = -1;
 
 export const ROOM_STATES = {
     disposed: "STATE_DISPOSED",
@@ -71,11 +68,15 @@ export interface IRoomTitleUpdateEvent {
 }
 
 export interface IRoomOptions {
+    readonly id: number;
+
+    readonly pin: string;
+
     readonly presenter: IUser;
 
-    readonly state?: IRoomStates;
+    readonly state: IRoomStates;
 
-    readonly title?: string;
+    readonly title: string;
 }
 
 export interface IRoom {
@@ -123,7 +124,7 @@ export interface IRoom {
 
     dispose(): void;
 
-    updatePIN(): string;
+    updatePIN(value: string): string;
 
     updateState(
         state: Exclude<IRoomStates, (typeof ROOM_STATES)["disposed"]>,
@@ -141,14 +142,10 @@ export class RoomDisposedError extends Error {
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {
-    const {presenter} = options;
-    let {state = ROOM_STATES.staging, title = "A Presentation Room"} = options;
+    const {id, presenter} = options;
+    let {pin, state, title} = options;
 
     let presenterEntity: IPresenterUser | null = null;
-
-    // **TODO:** Pull from options object when DB integration is ready
-    const id = ++idCounter;
-    let pin = generatePIN();
 
     const EVENT_ATTENDEE_ADDED = makeEvent<IRoomAttendeeAddedEvent>();
     const EVENT_ATTENDEE_DISPOSED = makeEvent<IRoomAttendeeDisposedEvent>();
@@ -320,7 +317,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             _updateState(ROOM_STATES.disposed);
         },
 
-        updatePIN() {
+        updatePIN(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomDisposedError(
                     `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed)`,
@@ -328,7 +325,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             }
 
             const oldPIN = pin;
-            pin = generatePIN();
+            pin = value;
 
             EVENT_PIN_UPDATE.dispatch({
                 oldPIN,

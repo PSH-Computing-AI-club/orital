@@ -7,7 +7,6 @@ import type {Route} from "./+types/rooms_.presenter_.events";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
-
     const {signal} = request;
 
     const {identifiable: user} = await requireAuthenticatedSession(request);

@@ -116,11 +116,11 @@ export interface IRoom {
 
     _entityDisposed(entity: IGenericEntity): void;
 
-    addAttendee(connection: IConnection, user: IUser): void;
+    addAttendee(connection: IConnection, user: IUser): IAttendeeUser;
 
-    addDisplay(connection: IConnection): void;
+    addDisplay(connection: IConnection): IDisplayEntity;
 
-    addPresenter(connection: IConnection): void;
+    addPresenter(connection: IConnection): IPresenterUser;
 
     dispose(): void;
 
@@ -249,6 +249,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             EVENT_ATTENDEE_ADDED.dispatch({
                 attendee,
             });
+
+            return attendee;
         },
 
         addDisplay(connection) {
@@ -269,6 +271,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             EVENT_DISPLAY_ADDED.dispatch({
                 display,
             });
+
+            return display;
         },
 
         addPresenter(connection) {
@@ -282,6 +286,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             EVENT_PRESENTER_ADDED.dispatch({
                 presenter: presenterEntity,
             });
+
+            return presenterEntity;
         },
 
         dispose() {

@@ -30,7 +30,7 @@ export async function insertOneLive(
 ): Promise<IRoom> {
     const {
         presenter,
-        state = ROOM_STATES.closed,
+        state = ROOM_STATES.locked,
         title = "A Presentation Room",
     } = options;
 

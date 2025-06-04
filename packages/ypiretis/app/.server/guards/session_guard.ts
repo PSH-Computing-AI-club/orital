@@ -1,3 +1,4 @@
+import type {InferSelectModel} from "drizzle-orm";
 import {eq} from "drizzle-orm";
 
 import type {Session, SessionData, SessionStorage} from "react-router";
@@ -10,6 +11,8 @@ import type {IIdentifiablesTable} from "../database/tables/identifiables_table";
 import {IGuardRequisiteFunc, IGuardHeaderFunc} from "./guard";
 
 export interface ISessionGuards<
+    T extends IIdentifiablesTable,
+    I extends InferSelectModel<T> = InferSelectModel<T>,
     D extends SessionData = SessionData,
     F extends SessionData = D,
     N extends Session<D, F> = Session<D, F>,
@@ -19,7 +22,7 @@ export interface ISessionGuards<
     readonly getRevokeHeader: IGuardHeaderFunc<D, F, N>;
 
     readonly requireAuthenticatedSession: IGuardRequisiteFunc<{
-        data: D;
+        identifiable: I;
         session: N;
     }>;
 
@@ -28,12 +31,13 @@ export interface ISessionGuards<
 
 export default function makeSessionGuard<
     T extends IIdentifiablesTable,
+    I extends InferSelectModel<T> = InferSelectModel<T>,
     D extends SessionData = SessionData,
     F extends SessionData = D,
     S extends SessionStorage<D, F> = SessionStorage<D, F>,
     N extends Session<D, F> = Session<D, F>,
     K extends keyof D | keyof F = keyof D | keyof F,
->(table: T, sessionStorage: S, idKey: K): ISessionGuards<D, N> {
+>(table: T, sessionStorage: S, idKey: K): ISessionGuards<T, I, D, N> {
     const {commitSession, destroySession, getSession} = sessionStorage;
 
     return {
@@ -89,7 +93,7 @@ export default function makeSessionGuard<
             return {
                 // **HACK:** Drizzle's typing is too complex for TypeScript to
                 // properly infer here. So, we got to forcibly cast it.
-                data: firstIdentifiable as D,
+                identifiable: firstIdentifiable as I,
                 session: session,
             };
         },
@@ -100,8 +104,11 @@ export default function makeSessionGuard<
             const cookie = headers.get("Cookie");
             const session = await getSession(cookie);
 
-            // **HACK:** See comment in `requireAuthenticatedSession`.
-            if (cookie && session.has(idKey as string)) {
+            if (
+                cookie &&
+                // **HACK:** See comment in `requireAuthenticatedSession`.
+                session.has(idKey as string)
+            ) {
                 throw data("Forbidden", {
                     status: 403,
                 });

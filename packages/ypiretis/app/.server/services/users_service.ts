@@ -21,7 +21,7 @@ export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUserSessionData>(
+const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUser>(
     USERS_TABLE,
     persistentSessionService,
     "userID",

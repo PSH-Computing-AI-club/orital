@@ -23,6 +23,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     }
 
     return eventStream(signal, (send, abort) => {
+        // **TODO:** consider how to handle room states, closed and permissive here
         const attendee = room.addAttendee({abort, send}, user);
 
         return () => {

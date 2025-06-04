@@ -16,11 +16,11 @@ import makePresenterUser, {isPresenterUser} from "./presenter_user";
 export const ROOM_STATES = {
     disposed: "STATE_DISPOSED",
 
+    closed: "STATE_CLOSED",
+
     open: "STATE_OPEN",
 
     permissive: "STATE_PERMISSIVE",
-
-    staging: "STATE_STAGING",
 } as const;
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];

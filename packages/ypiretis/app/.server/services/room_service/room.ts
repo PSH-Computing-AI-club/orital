@@ -210,6 +210,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                     display: entity,
                 });
             } else if (isPresenterUser(entity)) {
+                EVENT_PRESENTER_DISPOSED.dispatch({
+                    presenter: entity,
+                });
+
                 this.dispose();
             } else {
                 throw new InvalidEntityTypeError(

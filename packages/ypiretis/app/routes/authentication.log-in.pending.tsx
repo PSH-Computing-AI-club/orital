@@ -30,7 +30,7 @@ import {token} from "~/utils/valibot";
 import type {
     ILoginAuthorizedEvent,
     ILoginEventNames,
-} from "./authentication.log-in_.events";
+} from "./authentication_.log-in_.events";
 
 import {Route} from "./+types/authentication.log-in.pending";
 

@@ -28,6 +28,26 @@ export const ROOM_STATES = {
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
 
+export interface IRoomAttendeeAddedEvent {
+    readonly attendee: IAttendeeUser;
+}
+
+export interface IRoomAttendeeDisposedEvent {
+    readonly attendee: IAttendeeUser;
+}
+
+export interface IRoomDisplayAddedEvent {
+    readonly display: IDisplayEntity;
+}
+
+export interface IRoomDisplayDisposedEvent {
+    readonly display: IDisplayEntity;
+}
+
+export interface IRoomPresenterDisposedEvent {
+    readonly presenter: IPresenterUser;
+}
+
 export interface IRoomPINUpdateEvent {
     readonly oldPIN: string;
 
@@ -57,6 +77,16 @@ export interface IRoomOptions {
 }
 
 export interface IRoom {
+    readonly EVENT_ATTENDEE_ADDED: IEvent<IRoomAttendeeAddedEvent>;
+
+    readonly EVENT_ATTENDEE_DISPOSED: IEvent<IRoomAttendeeDisposedEvent>;
+
+    readonly EVENT_DISPLAY_ADDED: IEvent<IRoomDisplayAddedEvent>;
+
+    readonly EVENT_DISPLAY_DISPOSED: IEvent<IRoomDisplayDisposedEvent>;
+
+    readonly EVENT_PRESENTER_DISPOSED: IEvent<IRoomPresenterDisposedEvent>;
+
     readonly EVENT_PIN_UPDATE: IEvent<IRoomPINUpdateEvent>;
 
     readonly EVENT_STATE_UPDATE: IEvent<IRoomStateUpdateEvent>;
@@ -112,6 +142,12 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const id = ++idCounter;
     let pin = generatePIN();
 
+    const EVENT_ATTENDEE_ADDED = makeEvent<IRoomAttendeeAddedEvent>();
+    const EVENT_ATTENDEE_DISPOSED = makeEvent<IRoomAttendeeDisposedEvent>();
+    const EVENT_DISPLAY_ADDED = makeEvent<IRoomDisplayAddedEvent>();
+    const EVENT_DISPLAY_DISPOSED = makeEvent<IRoomDisplayDisposedEvent>();
+    const EVENT_PRESENTER_DISPOSED = makeEvent<IRoomPresenterDisposedEvent>();
+
     const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();
     const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
     const EVENT_TITLE_UPDATE = makeEvent<IRoomTitleUpdateEvent>();
@@ -131,6 +167,11 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     }
 
     const room = {
+        EVENT_ATTENDEE_ADDED,
+        EVENT_ATTENDEE_DISPOSED,
+        EVENT_DISPLAY_ADDED,
+        EVENT_DISPLAY_DISPOSED,
+        EVENT_PRESENTER_DISPOSED,
         EVENT_PIN_UPDATE,
         EVENT_STATE_UPDATE,
         EVENT_TITLE_UPDATE,
@@ -158,8 +199,16 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         _entityDisposed(entity) {
             if (isAttendeeUser(entity)) {
                 attendees.delete(entity);
+
+                EVENT_ATTENDEE_DISPOSED.dispatch({
+                    attendee: entity,
+                });
             } else if (isDisplayEntity(entity)) {
                 displays.delete(entity);
+
+                EVENT_DISPLAY_DISPOSED.dispatch({
+                    display: entity,
+                });
             } else if (isPresenterUser(entity)) {
                 this.dispose();
             } else {
@@ -184,6 +233,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             });
 
             attendees.add(attendee);
+
+            EVENT_ATTENDEE_ADDED.dispatch({
+                attendee,
+            });
         },
 
         addDisplay(connection) {
@@ -200,6 +253,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             });
 
             displays.add(display);
+
+            EVENT_DISPLAY_ADDED.dispatch({
+                display,
+            });
         },
 
         dispose() {

@@ -50,10 +50,10 @@ export default function makeUser<
     const entity = makeEntity<T, S, N, D>(options);
 
     return {
+        ...entity,
+
         [SYMBOL_USER_BRAND]: true,
 
         user,
-
-        ...entity,
     };
 }

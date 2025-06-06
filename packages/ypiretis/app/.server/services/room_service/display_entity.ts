@@ -25,8 +25,8 @@ export default function makeDisplayEntity(
     const entity = makeEntity<IDisplayEntityEvents>(options);
 
     return {
-        [SYMBOL_DISPLAY_ENTITY_BRAND]: true,
-
         ...entity,
+
+        [SYMBOL_DISPLAY_ENTITY_BRAND]: true,
     };
 }

@@ -38,8 +38,8 @@ export default function makeAttendeeUser(
     const user = makeUser<IAttendeeUserEvents, IAttendeeUserStates>(options);
 
     return {
-        [SYMBOL_ATTENDEE_USER_BRAND]: true,
-
         ...user,
+
+        [SYMBOL_ATTENDEE_USER_BRAND]: true,
     };
 }

@@ -25,8 +25,8 @@ export default function makePresenterUser(
     const user = makeUser<IPresenterUserEvents>(options);
 
     return {
-        [SYMBOL_PRESENTER_USER_BRAND]: true,
-
         ...user,
+
+        [SYMBOL_PRESENTER_USER_BRAND]: true,
     };
 }

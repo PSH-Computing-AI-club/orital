@@ -145,7 +145,7 @@ export default function makeEntity<
         _disconnect() {
             if (!connection) {
                 throw new EntityDisposed(
-                    `bad dispatch to 'IEntity.disconnect' (the connection to the entity was already closed)`,
+                    `bad dispatch to 'IEntity._disconnect' (the connection to the entity was already closed)`,
                 );
             }
 
@@ -160,7 +160,7 @@ export default function makeEntity<
 
             if (!connection) {
                 throw new EntityDisposed(
-                    `bad dispatch to 'IEntity.dispatch' (the connection to the entity is closed)`,
+                    `bad dispatch to 'IEntity._dispatch' (the connection to the entity is closed)`,
                 );
             }
 
@@ -173,7 +173,7 @@ export default function makeEntity<
         _dispose() {
             if (!connection) {
                 throw new EntityDisposed(
-                    `bad dispatch to 'IEntity.dispose' (the connection to the entity was already closed)`,
+                    `bad dispatch to 'IEntity._dispose' (the connection to the entity was already closed)`,
                 );
             }
 

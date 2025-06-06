@@ -171,11 +171,13 @@ export default function makeEntity<
         },
 
         _dispose() {
-            if (!connection) {
+            if (state === ENTITY_STATES.disposed) {
                 throw new EntityDisposedError(
-                    `bad dispatch to 'IEntity._dispose' (the connection to the entity was already closed)`,
+                    `bad dispatch to 'IEntity._dispose' (the entity was already disposed)`,
                 );
             }
+
+            _updateState(ENTITY_STATES.disposed);
 
             connection = null;
 
@@ -184,7 +186,6 @@ export default function makeEntity<
             }
 
             room._entityDisposed(this as unknown as IGenericEntity);
-            _updateState(ENTITY_STATES.disposed);
         },
     };
 }

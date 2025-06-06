@@ -177,13 +177,13 @@ export default function makeEntity<
                 );
             }
 
+            connection = null;
+
             if (this[SYMBOL_ENTITY_ON_DISPOSE]) {
                 this[SYMBOL_ENTITY_ON_DISPOSE]();
             }
 
             room._entityDisposed(this as unknown as IGenericEntity);
-
-            connection = null;
             _updateState(ENTITY_STATES.disposed);
         },
     };

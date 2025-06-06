@@ -116,8 +116,8 @@ export default function makeEntity<
     const EVENT_STATE_UPDATE =
         makeEvent<IEntityStateUpdateEvent<IEntityStates>>();
 
-    let hasAborted: boolean = false;
     let connection: IConnection | null = options.connection;
+    let hasDisconnected = false;
     let state: IEntityStates = ENTITY_STATES.connected;
 
     function _updateState(value: IEntityStates): void {
@@ -149,8 +149,8 @@ export default function makeEntity<
                 );
             }
 
-            if (!hasAborted) {
-                hasAborted = true;
+            if (!hasDisconnected) {
+                hasDisconnected = true;
                 connection.abort();
             }
         },

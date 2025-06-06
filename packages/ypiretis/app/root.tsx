@@ -9,9 +9,11 @@ import {
     ScrollRestoration,
 } from "react-router";
 
+import Error400 from "~/errors/error_400";
 import Error401 from "~/errors/error_401";
 import Error403 from "~/errors/error_403";
 import Error404 from "~/errors/error_404";
+import Error409 from "~/errors/error_409";
 import Error500 from "~/errors/error_500";
 
 import ThemedChakraProvider from "~/providers/themed_chakra_provider";
@@ -54,6 +56,11 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
 
     if (isRouteErrorResponse(error)) {
         switch (error.status) {
+            case 400:
+                Component = Error400;
+
+                break;
+
             case 401:
                 Component = Error401;
 
@@ -66,6 +73,11 @@ export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
 
             case 404:
                 Component = Error404;
+
+                break;
+
+            case 409:
+                Component = Error409;
 
                 break;
         }

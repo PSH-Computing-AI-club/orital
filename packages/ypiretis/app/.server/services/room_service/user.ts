@@ -3,7 +3,7 @@ import type {IUser as IServiceUser} from "../users_service";
 import type {
     IEntity,
     IEntityNetworkEvent,
-    IEntityEventData,
+    IEntityNetworkEventData,
     IEntityOptions,
     IEntityStates,
 } from "./entity";
@@ -19,7 +19,7 @@ export interface IUser<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 > extends IEntity<T, S> {
     [SYMBOL_USER_BRAND]: true;
 
@@ -30,7 +30,7 @@ export function isUser<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 >(value: unknown): value is IUser<T, S> {
     return (
         value !== null &&
@@ -43,7 +43,7 @@ export default function makeUser<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 >(options: IUserOptions): IUser<T, S, N, D> {
     const {user} = options;
 

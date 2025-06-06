@@ -18,23 +18,23 @@ export const ENTITY_STATES = {
 
 export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
-export type IEntityEventData =
+export type IEntityNetworkEventData =
     | boolean
     | number
     | string
-    | IEntityEventData[]
-    | {[key: number | string]: IEntityEventData};
+    | IEntityNetworkEventData[]
+    | {[key: number | string]: IEntityNetworkEventData};
 
 export type IGenericEntity = IEntity<
-    IEntityNetworkEvent<string, IEntityEventData>,
+    IEntityNetworkEvent<string, IEntityNetworkEventData>,
     IEntityStates,
     string,
-    IEntityEventData
+    IEntityNetworkEventData
 >;
 
 export interface IEntityNetworkEvent<
     N extends string,
-    D extends IEntityEventData,
+    D extends IEntityNetworkEventData,
 > {
     readonly event: N;
 
@@ -57,7 +57,7 @@ export interface IEntity<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
@@ -96,7 +96,7 @@ export function isEntity<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 >(value: unknown): value is IEntity<T, S> {
     return (
         value !== null &&
@@ -109,7 +109,7 @@ export default function makeEntity<
     T extends IEntityNetworkEvent<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityEventData = IEntityEventData,
+    D extends IEntityNetworkEventData = IEntityNetworkEventData,
 >(options: IEntityOptions): IEntity<T, S> {
     const {room} = options;
 

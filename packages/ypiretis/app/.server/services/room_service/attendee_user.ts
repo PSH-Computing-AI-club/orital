@@ -15,12 +15,12 @@ export const ATTENDEE_STATES = {
 export type IAttendeeUserStates =
     (typeof ATTENDEE_STATES)[keyof typeof ATTENDEE_STATES];
 
-export type IAttendeeUserEvents = null;
+export type IAttendeeUserNetworkEvents = null;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 
 export interface IAttendeeUser
-    extends IUser<IAttendeeUserEvents, IAttendeeUserStates> {
+    extends IUser<IAttendeeUserNetworkEvents, IAttendeeUserStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
 }
 
@@ -35,7 +35,9 @@ export function isAttendeeUser(value: unknown): value is IAttendeeUser {
 export default function makeAttendeeUser(
     options: IAttendeeUserOptions,
 ): IAttendeeUser {
-    const user = makeUser<IAttendeeUserEvents, IAttendeeUserStates>(options);
+    const user = makeUser<IAttendeeUserNetworkEvents, IAttendeeUserStates>(
+        options,
+    );
 
     return {
         ...user,

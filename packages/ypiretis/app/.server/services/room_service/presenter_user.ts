@@ -3,12 +3,14 @@ import makeUser from "./user";
 
 const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 
-export type IPresenterUserEvents = null;
+export type IPresenterUserNetworkEvents = null;
 
 export interface IPresenterUserOptions extends IUserOptions {}
 
-export interface IPresenterUser extends IUser<IPresenterUserEvents> {
+export interface IPresenterUser extends IUser<IPresenterUserNetworkEvents> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
+
+    [SYMBOL_ENTITY_ON_DISPOSE](): void;
 }
 
 export function isPresenterUser(value: unknown): value is IPresenterUser {
@@ -22,7 +24,7 @@ export function isPresenterUser(value: unknown): value is IPresenterUser {
 export default function makePresenterUser(
     options: IPresenterUserOptions,
 ): IPresenterUser {
-    const user = makeUser<IPresenterUserEvents>(options);
+    const user = makeUser<IPresenterUserNetworkEvents>(options);
 
     return {
         ...user,

@@ -25,28 +25,12 @@ export const ROOM_STATES = {
 
 export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
 
-export interface IRoomAttendeeAddedEvent {
-    readonly attendee: IAttendeeUser;
+export interface IRoomEntityAddedEvent {
+    readonly entity: IGenericEntity;
 }
 
-export interface IRoomAttendeeDisposedEvent {
-    readonly attendee: IAttendeeUser;
-}
-
-export interface IRoomDisplayAddedEvent {
-    readonly display: IDisplayEntity;
-}
-
-export interface IRoomDisplayDisposedEvent {
-    readonly display: IDisplayEntity;
-}
-
-export interface IRoomPresenterAddedEvent {
-    readonly presenter: IPresenterUser;
-}
-
-export interface IRoomPresenterDisposedEvent {
-    readonly presenter: IPresenterUser;
+export interface IRoomEntityDisposedEvent {
+    readonly entity: IGenericEntity;
 }
 
 export interface IRoomPINUpdateEvent {
@@ -80,17 +64,9 @@ export interface IRoomOptions {
 }
 
 export interface IRoom {
-    readonly EVENT_ATTENDEE_ADDED: IEvent<IRoomAttendeeAddedEvent>;
+    readonly EVENT_ENTITY_ADDED: IEvent<IRoomEntityAddedEvent>;
 
-    readonly EVENT_ATTENDEE_DISPOSED: IEvent<IRoomAttendeeDisposedEvent>;
-
-    readonly EVENT_DISPLAY_ADDED: IEvent<IRoomDisplayAddedEvent>;
-
-    readonly EVENT_DISPLAY_DISPOSED: IEvent<IRoomDisplayDisposedEvent>;
-
-    readonly EVENT_PRESENTER_ADDED: IEvent<IRoomPresenterAddedEvent>;
-
-    readonly EVENT_PRESENTER_DISPOSED: IEvent<IRoomPresenterDisposedEvent>;
+    readonly EVENT_ENTITY_DISPOSED: IEvent<IRoomEntityDisposedEvent>;
 
     readonly EVENT_PIN_UPDATE: IEvent<IRoomPINUpdateEvent>;
 
@@ -147,12 +123,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     let presenterEntity: IPresenterUser | null = null;
 
-    const EVENT_ATTENDEE_ADDED = makeEvent<IRoomAttendeeAddedEvent>();
-    const EVENT_ATTENDEE_DISPOSED = makeEvent<IRoomAttendeeDisposedEvent>();
-    const EVENT_DISPLAY_ADDED = makeEvent<IRoomDisplayAddedEvent>();
-    const EVENT_DISPLAY_DISPOSED = makeEvent<IRoomDisplayDisposedEvent>();
-    const EVENT_PRESENTER_ADDED = makeEvent<IRoomPresenterAddedEvent>();
-    const EVENT_PRESENTER_DISPOSED = makeEvent<IRoomPresenterDisposedEvent>();
+    const EVENT_ENTITY_ADDED = makeEvent<IRoomEntityAddedEvent>();
+    const EVENT_ENTITY_DISPOSED = makeEvent<IRoomEntityDisposedEvent>();
 
     const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();
     const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
@@ -173,12 +145,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     }
 
     return {
-        EVENT_ATTENDEE_ADDED,
-        EVENT_ATTENDEE_DISPOSED,
-        EVENT_DISPLAY_ADDED,
-        EVENT_DISPLAY_DISPOSED,
-        EVENT_PRESENTER_ADDED,
-        EVENT_PRESENTER_DISPOSED,
+        EVENT_ENTITY_ADDED,
+        EVENT_ENTITY_DISPOSED,
+
         EVENT_PIN_UPDATE,
         EVENT_STATE_UPDATE,
         EVENT_TITLE_UPDATE,
@@ -208,18 +177,18 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             if (isAttendeeUser(entity)) {
                 attendees.delete(entity);
 
-                EVENT_ATTENDEE_DISPOSED.dispatch({
-                    attendee: entity,
+                EVENT_ENTITY_DISPOSED.dispatch({
+                    entity,
                 });
             } else if (isDisplayEntity(entity)) {
                 displays.delete(entity);
 
-                EVENT_DISPLAY_DISPOSED.dispatch({
-                    display: entity,
+                EVENT_ENTITY_DISPOSED.dispatch({
+                    entity,
                 });
             } else if (isPresenterUser(entity)) {
-                EVENT_PRESENTER_DISPOSED.dispatch({
-                    presenter: entity,
+                EVENT_ENTITY_DISPOSED.dispatch({
+                    entity,
                 });
 
                 presenterEntity = null;
@@ -246,8 +215,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
             attendees.add(attendee);
 
-            EVENT_ATTENDEE_ADDED.dispatch({
-                attendee,
+            EVENT_ENTITY_ADDED.dispatch({
+                entity: attendee as unknown as IGenericEntity,
             });
 
             return attendee;
@@ -268,8 +237,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
             displays.add(display);
 
-            EVENT_DISPLAY_ADDED.dispatch({
-                display,
+            EVENT_ENTITY_ADDED.dispatch({
+                entity: display as unknown as IGenericEntity,
             });
 
             return display;
@@ -283,8 +252,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 user: presenter,
             });
 
-            EVENT_PRESENTER_ADDED.dispatch({
-                presenter: presenterEntity,
+            EVENT_ENTITY_ADDED.dispatch({
+                entity: presenterEntity as unknown as IGenericEntity,
             });
 
             return presenterEntity;

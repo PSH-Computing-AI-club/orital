@@ -6,12 +6,18 @@ import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import useEventSource from "~/hooks/event_source";
 
-import {Route} from "./+types/rooms.presenter._index";
+import {Route} from "./+types/rooms.$pin.presenter._index";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
+    const {params, request} = loaderArgs;
 
     await requireAuthenticatedSession(request);
+
+    const {pin} = params;
+
+    return {
+        pin,
+    };
 }
 
 export function HydrateFallback() {
@@ -29,8 +35,11 @@ export function HydrateFallback() {
     );
 }
 
-export default function RoomsPresenter() {
-    const message = useEventSource("/rooms/presenter/events", {
+export default function RoomsPresenter(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {pin} = loaderData;
+
+    const message = useEventSource(`/rooms/${pin}/presenter/events`, {
         init: {
             async onopen(response) {
                 if (!response.ok) {

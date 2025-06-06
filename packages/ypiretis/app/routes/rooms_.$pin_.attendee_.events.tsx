@@ -2,25 +2,32 @@ import {data} from "react-router";
 
 import {eventStream} from "remix-utils/sse/server";
 
-import {findOneLiveByPIN} from "~/.server/services/room_service";
-import {requireAuthenticatedSession} from "~/.server/services/users_service";
+import * as v from "valibot";
+
+import {requireAuthenticatedSessionForAttendee} from "~/.server/services/room_service";
+
+import {alphanumerical} from "~/utils/valibot";
 
 import type {Route} from "./+types/rooms_.$pin_.attendee_.events";
+
+const LOADER_SCHEMA = v.object({
+    pin: v.pipe(v.string(), v.length(6), alphanumerical),
+});
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {params, request} = loaderArgs;
     const {signal} = request;
 
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {output, success} = v.safeParse(LOADER_SCHEMA, params);
 
-    const {pin} = params;
-    const room = findOneLiveByPIN(pin);
-
-    if (room === null) {
-        throw data("Not Found", {
-            status: 404,
-        });
+    if (!success) {
+        throw data("Bad Request", 400);
     }
+
+    const {room, user} = await requireAuthenticatedSessionForAttendee(
+        request,
+        output.pin,
+    );
 
     return eventStream(signal, (send, abort) => {
         // **TODO:** consider how to handle room states, closed and permissive here

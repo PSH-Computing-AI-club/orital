@@ -76,11 +76,11 @@ export interface IEntity<
     _dispose(): void;
 }
 
-export class EntityDisposed extends Error {
+export class EntityDisposedError extends Error {
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);
 
-        this.name = EntityDisposed.name;
+        this.name = EntityDisposedError.name;
     }
 }
 
@@ -144,7 +144,7 @@ export default function makeEntity<
 
         _disconnect() {
             if (!connection) {
-                throw new EntityDisposed(
+                throw new EntityDisposedError(
                     `bad dispatch to 'IEntity._disconnect' (the connection to the entity was already closed)`,
                 );
             }
@@ -159,7 +159,7 @@ export default function makeEntity<
             const {data, event: name} = event;
 
             if (!connection) {
-                throw new EntityDisposed(
+                throw new EntityDisposedError(
                     `bad dispatch to 'IEntity._dispatch' (the connection to the entity is closed)`,
                 );
             }
@@ -172,7 +172,7 @@ export default function makeEntity<
 
         _dispose() {
             if (!connection) {
-                throw new EntityDisposed(
+                throw new EntityDisposedError(
                     `bad dispatch to 'IEntity._dispose' (the connection to the entity was already closed)`,
                 );
             }

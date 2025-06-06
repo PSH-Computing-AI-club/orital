@@ -7,7 +7,7 @@ export {isDisplayEntity} from "./display_entity";
 export type * from "./entity";
 export {
     ENTITY_STATES,
-    EntityDisposed,
+    EntityDisposedError,
     InvalidEntityTypeError,
     isEntity,
 } from "./entity";

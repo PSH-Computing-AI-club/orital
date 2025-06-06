@@ -16,15 +16,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     });
 
     return eventStream(signal, (send, abort) => {
-        room.addPresenter({
+        const presenter = room.addPresenter({
             abort,
             send,
         });
 
         return () => {
-            // **NOTE:** Rooms only exist for the lifetime of presenter's
-            // connection to keep things simple.
-            room.dispose();
+            presenter._dispose();
         };
     });
 }

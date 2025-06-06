@@ -8,6 +8,8 @@ import {IRoom} from "./room";
 
 const SYMBOL_ENTITY_BRAND: unique symbol = Symbol();
 
+export const SYMBOL_ENTITY_ON_DISPOSE: unique symbol = Symbol();
+
 export const ENTITY_STATES = {
     connected: "STATE_CONNECTED",
 
@@ -58,6 +60,8 @@ export interface IEntity<
     D extends IEntityEventData = IEntityEventData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
+
+    [SYMBOL_ENTITY_ON_DISPOSE]?: () => void;
 
     readonly EVENT_STATE_UPDATE: IEvent<
         IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
@@ -171,6 +175,10 @@ export default function makeEntity<
                 throw new EntityDisposed(
                     `bad dispatch to 'IEntity.dispose' (the connection to the entity was already closed)`,
                 );
+            }
+
+            if (this[SYMBOL_ENTITY_ON_DISPOSE]) {
+                this[SYMBOL_ENTITY_ON_DISPOSE]();
             }
 
             room._entityDisposed(this as unknown as IGenericEntity);

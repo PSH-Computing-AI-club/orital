@@ -50,6 +50,8 @@ export interface IEntityStateUpdateEvent<S extends string> {
 export interface IEntityOptions {
     readonly connection: IConnection;
 
+    readonly id: number;
+
     readonly room: IRoom;
 }
 
@@ -66,6 +68,8 @@ export interface IEntity<
     readonly EVENT_STATE_UPDATE: IEvent<
         IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
     >;
+
+    readonly id: number;
 
     readonly state: ExtendLiterals<S, IEntityStates>;
 
@@ -119,7 +123,7 @@ export default function makeEntity<
     N extends string = string,
     D extends IEntityNetworkEventData = IEntityNetworkEventData,
 >(options: IEntityOptions): IEntity<T, S> {
-    const {room} = options;
+    const {id, room} = options;
 
     const EVENT_STATE_UPDATE =
         makeEvent<IEntityStateUpdateEvent<IEntityStates>>();
@@ -141,6 +145,8 @@ export default function makeEntity<
 
     return {
         [SYMBOL_ENTITY_BRAND]: true,
+
+        id,
 
         EVENT_STATE_UPDATE: EVENT_STATE_UPDATE as unknown as IEvent<
             IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>

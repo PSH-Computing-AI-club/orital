@@ -1,3 +1,4 @@
+import {makeIDPool} from "../../utils/id_pool";
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
 import type {IConnection} from "../../utils/event_stream";
@@ -11,7 +12,10 @@ import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
 import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
-import makePresenterUser, {isPresenterUser} from "./presenter_user";
+import makePresenterUser, {
+    PRESENTER_ENTITY_ID,
+    isPresenterUser,
+} from "./presenter_user";
 
 export const ROOM_STATES = {
     disposed: "STATE_DISPOSED",
@@ -74,9 +78,9 @@ export interface IRoom {
 
     readonly EVENT_TITLE_UPDATE: IEvent<IRoomTitleUpdateEvent>;
 
-    readonly attendees: ReadonlySet<IAttendeeUser>;
+    readonly attendees: ReadonlyMap<number, IAttendeeUser>;
 
-    readonly displays: ReadonlySet<IDisplayEntity>;
+    readonly displays: ReadonlyMap<number, IDisplayEntity>;
 
     readonly id: number;
 
@@ -130,8 +134,11 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
     const EVENT_TITLE_UPDATE = makeEvent<IRoomTitleUpdateEvent>();
 
-    const attendees = new Set<IAttendeeUser>();
-    const displays = new Set<IDisplayEntity>();
+    const attendees = new Map<number, IAttendeeUser>();
+    const attendeePool = makeIDPool();
+
+    const displays = new Map<number, IDisplayEntity>();
+    const displayPool = makeIDPool();
 
     function _updateState(value: IRoomStates): void {
         const oldState = state;
@@ -175,13 +182,19 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         _entityDisposed(entity) {
             if (isAttendeeUser(entity)) {
-                attendees.delete(entity);
+                const {id} = entity;
+
+                attendeePool.releaseID(id);
+                attendees.delete(id);
 
                 EVENT_ENTITY_DISPOSED.dispatch({
                     entity,
                 });
             } else if (isDisplayEntity(entity)) {
-                displays.delete(entity);
+                const {id} = entity;
+
+                displayPool.releaseID(id);
+                displays.delete(id);
 
                 EVENT_ENTITY_DISPOSED.dispatch({
                     entity,
@@ -206,14 +219,17 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
+            const id = attendeePool.generateID();
+
             const attendee = makeAttendeeUser({
                 connection,
+                id,
                 user,
 
                 room: this,
             });
 
-            attendees.add(attendee);
+            attendees.set(id, attendee);
 
             EVENT_ENTITY_ADDED.dispatch({
                 entity: attendee as unknown as IGenericEntity,
@@ -229,13 +245,16 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
+            const id = displayPool.generateID();
+
             const display = makeDisplayEntity({
                 connection,
+                id,
 
                 room: this,
             });
 
-            displays.add(display);
+            displays.set(id, display);
 
             EVENT_ENTITY_ADDED.dispatch({
                 entity: display as unknown as IGenericEntity,
@@ -248,6 +267,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             presenterEntity = makePresenterUser({
                 connection,
 
+                // **NOTE**: There can only be one presenter connection at
+                // a time. So, we will just make it static.
+                id: PRESENTER_ENTITY_ID,
                 room: this,
                 user: presenter,
             });
@@ -266,7 +288,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
-            for (const attendee of attendees) {
+            for (const attendee of attendees.values()) {
                 const {state} = attendee;
 
                 if (state !== ENTITY_STATES.disposed) {
@@ -274,7 +296,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 }
             }
 
-            for (const display of displays) {
+            for (const display of displays.values()) {
                 const {state} = display;
 
                 if (state !== ENTITY_STATES.disposed) {

@@ -77,10 +77,8 @@ export function PresenterContextProvider(
 
     const eventSourceOptions = useMemo<IEventSourceOptions>(
         () => ({
-            init: {
-                onmessage: onMessage,
-                onopen: onOpen,
-            },
+            onmessage: onMessage,
+            onopen: onOpen,
         }),
 
         [onMessage, onOpen],

@@ -24,7 +24,7 @@ import type {
     IEventSourceMessage,
     IEventSourceOptions,
 } from "~/hooks/event_source";
-import useEventSource from "~/hooks/event_source";
+import useEventSource, {IEventSourceInit} from "~/hooks/event_source";
 import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
 
@@ -165,17 +165,20 @@ export default function AuthenticationLogInPending() {
         () => ({
             enabled: !!callbackToken,
 
-            init: {
-                onmessage: onMessage,
-                onopen: onOpen,
-
-                headers: {
-                    Authorization: `Bearer ${callbackToken}`,
-                },
-            },
+            onmessage: onMessage,
+            onopen: onOpen,
         }),
 
         [callbackToken, onMessage, onOpen],
+    );
+
+    const eventSourceInit = useMemo<IEventSourceInit>(
+        () => ({
+            headers: {
+                Authorization: `Bearer ${callbackToken}`,
+            },
+        }),
+        [callbackToken],
     );
 
     useTimeout(
@@ -191,7 +194,11 @@ export default function AuthenticationLogInPending() {
         },
     );
 
-    useEventSource("/authentication/log-in/events", eventSourceOptions);
+    useEventSource(
+        "/authentication/log-in/events",
+        eventSourceOptions,
+        eventSourceInit,
+    );
 
     return (
         <PromptShell title="Log-In Pending." query="Pending">

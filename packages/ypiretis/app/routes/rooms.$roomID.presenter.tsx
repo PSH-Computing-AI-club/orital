@@ -11,6 +11,9 @@ import {requireAuthenticatedPresenterSession} from "~/.server/services/room_serv
 import type {IAttendee, IDisplay, IRoom} from "~/state/presenter";
 import {PresenterContextProvider} from "~/state/presenter";
 
+import type {ISession} from "~/state/session";
+import {SessionContextProvider} from "~/state/session";
+
 import {token} from "~/utils/valibot";
 
 import {Route} from "./+types/rooms.$roomID.presenter";
@@ -40,6 +43,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     );
 
     const {attendees, displays, pin, roomID, state, title} = room;
+    const {accountID, firstName, lastName} = user;
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
         const {id: entityID, user} = attendee;
@@ -72,6 +76,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             title,
         } satisfies IRoom,
 
+        session: {
+            accountID,
+            firstName,
+            lastName,
+        } satisfies ISession,
     };
 }
 
@@ -92,13 +101,13 @@ export function HydrateFallback() {
 
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialRoomData} = loaderData;
+    const {initialRoomData, session} = loaderData;
 
     return (
-        <>
+        <SessionContextProvider session={session}>
             <PresenterContextProvider initialRoomData={initialRoomData}>
                 <Outlet />
             </PresenterContextProvider>
-        </>
+        </SessionContextProvider>
     );
 }

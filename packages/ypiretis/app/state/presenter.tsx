@@ -63,15 +63,117 @@ export function PresenterContextProvider(
     }, []);
 
     const onMessage = useCallback(async (message: IEventSourceMessage) => {
-        const event = {
+        // **HACK:** This kind of sucks. That is, allocating a new object here.
+        // But, this will allow us to bully TypeScript into recognizing the proper
+        // `IPresenterUserNetworkEvents.event` / `IPresenterUserNetworkEvents.data`
+        // pairs.
+
+        const {data, event} = {
             event: message.event,
             data: JSON.parse(message.data),
         } as IPresenterUserNetworkEvents;
 
-        switch (
-            event.event
-            // **TODO:** do stuff with `setRoom`
-        ) {
+        switch (event) {
+            case "room.attendeeAdded": {
+                const {accountID, entityID, firstName, lastName} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    attendees: [
+                        ...room.attendees,
+
+                        {
+                            accountID,
+                            entityID,
+                            firstName,
+                            lastName,
+                        },
+                    ],
+                }));
+
+                break;
+            }
+
+            case "room.attendeeDisposed": {
+                const {entityID} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    attendees: room.attendees.filter(
+                        (attendee) => attendee.entityID !== entityID,
+                    ),
+                }));
+
+                break;
+            }
+            case "room.displayAdded": {
+                const {entityID} = data;
+
+                setRoom((room) => ({
+                    ...room,
+                    displays: [
+                        ...room.displays,
+
+                        {
+                            entityID,
+                        },
+                    ],
+                }));
+
+                break;
+            }
+
+            case "room.displayDisposed": {
+                const {entityID} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    displays: room.displays.filter(
+                        (display) => display.entityID !== entityID,
+                    ),
+                }));
+
+                break;
+            }
+
+            case "room.pinUpdate": {
+                const {pin} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    pin,
+                }));
+
+                break;
+            }
+
+            case "room.stateUpdate": {
+                const {state} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    state,
+                }));
+
+                break;
+            }
+
+            case "room.titleUpdate": {
+                const {title} = data;
+
+                setRoom((room) => ({
+                    ...room,
+
+                    title,
+                }));
+
+                break;
+            }
         }
     }, []);
 

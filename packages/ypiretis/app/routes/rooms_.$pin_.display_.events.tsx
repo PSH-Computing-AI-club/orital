@@ -4,7 +4,7 @@ import {eventStream} from "remix-utils/sse/server";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedSessionForDisplay} from "~/.server/services/room_service";
+import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_service";
 
 import {alphanumerical} from "~/utils/valibot";
 
@@ -24,7 +24,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {room} = await requireAuthenticatedSessionForDisplay(
+    const {room} = await requireAuthenticatedDisplayConnection(
         request,
         output.pin,
     );

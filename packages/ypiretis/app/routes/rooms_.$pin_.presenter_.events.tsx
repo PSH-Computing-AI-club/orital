@@ -6,7 +6,7 @@ import * as v from "valibot";
 
 import {
     insertOneLive,
-    requireAuthenticatedSessionForPresenter,
+    requireAuthenticatedPresenterConnection,
 } from "~/.server/services/room_service";
 import {findOne} from "~/.server/services/users_service";
 
@@ -38,7 +38,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {room} = await requireAuthenticatedSessionForPresenter(
+    const {room} = await requireAuthenticatedPresenterConnection(
         request,
         output.pin,
     );

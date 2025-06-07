@@ -12,7 +12,7 @@ const LIVE_ROOMS = new Map<string, IRoom>();
 
 let idCounter = -1;
 
-export interface IAuthenticatedRoomSession {
+export interface IAuthenticatedRoomConnection {
     readonly room: IRoom;
 
     readonly user: IUser;
@@ -93,10 +93,10 @@ export async function insertOneLive(
     return room;
 }
 
-export async function requireAuthenticatedSessionForAttendee(
+export async function requireAuthenticatedAttendeeConnection(
     request: Request,
     pin: string,
-): Promise<IAuthenticatedRoomSession> {
+): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS.get(pin);
@@ -123,10 +123,10 @@ export async function requireAuthenticatedSessionForAttendee(
     };
 }
 
-export async function requireAuthenticatedSessionForDisplay(
+export async function requireAuthenticatedDisplayConnection(
     request: Request,
     pin: string,
-): Promise<IAuthenticatedRoomSession> {
+): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS.get(pin);
@@ -143,10 +143,10 @@ export async function requireAuthenticatedSessionForDisplay(
     };
 }
 
-export async function requireAuthenticatedSessionForPresenter(
+export async function requireAuthenticatedPresenterConnection(
     request: Request,
     pin: string,
-): Promise<IAuthenticatedRoomSession> {
+): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS.get(pin);

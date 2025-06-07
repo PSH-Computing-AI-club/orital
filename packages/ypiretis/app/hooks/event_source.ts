@@ -78,7 +78,7 @@ function generateCacheKey(
         referrerPolicy,
     } = init;
 
-    const keyObject = {
+    return JSON.stringify({
         url: url.toString(),
 
         body,
@@ -90,9 +90,7 @@ function generateCacheKey(
         mode,
         referrer,
         referrerPolicy,
-    };
-
-    return JSON.stringify(keyObject);
+    });
 }
 
 export default function useEventSource(

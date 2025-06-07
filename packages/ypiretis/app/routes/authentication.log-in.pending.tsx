@@ -1,6 +1,6 @@
 import {Strong, Text} from "@chakra-ui/react";
 
-import {useEffect, useMemo} from "react";
+import {useCallback, useMemo} from "react";
 
 import {data, useLocation, useNavigate} from "react-router";
 
@@ -20,7 +20,10 @@ import {
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import type {IEventSourceOptions} from "~/hooks/event_source";
+import type {
+    IEventSourceMessage,
+    IEventSourceOptions,
+} from "~/hooks/event_source";
 import useEventSource from "~/hooks/event_source";
 import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
@@ -96,60 +99,29 @@ export default function AuthenticationLogInPending() {
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
-    const eventSourceOptions = useMemo<IEventSourceOptions>(
-        () => ({
-            enabled: !!callbackToken,
-
-            init: {
-                headers: {
-                    Authorization: `Bearer ${callbackToken}`,
-                },
-
-                async onopen(response) {
-                    if (!response.ok) {
-                        // **TODO:** Can we force navigation to a route error boundary?
-                        // Also, we want to differentiate between status 401 and others.
-                        navigate("/authentication/log-in/unauthorized", {
-                            replace: true,
-                        });
-                    }
-                },
-            },
-        }),
-
-        [callbackToken],
-    );
-
-    const message = useEventSource(
-        "/authentication/log-in/events",
-        eventSourceOptions,
-    );
-
-    useTimeout(
-        () => {
-            navigate("/authentication/log-in/expired", {
-                replace: true,
-            });
+    const onOpen = useCallback(
+        async (response: Response) => {
+            if (!response.ok) {
+                // **TODO:** Can we force navigation to a route error boundary?
+                // Also, we want to differentiate between status 401 and others.
+                navigate("/authentication/log-in/unauthorized", {
+                    replace: true,
+                });
+            }
         },
-
-        {
-            duration: (callbackTokenExpiresAt ?? 0) - Date.now(),
-            enabled: !!callbackTokenExpiresAt,
-        },
+        [navigate],
     );
 
-    useEffect(() => {
-        if (!message) {
-            return;
-        }
+    const onMessage = useCallback(
+        async (message: IEventSourceMessage) => {
+            const {data, event} = message;
 
-        (async () => {
-            switch (message.event as ILoginEventNames) {
+            switch (event as ILoginEventNames) {
                 case "authorized":
                     // TODO: call route that sets session tokens
 
                     const {grantToken} = JSON.parse(
-                        message.data,
+                        data,
                     ) as ILoginAuthorizedEvent;
 
                     // **HACK:** I would use RRv7's `useFetcher` API here but...
@@ -185,8 +157,41 @@ export default function AuthenticationLogInPending() {
 
                     break;
             }
-        })();
-    }, [message]);
+        },
+        [navigate, pathname],
+    );
+
+    const eventSourceOptions = useMemo<IEventSourceOptions>(
+        () => ({
+            enabled: !!callbackToken,
+
+            init: {
+                onmessage: onMessage,
+                onopen: onOpen,
+
+                headers: {
+                    Authorization: `Bearer ${callbackToken}`,
+                },
+            },
+        }),
+
+        [callbackToken, onMessage, onOpen],
+    );
+
+    useTimeout(
+        () => {
+            navigate("/authentication/log-in/expired", {
+                replace: true,
+            });
+        },
+
+        {
+            duration: (callbackTokenExpiresAt ?? 0) - Date.now(),
+            enabled: !!callbackTokenExpiresAt,
+        },
+    );
+
+    useEventSource("/authentication/log-in/events", eventSourceOptions);
 
     return (
         <PromptShell title="Log-In Pending." query="Pending">

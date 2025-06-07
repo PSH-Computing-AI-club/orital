@@ -4,9 +4,11 @@ import type {
 } from "@microsoft/fetch-event-source";
 import {fetchEventSource} from "@microsoft/fetch-event-source";
 
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
-export type IEventSourceInit = Omit<FetchEventSourceInit, "onmessage">;
+export type IEventSourceInit = FetchEventSourceInit;
+
+export type IEventSourceMessage = EventSourceMessage;
 
 export interface IEventSourceOptions {
     enabled?: boolean;
@@ -19,20 +21,17 @@ export interface IEventSourceOptions {
 export default function useEventSource(
     url: string | URL,
     options: IEventSourceOptions = {},
-): EventSourceMessage | null {
+): void {
     const {enabled = true, eventName = null, init = {}} = options;
-    const {openWhenHidden = true} = init;
-
-    const [message, setMessage] = useState<EventSourceMessage | null>(null);
 
     useEffect(() => {
         if (!enabled) {
             return undefined;
         }
 
-        const abortController = new AbortController();
+        const {onmessage, openWhenHidden = true} = init;
 
-        setMessage(null);
+        const abortController = new AbortController();
 
         (async () => {
             await fetchEventSource(url.toString(), {
@@ -41,23 +40,24 @@ export default function useEventSource(
                 openWhenHidden,
                 signal: abortController.signal,
 
-                onmessage(event) {
-                    if (eventName) {
-                        if (event.event === eventName) {
-                            setMessage(event);
-                        }
-                        return;
-                    }
+                onmessage: onmessage
+                    ? (message) => {
+                          if (eventName) {
+                              if (message.event === eventName) {
+                                  onmessage(message);
+                              }
 
-                    setMessage(event);
-                },
+                              return;
+                          }
+
+                          onmessage(message);
+                      }
+                    : undefined,
             });
         })();
 
         return () => {
             abortController.abort();
         };
-    }, [enabled, eventName, init, url, openWhenHidden]);
-
-    return message;
+    }, [enabled, eventName, init, url]);
 }

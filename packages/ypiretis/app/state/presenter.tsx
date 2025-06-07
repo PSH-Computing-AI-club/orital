@@ -1,11 +1,15 @@
 import type {PropsWithChildren} from "react";
-import {createContext, useContext, useEffect, useState} from "react";
+import {createContext, useCallback, useContext, useMemo, useState} from "react";
 
 import type {
     IRoomStates,
     IPresenterUserNetworkEvents,
 } from "~/.server/services/room_service";
 
+import type {
+    IEventSourceMessage,
+    IEventSourceOptions,
+} from "~/hooks/event_source";
 import useEventSource from "~/hooks/event_source";
 
 const CONTEXT_PRESENTER = createContext<IRoom | null>(null);
@@ -52,21 +56,13 @@ export function PresenterContextProvider(
     const {children, initialRoomData} = props;
     const [room, setRoom] = useState<IRoom>(initialRoomData);
 
-    const message = useEventSource(`/rooms/${room.roomID}/presenter/events`, {
-        init: {
-            async onopen(response) {
-                if (!response.ok) {
-                    // **TODO:** error handle here somehow
-                }
-            },
-        },
-    });
-
-    useEffect(() => {
-        if (!message) {
-            return;
+    const onOpen = useCallback(async (response: Response) => {
+        if (!response.ok) {
+            // **TODO:** error handle here somehow
         }
+    }, []);
 
+    const onMessage = useCallback(async (message: IEventSourceMessage) => {
         const event = {
             event: message.event,
             data: JSON.parse(message.data),
@@ -77,7 +73,23 @@ export function PresenterContextProvider(
             // **TODO:** do stuff with `setRoom`
         ) {
         }
-    }, [message]);
+    }, []);
+
+    const eventSourceOptions = useMemo<IEventSourceOptions>(
+        () => ({
+            init: {
+                onmessage: onMessage,
+                onopen: onOpen,
+            },
+        }),
+
+        [onMessage, onOpen],
+    );
+
+    useEventSource(
+        `/rooms/${room.roomID}/presenter/events`,
+        eventSourceOptions,
+    );
 
     return (
         <CONTEXT_PRESENTER.Provider value={room}>

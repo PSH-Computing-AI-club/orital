@@ -1,6 +1,8 @@
 import {relations} from "drizzle-orm";
 import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
+import {ulid} from "ulid";
+
 import {generatePIN} from "../../utils/crypto";
 
 import temporalInstant, {
@@ -11,6 +13,11 @@ import USERS_TABLE from "./users_table";
 
 const ROOMS_TABLE = sqliteTable("rooms", {
     id: integer("id").primaryKey({autoIncrement: true}),
+
+    roomID: text("room_id")
+        .notNull()
+        .unique()
+        .$defaultFn(() => `room_${ulid()}`),
 
     pin: text("pin")
         .notNull()

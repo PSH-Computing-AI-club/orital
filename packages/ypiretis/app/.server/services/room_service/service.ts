@@ -34,8 +34,8 @@ export function findAllLive(): IRoom[] {
     return Array.from(LIVE_ROOMS.values());
 }
 
-export function findOneLiveByPIN(pin: string): IRoom | null {
-    return LIVE_ROOMS.get(pin) ?? null;
+export function findOneLiveByRoomID(roomID: string): IRoom | null {
+    return LIVE_ROOMS.get(roomID) ?? null;
 }
 
 export async function insertOneLive(

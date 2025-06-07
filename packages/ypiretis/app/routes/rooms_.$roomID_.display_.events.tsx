@@ -4,14 +4,16 @@ import {eventStream} from "remix-utils/sse/server";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_service";
+import {ROOM_ID_PREFIX} from "~/.server/database/tables/rooms_table";
 
-import {alphanumerical} from "~/utils/valibot";
+import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_service";
 
-import type {Route} from "./+types/rooms_.$pin_.attendee_.events";
+import {token} from "~/utils/valibot";
+
+import type {Route} from "./+types/rooms_.$roomID_.display_.events";
 
 const LOADER_SCHEMA = v.object({
-    pin: v.pipe(v.string(), v.length(6), alphanumerical),
+    roomID: token(ROOM_ID_PREFIX),
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
@@ -24,17 +26,16 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {room, user} = await requireAuthenticatedAttendeeConnection(
+    const {room} = await requireAuthenticatedDisplayConnection(
         request,
-        output.pin,
+        output.roomID,
     );
 
     return eventStream(signal, (send, abort) => {
-        // **TODO:** consider how to handle room states, closed and permissive here
-        const attendee = room.addAttendee({abort, send}, user);
+        const display = room.addDisplay({abort, send});
 
         return () => {
-            attendee._dispose();
+            display._dispose();
         };
     });
 }

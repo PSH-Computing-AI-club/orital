@@ -1,5 +1,9 @@
 import {data} from "react-router";
 
+import {ulid} from "ulid";
+
+import {ROOM_ID_PREFIX} from "../../database/tables/rooms_table";
+
 import {generatePIN} from "../../utils/crypto";
 
 import type {IUser} from "../users_service";
@@ -46,6 +50,7 @@ export async function insertOneLive(
     // **TODO:** Pull from options object when DB integration is ready
     const id = ++idCounter;
     const pin = generatePIN();
+    const roomID = `${ROOM_ID_PREFIX}_${ulid()}`;
 
     // **TODO:** add to db
 
@@ -53,11 +58,12 @@ export async function insertOneLive(
         id,
         pin,
         presenter,
+        roomID,
         state,
         title,
     });
 
-    LIVE_ROOMS.set(room.pin, room);
+    LIVE_ROOMS.set(room.roomID, room);
 
     const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
         const {newPIN, oldPIN} = event;
@@ -95,11 +101,11 @@ export async function insertOneLive(
 
 export async function requireAuthenticatedAttendeeConnection(
     request: Request,
-    pin: string,
+    roomID: string,
 ): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(pin);
+    const room = LIVE_ROOMS.get(roomID);
 
     if (!room) {
         throw data("Not Found", {
@@ -125,11 +131,11 @@ export async function requireAuthenticatedAttendeeConnection(
 
 export async function requireAuthenticatedDisplayConnection(
     request: Request,
-    pin: string,
+    roomID: string,
 ): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(pin);
+    const room = LIVE_ROOMS.get(roomID);
 
     if (!room) {
         throw data("Not Found", {
@@ -145,11 +151,11 @@ export async function requireAuthenticatedDisplayConnection(
 
 export async function requireAuthenticatedPresenterConnection(
     request: Request,
-    pin: string,
+    roomID: string,
 ): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(pin);
+    const room = LIVE_ROOMS.get(roomID);
 
     if (!room) {
         throw data("Not Found", {

@@ -62,6 +62,8 @@ export interface IRoomOptions {
 
     readonly presenter: IUser;
 
+    readonly roomID: string;
+
     readonly state: IRoomStates;
 
     readonly title: string;
@@ -89,6 +91,8 @@ export interface IRoom {
     readonly presenter: IUser;
 
     readonly presenterEntity: IPresenterUser | null;
+
+    readonly roomID: string;
 
     readonly title: string;
 
@@ -122,7 +126,7 @@ export class RoomDisposedError extends Error {
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {
-    const {id, presenter} = options;
+    const {id, roomID, presenter} = options;
     let {pin, state, title} = options;
 
     let presenterEntity: IPresenterUser | null = null;
@@ -163,6 +167,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         displays,
         id,
         presenter,
+        roomID,
 
         get pin() {
             return pin;

@@ -3,11 +3,11 @@ import makeEntity from "./entity";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 
-export type IDisplayEntityNetworkEvents = null;
+export type IDisplayEntityMessages = null;
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 
-export interface IDisplayEntity extends IEntity<IDisplayEntityNetworkEvents> {
+export interface IDisplayEntity extends IEntity<IDisplayEntityMessages> {
     [SYMBOL_DISPLAY_ENTITY_BRAND]: true;
 }
 
@@ -22,7 +22,7 @@ export function isDisplayEntity(value: unknown): value is IDisplayEntity {
 export default function makeDisplayEntity(
     options: IDisplayEntityOptions,
 ): IDisplayEntity {
-    const entity = makeEntity<IDisplayEntityNetworkEvents>(options);
+    const entity = makeEntity<IDisplayEntityMessages>(options);
 
     return {
         ...entity,

@@ -1,4 +1,4 @@
-import type {IEntityNetworkEvent} from "./entity";
+import type {IEntityMessage} from "./entity";
 import {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
 
 import {isAttendeeUser} from "./attendee_user";
@@ -11,16 +11,16 @@ const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 
 export const PRESENTER_ENTITY_ID = 1;
 
-export type IPresenterUserNetworkEvents =
-    | IPresenterRoomAttendeeAddedEvent
-    | IPresenterRoomAttendeeDisposedEvent
-    | IPresenterRoomDisplayAddedEvent
-    | IPresenterRoomDisplayDisposedEvent
-    | IPresenterRoomPINUpdateEvent
-    | IPresenterRoomStateUpdateEvent
-    | IPresenterRoomTitleUpdateEvent;
+export type IPresenterUserMessages =
+    | IPresenterRoomAttendeeAddedMessage
+    | IPresenterRoomAttendeeDisposedMessage
+    | IPresenterRoomDisplayAddedMessage
+    | IPresenterRoomDisplayDisposedMessage
+    | IPresenterRoomPINUpdateMessage
+    | IPresenterRoomStateUpdateMessage
+    | IPresenterRoomTitleUpdateMessage;
 
-export type IPresenterRoomAttendeeAddedEvent = IEntityNetworkEvent<
+export type IPresenterRoomAttendeeAddedMessage = IEntityMessage<
     "room.attendeeAdded",
     {
         readonly accountID: string;
@@ -33,42 +33,42 @@ export type IPresenterRoomAttendeeAddedEvent = IEntityNetworkEvent<
     }
 >;
 
-export type IPresenterRoomAttendeeDisposedEvent = IEntityNetworkEvent<
+export type IPresenterRoomAttendeeDisposedMessage = IEntityMessage<
     "room.attendeeDisposed",
     {
         readonly entityID: number;
     }
 >;
 
-export type IPresenterRoomDisplayAddedEvent = IEntityNetworkEvent<
+export type IPresenterRoomDisplayAddedMessage = IEntityMessage<
     "room.displayAdded",
     {
         readonly entityID: number;
     }
 >;
 
-export type IPresenterRoomDisplayDisposedEvent = IEntityNetworkEvent<
+export type IPresenterRoomDisplayDisposedMessage = IEntityMessage<
     "room.displayDisposed",
     {
         readonly entityID: number;
     }
 >;
 
-export type IPresenterRoomPINUpdateEvent = IEntityNetworkEvent<
+export type IPresenterRoomPINUpdateMessage = IEntityMessage<
     "room.pinUpdate",
     {
         readonly pin: string;
     }
 >;
 
-export type IPresenterRoomStateUpdateEvent = IEntityNetworkEvent<
+export type IPresenterRoomStateUpdateMessage = IEntityMessage<
     "room.stateUpdate",
     {
         readonly state: IRoomStates;
     }
 >;
 
-export type IPresenterRoomTitleUpdateEvent = IEntityNetworkEvent<
+export type IPresenterRoomTitleUpdateMessage = IEntityMessage<
     "room.titleUpdate",
     {
         readonly title: string;
@@ -77,7 +77,7 @@ export type IPresenterRoomTitleUpdateEvent = IEntityNetworkEvent<
 
 export interface IPresenterUserOptions extends IUserOptions {}
 
-export interface IPresenterUser extends IUser<IPresenterUserNetworkEvents> {
+export interface IPresenterUser extends IUser<IPresenterUserMessages> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
 
     [SYMBOL_ENTITY_ON_DISPOSE](): void;
@@ -96,7 +96,7 @@ export default function makePresenterUser(
 ): IPresenterUser {
     const {room} = options;
 
-    const user = makeUser<IPresenterUserNetworkEvents>(options);
+    const user = makeUser<IPresenterUserMessages>(options);
 
     const presenter = {
         ...user,

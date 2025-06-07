@@ -3,7 +3,7 @@ import {createContext, useCallback, useContext, useMemo, useState} from "react";
 
 import type {
     IRoomStates,
-    IPresenterUserNetworkEvents,
+    IPresenterUserMessages,
 } from "~/.server/services/room_service";
 
 import type {

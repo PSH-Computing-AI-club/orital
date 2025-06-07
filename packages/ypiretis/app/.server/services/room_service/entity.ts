@@ -18,23 +18,23 @@ export const ENTITY_STATES = {
 
 export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
-export type IEntityNetworkEventData =
+export type IEntityMessageData =
     | boolean
     | number
     | string
-    | IEntityNetworkEventData[]
-    | {[key: number | string]: IEntityNetworkEventData};
+    | IEntityMessageData[]
+    | {[key: number | string]: IEntityMessageData};
 
 export type IGenericEntity = IEntity<
-    IEntityNetworkEvent<string, IEntityNetworkEventData>,
+    IEntityMessage<string, IEntityMessageData>,
     IEntityStates,
     string,
-    IEntityNetworkEventData
+    IEntityMessageData
 >;
 
-export interface IEntityNetworkEvent<
+export interface IEntityMessage<
     N extends string,
-    D extends IEntityNetworkEventData,
+    D extends IEntityMessageData,
 > {
     readonly event: N;
 
@@ -56,10 +56,10 @@ export interface IEntityOptions {
 }
 
 export interface IEntity<
-    T extends IEntityNetworkEvent<N, D>,
+    T extends IEntityMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityNetworkEventData = IEntityNetworkEventData,
+    D extends IEntityMessageData = IEntityMessageData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
@@ -105,10 +105,10 @@ export class InvalidEntityTypeError extends Error {
 }
 
 export function isEntity<
-    T extends IEntityNetworkEvent<N, D>,
+    T extends IEntityMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityNetworkEventData = IEntityNetworkEventData,
+    D extends IEntityMessageData = IEntityMessageData,
 >(value: unknown): value is IEntity<T, S> {
     return (
         value !== null &&
@@ -118,10 +118,10 @@ export function isEntity<
 }
 
 export default function makeEntity<
-    T extends IEntityNetworkEvent<N, D>,
+    T extends IEntityMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityNetworkEventData = IEntityNetworkEventData,
+    D extends IEntityMessageData = IEntityMessageData,
 >(options: IEntityOptions): IEntity<T, S> {
     const {id, room} = options;
 

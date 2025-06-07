@@ -13,8 +13,6 @@ export type IEventSourceMessage = EventSourceMessage;
 export interface IEventSourceOptions {
     enabled?: boolean;
 
-    eventName?: string;
-
     init?: IEventSourceInit;
 }
 
@@ -22,14 +20,14 @@ export default function useEventSource(
     url: string | URL,
     options: IEventSourceOptions = {},
 ): void {
-    const {enabled = true, eventName = null, init = {}} = options;
+    const {enabled = true, init = {}} = options;
 
     useEffect(() => {
         if (!enabled) {
             return undefined;
         }
 
-        const {onmessage, openWhenHidden = true} = init;
+        const {openWhenHidden = true} = init;
 
         const abortController = new AbortController();
 
@@ -39,25 +37,11 @@ export default function useEventSource(
 
                 openWhenHidden,
                 signal: abortController.signal,
-
-                onmessage: onmessage
-                    ? (message) => {
-                          if (eventName) {
-                              if (message.event === eventName) {
-                                  onmessage(message);
-                              }
-
-                              return;
-                          }
-
-                          onmessage(message);
-                      }
-                    : undefined,
             });
         })();
 
         return () => {
             abortController.abort();
         };
-    }, [enabled, eventName, init, url]);
+    }, [enabled, init, url]);
 }

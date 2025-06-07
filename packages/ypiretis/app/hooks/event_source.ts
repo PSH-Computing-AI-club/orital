@@ -9,16 +9,16 @@ import {useEffect, useMemo} from "react";
 const CACHE_CONNECTIONS = new Map<string, ICacheEntry>();
 
 interface ICacheEntry {
-    abortController: AbortController;
+    readonly abortController: AbortController;
 
-    subscribers: {
-        close: Set<IEventSourceCloseCallback>;
+    readonly subscribers: {
+        readonly close: Set<IEventSourceCloseCallback>;
 
-        error: Set<IEventSourceErrorCallback>;
+        readonly error: Set<IEventSourceErrorCallback>;
 
-        message: Set<IEventSourceMessageCallback>;
+        readonly message: Set<IEventSourceMessageCallback>;
 
-        open: Set<IEventSourceOpenCallback>;
+        readonly open: Set<IEventSourceOpenCallback>;
     };
 }
 

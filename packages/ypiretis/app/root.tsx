@@ -16,7 +16,7 @@ import Error404 from "~/errors/error_404";
 import Error409 from "~/errors/error_409";
 import Error500 from "~/errors/error_500";
 
-import ThemedChakraProvider from "~/providers/themed_chakra_provider";
+import {ThemedChakraProvider} from "~/state/themed_chakra";
 
 import type {Route} from "./+types/root";
 

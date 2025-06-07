@@ -194,9 +194,7 @@ const THEME_SYSTEM = createSystem(defaultConfig, THEME_CONFIG);
 
 export type IThemedChakraProviderProps = PropsWithChildren<{}>;
 
-export default function ThemedChakraProvider(
-    props: IThemedChakraProviderProps,
-) {
+export function ThemedChakraProvider(props: IThemedChakraProviderProps) {
     const {children} = props;
 
     return <ChakraProvider value={THEME_SYSTEM}>{children}</ChakraProvider>;

@@ -116,7 +116,7 @@ export async function requireAuthenticatedAttendeeConnection(
     for (const attendee of room.attendees.values()) {
         // **TODO:** We should probably create a a direct lookup for by user id...
         // but this is good enough to now. ¯\_(ツ)_/¯
-        if (attendee.user.id) {
+        if (attendee.user.id === user.id) {
             throw data("Conflict", {
                 status: 409,
             });

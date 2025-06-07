@@ -15,6 +15,9 @@ export {
 export type * from "./room";
 export {ROOM_STATES, RoomDisposedError} from "./room";
 
+export type * from "./presenter_user";
+export {isPresenterUser} from "./presenter_user";
+
 export type * from "./user";
 export {isUser} from "./user";
 

@@ -129,6 +129,46 @@ export async function requireAuthenticatedAttendeeConnection(
     };
 }
 
+export async function requireAuthenticatedAttendeeSession(
+    request: Request,
+    roomID: string,
+): Promise<IAuthenticatedRoomConnection> {
+    const {identifiable: user} = await requireAuthenticatedSession(request);
+
+    const room = LIVE_ROOMS.get(roomID);
+
+    if (!room) {
+        throw data("Not Found", {
+            status: 404,
+        });
+    }
+
+    let hasAttendee: boolean = false;
+
+    for (const attendee of room.attendees.values()) {
+        if (attendee.user.id === user.id) {
+            hasAttendee = true;
+        }
+    }
+
+    if (!hasAttendee) {
+        // **NOTE:** While a `403` would be more appropriate, we do not want our
+        // room IDs to be enumerable by external clients.
+        //
+        // Similarly to how services return not found errors when responding to
+        // username + password login attempts. This is to prevent information
+        // leakage for the "semi-private" room IDs.
+        throw data("Not Found", {
+            status: 404,
+        });
+    }
+
+    return {
+        room,
+        user,
+    };
+}
+
 export async function requireAuthenticatedDisplayConnection(
     request: Request,
     roomID: string,
@@ -157,19 +197,11 @@ export async function requireAuthenticatedPresenterConnection(
 
     const room = LIVE_ROOMS.get(roomID);
 
-    if (!room) {
-        throw data("Not Found", {
-            status: 404,
-        });
-    }
-
-    if (room.presenter.id !== user.id) {
-        // **NOTE:** While a `403` would be more appropriate, we do not want our
-        // room PINs to be enumerable by external clients.
-        //
-        // Similarly to how services return not found errors when responding to
-        // username + password login attempts. This is to prevent information
-        // leakage for the "semi-private" room PINs.
+    if (
+        !room ||
+        // **NOTE:** See comment for `requireAuthenticatedAttendeeSession`.
+        room.presenter.id !== user.id
+    ) {
         throw data("Not Found", {
             status: 404,
         });
@@ -178,6 +210,26 @@ export async function requireAuthenticatedPresenterConnection(
     if (room.presenterEntity) {
         throw data("Conflict", {
             status: 409,
+        });
+    }
+
+    return {
+        room,
+        user,
+    };
+}
+
+export async function requireAuthenticatedPresenterSession(
+    request: Request,
+    roomID: string,
+): Promise<IAuthenticatedRoomConnection> {
+    const {identifiable: user} = await requireAuthenticatedSession(request);
+
+    const room = LIVE_ROOMS.get(roomID);
+
+    if (!room || room.presenter.id !== user.id) {
+        throw data("Not Found", {
+            status: 404,
         });
     }
 

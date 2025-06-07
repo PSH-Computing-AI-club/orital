@@ -8,7 +8,7 @@ import {ROOM_ID_PREFIX} from "~/.server/database/tables/rooms_table";
 
 import {requireAuthenticatedPresenterSession} from "~/.server/services/room_service";
 
-import type {IAttendee, IDisplay} from "~/state/presenter";
+import type {IAttendee, IDisplay, IRoom} from "~/state/presenter";
 import {PresenterContextProvider} from "~/state/presenter";
 
 import {token} from "~/utils/valibot";
@@ -70,7 +70,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             roomID,
             state,
             title,
-        },
+        } satisfies IRoom,
+
     };
 }
 

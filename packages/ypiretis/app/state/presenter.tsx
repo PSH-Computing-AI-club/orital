@@ -1,5 +1,11 @@
 import type {PropsWithChildren} from "react";
-import {createContext, useCallback, useContext, useMemo, useState} from "react";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useReducer,
+} from "react";
 
 import type {
     IRoomStates,
@@ -50,11 +56,110 @@ export interface IPresenterContextProviderProps extends PropsWithChildren {
     readonly initialRoomData: IRoom;
 }
 
+function roomReducer(room: IRoom, message: IPresenterUserMessages): IRoom {
+    const {data, event} = message;
+
+    switch (event) {
+        case "room.attendeeAdded": {
+            const {accountID, entityID, firstName, lastName} = data;
+
+            return {
+                ...room,
+
+                attendees: [
+                    ...room.attendees,
+
+                    {
+                        accountID,
+                        entityID,
+                        firstName,
+                        lastName,
+                    },
+                ],
+            };
+        }
+
+        case "room.attendeeDisposed": {
+            const {entityID} = data;
+
+            return {
+                ...room,
+
+                attendees: room.attendees.filter(
+                    (attendee) => attendee.entityID !== entityID,
+                ),
+            };
+        }
+
+        case "room.displayAdded": {
+            const {entityID} = data;
+
+            return {
+                ...room,
+                displays: [
+                    ...room.displays,
+
+                    {
+                        entityID,
+                    },
+                ],
+            };
+        }
+
+        case "room.displayDisposed": {
+            const {entityID} = data;
+
+            return {
+                ...room,
+
+                displays: room.displays.filter(
+                    (display) => display.entityID !== entityID,
+                ),
+            };
+        }
+
+        case "room.pinUpdate": {
+            const {pin} = data;
+
+            return {
+                ...room,
+
+                pin,
+            };
+        }
+
+        case "room.stateUpdate": {
+            const {state} = data;
+
+            return {
+                ...room,
+
+                state,
+            };
+        }
+
+        case "room.titleUpdate": {
+            const {title} = data;
+
+            return {
+                ...room,
+
+                title,
+            };
+        }
+
+        default:
+            throw new TypeError(
+                `bad argument #1 to 'roomReducer' (event type '${event}' not recognized)`,
+            );
+    }
+}
+
 export function PresenterContextProvider(
     props: IPresenterContextProviderProps,
 ) {
     const {children, initialRoomData} = props;
-    const [room, setRoom] = useState<IRoom>(initialRoomData);
+    const [room, dispatch] = useReducer(roomReducer, initialRoomData);
 
     const onOpen = useCallback(async (response: Response) => {
         if (!response.ok) {
@@ -65,116 +170,12 @@ export function PresenterContextProvider(
     const onMessage = useCallback(async (message: IEventSourceMessage) => {
         // **HACK:** This kind of sucks. That is, allocating a new object here.
         // But, this will allow us to bully TypeScript into recognizing the proper
-        // `IPresenterUserNetworkEvents.event` / `IPresenterUserNetworkEvents.data`
-        // pairs.
+        // `IPresenterUserMessages.event` / `IPresenterUserMessages.data` pairs.
 
-        const {data, event} = {
+        dispatch({
             event: message.event,
             data: JSON.parse(message.data),
-        } as IPresenterUserNetworkEvents;
-
-        switch (event) {
-            case "room.attendeeAdded": {
-                const {accountID, entityID, firstName, lastName} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    attendees: [
-                        ...room.attendees,
-
-                        {
-                            accountID,
-                            entityID,
-                            firstName,
-                            lastName,
-                        },
-                    ],
-                }));
-
-                break;
-            }
-
-            case "room.attendeeDisposed": {
-                const {entityID} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    attendees: room.attendees.filter(
-                        (attendee) => attendee.entityID !== entityID,
-                    ),
-                }));
-
-                break;
-            }
-            case "room.displayAdded": {
-                const {entityID} = data;
-
-                setRoom((room) => ({
-                    ...room,
-                    displays: [
-                        ...room.displays,
-
-                        {
-                            entityID,
-                        },
-                    ],
-                }));
-
-                break;
-            }
-
-            case "room.displayDisposed": {
-                const {entityID} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    displays: room.displays.filter(
-                        (display) => display.entityID !== entityID,
-                    ),
-                }));
-
-                break;
-            }
-
-            case "room.pinUpdate": {
-                const {pin} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    pin,
-                }));
-
-                break;
-            }
-
-            case "room.stateUpdate": {
-                const {state} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    state,
-                }));
-
-                break;
-            }
-
-            case "room.titleUpdate": {
-                const {title} = data;
-
-                setRoom((room) => ({
-                    ...room,
-
-                    title,
-                }));
-
-                break;
-            }
-        }
+        } as IPresenterUserMessages);
     }, []);
 
     const eventSourceOptions = useMemo<IEventSourceOptions>(

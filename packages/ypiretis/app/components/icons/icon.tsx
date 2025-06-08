@@ -1,23 +1,16 @@
-import type {PropsWithChildren} from "react";
+import type {IconProps} from "@chakra-ui/react";
+import {Icon} from "@chakra-ui/react";
 
 export type IIconProps = Omit<IIconRootProps, "children">;
 
-export interface IIconRootProps extends PropsWithChildren {
-    readonly size?: string;
-}
+export type IIconRootProps = Omit<IconProps, "as" | "asChild">;
 
 export default function IconRoot(props: IIconRootProps) {
-    const {children, size = "1.25em"} = props;
+    const {children, fill = "currentcolor", size = "md", ...rest} = props;
 
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            width={size}
-            height={size}
-        >
+        <Icon as="svg" fill={fill} size={size} {...rest}>
             {children}
-        </svg>
+        </Icon>
     );
 }

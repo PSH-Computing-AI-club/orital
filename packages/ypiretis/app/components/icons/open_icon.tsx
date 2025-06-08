@@ -1,9 +1,10 @@
-import Icon from "./icon";
+import type {IIconProps} from "./icon";
+import IconRoot from "./icon";
 
-export default function OpenIcon() {
+export default function OpenIcon(props: IIconProps) {
     return (
-        <Icon>
+        <IconRoot {...props}>
             <path d="M5 3h6v2H5v14h14v-6h2v8H3V3h2zm8 0h8v8h-2V7h-2V5h-4V3zm0 8h-2v2H9v2h2v-2h2v-2zm4-4h-2v2h-2v2h2V9h2V7z" />
-        </Icon>
+        </IconRoot>
     );
 }

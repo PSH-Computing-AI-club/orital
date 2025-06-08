@@ -1,9 +1,10 @@
-import Icon from "./icon";
+import type {IIconProps} from "./icon";
+import IconRoot from "./icon";
 
-export default function ReloadIcon() {
+export default function ReloadIcon(props: IIconProps) {
     return (
-        <Icon>
+        <IconRoot {...props}>
             <path d="M16 2h-2v2h2v2H4v2H2v5h2V8h12v2h-2v2h2v-2h2V8h2V6h-2V4h-2V2zM6 20h2v2h2v-2H8v-2h12v-2h2v-5h-2v5H8v-2h2v-2H8v2H6v2H4v2h2v2z" />
-        </Icon>
+        </IconRoot>
     );
 }

@@ -9,13 +9,21 @@ export default function IconRoot(props: IIconRootProps) {
     const {
         children,
         fill = "currentcolor",
-        size = "md",
+        height = "1.25em",
         viewBox = "0 0 24 24",
+        width = "1.25em",
         ...rest
     } = props;
 
     return (
-        <Icon as="svg" viewBox={viewBox} fill={fill} size={size} {...rest}>
+        <Icon
+            as="svg"
+            viewBox={viewBox}
+            fill={fill}
+            height={height}
+            width={width}
+            {...rest}
+        >
             {children}
         </Icon>
     );

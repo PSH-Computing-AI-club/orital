@@ -9,7 +9,7 @@ import {
 
 import {generatePIN} from "~/.server/utils/crypto";
 
-import {Route} from "./+types/rooms.$roomID.presenter";
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.regenerate-pin";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["regenerate-pin"])),

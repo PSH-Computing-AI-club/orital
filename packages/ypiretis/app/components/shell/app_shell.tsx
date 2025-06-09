@@ -103,6 +103,8 @@ function AppShellContainer(props: IAppShellContainerProps) {
 
     return (
         <Box
+            display={fluid ? undefined : "flex"}
+            flexDirection={fluid ? undefined : "column"}
             flexGrow="1"
             marginLeft="32"
             maxBlockSize={fluid ? undefined : "dvh"}

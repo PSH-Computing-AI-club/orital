@@ -106,35 +106,36 @@ function AppShellSidebar(props: IAppShellSidebarProps) {
     const {children} = props;
 
     return (
-        <VStack
-            gap="2"
+        <Box
             bg="bg"
             borderInlineEndColor="border"
             borderInlineEndStyle="solid"
             borderInlineEndWidth="thin"
-            padding="2"
-            maxInlineSize="max"
-            minInlineSize="max"
+            blockSize="dvh"
+            minInlineSize="32"
+            maxInlineSize="32"
         >
-            <Bleed
-                blockStart="2"
-                inline="2"
-                bg="bg.inverted"
-                borderBlockEndColor="border"
-                borderBlockEndStyle="solid"
-                borderBlockEndWidth="thin"
-                padding="4"
-                alignSelf="stretch"
-            >
-                <Image
-                    src="/images/logo.prompt.webp"
-                    marginInline="auto"
-                    width="10"
-                />
-            </Bleed>
+            <VStack gap="2" padding="2" blockSize="full">
+                <Bleed
+                    blockStart="2"
+                    inline="2"
+                    bg="bg.inverted"
+                    borderBlockEndColor="border"
+                    borderBlockEndStyle="solid"
+                    borderBlockEndWidth="thin"
+                    padding="4"
+                    alignSelf="stretch"
+                >
+                    <Image
+                        src="/images/logo.prompt.webp"
+                        marginInline="auto"
+                        width="10"
+                    />
+                </Bleed>
 
-            {children}
-        </VStack>
+                {children}
+            </VStack>
+        </Box>
     );
 }
 
@@ -142,7 +143,7 @@ function AppShellRoot(props: IAppShellRootProps) {
     const {children} = props;
 
     return (
-        <Flex align="stretch" width="dvw" height="dvh">
+        <Flex align="stretch" inlineSize="dvw">
             {children}
         </Flex>
     );

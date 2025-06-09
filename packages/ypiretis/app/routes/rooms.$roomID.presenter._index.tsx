@@ -5,7 +5,7 @@ import {
     Card,
     Grid,
     GridItem,
-    HStack,
+    SimpleGrid,
     PinInput,
 } from "@chakra-ui/react";
 
@@ -89,6 +89,7 @@ function PinCard() {
                     value={Array.from(pin)}
                     type="alphanumeric"
                     fontFamily="mono"
+                    size={{base: "2xl", xlDown: "xl", lgDown: "lg"}}
                     pointerEvents="none"
                     readOnly
                 >
@@ -134,13 +135,14 @@ function PinCard() {
 function StateCardButton(props: ButtonProps & {active?: boolean}) {
     const {
         active = false,
+        blockSize = "full",
         children,
         flexDirection = "column",
         fontWeight = "bold",
         gap = "2",
-        height = "32",
-        size = "md",
-        width = "32",
+
+        size = {base: "lg", xlDown: "md", lgDown: "sm"},
+
         ...rest
     } = props;
 
@@ -151,8 +153,7 @@ function StateCardButton(props: ButtonProps & {active?: boolean}) {
             flexDirection={flexDirection}
             fontWeight={fontWeight}
             gap={gap}
-            width={width}
-            height={height}
+            blockSize={blockSize}
             {...rest}
         >
             {children}
@@ -196,7 +197,12 @@ function StateCard() {
                     <ShieldIcon />
                 </Card.Title>
 
-                <HStack justifyContent="space-around">
+                <SimpleGrid
+                    columns={3}
+                    gap="2"
+                    justifyContent="space-around"
+                    blockSize="full"
+                >
                     <StateCardButton
                         active={state === "STATE_LOCKED"}
                         disabled={state === "STATE_DISPOSED"}
@@ -236,7 +242,7 @@ function StateCard() {
                         </StateCardIcon>
                         Permissive
                     </StateCardButton>
-                </HStack>
+                </SimpleGrid>
             </Card.Body>
         </>
     );

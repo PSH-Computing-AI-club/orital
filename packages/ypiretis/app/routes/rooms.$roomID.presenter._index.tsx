@@ -88,7 +88,7 @@ function PinCard() {
                 <PinInput.Root
                     value={Array.from(pin)}
                     type="alphanumeric"
-                    size="2xl"
+                    fontFamily="mono"
                     pointerEvents="none"
                     readOnly
                 >

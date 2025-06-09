@@ -94,7 +94,7 @@ function PinCard() {
                 >
                     <PinInput.Control
                         display="flex"
-                        justifyContent="space-evenly"
+                        justifyContent="space-around"
                     >
                         <PinInput.Input index={0} readOnly />
                         <PinInput.Input index={1} readOnly />
@@ -196,7 +196,7 @@ function StateCard() {
                     <ShieldIcon />
                 </Card.Title>
 
-                <HStack justifyContent="space-evenly">
+                <HStack justifyContent="space-around">
                     <StateCardButton
                         active={state === "STATE_LOCKED"}
                         disabled={state === "STATE_DISPOSED"}

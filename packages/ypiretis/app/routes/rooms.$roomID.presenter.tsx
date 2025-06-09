@@ -117,14 +117,14 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
             <PresenterContextProvider initialRoomData={initialRoomData}>
                 <AppShell.Root>
                     <AppShell.Sidebar>
-                        <AppShell.Link to={`/rooms/${roomID}`} active>
+                        <AppShell.Link to={`/rooms/${roomID}/presenter`} active>
                             <AppShell.Icon>
                                 <DashboardIcon />
                             </AppShell.Icon>
                             Dashboard
                         </AppShell.Link>
 
-                        <AppShell.Link to={`/rooms/${roomID}/polls`}>
+                        <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
                             <AppShell.Icon>
                                 <ChartIcon />
                             </AppShell.Icon>
@@ -133,7 +133,9 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
                         <AppShell.Divider />
 
-                        <AppShell.Link to={`/rooms/${roomID}/settings`}>
+                        <AppShell.Link
+                            to={`/rooms/${roomID}/presenter/settings`}
+                        >
                             <AppShell.Icon>
                                 <SlidersIcon />
                             </AppShell.Icon>

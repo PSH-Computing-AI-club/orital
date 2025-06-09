@@ -147,7 +147,10 @@ function StateCardIcon(props: PropsWithChildren) {
 function StateCard() {
     const {state} = usePresenterContext();
 
-    function onStateClick(newState: IRoomStates): void {
+    function onStateClick(
+        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+        newState: IRoomStates,
+    ): void {
         if (state === newState) {
             return;
         }
@@ -172,7 +175,7 @@ function StateCard() {
                         active={state === "STATE_LOCKED"}
                         disabled={state === "STATE_DISPOSED"}
                         colorPalette="red"
-                        onClick={() => onStateClick("STATE_LOCKED")}
+                        onClick={(event) => onStateClick(event, "STATE_LOCKED")}
                     >
                         <StateCardIcon>
                             <LockIcon />
@@ -184,7 +187,9 @@ function StateCard() {
                         active={state === "STATE_UNLOCKED"}
                         disabled={state === "STATE_DISPOSED"}
                         colorPalette="green"
-                        onClick={() => onStateClick("STATE_UNLOCKED")}
+                        onClick={(event) =>
+                            onStateClick(event, "STATE_UNLOCKED")
+                        }
                     >
                         <StateCardIcon>
                             <LockOpenIcon />
@@ -196,7 +201,9 @@ function StateCard() {
                         active={state === "STATE_PERMISSIVE"}
                         disabled={state === "STATE_DISPOSED"}
                         colorPalette="yellow"
-                        onClick={() => onStateClick("STATE_PERMISSIVE")}
+                        onClick={(event) =>
+                            onStateClick(event, "STATE_PERMISSIVE")
+                        }
                     >
                         <StateCardIcon>
                             <NotificationIcon />

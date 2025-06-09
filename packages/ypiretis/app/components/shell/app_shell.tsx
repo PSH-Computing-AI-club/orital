@@ -45,7 +45,7 @@ function AppShellButton(props: IAppShellButtonProps) {
             flexDirection="column"
             fontWeight="bold"
             width="full"
-            paddingY="8"
+            paddingY="10"
             gap="2"
             onClick={onClick}
         >

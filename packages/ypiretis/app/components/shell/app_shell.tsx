@@ -28,7 +28,9 @@ export interface IAppShellLinkProps extends PropsWithChildren {
     readonly to: To;
 }
 
-export interface IAppShellContainerProps extends PropsWithChildren {}
+export interface IAppShellContainerProps extends PropsWithChildren {
+    readonly fluid?: boolean;
+}
 
 export interface IAppShellRootProps extends PropsWithChildren {}
 
@@ -97,11 +99,20 @@ function AppShellLink(props: IAppShellLinkProps) {
 }
 
 function AppShellContainer(props: IAppShellContainerProps) {
-    const {children} = props;
+    const {children, fluid = false} = props;
 
     return (
-        <Box flexGrow="1" marginLeft="32">
-            <Container paddingBlock="4">{children}</Container>
+        <Box
+            flexGrow="1"
+            marginLeft="32"
+            maxBlockSize={fluid ? undefined : "dvh"}
+            minBlockSize={fluid ? undefined : "dvh"}
+            overflowX="hidden"
+            overflowY={fluid ? undefined : "hidden"}
+        >
+            <Container paddingBlock="4" minBlockSize="full">
+                {children}
+            </Container>
         </Box>
     );
 }

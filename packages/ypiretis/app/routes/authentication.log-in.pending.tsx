@@ -118,8 +118,6 @@ export default function AuthenticationLogInPending() {
 
             switch (event as ILoginEventNames) {
                 case "authorized":
-                    // TODO: call route that sets session tokens
-
                     const {grantToken} = JSON.parse(
                         data,
                     ) as ILoginAuthorizedEvent;

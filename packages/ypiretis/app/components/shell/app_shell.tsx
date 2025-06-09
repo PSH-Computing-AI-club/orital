@@ -99,7 +99,11 @@ function AppShellLink(props: IAppShellLinkProps) {
 function AppShellContainer(props: IAppShellContainerProps) {
     const {children} = props;
 
-    return <Container>{children}</Container>;
+    return (
+        <Box marginLeft="32">
+            <Container paddingBlock="4">{children}</Container>
+        </Box>
+    );
 }
 
 function AppShellSidebar(props: IAppShellSidebarProps) {
@@ -107,6 +111,7 @@ function AppShellSidebar(props: IAppShellSidebarProps) {
 
     return (
         <Box
+            pos="fixed"
             bg="bg"
             borderInlineEndColor="border"
             borderInlineEndStyle="solid"

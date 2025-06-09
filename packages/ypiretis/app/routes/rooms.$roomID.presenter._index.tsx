@@ -63,6 +63,7 @@ function PinCard() {
                 </Card.Title>
 
                 <PinInput.Root
+                    value={Array.from(pin)}
                     type="alphanumeric"
                     size="2xl"
                     pointerEvents="none"
@@ -72,12 +73,12 @@ function PinCard() {
                         display="flex"
                         justifyContent="space-evenly"
                     >
-                        <PinInput.Input index={0} value={pin[0]} readOnly />
-                        <PinInput.Input index={1} value={pin[1]} readOnly />
-                        <PinInput.Input index={2} value={pin[2]} readOnly />
-                        <PinInput.Input index={3} value={pin[3]} readOnly />
-                        <PinInput.Input index={4} value={pin[4]} readOnly />
-                        <PinInput.Input index={5} value={pin[5]} readOnly />
+                        <PinInput.Input index={0} readOnly />
+                        <PinInput.Input index={1} readOnly />
+                        <PinInput.Input index={2} readOnly />
+                        <PinInput.Input index={3} readOnly />
+                        <PinInput.Input index={4} readOnly />
+                        <PinInput.Input index={5} readOnly />
                     </PinInput.Control>
                 </PinInput.Root>
             </Card.Body>

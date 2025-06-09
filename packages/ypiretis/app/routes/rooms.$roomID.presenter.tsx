@@ -8,6 +8,13 @@ import {ROOM_ID_PREFIX} from "~/.server/database/tables/rooms_table";
 
 import {requireAuthenticatedPresenterSession} from "~/.server/services/room_service";
 
+import CloseIcon from "~/components/icons/close_icon";
+import DashboardIcon from "~/components/icons/dashboard_icon";
+import ChartIcon from "~/components/icons/chart_icon";
+import SlidersIcon from "~/components/icons/sliders_icon";
+
+import AppShell from "~/components/shell/app_shell";
+
 import type {IAttendee, IDisplay, IRoom} from "~/state/presenter";
 import {PresenterContextProvider} from "~/state/presenter";
 
@@ -103,10 +110,49 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {initialRoomData, session} = loaderData;
 
+    const {roomID} = initialRoomData;
+
     return (
         <SessionContextProvider session={session}>
             <PresenterContextProvider initialRoomData={initialRoomData}>
-                <Outlet />
+                <AppShell.Root>
+                    <AppShell.Sidebar>
+                        <AppShell.Link to={`/rooms/${roomID}`} active>
+                            <AppShell.Icon>
+                                <DashboardIcon />
+                            </AppShell.Icon>
+                            Dashboard
+                        </AppShell.Link>
+
+                        <AppShell.Link to={`/rooms/${roomID}/polls`}>
+                            <AppShell.Icon>
+                                <ChartIcon />
+                            </AppShell.Icon>
+                            Polls
+                        </AppShell.Link>
+
+                        <AppShell.Divider />
+
+                        <AppShell.Link to={`/rooms/${roomID}/settings`}>
+                            <AppShell.Icon>
+                                <SlidersIcon />
+                            </AppShell.Icon>
+                            Settings
+                        </AppShell.Link>
+
+                        <AppShell.Button
+                            colorPalette="red"
+                            onClick={() => console.log("hello world!")}
+                        >
+                            <AppShell.Icon>
+                                <CloseIcon />
+                            </AppShell.Icon>
+                            Close Room
+                        </AppShell.Button>
+                    </AppShell.Sidebar>
+
+                    <Outlet />
+                </AppShell.Root>
             </PresenterContextProvider>
         </SessionContextProvider>
     );

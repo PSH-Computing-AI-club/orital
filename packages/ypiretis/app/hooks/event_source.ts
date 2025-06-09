@@ -117,7 +117,7 @@ export default function useEventSource(
             const messageSubscribers = new Set<IEventSourceMessageCallback>();
             const openSubscribers = new Set<IEventSourceOpenCallback>();
 
-            const entry: ICacheEntry = {
+            entry = {
                 abortController,
 
                 subscribers: {
@@ -126,7 +126,7 @@ export default function useEventSource(
                     message: messageSubscribers,
                     open: openSubscribers,
                 },
-            } satisfies ICacheEntry;
+            };
 
             CACHE_CONNECTIONS.set(cacheKey, entry);
 
@@ -182,31 +182,29 @@ export default function useEventSource(
             });
         }
 
-        if (entry) {
-            const {subscribers} = entry;
+        const {subscribers} = entry;
 
-            const {
-                close: closeSubscribers,
-                error: errorSubscribers,
-                message: messageSubscribers,
-                open: openSubscribers,
-            } = subscribers;
+        const {
+            close: closeSubscribers,
+            error: errorSubscribers,
+            message: messageSubscribers,
+            open: openSubscribers,
+        } = subscribers;
 
-            if (onclose) {
-                closeSubscribers.add(onclose);
-            }
+        if (onclose) {
+            closeSubscribers.add(onclose);
+        }
 
-            if (onerror) {
-                errorSubscribers.add(onerror);
-            }
+        if (onerror) {
+            errorSubscribers.add(onerror);
+        }
 
-            if (onmessage) {
-                messageSubscribers.add(onmessage);
-            }
+        if (onmessage) {
+            messageSubscribers.add(onmessage);
+        }
 
-            if (onopen) {
-                openSubscribers.add(onopen);
-            }
+        if (onopen) {
+            openSubscribers.add(onopen);
         }
 
         return () => {

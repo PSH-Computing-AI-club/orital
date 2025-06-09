@@ -29,7 +29,7 @@ import {usePresenterContext} from "~/state/presenter";
 
 import {buildFormData} from "~/utils/forms";
 
-import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.regenerate-pin";
+import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.regenerate-pin";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -63,7 +63,7 @@ function PinCard() {
     ): Promise<void> {
         setFetchingRegenerateAction(true);
 
-        await fetch("./presenter/actions/regenerate-pin", {
+        await fetch("./presenter/actions/room/regenerate-pin", {
             method: "POST",
             body: buildFormData<IRegeneratePINFormData>({
                 action: "regenerate-pin",

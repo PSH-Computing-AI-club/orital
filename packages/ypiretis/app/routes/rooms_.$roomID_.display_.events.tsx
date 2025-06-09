@@ -4,16 +4,12 @@ import {eventStream} from "remix-utils/sse/server";
 
 import * as v from "valibot";
 
-import {ROOM_ID_PREFIX} from "~/.server/database/tables/rooms_table";
-
 import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_service";
-
-import {token} from "~/utils/valibot";
 
 import type {Route} from "./+types/rooms_.$roomID_.display_.events";
 
 const LOADER_SCHEMA = v.object({
-    roomID: token(ROOM_ID_PREFIX),
+    roomID: v.pipe(v.string(), v.ulid()),
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

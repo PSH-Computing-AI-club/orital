@@ -4,8 +4,6 @@ import {Outlet, data, useLocation} from "react-router";
 
 import * as v from "valibot";
 
-import {ROOM_ID_PREFIX} from "~/.server/database/tables/rooms_table";
-
 import {requireAuthenticatedPresenterSession} from "~/.server/services/room_service";
 
 import CloseIcon from "~/components/icons/close_icon";
@@ -21,12 +19,10 @@ import {PresenterContextProvider} from "~/state/presenter";
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
 
-import {token} from "~/utils/valibot";
-
 import {Route} from "./+types/rooms.$roomID.presenter";
 
 const LOADER_SCHEMA = v.object({
-    roomID: token(ROOM_ID_PREFIX),
+    roomID: v.pipe(v.string(), v.ulid()),
 });
 
 export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {

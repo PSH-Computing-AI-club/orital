@@ -11,15 +11,13 @@ import temporalInstant, {
 
 import USERS_TABLE from "./users_table";
 
-export const ROOM_ID_PREFIX = "ROOM";
-
 const ROOMS_TABLE = sqliteTable("rooms", {
     id: integer("id").primaryKey({autoIncrement: true}),
 
     roomID: text("room_id")
         .notNull()
         .unique()
-        .$defaultFn(() => `${ROOM_ID_PREFIX}_${ulid()}`),
+        .$defaultFn(() => ulid()),
 
     pin: text("pin")
         .notNull()

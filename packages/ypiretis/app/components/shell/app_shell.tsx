@@ -45,7 +45,7 @@ function AppShellButton(props: IAppShellButtonProps) {
             flexDirection="column"
             fontWeight="bold"
             width="full"
-            paddingY="10"
+            paddingY="8"
             gap="2"
             onClick={onClick}
         >
@@ -107,18 +107,18 @@ function AppShellSidebar(props: IAppShellSidebarProps) {
 
     return (
         <VStack
-            gap="4"
+            gap="2"
             bg="bg"
             borderInlineEndColor="border"
             borderInlineEndStyle="solid"
             borderInlineEndWidth="thin"
-            padding="4"
+            padding="2"
             maxInlineSize="max"
             minInlineSize="max"
         >
             <Bleed
-                blockStart="4"
-                inline="4"
+                blockStart="2"
+                inline="2"
                 bg="bg.inverted"
                 borderBlockEndColor="border"
                 borderBlockEndStyle="solid"
@@ -129,7 +129,7 @@ function AppShellSidebar(props: IAppShellSidebarProps) {
                 <Image
                     src="/images/logo.prompt.webp"
                     marginInline="auto"
-                    width="16"
+                    width="10"
                 />
             </Bleed>
 

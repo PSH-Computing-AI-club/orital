@@ -100,7 +100,7 @@ function AppShellContainer(props: IAppShellContainerProps) {
     const {children} = props;
 
     return (
-        <Box marginLeft="32">
+        <Box flexGrow="1" marginLeft="32">
             <Container paddingBlock="4">{children}</Container>
         </Box>
     );

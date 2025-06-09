@@ -1,3 +1,5 @@
+import {redirect} from "react-router";
+
 import {insertOneLive} from "~/.server/services/room_service";
 import {findOne} from "~/.server/services/users_service";
 
@@ -8,7 +10,5 @@ export async function loader() {
         presenter: TEST_PRESENTER,
     });
 
-    console.log({
-        TEST_ROOM_ID: TEST_ROOM.roomID,
-    });
+    return redirect(`/rooms/${TEST_ROOM.roomID}/presenter`);
 }

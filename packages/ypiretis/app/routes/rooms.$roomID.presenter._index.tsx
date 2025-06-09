@@ -30,6 +30,7 @@ import {usePresenterContext} from "~/state/presenter";
 import {buildFormData} from "~/utils/forms";
 
 import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.regenerate-pin";
+import type {IActionFormData as IUpdateStateFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.update-state";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -174,15 +175,28 @@ function StateCardIcon(props: PropsWithChildren) {
 function StateCard() {
     const {state} = usePresenterContext();
 
-    function onStateClick(
+    const [fetchingUpdateAction, setFetchingRegenerateAction] =
+        useState<boolean>(false);
+
+    async function onStateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        newState: IRoomStates,
-    ): void {
+        newState: Exclude<IRoomStates, "STATE_DISPOSED">,
+    ): Promise<void> {
         if (state === newState) {
             return;
         }
 
-        console.log({state: newState});
+        setFetchingRegenerateAction(true);
+
+        await fetch("./presenter/actions/room/update-state", {
+            method: "POST",
+            body: buildFormData<IUpdateStateFormData>({
+                action: "update-state",
+                state: newState,
+            }),
+        });
+
+        setFetchingRegenerateAction(false);
     }
 
     return (
@@ -205,7 +219,9 @@ function StateCard() {
                 >
                     <StateCardButton
                         active={state === "STATE_LOCKED"}
-                        disabled={state === "STATE_DISPOSED"}
+                        disabled={
+                            fetchingUpdateAction || state === "STATE_DISPOSED"
+                        }
                         colorPalette="red"
                         onClick={(event) => onStateClick(event, "STATE_LOCKED")}
                     >
@@ -217,7 +233,9 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_UNLOCKED"}
-                        disabled={state === "STATE_DISPOSED"}
+                        disabled={
+                            fetchingUpdateAction || state === "STATE_DISPOSED"
+                        }
                         colorPalette="green"
                         onClick={(event) =>
                             onStateClick(event, "STATE_UNLOCKED")
@@ -231,7 +249,9 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_PERMISSIVE"}
-                        disabled={state === "STATE_DISPOSED"}
+                        disabled={
+                            fetchingUpdateAction || state === "STATE_DISPOSED"
+                        }
                         colorPalette="yellow"
                         onClick={(event) =>
                             onStateClick(event, "STATE_PERMISSIVE")

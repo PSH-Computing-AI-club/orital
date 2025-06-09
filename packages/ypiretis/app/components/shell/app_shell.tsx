@@ -4,6 +4,7 @@ import {
     Bleed,
     Button,
     Container,
+    Heading,
     Image,
     Flex,
     VStack,
@@ -30,6 +31,8 @@ export interface IAppShellLinkProps extends PropsWithChildren {
 
 export interface IAppShellContainerProps extends PropsWithChildren {
     readonly fluid?: boolean;
+
+    readonly title: string;
 }
 
 export interface IAppShellRootProps extends PropsWithChildren {}
@@ -99,7 +102,7 @@ function AppShellLink(props: IAppShellLinkProps) {
 }
 
 function AppShellContainer(props: IAppShellContainerProps) {
-    const {children, fluid = false} = props;
+    const {children, fluid = false, title} = props;
 
     return (
         <Box
@@ -112,7 +115,14 @@ function AppShellContainer(props: IAppShellContainerProps) {
             overflowX="hidden"
             overflowY={fluid ? undefined : "hidden"}
         >
-            <Container paddingBlock="4" minBlockSize="full">
+            <Container
+                display="flex"
+                flexDirection="column"
+                gap="4"
+                paddingBlock="4"
+                minBlockSize="full"
+            >
+                <Heading>{title}</Heading>
                 {children}
             </Container>
         </Box>

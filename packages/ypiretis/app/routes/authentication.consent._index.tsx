@@ -39,13 +39,13 @@ import {alphanumerical, token} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication.consent._index";
 
-const ACTION_SCHEMA = v.object({
+const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["authorize", "revoke"])),
 
     consentToken: v.pipe(v.string(), token("TCSN")),
 });
 
-const CLIENT_LOADER_SCHEMA = v.object({
+const HASH_LOADER_HASH_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
 
     consentToken: v.pipe(v.string(), token("TCSN")),
@@ -67,7 +67,7 @@ const useHashLoader = withHashLoader((hash) => {
     const searchParams = new URLSearchParams(hash);
 
     return v.parse(
-        CLIENT_LOADER_SCHEMA,
+        HASH_LOADER_HASH_SCHEMA,
         Object.fromEntries(searchParams.entries()),
     );
 });
@@ -83,7 +83,10 @@ export async function action(actionArgs: Route.ActionArgs) {
         output: actionData,
         issues,
         success,
-    } = v.safeParse(ACTION_SCHEMA, Object.fromEntries(formData.entries()));
+    } = v.safeParse(
+        ACTION_FORM_DATA_SCHEMA,
+        Object.fromEntries(formData.entries()),
+    );
 
     if (!success) {
         const {nested: errors} = v.flatten(issues);

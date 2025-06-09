@@ -29,7 +29,7 @@ import {alphanumerical} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication.log-in._index";
 
-const ACTION_SCHEMA = v.object({
+const ACTION_FORM_DATA_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
 
     action: v.pipe(v.string(), v.picklist(["log-in"])),
@@ -52,7 +52,10 @@ export async function action(actionArgs: Route.ActionArgs) {
         output: actionData,
         issues,
         success,
-    } = v.safeParse(ACTION_SCHEMA, Object.fromEntries(formData.entries()));
+    } = v.safeParse(
+        ACTION_FORM_DATA_SCHEMA,
+        Object.fromEntries(formData.entries()),
+    );
 
     if (!success) {
         const {nested: errors} = v.flatten(issues);

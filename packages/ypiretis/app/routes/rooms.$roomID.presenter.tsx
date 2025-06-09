@@ -21,7 +21,7 @@ import {SessionContextProvider} from "~/state/session";
 
 import {Route} from "./+types/rooms.$roomID.presenter";
 
-const LOADER_SCHEMA = v.object({
+const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
 });
 
@@ -34,7 +34,7 @@ clientLoader.hydrate = true as const;
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {params, request} = loaderArgs;
 
-    const {output, success} = v.safeParse(LOADER_SCHEMA, params);
+    const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
 
     if (!success) {
         throw data("Bad Request", 400);

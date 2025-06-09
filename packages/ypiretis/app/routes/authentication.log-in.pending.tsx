@@ -37,7 +37,7 @@ import type {
 
 import {Route} from "./+types/authentication.log-in.pending";
 
-const CLIENT_LOADER_SCHEMA = v.object({
+const HASH_LOADER_HASH_SCHEMA = v.object({
     callbackToken: v.pipe(v.string(), token("TCLB")),
 
     callbackTokenExpiresAt: v.pipe(
@@ -88,7 +88,7 @@ const useHashLoader = withHashLoader((hash) => {
     const searchParams = new URLSearchParams(hash);
 
     return v.parse(
-        CLIENT_LOADER_SCHEMA,
+        HASH_LOADER_HASH_SCHEMA,
         Object.fromEntries(searchParams.entries()),
     );
 });

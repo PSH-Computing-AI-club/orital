@@ -2,6 +2,8 @@ import {data} from "react-router";
 
 import {ulid} from "ulid";
 
+import {APP_IS_PRODUCTION} from "../../../utils/constants";
+
 import {generatePIN} from "../../utils/crypto";
 
 import type {IUser} from "../users_service";
@@ -145,7 +147,16 @@ export async function requireAuthenticatedAttendeeSession(
 
     for (const attendee of room.attendees.values()) {
         if (attendee.user.id === user.id) {
-            hasAttendee = true;
+            // **HACK:** The deconstructor callback for `eventStream` is not called
+            // properly by Vite's development server.
+            //
+            // So, we have to be slightly more leient here and just dispose of the
+            // the existing connection to make development mode easier.
+            if (APP_IS_PRODUCTION) {
+                hasAttendee = true;
+            } else {
+                attendee._dispose();
+            }
         }
     }
 
@@ -206,9 +217,15 @@ export async function requireAuthenticatedPresenterConnection(
     }
 
     if (room.presenterEntity) {
-        throw data("Conflict", {
-            status: 409,
-        });
+        // **HACK:** See the similar comment for
+        // `requireAuthenticatedAttendeeConnection`.
+        if (APP_IS_PRODUCTION) {
+            throw data("Conflict", {
+                status: 409,
+            });
+        } else {
+            room.presenterEntity._dispose();
+        }
     }
 
     return {

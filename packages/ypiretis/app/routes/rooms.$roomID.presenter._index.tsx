@@ -9,7 +9,8 @@ import {
     PinInput,
 } from "@chakra-ui/react";
 
-import type {PropsWithChildren} from "react";
+import type {MouseEvent, PropsWithChildren} from "react";
+import {useState} from "react";
 
 import type {IRoomStates} from "~/.server/services/room_service";
 
@@ -25,6 +26,10 @@ import UsersIcon from "~/components/icons/users_icon";
 import AppShell from "~/components/shell/app_shell";
 
 import {usePresenterContext} from "~/state/presenter";
+
+import {buildFormData} from "~/utils/forms";
+
+import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.regenerate-pin";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -49,6 +54,24 @@ function AttendeesCard() {
 
 function PinCard() {
     const {pin, state} = usePresenterContext();
+
+    const [fetchingRegenerateAction, setFetchingRegenerateAction] =
+        useState<boolean>(false);
+
+    async function onRegenerateClick(
+        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ): Promise<void> {
+        setFetchingRegenerateAction(true);
+
+        await fetch("./presenter/actions/regenerate-pin", {
+            method: "POST",
+            body: buildFormData<IRegeneratePINFormData>({
+                action: "regenerate-pin",
+            }),
+        });
+
+        setFetchingRegenerateAction(false);
+    }
 
     return (
         <>
@@ -85,8 +108,11 @@ function PinCard() {
 
             <Card.Footer>
                 <Button
-                    disabled={state === "STATE_DISPOSED"}
+                    disabled={
+                        fetchingRegenerateAction || state === "STATE_DISPOSED"
+                    }
                     colorPalette="red"
+                    onClick={(event) => onRegenerateClick(event)}
                 >
                     Regenerate
                     <ReloadIcon />

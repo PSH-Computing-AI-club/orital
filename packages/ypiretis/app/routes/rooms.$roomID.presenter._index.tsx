@@ -261,7 +261,7 @@ function StateCard() {
 export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {title} = usePresenterContext();
 
-    async function onTitleChange(
+    async function onTitleCommit(
         details: EditableValueChangeDetails,
     ): Promise<void> {
         console.log({details});
@@ -271,7 +271,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
         <AppShell.Container>
             <AppShell.EditableTitle
                 title={title}
-                onTitleChange={onTitleChange}
+                onTitleCommit={onTitleCommit}
             />
 
             <Grid

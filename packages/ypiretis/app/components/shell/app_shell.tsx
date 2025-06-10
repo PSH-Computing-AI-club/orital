@@ -42,7 +42,7 @@ export interface IAppShellTitleProps {
 export interface IAppShellEditableTitleProps extends IAppShellTitleProps {
     readonly disabled?: boolean;
 
-    readonly onTitleChange: (details: EditableValueChangeDetails) => void;
+    readonly onTitleCommit: (details: EditableValueChangeDetails) => void;
 }
 
 export interface IAppShellContainerProps extends PropsWithChildren {
@@ -74,7 +74,7 @@ function AppShellButton(props: IAppShellButtonProps) {
 }
 
 function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
-    const {disabled = false, onTitleChange, title} = props;
+    const {disabled = false, onTitleCommit, title} = props;
 
     return (
         <Heading>
@@ -84,7 +84,7 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                 activationMode="dblclick"
                 fontSize="inherit"
                 lineHeight="inherit"
-                onValueChange={onTitleChange}
+                onValueCommit={onTitleCommit}
             >
                 <Editable.Preview />
                 <Editable.Input />

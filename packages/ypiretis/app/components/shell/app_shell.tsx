@@ -29,10 +29,12 @@ export interface IAppShellLinkProps extends PropsWithChildren {
     readonly to: To;
 }
 
+export interface IAppShellTitleProps {
+    readonly title: string;
+}
+
 export interface IAppShellContainerProps extends PropsWithChildren {
     readonly fluid?: boolean;
-
-    readonly title: string;
 }
 
 export interface IAppShellRootProps extends PropsWithChildren {}
@@ -81,6 +83,12 @@ function AppShellIcon(props: IAppShellIconProps) {
     );
 }
 
+function AppShellTitle(props: IAppShellTitleProps) {
+    const {title} = props;
+
+    return <Heading>{title}</Heading>;
+}
+
 function AppShellLink(props: IAppShellLinkProps) {
     const {active = false, children, to} = props;
 
@@ -102,7 +110,7 @@ function AppShellLink(props: IAppShellLinkProps) {
 }
 
 function AppShellContainer(props: IAppShellContainerProps) {
-    const {children, fluid = false, title} = props;
+    const {children, fluid = false} = props;
 
     return (
         <Box
@@ -122,7 +130,6 @@ function AppShellContainer(props: IAppShellContainerProps) {
                 paddingBlock="4"
                 minBlockSize="full"
             >
-                <Heading>{title}</Heading>
                 {children}
             </Container>
         </Box>
@@ -185,6 +192,7 @@ const AppShell = {
     Link: AppShellLink,
     Sidebar: AppShellSidebar,
     Root: AppShellRoot,
+    Title: AppShellTitle,
 } as const;
 
 export default AppShell;

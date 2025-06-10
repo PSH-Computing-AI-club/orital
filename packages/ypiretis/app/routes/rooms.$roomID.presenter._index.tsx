@@ -268,11 +268,13 @@ function StateCard() {
     );
 }
 
-export default function RoomsPresenterIndex(props: Route.ComponentProps) {
+export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {title} = usePresenterContext();
 
     return (
-        <AppShell.Container title={title}>
+        <AppShell.Container>
+            <AppShell.Title title={title} />
+
             <Grid
                 templateRows="auto 1fr"
                 templateColumns="1fr 1fr"

@@ -15,11 +15,14 @@ import {
 import type {MouseEventHandler, PropsWithChildren} from "react";
 import {useState} from "react";
 
+import {useLocation} from "react-router";
+
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import EditBoxIcon from "~/components/icons/edit_box_icon";
 
 import {APP_NAME} from "~/utils/constants";
+import {buildAppURL} from "~/utils/url";
 
 import type {To} from "react-router";
 import {Link} from "react-router";
@@ -33,8 +36,6 @@ export interface IAppShellButtonProps extends PropsWithChildren {
 export interface IAppShellIconProps extends PropsWithChildren {}
 
 export interface IAppShellLinkProps extends PropsWithChildren {
-    readonly active?: boolean;
-
     readonly to: To;
 }
 
@@ -208,12 +209,18 @@ function AppShellTitle(props: IAppShellTitleProps) {
 }
 
 function AppShellLink(props: IAppShellLinkProps) {
-    const {active = false, children, to} = props;
+    const {children, to} = props;
+    const location = useLocation();
+
+    const currentURL = buildAppURL(location);
+    const toURL = buildAppURL(to);
+
+    const isActive = currentURL.toString() === toURL.toString();
 
     return (
         <Button
             variant="ghost"
-            colorPalette={active ? "cyan" : undefined}
+            colorPalette={isActive ? "cyan" : undefined}
             size="2xs"
             flexDirection="column"
             fontWeight="bold"

@@ -1,7 +1,7 @@
 import {Strong, Text} from "@chakra-ui/react";
 
 import type {ShouldRevalidateFunction} from "react-router";
-import {Outlet, data, useLocation} from "react-router";
+import {Outlet, data} from "react-router";
 
 import * as v from "valibot";
 
@@ -113,25 +113,17 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
     const {roomID} = initialRoomData;
 
-    const {pathname} = useLocation();
-
     return (
         <AppShell.Root>
             <AppShell.Sidebar>
-                <AppShell.Link
-                    to={`/rooms/${roomID}/presenter`}
-                    active={pathname === `/rooms/${roomID}/presenter`}
-                >
+                <AppShell.Link to={`/rooms/${roomID}/presenter`}>
                     <AppShell.Icon>
                         <DashboardIcon />
                     </AppShell.Icon>
                     Dashboard
                 </AppShell.Link>
 
-                <AppShell.Link
-                    to={`/rooms/${roomID}/presenter/polls`}
-                    active={pathname === `/rooms/${roomID}/presenter/polls`}
-                >
+                <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
                     <AppShell.Icon>
                         <ChartIcon />
                     </AppShell.Icon>
@@ -140,10 +132,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
                 <AppShell.Divider />
 
-                <AppShell.Link
-                    to={`/rooms/${roomID}/presenter/settings`}
-                    active={pathname === `/rooms/${roomID}/presenter/settings`}
-                >
+                <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
                     <AppShell.Icon>
                         <SlidersIcon />
                     </AppShell.Icon>

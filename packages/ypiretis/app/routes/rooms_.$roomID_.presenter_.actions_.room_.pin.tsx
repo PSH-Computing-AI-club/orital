@@ -7,14 +7,12 @@ import {
     requireAuthenticatedPresenterSession,
 } from "~/.server/services/room_service";
 
-import {title} from "~/utils/valibot";
+import {generatePIN} from "~/.server/utils/crypto";
 
-import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.update-title";
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.pin";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.picklist(["update-title"])),
-
-    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
+    action: v.pipe(v.string(), v.picklist(["regenerate"])),
 });
 
 const ACTION_PARAMS_SCHEMA = v.object({
@@ -31,8 +29,6 @@ export async function action(actionArgs: Route.ActionArgs) {
         params,
     );
 
-    console.log({isValidParams});
-
     if (!isValidParams) {
         throw data("Bad Request", 400);
     }
@@ -48,26 +44,22 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const requestFormData = await request.formData();
 
-    const {
-        output: formData,
-        issues,
-        success: isValidFormData,
-    } = v.safeParse(
+    const {output: formData, success: isValidFormData} = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
         Object.fromEntries(requestFormData.entries()),
     );
-
-    console.log({isValidFormData, issues});
 
     if (!isValidFormData) {
         throw data("Bad Request", 400);
     }
 
-    const {action, title} = formData;
+    const {action} = formData;
 
     switch (action) {
-        case "update-title": {
-            room.updateTitle(title);
+        case "regenerate": {
+            const newPIN = generatePIN();
+
+            room.updatePIN(newPIN);
         }
     }
 }

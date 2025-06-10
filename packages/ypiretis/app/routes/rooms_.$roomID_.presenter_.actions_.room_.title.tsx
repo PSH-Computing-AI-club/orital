@@ -7,19 +7,14 @@ import {
     requireAuthenticatedPresenterSession,
 } from "~/.server/services/room_service";
 
-import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.update-state";
+import {title} from "~/utils/valibot";
+
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.title";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.picklist(["update-state"])),
+    action: v.pipe(v.string(), v.picklist(["update"])),
 
-    state: v.pipe(
-        v.string(),
-        v.picklist([
-            ROOM_STATES.locked,
-            ROOM_STATES.permissive,
-            ROOM_STATES.unlocked,
-        ]),
-    ),
+    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
 });
 
 const ACTION_PARAMS_SCHEMA = v.object({
@@ -51,7 +46,11 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const requestFormData = await request.formData();
 
-    const {output: formData, success: isValidFormData} = v.safeParse(
+    const {
+        output: formData,
+
+        success: isValidFormData,
+    } = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
         Object.fromEntries(requestFormData.entries()),
     );
@@ -60,11 +59,11 @@ export async function action(actionArgs: Route.ActionArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {action, state} = formData;
+    const {action, title} = formData;
 
     switch (action) {
-        case "update-state": {
-            room.updateState(state);
+        case "update": {
+            room.updateTitle(title);
         }
     }
 }

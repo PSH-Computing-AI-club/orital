@@ -29,9 +29,9 @@ import {usePresenterContext} from "~/state/presenter";
 
 import {buildFormData} from "~/utils/forms";
 
-import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.regenerate-pin";
-import type {IActionFormData as IUpdateStateFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.update-state";
-import type {IActionFormData as IUpdateTitleFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.update-title";
+import type {IActionFormData as IPINActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.pin";
+import type {IActionFormData as IStateActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.state";
+import type {IActionFormData as ITitleActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.title";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -64,10 +64,10 @@ function PinCard() {
     ): Promise<void> {
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/regenerate-pin", {
+        await fetch("./presenter/actions/room/pin", {
             method: "POST",
-            body: buildFormData<IRegeneratePINFormData>({
-                action: "regenerate-pin",
+            body: buildFormData<IPINActionFormData>({
+                action: "regenerate",
             }),
         });
 
@@ -185,10 +185,10 @@ function StateCard() {
 
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/update-state", {
+        await fetch("./presenter/actions/room/state", {
             method: "POST",
-            body: buildFormData<IUpdateStateFormData>({
-                action: "update-state",
+            body: buildFormData<IStateActionFormData>({
+                action: "update",
                 state: newState,
             }),
         });
@@ -275,10 +275,10 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
 
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/update-title", {
+        await fetch("./presenter/actions/room/title", {
             method: "POST",
-            body: buildFormData<IUpdateTitleFormData>({
-                action: "update-title",
+            body: buildFormData<ITitleActionFormData>({
+                action: "update",
                 title: newTitle,
             }),
         });

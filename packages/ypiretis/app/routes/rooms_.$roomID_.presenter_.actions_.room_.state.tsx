@@ -7,12 +7,19 @@ import {
     requireAuthenticatedPresenterSession,
 } from "~/.server/services/room_service";
 
-import {generatePIN} from "~/.server/utils/crypto";
-
-import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.regenerate-pin";
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.state";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.picklist(["regenerate-pin"])),
+    action: v.pipe(v.string(), v.picklist(["update"])),
+
+    state: v.pipe(
+        v.string(),
+        v.picklist([
+            ROOM_STATES.locked,
+            ROOM_STATES.permissive,
+            ROOM_STATES.unlocked,
+        ]),
+    ),
 });
 
 const ACTION_PARAMS_SCHEMA = v.object({
@@ -53,13 +60,11 @@ export async function action(actionArgs: Route.ActionArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {action} = formData;
+    const {action, state} = formData;
 
     switch (action) {
-        case "regenerate-pin": {
-            const newPIN = generatePIN();
-
-            room.updatePIN(newPIN);
+        case "update": {
+            room.updateState(state);
         }
     }
 }

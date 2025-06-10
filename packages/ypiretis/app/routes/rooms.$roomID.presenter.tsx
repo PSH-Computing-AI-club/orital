@@ -25,8 +25,16 @@ const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
 });
 
-export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
-    return loaderArgs.serverLoader();
+let clientLoaderCache: Awaited<ReturnType<typeof loader>> | null = null;
+
+export async function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
+    const {serverLoader} = loaderArgs;
+
+    if (!clientLoaderCache) {
+        clientLoaderCache = await serverLoader();
+    }
+
+    return clientLoaderCache;
 }
 
 clientLoader.hydrate = true as const;

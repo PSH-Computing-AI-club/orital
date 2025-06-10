@@ -1,5 +1,6 @@
 import {Strong, Text} from "@chakra-ui/react";
 
+import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet, data, useLocation} from "react-router";
 
 import * as v from "valibot";
@@ -25,16 +26,12 @@ const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
 });
 
-let clientLoaderCache: Awaited<ReturnType<typeof loader>> | null = null;
+export const shouldRevalidate = ((_revalidateArgs) => {
+    return false;
+}) satisfies ShouldRevalidateFunction;
 
-export async function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
-    const {serverLoader} = loaderArgs;
-
-    if (!clientLoaderCache) {
-        clientLoaderCache = await serverLoader();
-    }
-
-    return clientLoaderCache;
+export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
+    return loaderArgs.serverLoader();
 }
 
 clientLoader.hydrate = true as const;

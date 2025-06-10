@@ -1,16 +1,22 @@
-import type {ColorPalette} from "@chakra-ui/react";
+import type {ColorPalette, EditableValueChangeDetails} from "@chakra-ui/react";
 import {
     Box,
     Bleed,
     Button,
     Container,
+    Editable,
     Heading,
+    IconButton,
     Image,
     Flex,
     VStack,
 } from "@chakra-ui/react";
 
 import type {MouseEventHandler, PropsWithChildren} from "react";
+
+import CheckIcon from "~/components/icons/check_icon";
+import CloseIcon from "~/components/icons/close_icon";
+import EditBoxIcon from "~/components/icons/edit_box_icon";
 
 import type {To} from "react-router";
 import {Link} from "react-router";
@@ -31,6 +37,12 @@ export interface IAppShellLinkProps extends PropsWithChildren {
 
 export interface IAppShellTitleProps {
     readonly title: string;
+}
+
+export interface IAppShellEditableTitleProps extends IAppShellTitleProps {
+    readonly disabled?: boolean;
+
+    readonly onTitleChange: (details: EditableValueChangeDetails) => void;
 }
 
 export interface IAppShellContainerProps extends PropsWithChildren {
@@ -58,6 +70,46 @@ function AppShellButton(props: IAppShellButtonProps) {
         >
             {children}
         </Button>
+    );
+}
+
+function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
+    const {disabled = false, onTitleChange, title} = props;
+
+    return (
+        <Heading>
+            <Editable.Root
+                disabled={disabled}
+                value={title}
+                activationMode="dblclick"
+                fontSize="inherit"
+                lineHeight="inherit"
+                onValueChange={onTitleChange}
+            >
+                <Editable.Preview />
+                <Editable.Input />
+
+                <Editable.Control>
+                    <Editable.EditTrigger asChild>
+                        <IconButton variant="ghost" colorPalette="cyan">
+                            <EditBoxIcon />
+                        </IconButton>
+                    </Editable.EditTrigger>
+
+                    <Editable.CancelTrigger asChild>
+                        <IconButton variant="outline" colorPalette="red">
+                            <CloseIcon />
+                        </IconButton>
+                    </Editable.CancelTrigger>
+
+                    <Editable.SubmitTrigger asChild>
+                        <IconButton variant="outline" colorPalette="green">
+                            <CheckIcon />
+                        </IconButton>
+                    </Editable.SubmitTrigger>
+                </Editable.Control>
+            </Editable.Root>
+        </Heading>
     );
 }
 
@@ -188,6 +240,7 @@ const AppShell = {
     Button: AppShellButton,
     Container: AppShellContainer,
     Divider: AppShellDivider,
+    EditableTitle: AppShellEditableTitle,
     Icon: AppShellIcon,
     Link: AppShellLink,
     Sidebar: AppShellSidebar,

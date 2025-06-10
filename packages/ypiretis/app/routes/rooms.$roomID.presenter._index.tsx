@@ -1,4 +1,4 @@
-import type {ButtonProps} from "@chakra-ui/react";
+import type {ButtonProps, EditableValueChangeDetails} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -271,9 +271,18 @@ function StateCard() {
 export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {title} = usePresenterContext();
 
+    async function onTitleChange(
+        details: EditableValueChangeDetails,
+    ): Promise<void> {
+        console.log({details});
+    }
+
     return (
         <AppShell.Container>
-            <AppShell.Title title={title} />
+            <AppShell.EditableTitle
+                title={title}
+                onTitleChange={onTitleChange}
+            />
 
             <Grid
                 templateRows="auto 1fr"

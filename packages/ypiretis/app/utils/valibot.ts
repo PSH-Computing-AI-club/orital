@@ -18,6 +18,8 @@ const EXPRESSION_DURATION =
 
 const EXPRESSION_NUMERIC = /^[0-9]*$/;
 
+const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
+
 export const alphabetic = v.regex(
     EXPRESSION_ALPHABETIC,
     "Invalid alphabetic format",
@@ -45,6 +47,8 @@ export const hostname = v.union(
 );
 
 export const numeric = v.regex(EXPRESSION_NUMERIC, "Invalid numeric format.");
+
+export const title = v.regex(EXPRESSION_TITLE, "Invalid title format.");
 
 export const token = (namespace: string) => {
     const prefix = `${namespace}_`;

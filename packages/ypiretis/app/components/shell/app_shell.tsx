@@ -80,7 +80,7 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
         <Heading>
             <Editable.Root
                 disabled={disabled}
-                value={title}
+                defaultValue={title}
                 activationMode="dblclick"
                 fontSize="inherit"
                 lineHeight="inherit"

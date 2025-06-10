@@ -270,7 +270,7 @@ function StateCard() {
 }
 
 export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
-    const {title} = usePresenterContext();
+    const {state, title} = usePresenterContext();
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
@@ -305,13 +305,17 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
 
     return (
         <AppShell.Container>
-            <AppShell.EditableTitle
-                disabled={fetchingAction}
-                title={title}
-                maxLength={32}
-                onTitleCommit={onTitleCommit}
-                onTitleIsValid={onTitleIsValid}
-            />
+            {state === "STATE_DISPOSED" ? (
+                <AppShell.Title title={title} />
+            ) : (
+                <AppShell.EditableTitle
+                    disabled={fetchingAction}
+                    title={title}
+                    maxLength={32}
+                    onTitleCommit={onTitleCommit}
+                    onTitleIsValid={onTitleIsValid}
+                />
+            )}
 
             <Grid
                 templateRows="auto 1fr"

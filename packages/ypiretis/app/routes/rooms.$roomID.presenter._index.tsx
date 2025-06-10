@@ -56,13 +56,12 @@ function AttendeesCard() {
 function PinCard() {
     const {pin, state} = usePresenterContext();
 
-    const [fetchingRegenerateAction, setFetchingRegenerateAction] =
-        useState<boolean>(false);
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     async function onRegenerateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     ): Promise<void> {
-        setFetchingRegenerateAction(true);
+        setFetchingAction(true);
 
         await fetch("./presenter/actions/room/regenerate-pin", {
             method: "POST",
@@ -71,7 +70,7 @@ function PinCard() {
             }),
         });
 
-        setFetchingRegenerateAction(false);
+        setFetchingAction(false);
     }
 
     return (
@@ -110,9 +109,7 @@ function PinCard() {
 
             <Card.Footer>
                 <Button
-                    disabled={
-                        fetchingRegenerateAction || state === "STATE_DISPOSED"
-                    }
+                    disabled={fetchingAction || state === "STATE_DISPOSED"}
                     colorPalette="red"
                     onClick={(event) => onRegenerateClick(event)}
                 >
@@ -175,8 +172,7 @@ function StateCardIcon(props: PropsWithChildren) {
 function StateCard() {
     const {state} = usePresenterContext();
 
-    const [fetchingUpdateAction, setFetchingRegenerateAction] =
-        useState<boolean>(false);
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     async function onStateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -186,7 +182,7 @@ function StateCard() {
             return;
         }
 
-        setFetchingRegenerateAction(true);
+        setFetchingAction(true);
 
         await fetch("./presenter/actions/room/update-state", {
             method: "POST",
@@ -196,7 +192,7 @@ function StateCard() {
             }),
         });
 
-        setFetchingRegenerateAction(false);
+        setFetchingAction(false);
     }
 
     return (
@@ -219,9 +215,7 @@ function StateCard() {
                 >
                     <StateCardButton
                         active={state === "STATE_LOCKED"}
-                        disabled={
-                            fetchingUpdateAction || state === "STATE_DISPOSED"
-                        }
+                        disabled={fetchingAction || state === "STATE_DISPOSED"}
                         colorPalette="red"
                         onClick={(event) => onStateClick(event, "STATE_LOCKED")}
                     >
@@ -233,9 +227,7 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_UNLOCKED"}
-                        disabled={
-                            fetchingUpdateAction || state === "STATE_DISPOSED"
-                        }
+                        disabled={fetchingAction || state === "STATE_DISPOSED"}
                         colorPalette="green"
                         onClick={(event) =>
                             onStateClick(event, "STATE_UNLOCKED")
@@ -249,9 +241,7 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_PERMISSIVE"}
-                        disabled={
-                            fetchingUpdateAction || state === "STATE_DISPOSED"
-                        }
+                        disabled={fetchingAction || state === "STATE_DISPOSED"}
                         colorPalette="yellow"
                         onClick={(event) =>
                             onStateClick(event, "STATE_PERMISSIVE")

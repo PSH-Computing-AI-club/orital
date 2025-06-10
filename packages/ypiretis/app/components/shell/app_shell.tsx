@@ -82,12 +82,13 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                 disabled={disabled}
                 value={title}
                 activationMode="dblclick"
+                submitMode="enter"
                 fontSize="inherit"
                 lineHeight="inherit"
                 onValueCommit={onTitleCommit}
             >
                 <Editable.Preview />
-                <Editable.Input />
+                <Editable.Input pattern="" />
 
                 <Editable.Control>
                     <Editable.EditTrigger asChild>

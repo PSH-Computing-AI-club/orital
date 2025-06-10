@@ -291,6 +291,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
             <AppShell.EditableTitle
                 disabled={fetchingAction}
                 title={title}
+                maxLength={32}
                 onTitleCommit={onTitleCommit}
             />
 

@@ -42,6 +42,8 @@ export interface IAppShellTitleProps {
 export interface IAppShellEditableTitleProps extends IAppShellTitleProps {
     readonly disabled?: boolean;
 
+    readonly maxLength?: number;
+
     readonly onTitleCommit: (details: EditableValueChangeDetails) => void;
 }
 
@@ -74,7 +76,7 @@ function AppShellButton(props: IAppShellButtonProps) {
 }
 
 function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
-    const {disabled = false, onTitleCommit, title} = props;
+    const {disabled = false, onTitleCommit, maxLength, title} = props;
 
     return (
         <Heading>
@@ -83,6 +85,7 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                 value={title}
                 activationMode="dblclick"
                 submitMode="enter"
+                maxLength={maxLength}
                 fontSize="inherit"
                 lineHeight="inherit"
                 onValueCommit={onTitleCommit}

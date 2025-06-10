@@ -1,0 +1,73 @@
+import {data} from "react-router";
+
+import * as v from "valibot";
+
+import {
+    ROOM_STATES,
+    requireAuthenticatedPresenterSession,
+} from "~/.server/services/room_service";
+
+import {title} from "~/utils/valibot";
+
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.update-title";
+
+const ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.picklist(["update-title"])),
+
+    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
+});
+
+const ACTION_PARAMS_SCHEMA = v.object({
+    roomID: v.pipe(v.string(), v.ulid()),
+});
+
+export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
+
+export async function action(actionArgs: Route.ActionArgs) {
+    const {params, request} = actionArgs;
+
+    const {output: paramsData, success: isValidParams} = v.safeParse(
+        ACTION_PARAMS_SCHEMA,
+        params,
+    );
+
+    console.log({isValidParams});
+
+    if (!isValidParams) {
+        throw data("Bad Request", 400);
+    }
+
+    const {room} = await requireAuthenticatedPresenterSession(
+        request,
+        paramsData.roomID,
+    );
+
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
+    }
+
+    const requestFormData = await request.formData();
+
+    const {
+        output: formData,
+        issues,
+        success: isValidFormData,
+    } = v.safeParse(
+        ACTION_FORM_DATA_SCHEMA,
+        Object.fromEntries(requestFormData.entries()),
+    );
+
+    console.log({isValidFormData, issues});
+
+    if (!isValidFormData) {
+        throw data("Bad Request", 400);
+    }
+
+    const {action, title} = formData;
+
+    switch (action) {
+        case "update-title": {
+            room.updateTitle(title);
+        }
+    }
+}

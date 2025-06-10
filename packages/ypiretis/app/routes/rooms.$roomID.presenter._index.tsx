@@ -31,6 +31,7 @@ import {buildFormData} from "~/utils/forms";
 
 import type {IActionFormData as IRegeneratePINFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.regenerate-pin";
 import type {IActionFormData as IUpdateStateFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.update-state";
+import type {IActionFormData as IUpdateTitleFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.update-title";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -261,15 +262,34 @@ function StateCard() {
 export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {title} = usePresenterContext();
 
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
     async function onTitleCommit(
         details: EditableValueChangeDetails,
     ): Promise<void> {
-        console.log({details});
+        const {value: newTitle} = details;
+
+        if (title === newTitle) {
+            return;
+        }
+
+        setFetchingAction(true);
+
+        await fetch("./presenter/actions/room/update-title", {
+            method: "POST",
+            body: buildFormData<IUpdateTitleFormData>({
+                action: "update-title",
+                title: newTitle,
+            }),
+        });
+
+        setFetchingAction(false);
     }
 
     return (
         <AppShell.Container>
             <AppShell.EditableTitle
+                disabled={fetchingAction}
                 title={title}
                 onTitleCommit={onTitleCommit}
             />

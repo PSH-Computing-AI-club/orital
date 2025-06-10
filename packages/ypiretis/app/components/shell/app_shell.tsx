@@ -19,6 +19,8 @@ import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import EditBoxIcon from "~/components/icons/edit_box_icon";
 
+import {APP_NAME} from "~/utils/constants";
+
 import type {To} from "react-router";
 import {Link} from "react-router";
 
@@ -113,50 +115,59 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
     }
 
     return (
-        <Heading>
-            <Editable.Root
-                disabled={disabled}
-                value={title}
-                activationMode="dblclick"
-                submitMode={isValid ? "enter" : "none"}
-                maxLength={maxLength}
-                colorPalette={
-                    isEditing ? (isValid ? undefined : "red") : undefined
-                }
-                fontSize="inherit"
-                lineHeight="inherit"
-                onEditChange={onEditChange}
-                onValueChange={onTitleIsValid ? onValueChange : undefined}
-                onValueCommit={onValueCommit}
-            >
-                <Editable.Preview />
-                <Editable.Input />
+        <>
+            {
+                // **HACK:** React's special handling of the `<title>` element
+                // requires that it has no child elements. That is, it is only
+                // a singular primitive value.
+            }
+            <title>{`${title} :: ${APP_NAME}`}</title>
 
-                <Editable.Control>
-                    <Editable.EditTrigger asChild>
-                        <IconButton variant="ghost" colorPalette="cyan">
-                            <EditBoxIcon />
-                        </IconButton>
-                    </Editable.EditTrigger>
+            <Heading>
+                <Editable.Root
+                    disabled={disabled}
+                    value={title}
+                    activationMode="dblclick"
+                    submitMode={isValid ? "enter" : "none"}
+                    maxLength={maxLength}
+                    colorPalette={
+                        isEditing ? (isValid ? undefined : "red") : undefined
+                    }
+                    fontSize="inherit"
+                    lineHeight="inherit"
+                    onEditChange={onEditChange}
+                    onValueChange={onTitleIsValid ? onValueChange : undefined}
+                    onValueCommit={onValueCommit}
+                >
+                    <Editable.Preview />
+                    <Editable.Input />
 
-                    <Editable.CancelTrigger asChild>
-                        <IconButton variant="outline" colorPalette="red">
-                            <CloseIcon />
-                        </IconButton>
-                    </Editable.CancelTrigger>
+                    <Editable.Control>
+                        <Editable.EditTrigger asChild>
+                            <IconButton variant="ghost" colorPalette="cyan">
+                                <EditBoxIcon />
+                            </IconButton>
+                        </Editable.EditTrigger>
 
-                    <Editable.SubmitTrigger asChild>
-                        <IconButton
-                            disabled={!isValid || disabled}
-                            variant="outline"
-                            colorPalette="green"
-                        >
-                            <CheckIcon />
-                        </IconButton>
-                    </Editable.SubmitTrigger>
-                </Editable.Control>
-            </Editable.Root>
-        </Heading>
+                        <Editable.CancelTrigger asChild>
+                            <IconButton variant="outline" colorPalette="red">
+                                <CloseIcon />
+                            </IconButton>
+                        </Editable.CancelTrigger>
+
+                        <Editable.SubmitTrigger asChild>
+                            <IconButton
+                                disabled={!isValid || disabled}
+                                variant="outline"
+                                colorPalette="green"
+                            >
+                                <CheckIcon />
+                            </IconButton>
+                        </Editable.SubmitTrigger>
+                    </Editable.Control>
+                </Editable.Root>
+            </Heading>
+        </>
     );
 }
 
@@ -185,7 +196,15 @@ function AppShellIcon(props: IAppShellIconProps) {
 function AppShellTitle(props: IAppShellTitleProps) {
     const {title} = props;
 
-    return <Heading>{title}</Heading>;
+    return (
+        <>
+            {
+                // **HACK:** See similar comment for `AppShellEditableTitle`.
+            }
+            <title>{`${title} :: ${APP_NAME}`}</title>
+            <Heading>{title}</Heading>
+        </>
+    );
 }
 
 function AppShellLink(props: IAppShellLinkProps) {

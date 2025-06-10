@@ -119,61 +119,56 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {pathname} = useLocation();
 
     return (
-        <SessionContextProvider session={session}>
-            <PresenterContextProvider initialRoomData={initialRoomData}>
-                <AppShell.Root>
-                    <AppShell.Sidebar>
-                        <AppShell.Link
-                            to={`/rooms/${roomID}/presenter`}
-                            active={pathname === `/rooms/${roomID}/presenter`}
-                        >
-                            <AppShell.Icon>
-                                <DashboardIcon />
-                            </AppShell.Icon>
-                            Dashboard
-                        </AppShell.Link>
+        <AppShell.Root>
+            <AppShell.Sidebar>
+                <AppShell.Link
+                    to={`/rooms/${roomID}/presenter`}
+                    active={pathname === `/rooms/${roomID}/presenter`}
+                >
+                    <AppShell.Icon>
+                        <DashboardIcon />
+                    </AppShell.Icon>
+                    Dashboard
+                </AppShell.Link>
 
-                        <AppShell.Link
-                            to={`/rooms/${roomID}/presenter/polls`}
-                            active={
-                                pathname === `/rooms/${roomID}/presenter/polls`
-                            }
-                        >
-                            <AppShell.Icon>
-                                <ChartIcon />
-                            </AppShell.Icon>
-                            Polls
-                        </AppShell.Link>
+                <AppShell.Link
+                    to={`/rooms/${roomID}/presenter/polls`}
+                    active={pathname === `/rooms/${roomID}/presenter/polls`}
+                >
+                    <AppShell.Icon>
+                        <ChartIcon />
+                    </AppShell.Icon>
+                    Polls
+                </AppShell.Link>
 
-                        <AppShell.Divider />
+                <AppShell.Divider />
 
-                        <AppShell.Link
-                            to={`/rooms/${roomID}/presenter/settings`}
-                            active={
-                                pathname ===
-                                `/rooms/${roomID}/presenter/settings`
-                            }
-                        >
-                            <AppShell.Icon>
-                                <SlidersIcon />
-                            </AppShell.Icon>
-                            Settings
-                        </AppShell.Link>
+                <AppShell.Link
+                    to={`/rooms/${roomID}/presenter/settings`}
+                    active={pathname === `/rooms/${roomID}/presenter/settings`}
+                >
+                    <AppShell.Icon>
+                        <SlidersIcon />
+                    </AppShell.Icon>
+                    Settings
+                </AppShell.Link>
 
-                        <AppShell.Button
-                            colorPalette="red"
-                            onClick={() => console.log("hello world!")}
-                        >
-                            <AppShell.Icon>
-                                <CloseIcon />
-                            </AppShell.Icon>
-                            Close Room
-                        </AppShell.Button>
-                    </AppShell.Sidebar>
+                <AppShell.Button
+                    colorPalette="red"
+                    onClick={() => console.log("hello world!")}
+                >
+                    <AppShell.Icon>
+                        <CloseIcon />
+                    </AppShell.Icon>
+                    Close Room
+                </AppShell.Button>
+            </AppShell.Sidebar>
 
+            <SessionContextProvider session={session}>
+                <PresenterContextProvider initialRoomData={initialRoomData}>
                     <Outlet />
-                </AppShell.Root>
-            </PresenterContextProvider>
-        </SessionContextProvider>
+                </PresenterContextProvider>
+            </SessionContextProvider>
+        </AppShell.Root>
     );
 }

@@ -12,6 +12,8 @@ import {
 import type {MouseEvent, PropsWithChildren} from "react";
 import {useState} from "react";
 
+import * as v from "valibot";
+
 import type {IRoomStates} from "~/.server/services/room_service";
 
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
@@ -28,12 +30,20 @@ import AppShell from "~/components/shell/app_shell";
 import {usePresenterContext} from "~/state/presenter";
 
 import {buildFormData} from "~/utils/forms";
+import {title} from "~/utils/valibot";
 
 import type {IActionFormData as IPINActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.pin";
 import type {IActionFormData as IStateActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.state";
 import type {IActionFormData as ITitleActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.title";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
+
+const UX_TITLE_SCHEMA = v.pipe(
+    v.string(),
+    v.minLength(1),
+    v.maxLength(32),
+    title,
+);
 
 function AttendeesCard() {
     return (
@@ -286,6 +296,13 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
         setFetchingAction(false);
     }
 
+    function onTitleIsValid(details: EditableValueChangeDetails): boolean {
+        const {value: newTitle} = details;
+        const {success} = v.safeParse(UX_TITLE_SCHEMA, newTitle);
+
+        return success;
+    }
+
     return (
         <AppShell.Container>
             <AppShell.EditableTitle
@@ -293,6 +310,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 title={title}
                 maxLength={32}
                 onTitleCommit={onTitleCommit}
+                onTitleIsValid={onTitleIsValid}
             />
 
             <Grid

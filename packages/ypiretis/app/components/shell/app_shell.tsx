@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import type {MouseEventHandler, PropsWithChildren} from "react";
+import {useState} from "react";
 
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
@@ -45,6 +46,8 @@ export interface IAppShellEditableTitleProps extends IAppShellTitleProps {
     readonly maxLength?: number;
 
     readonly onTitleCommit: (details: EditableValueChangeDetails) => void;
+
+    readonly onTitleIsValid?: (details: EditableValueChangeDetails) => boolean;
 }
 
 export interface IAppShellContainerProps extends PropsWithChildren {
@@ -76,7 +79,38 @@ function AppShellButton(props: IAppShellButtonProps) {
 }
 
 function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
-    const {disabled = false, onTitleCommit, maxLength, title} = props;
+    const {
+        disabled = false,
+        onTitleCommit,
+        onTitleIsValid,
+        maxLength,
+        title,
+    } = props;
+
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isValid, setIsValid] = useState<boolean>(true);
+
+    // **HACK:** `Editable.RootProps.value` controls the display value AND
+    // the value passed to `onValueCommit`. Thereforce, we need to run a
+    // virtual value state based off the change event to fake our own
+    // `onTitleCommit` event.
+    //
+    // Yay~!
+    const [value, setValue] = useState<string>(title);
+
+    function onEditChange(details: {edit: boolean}): void {
+        setIsEditing(details.edit);
+    }
+
+    function onValueChange(details: EditableValueChangeDetails): void {
+        setIsValid(onTitleIsValid!(details));
+
+        setValue(details.value);
+    }
+
+    function onValueCommit(_details: EditableValueChangeDetails): void {
+        onTitleCommit({value});
+    }
 
     return (
         <Heading>
@@ -84,14 +118,19 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                 disabled={disabled}
                 value={title}
                 activationMode="dblclick"
-                submitMode="enter"
+                submitMode={isValid ? "enter" : "none"}
                 maxLength={maxLength}
+                colorPalette={
+                    isEditing ? (isValid ? undefined : "red") : undefined
+                }
                 fontSize="inherit"
                 lineHeight="inherit"
-                onValueCommit={onTitleCommit}
+                onEditChange={onEditChange}
+                onValueChange={onTitleIsValid ? onValueChange : undefined}
+                onValueCommit={onValueCommit}
             >
                 <Editable.Preview />
-                <Editable.Input pattern="" />
+                <Editable.Input />
 
                 <Editable.Control>
                     <Editable.EditTrigger asChild>
@@ -107,7 +146,11 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                     </Editable.CancelTrigger>
 
                     <Editable.SubmitTrigger asChild>
-                        <IconButton variant="outline" colorPalette="green">
+                        <IconButton
+                            disabled={!isValid || disabled}
+                            variant="outline"
+                            colorPalette="green"
+                        >
                             <CheckIcon />
                         </IconButton>
                     </Editable.SubmitTrigger>

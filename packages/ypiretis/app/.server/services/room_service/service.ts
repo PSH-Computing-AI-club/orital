@@ -182,14 +182,8 @@ export async function requireAuthenticatedAttendeeSession(
     }
 
     if (!hasAttendee) {
-        // **NOTE:** While a `403` would be more appropriate, we do not want our
-        // room IDs to be enumerable by external clients.
-        //
-        // Similarly to how services return not found errors when responding to
-        // username + password login attempts. This is to prevent information
-        // leakage for the "semi-private" room IDs.
-        throw data("Not Found", {
-            status: 404,
+        throw data("Forbidden", {
+            status: 403,
         });
     }
 
@@ -225,15 +219,17 @@ export async function requireAuthenticatedPresenterConnection(
 ): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID);
+    const room = LIVE_ROOMS.get(roomID) ?? null;
 
-    if (
-        !room ||
-        // **NOTE:** See comment for `requireAuthenticatedAttendeeSession`.
-        room.presenter.id !== user.id
-    ) {
+    if (room === null) {
         throw data("Not Found", {
             status: 404,
+        });
+    }
+
+    if (room.presenter.id !== user.id) {
+        throw data("Forbidden", {
+            status: 403,
         });
     }
 
@@ -261,11 +257,17 @@ export async function requireAuthenticatedPresenterSession(
 ): Promise<IAuthenticatedRoomConnection> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID);
+    const room = LIVE_ROOMS.get(roomID) ?? null;
 
-    if (!room || room.presenter.id !== user.id) {
+    if (room === null) {
         throw data("Not Found", {
             status: 404,
+        });
+    }
+
+    if (room.presenter.id !== user.id) {
+        throw data("Forbidden", {
+            status: 403,
         });
     }
 

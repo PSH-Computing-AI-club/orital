@@ -18,6 +18,8 @@ const EXPRESSION_DURATION =
 
 const EXPRESSION_NUMERIC = /^[0-9]*$/;
 
+const EXPRESSION_PIN = /^[0-9A-NP-Z!@#$%&?=+]*$/u;
+
 const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
 
 export const alphabetic = v.regex(
@@ -47,6 +49,8 @@ export const hostname = v.union(
 );
 
 export const numeric = v.regex(EXPRESSION_NUMERIC, "Invalid numeric format.");
+
+export const pin = v.regex(EXPRESSION_PIN, "Invalid PIN format.");
 
 export const title = v.regex(EXPRESSION_TITLE, "Invalid title format.");
 

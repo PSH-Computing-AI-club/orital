@@ -69,6 +69,9 @@ function PINCard() {
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
     async function onRegenerateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     ): Promise<void> {
@@ -120,7 +123,7 @@ function PINCard() {
 
             <Card.Footer>
                 <Button
-                    disabled={fetchingAction || state === "STATE_DISPOSED"}
+                    disabled={!canFetchAction}
                     colorPalette="red"
                     onClick={(event) => onRegenerateClick(event)}
                 >
@@ -128,11 +131,7 @@ function PINCard() {
                     <ReloadIcon />
                 </Button>
 
-                <Button
-                    disabled={state === "STATE_DISPOSED"}
-                    colorPalette="cyan"
-                    flexGrow="1"
-                >
+                <Button disabled={isDisposed} colorPalette="cyan" flexGrow="1">
                     QR Code
                     <ExternalLinkIcon />
                 </Button>
@@ -185,6 +184,9 @@ function StateCard() {
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
     async function onStateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         newState: Exclude<IRoomStates, "STATE_DISPOSED">,
@@ -226,7 +228,7 @@ function StateCard() {
                 >
                     <StateCardButton
                         active={state === "STATE_LOCKED"}
-                        disabled={fetchingAction || state === "STATE_DISPOSED"}
+                        disabled={!canFetchAction}
                         colorPalette="red"
                         onClick={(event) => onStateClick(event, "STATE_LOCKED")}
                     >
@@ -238,7 +240,7 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_UNLOCKED"}
-                        disabled={fetchingAction || state === "STATE_DISPOSED"}
+                        disabled={!canFetchAction}
                         colorPalette="green"
                         onClick={(event) =>
                             onStateClick(event, "STATE_UNLOCKED")
@@ -252,7 +254,7 @@ function StateCard() {
 
                     <StateCardButton
                         active={state === "STATE_PERMISSIVE"}
-                        disabled={fetchingAction || state === "STATE_DISPOSED"}
+                        disabled={!canFetchAction}
                         colorPalette="yellow"
                         onClick={(event) =>
                             onStateClick(event, "STATE_PERMISSIVE")
@@ -273,6 +275,9 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {state, title} = usePresenterContext();
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
 
     async function onTitleCommit(
         details: EditableValueChangeDetails,
@@ -305,11 +310,11 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
 
     return (
         <AppShell.Container>
-            {state === "STATE_DISPOSED" ? (
+            {isDisposed ? (
                 <AppShell.Title title={title} />
             ) : (
                 <AppShell.EditableTitle
-                    disabled={fetchingAction}
+                    disabled={!canFetchAction}
                     title={title}
                     maxLength={32}
                     onTitleCommit={onTitleCommit}

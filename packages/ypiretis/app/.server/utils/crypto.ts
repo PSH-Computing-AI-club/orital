@@ -53,14 +53,41 @@ const PIN_ALPHABET = [
     "*",
 ] as const;
 
+export function generateRandomNumberBatch(
+    amountOfNumbers: number,
+    rangeMax: number,
+    rangeMin: number = 0,
+    bufferBatchSize: number = amountOfNumbers * 2,
+): number[] {
+    const numbers: number[] = [];
+    const buffer = new Uint8Array(bufferBatchSize);
+
+    const rangeSize = rangeMax - rangeMin;
+    const byteThreshold = Math.floor(256 / rangeSize) * rangeSize;
+
+    while (numbers.length < amountOfNumbers) {
+        crypto.getRandomValues(buffer);
+
+        for (const byte of buffer) {
+            if (byte < byteThreshold) {
+                const offset = byte % rangeSize;
+
+                numbers.push(rangeMin + offset);
+
+                if (numbers.length === amountOfNumbers) {
+                    return numbers;
+                }
+            }
+        }
+    }
+
+    return numbers;
+}
+
 export function generatePIN(): string {
-    const buffer = new Uint8Array(6);
+    const indices = generateRandomNumberBatch(6, PIN_ALPHABET.length);
 
-    crypto.getRandomValues(buffer);
-
-    return Array.from(buffer)
-        .map((value) => PIN_ALPHABET[value % PIN_ALPHABET.length])
-        .join("");
+    return indices.map((index) => PIN_ALPHABET[index]).join("");
 }
 
 export function hashSecret(secret: string): string {

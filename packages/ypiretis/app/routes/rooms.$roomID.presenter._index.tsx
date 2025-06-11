@@ -5,8 +5,12 @@ import {
     Card,
     Grid,
     GridItem,
+    HStack,
     SimpleGrid,
+    Span,
     PinInput,
+    VStack,
+    Tag,
 } from "@chakra-ui/react";
 
 import type {MouseEvent, PropsWithChildren} from "react";
@@ -23,11 +27,14 @@ import NotificationIcon from "~/components/icons/notification_icon";
 import PinIcon from "~/components/icons/pin_icon";
 import ReloadIcon from "~/components/icons/reload_icon";
 import ShieldIcon from "~/components/icons/shield_icon";
+import TeachIcon from "~/components/icons/teach";
+import UserIcon from "~/components/icons/user";
 import UsersIcon from "~/components/icons/users_icon";
 
 import AppShell from "~/components/shell/app_shell";
 
 import {usePresenterContext} from "~/state/presenter";
+import {useAuthenticatedSessionContext} from "~/state/session";
 
 import {buildFormData} from "~/utils/forms";
 import {title} from "~/utils/valibot";
@@ -45,7 +52,54 @@ const UX_TITLE_SCHEMA = v.pipe(
     title,
 );
 
+interface IAttendeeListItemProps {
+    readonly isPresenter?: boolean;
+
+    readonly user: {
+        readonly accountID: string;
+
+        readonly firstName: string;
+
+        readonly lastName: string;
+    };
+}
+
+function AttendeeListItem(props: IAttendeeListItemProps) {
+    const {isPresenter, user} = props;
+    const {accountID, firstName, lastName} = user;
+
+    return (
+        <HStack gap="2" bg="bg" padding="3" fontSize="xs">
+            {isPresenter ? (
+                <TeachIcon fontSize="2xl" />
+            ) : (
+                <UserIcon fontSize="2xl" />
+            )}
+
+            <VStack gap="0" alignItems="flex-start" lineHeight="shorter">
+                <HStack>
+                    {firstName} {lastName}
+                    <Tag.Root
+                        variant="solid"
+                        colorPalette={isPresenter ? "orange" : "cyan"}
+                        size="sm"
+                    >
+                        <Tag.Label>
+                            {isPresenter ? "Presenter" : "Attendee"}
+                        </Tag.Label>
+                    </Tag.Root>
+                </HStack>
+
+                <Span color="fg.muted">{accountID}</Span>
+            </VStack>
+        </HStack>
+    );
+}
+
 function AttendeesCard() {
+    const {attendees} = usePresenterContext();
+    const session = useAuthenticatedSessionContext();
+
     return (
         <>
             <Card.Body gap="4" maxBlockSize="full" overflow="hidden">
@@ -58,7 +112,25 @@ function AttendeesCard() {
                     <UsersIcon />
                 </Card.Title>
 
-                <Card.Description>blahblahlblah</Card.Description>
+                <VStack
+                    alignItems="stretch"
+                    gap="2"
+                    bg="bg.muted"
+                    flexGrow="1"
+                    padding="3"
+                    maxBlockSize="full"
+                    overflowInline="hidden"
+                    overflowBlock="auto"
+                >
+                    <AttendeeListItem user={session} isPresenter />
+
+                    {attendees.map((attendee) => (
+                        <AttendeeListItem
+                            key={attendee.accountID}
+                            user={attendee}
+                        />
+                    ))}
+                </VStack>
             </Card.Body>
         </>
     );

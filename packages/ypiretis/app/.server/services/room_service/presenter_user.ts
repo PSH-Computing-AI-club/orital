@@ -1,9 +1,14 @@
-import type {IEntityMessage} from "./entity";
-import {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
-
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
-import type {IRoomStates} from "./room";
+import type {IEntityMessages} from "./entity";
+import {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
+import type {
+    IRoomAttendeeAddedMessage,
+    IRoomAttendeeDisposedMessage,
+    IRoomDisplayAddedMessage,
+    IRoomDisplayDisposedMessage,
+    IRoomPINUpdateMessage,
+} from "./messages";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
 
@@ -12,68 +17,12 @@ const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 export const PRESENTER_ENTITY_ID = 1;
 
 export type IPresenterUserMessages =
-    | IPresenterRoomAttendeeAddedMessage
-    | IPresenterRoomAttendeeDisposedMessage
-    | IPresenterRoomDisplayAddedMessage
-    | IPresenterRoomDisplayDisposedMessage
-    | IPresenterRoomPINUpdateMessage
-    | IPresenterRoomStateUpdateMessage
-    | IPresenterRoomTitleUpdateMessage;
-
-export type IPresenterRoomAttendeeAddedMessage = IEntityMessage<
-    "room.attendeeAdded",
-    {
-        readonly accountID: string;
-
-        readonly entityID: number;
-
-        readonly firstName: string;
-
-        readonly lastName: string;
-    }
->;
-
-export type IPresenterRoomAttendeeDisposedMessage = IEntityMessage<
-    "room.attendeeDisposed",
-    {
-        readonly entityID: number;
-    }
->;
-
-export type IPresenterRoomDisplayAddedMessage = IEntityMessage<
-    "room.displayAdded",
-    {
-        readonly entityID: number;
-    }
->;
-
-export type IPresenterRoomDisplayDisposedMessage = IEntityMessage<
-    "room.displayDisposed",
-    {
-        readonly entityID: number;
-    }
->;
-
-export type IPresenterRoomPINUpdateMessage = IEntityMessage<
-    "room.pinUpdate",
-    {
-        readonly pin: string;
-    }
->;
-
-export type IPresenterRoomStateUpdateMessage = IEntityMessage<
-    "room.stateUpdate",
-    {
-        readonly state: IRoomStates;
-    }
->;
-
-export type IPresenterRoomTitleUpdateMessage = IEntityMessage<
-    "room.titleUpdate",
-    {
-        readonly title: string;
-    }
->;
+    | IRoomAttendeeAddedMessage
+    | IRoomAttendeeDisposedMessage
+    | IRoomDisplayAddedMessage
+    | IRoomDisplayDisposedMessage
+    | IRoomPINUpdateMessage
+    | IEntityMessages;
 
 export interface IPresenterUserOptions extends IUserOptions {}
 
@@ -104,12 +53,12 @@ export default function makePresenterUser(
         [SYMBOL_PRESENTER_USER_BRAND]: true,
 
         [SYMBOL_ENTITY_ON_DISPOSE]() {
+            user[SYMBOL_ENTITY_ON_DISPOSE]();
+
             entityAddedSubscription.dispose();
             entityDisposedSubscription.dispose();
 
             pinUpdateSubscription.dispose();
-            stateUpdateSubscription.dispose();
-            titleUpdateSubscription.dispose();
         },
     } satisfies IPresenterUser;
 
@@ -184,34 +133,6 @@ export default function makePresenterUser(
             },
         });
     });
-
-    const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
-        (event) => {
-            const {newState} = event;
-
-            presenter._dispatch({
-                event: "room.stateUpdate",
-
-                data: {
-                    state: newState,
-                },
-            });
-        },
-    );
-
-    const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
-        (event) => {
-            const {newTitle} = event;
-
-            presenter._dispatch({
-                event: "room.titleUpdate",
-
-                data: {
-                    title: newTitle,
-                },
-            });
-        },
-    );
 
     return presenter;
 }

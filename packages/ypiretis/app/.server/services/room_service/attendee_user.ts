@@ -1,3 +1,4 @@
+import type {IEntityMessages} from "./entity";
 import {ENTITY_STATES} from "./entity";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
@@ -15,7 +16,7 @@ export const ATTENDEE_STATES = {
 export type IAttendeeUserStates =
     (typeof ATTENDEE_STATES)[keyof typeof ATTENDEE_STATES];
 
-export type IAttendeeUserMessages = null;
+export type IAttendeeUserMessages = IEntityMessages;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 

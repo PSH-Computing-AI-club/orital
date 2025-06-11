@@ -4,7 +4,13 @@ import makeEvent from "../../../utils/event";
 import type {IConnection} from "../../utils/event_stream";
 import type {ExtendLiterals} from "../../utils/types";
 
-import {IRoom} from "./room";
+import type {
+    IEntityMessage,
+    IEntityMessageData,
+    IRoomStateUpdateMessage,
+    IRoomTitleUpdateMessage,
+} from "./messages";
+import type {IRoom} from "./room";
 
 const SYMBOL_ENTITY_BRAND: unique symbol = Symbol();
 
@@ -18,28 +24,9 @@ export const ENTITY_STATES = {
 
 export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
-export type IEntityMessageData =
-    | boolean
-    | number
-    | string
-    | IEntityMessageData[]
-    | {[key: number | string]: IEntityMessageData};
+export type IEntityMessages = IRoomStateUpdateMessage | IRoomTitleUpdateMessage;
 
-export type IGenericEntity = IEntity<
-    IEntityMessage<string, IEntityMessageData>,
-    IEntityStates,
-    string,
-    IEntityMessageData
->;
-
-export interface IEntityMessage<
-    N extends string,
-    D extends IEntityMessageData,
-> {
-    readonly event: N;
-
-    readonly data: D;
-}
+export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 
 export interface IEntityStateUpdateEvent<S extends string> {
     readonly oldState: ExtendLiterals<S, IEntityStates>;
@@ -63,7 +50,7 @@ export interface IEntity<
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
-    [SYMBOL_ENTITY_ON_DISPOSE]?: () => void;
+    [SYMBOL_ENTITY_ON_DISPOSE]: () => void;
 
     readonly EVENT_STATE_UPDATE: IEvent<
         IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
@@ -122,7 +109,8 @@ export default function makeEntity<
     S extends string = IEntityStates,
     N extends string = string,
     D extends IEntityMessageData = IEntityMessageData,
->(options: IEntityOptions): IEntity<T, S> {
+    E extends IEntity<T, S, N, D> = IEntity<T, S, N, D>,
+>(options: IEntityOptions): E {
     const {id, room} = options;
 
     const EVENT_STATE_UPDATE =
@@ -143,17 +131,20 @@ export default function makeEntity<
         });
     }
 
-    return {
+    const entity = {
         [SYMBOL_ENTITY_BRAND]: true,
+
+        [SYMBOL_ENTITY_ON_DISPOSE]() {
+            stateUpdateSubscription.dispose();
+            titleUpdateSubscription.dispose();
+        },
+
+        EVENT_STATE_UPDATE,
 
         id,
 
-        EVENT_STATE_UPDATE: EVENT_STATE_UPDATE as unknown as IEvent<
-            IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
-        >,
-
         get state() {
-            return state as ExtendLiterals<S, IEntityStates>;
+            return state;
         },
 
         _disconnect() {
@@ -201,5 +192,35 @@ export default function makeEntity<
 
             room._entityDisposed(this as unknown as IGenericEntity);
         },
-    };
+    } satisfies IGenericEntity;
+
+    const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
+        (event) => {
+            const {newState} = event;
+
+            entity._dispatch({
+                event: "room.stateUpdate",
+
+                data: {
+                    state: newState,
+                },
+            });
+        },
+    );
+
+    const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
+        (event) => {
+            const {newTitle} = event;
+
+            entity._dispatch({
+                event: "room.titleUpdate",
+
+                data: {
+                    title: newTitle,
+                },
+            });
+        },
+    );
+
+    return entity as unknown as E;
 }

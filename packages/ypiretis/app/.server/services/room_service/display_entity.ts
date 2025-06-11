@@ -1,9 +1,10 @@
+import type {IEntityMessages} from "./entity";
 import type {IEntity, IEntityOptions} from "./entity";
 import makeEntity from "./entity";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 
-export type IDisplayEntityMessages = null;
+export type IDisplayEntityMessages = IEntityMessages;
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 

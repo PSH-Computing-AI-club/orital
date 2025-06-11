@@ -81,12 +81,6 @@ export async function insertOneLive(
         LIVE_ROOMS.delete(oldPIN);
     });
 
-    const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
-        (event) => {
-            // **TODO:** update db title
-        },
-    );
-
     const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {
             const {newState} = event;
@@ -101,6 +95,12 @@ export async function insertOneLive(
             }
 
             // **TODO:** update db state
+        },
+    );
+
+    const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
+        (event) => {
+            // **TODO:** update db title
         },
     );
 

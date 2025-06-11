@@ -49,8 +49,6 @@ const PIN_ALPHABET = [
     "?",
     "=",
     "+",
-    "~",
-    "*",
 ] as const;
 
 export function generateRandomNumberBatch(

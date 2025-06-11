@@ -1,0 +1,10 @@
+import type {IIconProps} from "./icon";
+import IconRoot from "./icon";
+
+export default function TeachIcon(props: IIconProps) {
+    return (
+        <IconRoot {...props}>
+            <path d="M9 2H5v4h4V2zm7 7V7H2v9h2v6h2v-6h2v6h2V9h6zm-5-7h11v14H11v-2h9V4h-9V2z" />
+        </IconRoot>
+    );
+}

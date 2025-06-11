@@ -27,8 +27,8 @@ import NotificationIcon from "~/components/icons/notification_icon";
 import PinIcon from "~/components/icons/pin_icon";
 import ReloadIcon from "~/components/icons/reload_icon";
 import ShieldIcon from "~/components/icons/shield_icon";
-import TeachIcon from "~/components/icons/teach";
-import UserIcon from "~/components/icons/user";
+import TeachIcon from "~/components/icons/teach_icon";
+import UserIcon from "~/components/icons/user_icon";
 import UsersIcon from "~/components/icons/users_icon";
 
 import AppShell from "~/components/shell/app_shell";

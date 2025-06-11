@@ -1,0 +1,10 @@
+import type {IIconProps} from "./icon";
+import IconRoot from "./icon";
+
+export default function CopyIcon(props: IIconProps) {
+    return (
+        <IconRoot {...props}>
+            <path d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" />
+        </IconRoot>
+    );
+}

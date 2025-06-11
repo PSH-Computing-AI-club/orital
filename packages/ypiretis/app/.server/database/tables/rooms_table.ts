@@ -3,8 +3,6 @@ import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
 
-import {generatePIN} from "../../utils/crypto";
-
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
@@ -18,11 +16,6 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .notNull()
         .unique()
         .$defaultFn(() => ulid()),
-
-    pin: text("pin")
-        .notNull()
-        .unique()
-        .$defaultFn(() => generatePIN()),
 
     presenterUserID: text("presenter_user_id")
         .notNull()

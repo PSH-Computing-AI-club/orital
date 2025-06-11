@@ -48,7 +48,7 @@ const UX_TITLE_SCHEMA = v.pipe(
 function AttendeesCard() {
     return (
         <>
-            <Card.Body gap="4">
+            <Card.Body gap="4" maxBlockSize="full" overflow="hidden">
                 <Card.Title
                     display="flex"
                     alignItems="center"
@@ -327,7 +327,9 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 templateColumns="1fr 1fr"
                 columnGap="8"
                 rowGap="4"
-                blockSize="full"
+                flexGrow="1"
+                maxBlockSize="full"
+                overflow="hidden"
             >
                 <Card.Root>
                     <PINCard />
@@ -337,8 +339,13 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                     <StateCard />
                 </Card.Root>
 
-                <GridItem colSpan={2}>
-                    <Card.Root blockSize="full">
+                <GridItem
+                    colSpan={2}
+                    display="flex"
+                    maxBlockSize="full"
+                    overflow="hidden"
+                >
+                    <Card.Root flexGrow="1">
                         <AttendeesCard />
                     </Card.Root>
                 </GridItem>

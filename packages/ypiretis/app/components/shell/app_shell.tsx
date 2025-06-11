@@ -252,8 +252,10 @@ function AppShellContainer(props: IAppShellContainerProps) {
                 display="flex"
                 flexDirection="column"
                 gap="4"
+                flexGrow={fluid ? undefined : "1"}
+                maxBlockSize={fluid ? undefined : "full"}
+                overflow={fluid ? undefined : "hidden"}
                 paddingBlock="4"
-                minBlockSize="full"
             >
                 {children}
             </Container>

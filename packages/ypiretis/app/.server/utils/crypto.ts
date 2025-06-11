@@ -19,7 +19,6 @@ const PIN_ALPHABET = [
     "L",
     "M",
     "N",
-    "O",
     "P",
     "Q",
     "R",

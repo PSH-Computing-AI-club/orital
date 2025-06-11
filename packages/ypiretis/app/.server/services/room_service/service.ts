@@ -117,9 +117,20 @@ export async function requireAuthenticatedAttendeeConnection(
         // **TODO:** We should probably create a a direct lookup for by user id...
         // but this is good enough to now. ¯\_(ツ)_/¯
         if (attendee.user.id === user.id) {
-            throw data("Conflict", {
-                status: 409,
-            });
+            // **HACK:** The deconstructor callback for `eventStream` is not called
+            // properly by Vite's development server.
+            //
+            // So, we have to be slightly more leient here and just dispose of the
+            // the existing connection to make development mode easier.
+            if (APP_IS_PRODUCTION) {
+                throw data("Conflict", {
+                    status: 409,
+                });
+            } else {
+                attendee._dispose();
+            }
+
+            break;
         }
     }
 
@@ -147,16 +158,8 @@ export async function requireAuthenticatedAttendeeSession(
 
     for (const attendee of room.attendees.values()) {
         if (attendee.user.id === user.id) {
-            // **HACK:** The deconstructor callback for `eventStream` is not called
-            // properly by Vite's development server.
-            //
-            // So, we have to be slightly more leient here and just dispose of the
-            // the existing connection to make development mode easier.
-            if (APP_IS_PRODUCTION) {
-                hasAttendee = true;
-            } else {
-                attendee._dispose();
-            }
+            hasAttendee = true;
+            break;
         }
     }
 

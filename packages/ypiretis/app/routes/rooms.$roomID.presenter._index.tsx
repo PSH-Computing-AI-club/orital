@@ -64,7 +64,7 @@ function AttendeesCard() {
     );
 }
 
-function PinCard() {
+function PINCard() {
     const {pin, state} = usePresenterContext();
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
@@ -325,7 +325,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 blockSize="full"
             >
                 <Card.Root>
-                    <PinCard />
+                    <PINCard />
                 </Card.Root>
 
                 <Card.Root>

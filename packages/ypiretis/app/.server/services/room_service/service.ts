@@ -38,6 +38,10 @@ export function findOneLiveByRoomID(roomID: string): IRoom | null {
     return LIVE_ROOMS.get(roomID) ?? null;
 }
 
+export function findOneLiveByPIN(pin: string): IRoom | null {
+    return LIVE_ROOMS.get(pin) ?? null;
+}
+
 export async function insertOneLive(
     options: IInsertOneOptions,
 ): Promise<IRoom> {
@@ -63,12 +67,15 @@ export async function insertOneLive(
         title,
     });
 
+    // **HACK:** We are actually doing a clever hack here. The room ID
+    // ULIDs (26 characters) will never be the length of a PIN (6 characters).
+    //
+    // So, we can just use the same map for dual-indexing.
     LIVE_ROOMS.set(room.roomID, room);
+    LIVE_ROOMS.set(room.pin, room);
 
     const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
         const {newPIN, oldPIN} = event;
-
-        // **TODO:** update db pin
 
         LIVE_ROOMS.set(newPIN, room);
         LIVE_ROOMS.delete(oldPIN);
@@ -90,6 +97,7 @@ export async function insertOneLive(
                 titleUpdateSubscription.dispose();
 
                 LIVE_ROOMS.delete(room.pin);
+                LIVE_ROOMS.delete(room.roomID);
             }
 
             // **TODO:** update db state

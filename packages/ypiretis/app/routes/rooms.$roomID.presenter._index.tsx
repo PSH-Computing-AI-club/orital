@@ -6,6 +6,7 @@ import {
     Grid,
     GridItem,
     HStack,
+    IconButton,
     SimpleGrid,
     Span,
     PinInput,
@@ -20,6 +21,7 @@ import * as v from "valibot";
 
 import type {IRoomStates} from "~/.server/services/room_service";
 
+import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
@@ -144,6 +146,12 @@ function PINCard() {
     const isDisposed = state === "STATE_DISPOSED";
     const canFetchAction = !(isDisposed || fetchingAction);
 
+    async function onCopyClick(
+        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ): Promise<void> {
+        await navigator.clipboard.writeText(pin);
+    }
+
     async function onRegenerateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     ): Promise<void> {
@@ -207,6 +215,25 @@ function PINCard() {
                     QR Code
                     <ExternalLinkIcon />
                 </Button>
+
+                <Button
+                    disabled={isDisposed}
+                    hideBelow="xl"
+                    colorPalette="green"
+                    onClick={onCopyClick}
+                >
+                    Copy
+                    <CopyIcon />
+                </Button>
+
+                <IconButton
+                    disabled={isDisposed}
+                    hideFrom="xl"
+                    colorPalette="green"
+                    onClick={onCopyClick}
+                >
+                    <CopyIcon />
+                </IconButton>
             </Card.Footer>
         </>
     );

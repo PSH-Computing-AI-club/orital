@@ -5,9 +5,8 @@ import * as v from "valibot";
 import {
     ROOM_STATES,
     requireAuthenticatedPresenterSession,
+    generateUniquePIN,
 } from "~/.server/services/room_service";
-
-import {generatePIN} from "~/.server/utils/crypto";
 
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.pin";
 
@@ -57,7 +56,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     switch (action) {
         case "regenerate": {
-            const newPIN = generatePIN();
+            const newPIN = generateUniquePIN();
 
             room.updatePIN(newPIN);
         }

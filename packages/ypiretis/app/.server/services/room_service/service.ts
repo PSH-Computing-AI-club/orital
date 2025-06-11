@@ -42,6 +42,16 @@ export function findOneLiveByPIN(pin: string): IRoom | null {
     return LIVE_ROOMS.get(pin) ?? null;
 }
 
+export function generateUniquePIN(): string {
+    let pin = generatePIN();
+
+    while (LIVE_ROOMS.has(pin)) {
+        pin = generatePIN();
+    }
+
+    return pin;
+}
+
 export async function insertOneLive(
     options: IInsertOneOptions,
 ): Promise<IRoom> {
@@ -53,7 +63,7 @@ export async function insertOneLive(
 
     // **TODO:** Pull from options object when DB integration is ready
     const id = ++idCounter;
-    const pin = generatePIN();
+    const pin = generateUniquePIN();
     const roomID = ulid();
 
     // **TODO:** add to db

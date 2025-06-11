@@ -37,10 +37,6 @@ export async function action(actionArgs: Route.ActionArgs) {
         paramsData.roomID,
     );
 
-    if (room.state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
-    }
-
     const requestFormData = await request.formData();
 
     const {output: formData, success: isValidFormData} = v.safeParse(

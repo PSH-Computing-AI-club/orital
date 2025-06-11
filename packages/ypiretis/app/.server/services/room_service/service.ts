@@ -131,6 +131,10 @@ export async function requireAuthenticatedAttendeeConnection(
         });
     }
 
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
+    }
+
     for (const attendee of room.attendees.values()) {
         // **TODO:** We should probably create a a direct lookup for by user id...
         // but this is good enough to now. ¯\_(ツ)_/¯
@@ -187,6 +191,10 @@ export async function requireAuthenticatedAttendeeSession(
         });
     }
 
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
+    }
+
     return {
         room,
         user,
@@ -205,6 +213,10 @@ export async function requireAuthenticatedDisplayConnection(
         throw data("Not Found", {
             status: 404,
         });
+    }
+
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
     }
 
     return {
@@ -231,6 +243,10 @@ export async function requireAuthenticatedPresenterConnection(
         throw data("Forbidden", {
             status: 403,
         });
+    }
+
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
     }
 
     if (room.presenterEntity) {
@@ -269,6 +285,10 @@ export async function requireAuthenticatedPresenterSession(
         throw data("Forbidden", {
             status: 403,
         });
+    }
+
+    if (room.state === ROOM_STATES.disposed) {
+        throw data("Conflict", 409);
     }
 
     return {

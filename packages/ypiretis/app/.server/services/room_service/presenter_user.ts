@@ -1,6 +1,5 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
-import type {IEntityMessages} from "./entity";
 import {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
 import type {
     IRoomAttendeeAddedMessage,
@@ -9,7 +8,7 @@ import type {
     IRoomDisplayDisposedMessage,
     IRoomPINUpdateMessage,
 } from "./messages";
-import type {IUser, IUserOptions} from "./user";
+import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
 
 const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
@@ -22,7 +21,7 @@ export type IPresenterUserMessages =
     | IRoomDisplayAddedMessage
     | IRoomDisplayDisposedMessage
     | IRoomPINUpdateMessage
-    | IEntityMessages;
+    | IUserMessages;
 
 export interface IPresenterUserOptions extends IUserOptions {}
 

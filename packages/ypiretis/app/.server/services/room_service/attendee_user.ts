@@ -1,6 +1,5 @@
-import type {IEntityMessages} from "./entity";
 import {ENTITY_STATES} from "./entity";
-import type {IUser, IUserOptions} from "./user";
+import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
 
 const SYMBOL_ATTENDEE_USER_BRAND: unique symbol = Symbol();
@@ -16,7 +15,7 @@ export const ATTENDEE_STATES = {
 export type IAttendeeUserStates =
     (typeof ATTENDEE_STATES)[keyof typeof ATTENDEE_STATES];
 
-export type IAttendeeUserMessages = IEntityMessages;
+export type IAttendeeUserMessages = IUserMessages;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 

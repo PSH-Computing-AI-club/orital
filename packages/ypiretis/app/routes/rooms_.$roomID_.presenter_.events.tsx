@@ -1,10 +1,11 @@
 import {data} from "react-router";
 
-import {eventStream} from "remix-utils/sse/server";
-
 import * as v from "valibot";
 
+import type {IPresenterUser} from "~/.server/services/room_service";
 import {requireAuthenticatedPresenterConnection} from "~/.server/services/room_service";
+
+import {webSocket} from "~/.server/utils/web_socket";
 
 import type {Route} from "./+types/rooms_.$roomID_.presenter_.events";
 
@@ -14,7 +15,6 @@ const LOADER_PARAMS_SCHEMA = v.object({
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {params, request} = loaderArgs;
-    const {signal} = request;
 
     const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
 
@@ -27,14 +27,15 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         output.roomID,
     );
 
-    return eventStream(signal, (send, abort) => {
-        const presenter = room.addPresenter({
-            abort,
-            send,
-        });
+    let presenter: IPresenterUser | null = null;
 
-        return () => {
-            presenter._dispose();
-        };
+    webSocket({
+        onClose(_event, _connection) {
+            presenter?._dispose();
+        },
+
+        onOpen(_event, connection) {
+            presenter = room.addPresenter(connection);
+        },
     });
 }

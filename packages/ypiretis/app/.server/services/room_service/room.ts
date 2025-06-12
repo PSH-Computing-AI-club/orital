@@ -1,7 +1,7 @@
 import {makeIDPool} from "../../utils/id_pool";
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
-import type {IConnection} from "../../utils/event_stream";
+import type {IWSContext} from "../../utils/web_socket";
 
 import {IUser} from "../users_service";
 
@@ -100,11 +100,11 @@ export interface IRoom {
 
     _entityDisposed(entity: IGenericEntity): void;
 
-    addAttendee(connection: IConnection, user: IUser): IAttendeeUser;
+    addAttendee(connection: IWSContext, user: IUser): IAttendeeUser;
 
-    addDisplay(connection: IConnection): IDisplayEntity;
+    addDisplay(connection: IWSContext): IDisplayEntity;
 
-    addPresenter(connection: IConnection): IPresenterUser;
+    addPresenter(connection: IWSContext): IPresenterUser;
 
     dispose(): void;
 

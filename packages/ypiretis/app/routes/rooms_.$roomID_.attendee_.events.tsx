@@ -1,10 +1,11 @@
 import {data} from "react-router";
 
-import {eventStream} from "remix-utils/sse/server";
-
 import * as v from "valibot";
 
+import type {IAttendeeUser} from "~/.server/services/room_service";
 import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_service";
+
+import {webSocket} from "~/.server/utils/web_socket";
 
 import type {Route} from "./+types/rooms_.$roomID_.attendee_.events";
 
@@ -14,7 +15,6 @@ const LOADER_PARAMS_SCHEMA = v.object({
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {params, request} = loaderArgs;
-    const {signal} = request;
 
     const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
 
@@ -27,12 +27,15 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         output.roomID,
     );
 
-    return eventStream(signal, (send, abort) => {
-        // **TODO:** consider how to handle room states, closed and permissive here
-        const attendee = room.addAttendee({abort, send}, user);
+    let attendee: IAttendeeUser | null = null;
 
-        return () => {
-            attendee._dispose();
-        };
+    webSocket({
+        onClose(_event, _connection) {
+            attendee?._dispose();
+        },
+
+        onOpen(_event, connection) {
+            attendee = room.addAttendee(connection, user);
+        },
     });
 }

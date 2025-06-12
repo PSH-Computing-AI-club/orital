@@ -1,8 +1,8 @@
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
 
-import type {IConnection} from "../../utils/event_stream";
 import type {ExtendLiterals} from "../../utils/types";
+import type {IWSContext} from "../../utils/web_socket";
 
 import type {
     IEntityMessage,
@@ -35,7 +35,7 @@ export interface IEntityStateUpdateEvent<S extends string> {
 }
 
 export interface IEntityOptions {
-    readonly connection: IConnection;
+    readonly connection: IWSContext;
 
     readonly id: number;
 
@@ -116,7 +116,7 @@ export default function makeEntity<
     const EVENT_STATE_UPDATE =
         makeEvent<IEntityStateUpdateEvent<IEntityStates>>();
 
-    let connection: IConnection | null = options.connection;
+    let connection: IWSContext | null = options.connection;
     let hasDisconnected = false;
     let state: IEntityStates = ENTITY_STATES.connected;
 
@@ -156,7 +156,7 @@ export default function makeEntity<
 
             if (!hasDisconnected) {
                 hasDisconnected = true;
-                connection.abort();
+                connection.close();
             }
         },
 
@@ -169,10 +169,12 @@ export default function makeEntity<
                 );
             }
 
-            connection.send({
-                event: name,
-                data: JSON.stringify(data),
-            });
+            connection.send(
+                JSON.stringify({
+                    event: name,
+                    data: data,
+                }),
+            );
         },
 
         _dispose() {

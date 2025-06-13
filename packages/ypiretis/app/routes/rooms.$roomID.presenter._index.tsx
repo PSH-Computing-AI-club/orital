@@ -140,7 +140,7 @@ function AttendeesCard() {
 }
 
 function PINCard() {
-    const {pin, state} = usePresenterContext();
+    const {pin, roomID, state} = usePresenterContext();
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 

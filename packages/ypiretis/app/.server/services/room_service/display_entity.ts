@@ -1,10 +1,11 @@
-import type {IEntityMessages} from "./entity";
-import type {IEntity, IEntityOptions} from "./entity";
-import makeEntity from "./entity";
+import type {IEntity, IEntityMessages, IEntityOptions} from "./entity";
+import makeEntity, {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
+
+import type {IRoomPINUpdateMessage} from "./messages";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 
-export type IDisplayEntityMessages = IEntityMessages;
+export type IDisplayEntityMessages = IRoomPINUpdateMessage | IEntityMessages;
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 
@@ -23,11 +24,33 @@ export function isDisplayEntity(value: unknown): value is IDisplayEntity {
 export default function makeDisplayEntity(
     options: IDisplayEntityOptions,
 ): IDisplayEntity {
+    const {room} = options;
+
     const entity = makeEntity<IDisplayEntityMessages>(options);
 
-    return {
+    const display = {
         ...entity,
 
         [SYMBOL_DISPLAY_ENTITY_BRAND]: true,
-    };
+
+        [SYMBOL_ENTITY_ON_DISPOSE]() {
+            entity[SYMBOL_ENTITY_ON_DISPOSE]();
+
+            pinUpdateSubscription.dispose();
+        },
+    } satisfies IDisplayEntity;
+
+    const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
+        const {newPIN} = event;
+
+        display._dispatch({
+            event: "room.pinUpdate",
+
+            data: {
+                pin: newPIN,
+            },
+        });
+    });
+
+    return display;
 }

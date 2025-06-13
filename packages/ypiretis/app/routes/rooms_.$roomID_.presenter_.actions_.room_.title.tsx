@@ -2,10 +2,7 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {
-    ROOM_STATES,
-    requireAuthenticatedPresenterSession,
-} from "~/.server/services/room_service";
+import {requireAuthenticatedPresenterSession} from "~/.server/services/room_service";
 
 import {title} from "~/utils/valibot";
 

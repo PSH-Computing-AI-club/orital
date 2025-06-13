@@ -3,7 +3,6 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import {
-    ROOM_STATES,
     requireAuthenticatedPresenterSession,
     generateUniquePIN,
 } from "~/.server/services/room_service";

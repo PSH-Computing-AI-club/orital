@@ -21,7 +21,6 @@
         "@emotion/react": "^11.14.0",
         "@emotion/server": "^11.11.0",
         "@js-temporal/polyfill": "^0.5.1",
-        "@microsoft/fetch-event-source": "^2.0.1",
         "@react-router/fs-routes": "^7.6.1",
         "croner": "^9.0.0",
         "drizzle-orm": "^0.43.1",

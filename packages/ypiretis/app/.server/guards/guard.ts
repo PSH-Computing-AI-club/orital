@@ -1,7 +1,16 @@
 import type {Session, SessionData} from "react-router";
 
+export interface IGuardBearerRequisiteFuncOptions {
+    readonly isBrowserWebSocket?: boolean;
+}
+
 export type IGuardRequisiteFunc<T = void> = (
     request: Request,
+) => Promise<T> | T;
+
+export type IGuardBearerRequisiteFunc<T = void> = (
+    request: Request,
+    options?: IGuardBearerRequisiteFuncOptions,
 ) => Promise<T> | T;
 
 export type IGuardHeaderFunc<

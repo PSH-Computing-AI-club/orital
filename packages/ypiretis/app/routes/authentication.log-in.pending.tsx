@@ -20,20 +20,15 @@ import {
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import type {
-    IEventSourceMessage,
-    IEventSourceOptions,
-} from "~/hooks/event_source";
-import useEventSource, {IEventSourceInit} from "~/hooks/event_source";
+import type {IUseWebSocketOptions} from "~/hooks/web_socket";
+import useWebSocket from "~/hooks/web_socket";
 import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
 
+import {buildWebSocketURL} from "~/utils/url";
 import {token} from "~/utils/valibot";
 
-import type {
-    ILoginAuthorizedEvent,
-    ILoginEventNames,
-} from "./authentication_.log-in_.events";
+import type {ILoginEvents} from "./authentication_.log-in_.events";
 
 import {Route} from "./+types/authentication.log-in.pending";
 
@@ -93,28 +88,19 @@ export default function AuthenticationLogInPending() {
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
-    const onOpen = useCallback(
-        async (response: Response) => {
-            if (!response.ok) {
-                // **TODO:** Can we force navigation to a route error boundary?
-                // Also, we want to differentiate between status 401 and others.
-                navigate("/authentication/log-in/unauthorized", {
-                    replace: true,
-                });
-            }
-        },
-        [navigate],
-    );
+    const onError = useCallback((event: Event) => {
+        // **TODO:** handle error here somehow
+
+        console.error(event);
+    }, []);
 
     const onMessage = useCallback(
-        async (message: IEventSourceMessage) => {
-            const {data, event} = message;
+        async (event: MessageEvent) => {
+            const message = JSON.parse(event.data) as ILoginEvents;
 
-            switch (event as ILoginEventNames) {
-                case "authorized":
-                    const {grantToken} = JSON.parse(
-                        data,
-                    ) as ILoginAuthorizedEvent;
+            switch (message.event) {
+                case "authorized": {
+                    const {grantToken} = message.data;
 
                     // **HACK:** I would use RRv7's `useFetcher` API here but...
                     // it does not support setting headers. And we want to user
@@ -141,6 +127,7 @@ export default function AuthenticationLogInPending() {
                     });
 
                     break;
+                }
 
                 case "revoked":
                     navigate("/authentication/log-in/revoked", {
@@ -153,24 +140,16 @@ export default function AuthenticationLogInPending() {
         [navigate, pathname],
     );
 
-    const eventSourceOptions = useMemo<IEventSourceOptions>(
+    const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
-            enabled: !!callbackToken,
-
-            onmessage: onMessage,
-            onopen: onOpen,
+            onError,
+            onMessage,
+            // **HACK:** Just know, this is a massive awful hack to bypass
+            // sending our token over query params.
+            protocols: callbackToken,
         }),
 
-        [callbackToken, onMessage, onOpen],
-    );
-
-    const eventSourceInit = useMemo<IEventSourceInit>(
-        () => ({
-            headers: {
-                Authorization: `Bearer ${callbackToken}`,
-            },
-        }),
-        [callbackToken],
+        [callbackToken, onError, onMessage],
     );
 
     useTimeout(
@@ -186,10 +165,9 @@ export default function AuthenticationLogInPending() {
         },
     );
 
-    useEventSource(
-        "/authentication/log-in/events",
-        eventSourceOptions,
-        eventSourceInit,
+    useWebSocket(
+        buildWebSocketURL("/authentication/log-in/events"),
+        useWebSocketOptions,
     );
 
     return (

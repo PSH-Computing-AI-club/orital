@@ -140,6 +140,8 @@ export default function useWebSocket(
                     | undefined) ?? WebSocket.CLOSED
             );
         },
+
+        () => WebSocket.CLOSED,
     );
 
     const send = useCallback(

@@ -78,126 +78,131 @@ export default function RoomsJoin(props: Route.ComponentProps) {
     const {actionData} = props;
     const {errors} = actionData ?? {};
 
-    console.log({errors});
-
     const navigation = useNavigation();
 
     return (
-        <PromptShell
-            title="Join a Presentation Room."
-            query="Join"
-            color="cyan.solid"
-        >
-            <Form method="POST">
-                <VStack gap="4">
-                    <Field.Root invalid={!!errors} required>
-                        <Field.Label>
-                            Room PIN
-                            <Field.RequiredIndicator />
-                        </Field.Label>
+        <PromptShell.Root>
+            <PromptShell.Sidebar />
 
-                        <PinInput.Root
-                            type="alphanumeric"
-                            size="2xl"
-                            fontFamily="mono"
-                            inlineSize="full"
-                        >
-                            <PinInput.Control
-                                display="flex"
-                                justifyContent="space-around"
+            <PromptShell.Container>
+                <PromptShell.Title
+                    title="Join a Presentation Room."
+                    query="Join"
+                />
+
+                <PromptShell.Body>
+                    <Form method="POST">
+                        <VStack gap="4">
+                            <Field.Root invalid={!!errors} required>
+                                <Field.Label>
+                                    Room PIN
+                                    <Field.RequiredIndicator />
+                                </Field.Label>
+
+                                <PinInput.Root
+                                    type="alphanumeric"
+                                    size="2xl"
+                                    fontFamily="mono"
+                                    inlineSize="full"
+                                >
+                                    <PinInput.Control
+                                        display="flex"
+                                        justifyContent="space-around"
+                                    >
+                                        <PinInput.Input
+                                            index={0}
+                                            name="pin0"
+                                            ref={pinWithMask}
+                                        />
+
+                                        <PinInput.Input
+                                            index={1}
+                                            name="pin1"
+                                            ref={pinWithMask}
+                                        />
+
+                                        <PinInput.Input
+                                            index={2}
+                                            name="pin2"
+                                            ref={pinWithMask}
+                                        />
+
+                                        <PinInput.Input
+                                            index={3}
+                                            name="pin3"
+                                            ref={pinWithMask}
+                                        />
+
+                                        <PinInput.Input
+                                            index={4}
+                                            name="pin4"
+                                            ref={pinWithMask}
+                                        />
+
+                                        <PinInput.Input
+                                            index={5}
+                                            name="pin5"
+                                            ref={pinWithMask}
+                                        />
+                                    </PinInput.Control>
+                                </PinInput.Root>
+
+                                {
+                                    // **NOTE:** This is not that great... but meh...
+                                    // it is the more straight-forward way.
+                                }
+
+                                {errors?.pin0 ? (
+                                    <Field.ErrorText>
+                                        [digit 1] {errors.pin0[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+
+                                {errors?.pin1 ? (
+                                    <Field.ErrorText>
+                                        [digit 2] {errors.pin1[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+
+                                {errors?.pin2 ? (
+                                    <Field.ErrorText>
+                                        [digit 3] {errors.pin2[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+
+                                {errors?.pin3 ? (
+                                    <Field.ErrorText>
+                                        [digit 4] {errors.pin3[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+
+                                {errors?.pin4 ? (
+                                    <Field.ErrorText>
+                                        [digit 5] {errors.pin4[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+
+                                {errors?.pin5 ? (
+                                    <Field.ErrorText>
+                                        [digit 6] {errors.pin5[0]}
+                                    </Field.ErrorText>
+                                ) : null}
+                            </Field.Root>
+
+                            <Button
+                                disabled={navigation.state !== "idle"}
+                                colorPalette="green"
+                                type="submit"
+                                name="action"
+                                value="join"
+                                inlineSize="full"
                             >
-                                <PinInput.Input
-                                    index={0}
-                                    name="pin0"
-                                    ref={pinWithMask}
-                                />
-
-                                <PinInput.Input
-                                    index={1}
-                                    name="pin1"
-                                    ref={pinWithMask}
-                                />
-
-                                <PinInput.Input
-                                    index={2}
-                                    name="pin2"
-                                    ref={pinWithMask}
-                                />
-
-                                <PinInput.Input
-                                    index={3}
-                                    name="pin3"
-                                    ref={pinWithMask}
-                                />
-
-                                <PinInput.Input
-                                    index={4}
-                                    name="pin4"
-                                    ref={pinWithMask}
-                                />
-
-                                <PinInput.Input
-                                    index={5}
-                                    name="pin5"
-                                    ref={pinWithMask}
-                                />
-                            </PinInput.Control>
-                        </PinInput.Root>
-
-                        {
-                            // **NOTE:** This is not that great... but meh...
-                            // it is the more straight-forward way.
-                        }
-
-                        {errors?.pin0 ? (
-                            <Field.ErrorText>
-                                [digit 1] {errors.pin0[0]}
-                            </Field.ErrorText>
-                        ) : null}
-
-                        {errors?.pin1 ? (
-                            <Field.ErrorText>
-                                [digit 2] {errors.pin1[0]}
-                            </Field.ErrorText>
-                        ) : null}
-
-                        {errors?.pin2 ? (
-                            <Field.ErrorText>
-                                [digit 3] {errors.pin2[0]}
-                            </Field.ErrorText>
-                        ) : null}
-
-                        {errors?.pin3 ? (
-                            <Field.ErrorText>
-                                [digit 4] {errors.pin3[0]}
-                            </Field.ErrorText>
-                        ) : null}
-
-                        {errors?.pin4 ? (
-                            <Field.ErrorText>
-                                [digit 5] {errors.pin4[0]}
-                            </Field.ErrorText>
-                        ) : null}
-
-                        {errors?.pin5 ? (
-                            <Field.ErrorText>
-                                [digit 6] {errors.pin5[0]}
-                            </Field.ErrorText>
-                        ) : null}
-                    </Field.Root>
-
-                    <Button
-                        disabled={navigation.state !== "idle"}
-                        colorPalette="green"
-                        type="submit"
-                        name="action"
-                        value="join"
-                        inlineSize="full"
-                    >
-                        Join
-                    </Button>
-                </VStack>
-            </Form>
-        </PromptShell>
+                                Join
+                            </Button>
+                        </VStack>
+                    </Form>
+                </PromptShell.Body>
+            </PromptShell.Container>
+        </PromptShell.Root>
     );
 }

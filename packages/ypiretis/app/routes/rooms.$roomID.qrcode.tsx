@@ -20,6 +20,7 @@ import {WebSocketCacheProvider} from "~/hooks/web_socket";
 import type {IRoom} from "~/state/display";
 import {DisplayContextProvider, useDisplayContext} from "~/state/display";
 
+import {APP_NAME} from "~/utils/constants";
 import {buildAppURL} from "~/utils/url";
 
 import {Route} from "./+types/rooms.$roomID.qrcode";
@@ -86,47 +87,51 @@ function QRCodeView() {
     const joinURL = buildAppURL(`/r/${pin}`).toString();
 
     return (
-        <Flex
-            direction="column"
-            gap="16"
-            justifyContent="center"
-            alignItems="center"
-            blockSize="dvh"
-            inlineSize="dvw"
-        >
-            <Heading size="4xl">
-                <Highlight query="Join" styles={{color: "cyan.solid"}}>
-                    {`Join ${title}`}
-                </Highlight>
-            </Heading>
+        <>
+            <title>{`Join ${title} :: ${APP_NAME}`}</title>
 
-            <Flex justifyContent="center">
-                <QrCode.Root
-                    value={roomURL}
-                    encoding={{ecc: "H"}}
-                    bg="bg"
-                    padding="6"
-                >
-                    <QrCode.Frame
-                        blockSize="min(50dvw, 50dvh, var(--chakra-sizes-lg))"
-                        inlineSize="min(50dvw, 50dvh, var(--chakra-sizes-lg))"
+            <Flex
+                direction="column"
+                gap="16"
+                justifyContent="center"
+                alignItems="center"
+                blockSize="dvh"
+                inlineSize="dvw"
+            >
+                <Heading size="4xl">
+                    <Highlight query="Join" styles={{color: "cyan.solid"}}>
+                        {`Join ${title}`}
+                    </Highlight>
+                </Heading>
+
+                <Flex justifyContent="center">
+                    <QrCode.Root
+                        value={roomURL}
+                        encoding={{ecc: "H"}}
+                        bg="bg"
+                        padding="6"
                     >
-                        <QrCode.Pattern />
-                    </QrCode.Frame>
-                </QrCode.Root>
-            </Flex>
+                        <QrCode.Frame
+                            blockSize="min(50dvw, 50dvh, var(--chakra-sizes-lg))"
+                            inlineSize="min(50dvw, 50dvh, var(--chakra-sizes-lg))"
+                        >
+                            <QrCode.Pattern />
+                        </QrCode.Frame>
+                    </QrCode.Root>
+                </Flex>
 
-            <Text fontFamily="mono" fontSize="2xl" fontWeight="bold">
-                <Link
-                    variant="underline"
-                    href={joinURL}
-                    target="_blank"
-                    colorPalette="blue"
-                >
-                    {joinURL}
-                </Link>
-            </Text>
-        </Flex>
+                <Text fontFamily="mono" fontSize="2xl" fontWeight="bold">
+                    <Link
+                        variant="underline"
+                        href={joinURL}
+                        target="_blank"
+                        colorPalette="blue"
+                    >
+                        {joinURL}
+                    </Link>
+                </Text>
+            </Flex>
+        </>
     );
 }
 

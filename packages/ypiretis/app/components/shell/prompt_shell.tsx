@@ -1,5 +1,5 @@
 // **HACK:** *cough* *cough* don't think about it...
-import type {SystemProperties} from "../../../../../node_modules/@chakra-ui/react/dist/types/styled-system/generated/system.gen";
+import type {ColorPalette} from "@chakra-ui/react";
 
 import {
     Card,
@@ -16,7 +16,7 @@ import {APP_NAME, PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
 import type {PropsWithChildren} from "react";
 
 export type IPromptShellProps = PropsWithChildren<{
-    readonly color?: SystemProperties["color"];
+    readonly color?: ColorPalette;
 
     readonly query?: string;
 

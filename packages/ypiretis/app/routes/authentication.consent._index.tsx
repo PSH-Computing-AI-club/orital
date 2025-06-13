@@ -57,12 +57,6 @@ const HASH_LOADER_HASH_SCHEMA = v.object({
     ),
 });
 
-export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireGuestSession(request);
-}
-
 const useHashLoader = withHashLoader((hash) => {
     const searchParams = new URLSearchParams(hash);
 
@@ -159,122 +153,132 @@ export default function AuthenticationConsent() {
     );
 
     return (
-        <PromptShell title="Authorized Login?" query="Login">
-            <noscript>
+        <>
+            <PromptShell.Title title="Authorized Login?" query="Login" />
+
+            <PromptShell.Body>
+                <noscript>
+                    <Text>
+                        JavaScript is{" "}
+                        <Strong color="red.solid">required</Strong> to log-in.
+                    </Text>
+                </noscript>
+
                 <Text>
-                    JavaScript is <Strong color="red.solid">required</Strong> to
-                    log-in.
+                    You are about to log-in with the account:
+                    <Code
+                        variant="solid"
+                        fontWeight="bold"
+                        marginInlineStart="2"
+                    >
+                        {accountID}@{ACCOUNT_PROVIDER_DOMAIN}
+                    </Code>
                 </Text>
-            </noscript>
 
-            <Text>
-                You are about to log-in with the account:
-                <Code variant="solid" fontWeight="bold" marginInlineStart="2">
-                    {accountID}@{ACCOUNT_PROVIDER_DOMAIN}
-                </Code>
-            </Text>
+                <Text>
+                    This will <Strong color="green.solid">authorize</Strong>{" "}
+                    {APP_NAME} to do the following:
+                </Text>
 
-            <Text>
-                This will <Strong color="green.solid">authorize</Strong>{" "}
-                {APP_NAME} to do the following:
-            </Text>
+                <List.Root gap="4" variant="plain" align="center">
+                    <List.Item gap="2">
+                        <List.Indicator color="green.solid" asChild>
+                            <Flex alignItems="center">
+                                <UserPlusIcon />
+                            </Flex>
+                        </List.Indicator>
 
-            <List.Root gap="4" variant="plain" align="center">
-                <List.Item gap="2">
-                    <List.Indicator color="green.solid" asChild>
-                        <Flex alignItems="center">
-                            <UserPlusIcon />
-                        </Flex>
-                    </List.Indicator>
+                        <Span>
+                            Create a&nbsp;
+                            <Strong color="cyan.solid">
+                                {APP_NAME} account
+                            </Strong>
+                            , if one does not exist.
+                        </Span>
+                    </List.Item>
 
-                    <Span>
-                        Create a&nbsp;
-                        <Strong color="cyan.solid">{APP_NAME} account</Strong>,
-                        if one does not exist.
-                    </Span>
-                </List.Item>
+                    <List.Item gap="2">
+                        <List.Indicator color="green.solid" asChild>
+                            <Flex alignItems="center">
+                                <SearchIcon />
+                            </Flex>
+                        </List.Indicator>
 
-                <List.Item gap="2">
-                    <List.Indicator color="green.solid" asChild>
-                        <Flex alignItems="center">
-                            <SearchIcon />
-                        </Flex>
-                    </List.Indicator>
+                        <Span>
+                            Retrieve your full name from&nbsp;
+                            <Strong color="cyan.solid">
+                                {ACCOUNT_PROVIDER_NAME}
+                            </Strong>
+                            .
+                        </Span>
+                    </List.Item>
+                </List.Root>
 
-                    <Span>
-                        Retrieve your full name from&nbsp;
-                        <Strong color="cyan.solid">
-                            {ACCOUNT_PROVIDER_NAME}
-                        </Strong>
-                        .
-                    </Span>
-                </List.Item>
-            </List.Root>
+                <Form method="POST">
+                    {
+                        // **HACK:** We need to force a full re-render here due to
+                        // Chakra UI's disabled prop on `Button` causing a hydration
+                        // mismatch.
+                        consentToken ? (
+                            <>
+                                <input
+                                    type="hidden"
+                                    name="consentToken"
+                                    value={consentToken}
+                                />
 
-            <Form method="POST">
-                {
-                    // **HACK:** We need to force a full re-render here due to
-                    // Chakra UI's disabled prop on `Button` causing a hydration
-                    // mismatch.
-                    consentToken ? (
-                        <>
-                            <input
-                                type="hidden"
-                                name="consentToken"
-                                value={consentToken}
-                            />
+                                <Group gap="4" grow>
+                                    <Button
+                                        disabled={navigation.state !== "idle"}
+                                        variant="ghost"
+                                        colorPalette="red"
+                                        type="submit"
+                                        name="action"
+                                        value="revoke"
+                                    >
+                                        Revoke
+                                    </Button>
 
-                            <Group gap="4" grow>
-                                <Button
-                                    disabled={navigation.state !== "idle"}
-                                    variant="ghost"
-                                    colorPalette="red"
-                                    type="submit"
-                                    name="action"
-                                    value="revoke"
-                                >
-                                    Revoke
-                                </Button>
+                                    <Button
+                                        disabled={navigation.state !== "idle"}
+                                        colorPalette="green"
+                                        type="submit"
+                                        name="action"
+                                        value="authorize"
+                                    >
+                                        Authorize
+                                    </Button>
+                                </Group>
+                            </>
+                        ) : (
+                            <>
+                                <Group gap="4" grow>
+                                    <Button
+                                        variant="ghost"
+                                        colorPalette="red"
+                                        type="submit"
+                                        name="action"
+                                        value="revoke"
+                                        disabled
+                                    >
+                                        Revoke
+                                    </Button>
 
-                                <Button
-                                    disabled={navigation.state !== "idle"}
-                                    colorPalette="green"
-                                    type="submit"
-                                    name="action"
-                                    value="authorize"
-                                >
-                                    Authorize
-                                </Button>
-                            </Group>
-                        </>
-                    ) : (
-                        <>
-                            <Group gap="4" grow>
-                                <Button
-                                    variant="ghost"
-                                    colorPalette="red"
-                                    type="submit"
-                                    name="action"
-                                    value="revoke"
-                                    disabled
-                                >
-                                    Revoke
-                                </Button>
-
-                                <Button
-                                    colorPalette="green"
-                                    type="submit"
-                                    name="action"
-                                    value="authorize"
-                                    disabled
-                                >
-                                    Authorize
-                                </Button>
-                            </Group>
-                        </>
-                    )
-                }
-            </Form>
-        </PromptShell>
+                                    <Button
+                                        colorPalette="green"
+                                        type="submit"
+                                        name="action"
+                                        value="authorize"
+                                        disabled
+                                    >
+                                        Authorize
+                                    </Button>
+                                </Group>
+                            </>
+                        )
+                    }
+                </Form>
+            </PromptShell.Body>
+        </>
     );
 }

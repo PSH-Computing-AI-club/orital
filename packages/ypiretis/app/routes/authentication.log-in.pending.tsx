@@ -47,12 +47,6 @@ const HASH_LOADER_HASH_SCHEMA = v.object({
     ),
 });
 
-export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireGuestSession(request);
-}
-
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
@@ -199,20 +193,24 @@ export default function AuthenticationLogInPending() {
     );
 
     return (
-        <PromptShell title="Log-In Pending." query="Pending">
-            <noscript>
+        <>
+            <PromptShell.Title title="Log-In Pending." query="Pending" />
+
+            <PromptShell.Body>
+                <noscript>
+                    <Text>
+                        JavaScript is{" "}
+                        <Strong color="red.solid">required</Strong> to log-in.
+                    </Text>
+                </noscript>
+
                 <Text>
-                    JavaScript is <Strong color="red.solid">required</Strong> to
-                    log-in.
+                    Check your email for the{" "}
+                    <Strong color="cyan.solid">log-in link</Strong>.
                 </Text>
-            </noscript>
 
-            <Text>
-                Check your email for the{" "}
-                <Strong color="cyan.solid">log-in link</Strong>.
-            </Text>
-
-            <Text>Awaiting pending authorization...</Text>
-        </PromptShell>
+                <Text>Awaiting pending authorization...</Text>
+            </PromptShell.Body>
+        </>
     );
 }

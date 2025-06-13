@@ -35,12 +35,6 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["log-in"])),
 });
 
-export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireGuestSession(request);
-}
-
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
@@ -111,59 +105,64 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
     const navigation = useNavigation();
 
     return (
-        <PromptShell
-            title={`Log-In via ${ACCOUNT_PROVIDER_NAME}.`}
-            query={ACCOUNT_PROVIDER_NAME}
-            color="beaverblue.solid"
-        >
-            <noscript>
-                <Text>
-                    JavaScript is <Strong color="red.solid">required</Strong> to
-                    log-in.
-                </Text>
-            </noscript>
+        <>
+            <PromptShell.Title
+                title={`Log-In via ${ACCOUNT_PROVIDER_NAME}.`}
+                query={ACCOUNT_PROVIDER_NAME}
+                color="beaverblue.solid"
+            />
 
-            <Form method="POST">
-                <VStack gap="4">
-                    <Field.Root invalid={!!errors} required>
-                        <Field.Label>
-                            {ACCOUNT_PROVIDER_NAME} ID{" "}
-                            <Field.RequiredIndicator />
-                        </Field.Label>
+            <PromptShell.Body>
+                <noscript>
+                    <Text>
+                        JavaScript is{" "}
+                        <Strong color="red.solid">required</Strong> to log-in.
+                    </Text>
+                </noscript>
 
-                        <InputGroup
-                            endAddon={
-                                <>
-                                    <Strong>@</Strong> {ACCOUNT_PROVIDER_DOMAIN}
-                                </>
-                            }
+                <Form method="POST">
+                    <VStack gap="4">
+                        <Field.Root invalid={!!errors} required>
+                            <Field.Label>
+                                {ACCOUNT_PROVIDER_NAME} ID{" "}
+                                <Field.RequiredIndicator />
+                            </Field.Label>
+
+                            <InputGroup
+                                endAddon={
+                                    <>
+                                        <Strong>@</Strong>{" "}
+                                        {ACCOUNT_PROVIDER_DOMAIN}
+                                    </>
+                                }
+                            >
+                                <Input
+                                    name="accountID"
+                                    placeholder="ex. don5092"
+                                    textAlign="right"
+                                />
+                            </InputGroup>
+
+                            {errors?.accountID ? (
+                                <Field.ErrorText>
+                                    {errors.accountID[0]}
+                                </Field.ErrorText>
+                            ) : null}
+                        </Field.Root>
+
+                        <Button
+                            disabled={navigation.state !== "idle"}
+                            colorPalette="green"
+                            type="submit"
+                            name="action"
+                            value="log-in"
+                            width="full"
                         >
-                            <Input
-                                name="accountID"
-                                placeholder="ex. don5092"
-                                textAlign="right"
-                            />
-                        </InputGroup>
-
-                        {errors?.accountID ? (
-                            <Field.ErrorText>
-                                {errors.accountID[0]}
-                            </Field.ErrorText>
-                        ) : null}
-                    </Field.Root>
-
-                    <Button
-                        disabled={navigation.state !== "idle"}
-                        colorPalette="green"
-                        type="submit"
-                        name="action"
-                        value="log-in"
-                        width="full"
-                    >
-                        Log In
-                    </Button>
-                </VStack>
-            </Form>
-        </PromptShell>
+                            Log In
+                        </Button>
+                    </VStack>
+                </Form>
+            </PromptShell.Body>
+        </>
     );
 }

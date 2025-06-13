@@ -14,6 +14,8 @@ import SlidersIcon from "~/components/icons/sliders_icon";
 
 import AppShell from "~/components/shell/app_shell";
 
+import {WebSocketCacheProvider} from "~/hooks/web_socket";
+
 import type {IAttendee, IDisplay, IRoom} from "~/state/presenter";
 import {PresenterContextProvider} from "~/state/presenter";
 
@@ -150,11 +152,13 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
                 </AppShell.Button>
             </AppShell.Sidebar>
 
-            <SessionContextProvider session={session}>
-                <PresenterContextProvider initialRoomData={initialRoomData}>
-                    <Outlet />
-                </PresenterContextProvider>
-            </SessionContextProvider>
+            <WebSocketCacheProvider>
+                <SessionContextProvider session={session}>
+                    <PresenterContextProvider initialRoomData={initialRoomData}>
+                        <Outlet />
+                    </PresenterContextProvider>
+                </SessionContextProvider>
+            </WebSocketCacheProvider>
         </AppShell.Root>
     );
 }

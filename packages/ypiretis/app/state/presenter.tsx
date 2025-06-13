@@ -12,11 +12,10 @@ import type {
     IPresenterUserMessages,
 } from "~/.server/services/room_service";
 
-import type {
-    IEventSourceMessage,
-    IEventSourceOptions,
-} from "~/hooks/event_source";
-import useEventSource from "~/hooks/event_source";
+import type {IUseWebSocketOptions} from "~/hooks/web_socket";
+import useWebSocket from "~/hooks/web_socket";
+
+import {buildWebSocketURL} from "~/utils/url";
 
 const CONTEXT_PRESENTER = createContext<IRoom | null>(null);
 
@@ -161,35 +160,23 @@ export function PresenterContextProvider(
     const {children, initialRoomData} = props;
     const [room, dispatch] = useReducer(roomReducer, initialRoomData);
 
-    const onOpen = useCallback(async (response: Response) => {
-        if (!response.ok) {
-            // **TODO:** error handle here somehow
-        }
+    const onMessage = useCallback(async (event: MessageEvent) => {
+        const message = JSON.parse(event.data) as IPresenterUserMessages;
+
+        dispatch(message);
     }, []);
 
-    const onMessage = useCallback(async (message: IEventSourceMessage) => {
-        // **HACK:** This kind of sucks. That is, allocating a new object here.
-        // But, this will allow us to bully TypeScript into recognizing the proper
-        // `IPresenterUserMessages.event` / `IPresenterUserMessages.data` pairs.
-
-        dispatch({
-            event: message.event,
-            data: JSON.parse(message.data),
-        } as IPresenterUserMessages);
-    }, []);
-
-    const eventSourceOptions = useMemo<IEventSourceOptions>(
+    const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
-            onmessage: onMessage,
-            onopen: onOpen,
+            onMessage,
         }),
 
-        [onMessage, onOpen],
+        [onMessage],
     );
 
-    useEventSource(
-        `/rooms/${room.roomID}/presenter/events`,
-        eventSourceOptions,
+    useWebSocket(
+        buildWebSocketURL(`/rooms/${room.roomID}/presenter/events`),
+        useWebSocketOptions,
     );
 
     return (

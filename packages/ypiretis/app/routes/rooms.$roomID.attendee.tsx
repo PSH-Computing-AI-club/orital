@@ -7,6 +7,8 @@ import * as v from "valibot";
 
 import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_service";
 
+import {WebSocketCacheProvider} from "~/hooks/web_socket";
+
 import type {IRoom} from "~/state/attendee";
 import {AttendeeContextProvider} from "~/state/attendee";
 
@@ -81,10 +83,12 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {initialRoomData, session} = loaderData;
 
     return (
-        <SessionContextProvider session={session}>
-            <AttendeeContextProvider initialRoomData={initialRoomData}>
-                <Outlet />
-            </AttendeeContextProvider>
-        </SessionContextProvider>
+        <WebSocketCacheProvider>
+            <SessionContextProvider session={session}>
+                <AttendeeContextProvider initialRoomData={initialRoomData}>
+                    <Outlet />
+                </AttendeeContextProvider>
+            </SessionContextProvider>
+        </WebSocketCacheProvider>
     );
 }

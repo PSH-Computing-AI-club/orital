@@ -1,20 +1,8 @@
 import type {PropsWithChildren} from "react";
 
-import {
-    isRouteErrorResponse,
-    Links,
-    Meta,
-    Outlet,
-    Scripts,
-    ScrollRestoration,
-} from "react-router";
+import {Links, Meta, Outlet, Scripts, ScrollRestoration} from "react-router";
 
-import Error400 from "~/errors/error_400";
-import Error401 from "~/errors/error_401";
-import Error403 from "~/errors/error_403";
-import Error404 from "~/errors/error_404";
-import Error409 from "~/errors/error_409";
-import Error500 from "~/errors/error_500";
+import {default as ErrorBoundarySelector} from "./errors";
 
 import {ThemedChakraProvider} from "~/state/themed_chakra";
 
@@ -50,42 +38,9 @@ export function Layout(props: PropsWithChildren) {
 }
 
 export function ErrorBoundary(props: Route.ErrorBoundaryProps) {
-    const {error} = props;
-
-    let Component = () => Error500({error});
-
-    if (isRouteErrorResponse(error)) {
-        switch (error.status) {
-            case 400:
-                Component = Error400;
-
-                break;
-
-            case 401:
-                Component = Error401;
-
-                break;
-
-            case 403:
-                Component = Error403;
-
-                break;
-
-            case 404:
-                Component = Error404;
-
-                break;
-
-            case 409:
-                Component = Error409;
-
-                break;
-        }
-    }
-
     return (
         <ThemedChakraProvider>
-            <Component />
+            <ErrorBoundarySelector {...props} />
         </ThemedChakraProvider>
     );
 }

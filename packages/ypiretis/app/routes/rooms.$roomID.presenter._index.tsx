@@ -205,6 +205,7 @@ function PINCard() {
             <Card.Footer>
                 <Button
                     disabled={!canFetchAction}
+                    size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"
                     onClick={(event) => onRegenerateClick(event)}
                 >
@@ -212,7 +213,12 @@ function PINCard() {
                     <ReloadIcon />
                 </Button>
 
-                <Button disabled={isDisposed} colorPalette="cyan" flexGrow="1">
+                <Button
+                    disabled={isDisposed}
+                    size={{base: "md", lgDown: "sm"}}
+                    colorPalette="cyan"
+                    flexGrow="1"
+                >
                     QR Code
                     <ExternalLinkIcon />
                 </Button>
@@ -232,6 +238,7 @@ function PINCard() {
                 <IconButton
                     disabled={isDisposed}
                     hideFrom="xl"
+                    size={{base: "md", lgDown: "sm"}}
                     colorPalette="blue"
                     asChild
                 >
@@ -253,6 +260,7 @@ function PINCard() {
                 <IconButton
                     disabled={isDisposed}
                     hideFrom="xl"
+                    size={{base: "md", lgDown: "sm"}}
                     colorPalette="green"
                     onClick={onCopyClick}
                 >

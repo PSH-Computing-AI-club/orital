@@ -229,9 +229,12 @@ function PINCard() {
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="cyan"
                     flexGrow="1"
+                    asChild
                 >
-                    QR Code
-                    <ExternalLinkIcon />
+                    <a href={`/rooms/${roomID}/qrcode`} target="_blank">
+                        QR Code
+                        <ExternalLinkIcon />
+                    </a>
                 </Button>
 
                 <Button

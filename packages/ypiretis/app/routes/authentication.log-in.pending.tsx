@@ -149,7 +149,7 @@ function AuthenticationLogInPendingView(props: {
             onMessage,
             // **HACK:** Just know, this is a massive awful hack to bypass
             // sending our token over query params.
-            protocols: callbackToken,
+            protocols: `Bearer ${callbackToken}`,
         }),
 
         [callbackToken, onError, onMessage],

@@ -1,5 +1,5 @@
 // **HACK:** *cough* *cough* don't think about it...
-import type {ColorPalette} from "@chakra-ui/react";
+import type {ColorsToken} from "../../../../../node_modules/@chakra-ui/react/dist/types/styled-system/generated/token.gen";
 
 import {
     Card,
@@ -16,7 +16,7 @@ import {APP_NAME, PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
 import type {PropsWithChildren} from "react";
 
 export interface IPromptShellTitle {
-    readonly color?: ColorPalette;
+    readonly color?: ColorsToken;
 
     readonly query?: string;
 

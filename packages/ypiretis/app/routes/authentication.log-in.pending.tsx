@@ -21,7 +21,7 @@ import {
 import PromptShell from "~/components/shell/prompt_shell";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
-import useWebSocket from "~/hooks/web_socket";
+import useWebSocket, {WebSocketCacheProvider} from "~/hooks/web_socket";
 import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
 
@@ -82,8 +82,11 @@ const useHashLoader = withHashLoader((hash) => {
     );
 });
 
-export default function AuthenticationLogInPending() {
-    const {callbackToken, callbackTokenExpiresAt} = useHashLoader() ?? {};
+function AuthenticationLogInPendingView(props: {
+    callbackToken?: string;
+    callbackTokenExpiresAt?: number;
+}) {
+    const {callbackToken, callbackTokenExpiresAt} = props;
 
     const {pathname} = useLocation();
     const navigate = useNavigate();
@@ -190,5 +193,18 @@ export default function AuthenticationLogInPending() {
                 <Text>Awaiting pending authorization...</Text>
             </PromptShell.Body>
         </>
+    );
+}
+
+export default function AuthenticationLogInPending() {
+    const {callbackToken, callbackTokenExpiresAt} = useHashLoader() ?? {};
+
+    return (
+        <WebSocketCacheProvider>
+            <AuthenticationLogInPendingView
+                callbackToken={callbackToken}
+                callbackTokenExpiresAt={callbackTokenExpiresAt}
+            />
+        </WebSocketCacheProvider>
     );
 }

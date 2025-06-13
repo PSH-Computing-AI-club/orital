@@ -205,6 +205,7 @@ function PINCard() {
             <Card.Footer>
                 <Button
                     disabled={!canFetchAction}
+                    hideBelow="lg"
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"
                     onClick={(event) => onRegenerateClick(event)}
@@ -212,6 +213,16 @@ function PINCard() {
                     Regenerate
                     <ReloadIcon />
                 </Button>
+
+                <IconButton
+                    disabled={isDisposed}
+                    hideFrom="lg"
+                    size={{base: "md", lgDown: "sm"}}
+                    colorPalette="red"
+                    onClick={(event) => onRegenerateClick(event)}
+                >
+                    <ReloadIcon />
+                </IconButton>
 
                 <Button
                     disabled={isDisposed}

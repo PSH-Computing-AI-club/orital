@@ -109,6 +109,7 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
             <PromptShell.Title
                 title={`Log-In via ${ACCOUNT_PROVIDER_NAME}.`}
                 query={ACCOUNT_PROVIDER_NAME}
+                // @ts-expect-error - **HACK:** Our custom colors are not typed.
                 color="beaverblue.solid"
             />
 

@@ -27,11 +27,13 @@ export interface ILoginRevokedEvent {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
-    const {id} = await requireTokenBearer(request);
+    const {id} = await requireTokenBearer(request, {
+        isBrowserWebSocket: true,
+    });
 
     let destructor: (() => void) | null = null;
 
-    return webSocket({
+    webSocket({
         onClose(_event, _connection) {
             if (destructor) {
                 destructor();

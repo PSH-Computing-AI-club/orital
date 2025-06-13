@@ -116,7 +116,7 @@ function QRCodeView() {
                 </QrCode.Root>
             </Flex>
 
-            <Text fontWeight="bold" fontSize="2xl">
+            <Text fontFamily="mono" fontSize="2xl" fontWeight="bold">
                 <Link
                     variant="underline"
                     href={joinURL}

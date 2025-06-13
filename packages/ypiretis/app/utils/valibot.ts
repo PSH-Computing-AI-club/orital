@@ -5,22 +5,23 @@ import * as v from "valibot";
 
 import {isValid} from "ulid";
 
-const EXPRESSION_ALPHABETIC = /^[A-Za-z]*$/u;
+export const EXPRESSION_ALPHABETIC = /^[A-Za-z]*$/u;
 
-const EXPRESSION_ALPHANUMERICAL = /^[0-9A-Za-z]*$/u;
+export const EXPRESSION_ALPHANUMERICAL = /^[0-9A-Za-z]*$/u;
 
 // SOURCE: https://github.com/fabian-hiller/valibot/issues/894#issuecomment-2763071920
-const EXPRESSION_DOMAIN = /^(?!-)([a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,36}$/iu;
+export const EXPRESSION_DOMAIN =
+    /^(?!-)([a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,36}$/iu;
 
 // SOURCE: https://rgxdb.com/r/MD2234J
-const EXPRESSION_DURATION =
+export const EXPRESSION_DURATION =
     /^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/;
 
-const EXPRESSION_NUMERIC = /^[0-9]*$/;
+export const EXPRESSION_NUMERIC = /^[0-9]*$/;
 
-const EXPRESSION_PIN = /^[0-9A-NP-Z!@#$%&?=+]*$/u;
+export const EXPRESSION_PIN = /^[0-9A-NP-Z!@#$%&?=+]*$/u;
 
-const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
+export const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
 
 export const alphabetic = v.regex(
     EXPRESSION_ALPHABETIC,

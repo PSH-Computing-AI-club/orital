@@ -20,9 +20,12 @@ export default function Error500(props: IError500Props) {
     }
 
     return (
-        <PromptShell title="Server Error." query="Error">
-            <Text>The server had an error while loading this page.</Text>
-            <Code>{message}</Code>
-        </PromptShell>
+        <>
+            <PromptShell.Title title="Server Error." query="Error" />
+            <PromptShell.Body>
+                <Text>The server had an error while loading this page.</Text>
+                <Code>{message}</Code>
+            </PromptShell.Body>
+        </>
     );
 }

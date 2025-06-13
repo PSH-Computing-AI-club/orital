@@ -1,5 +1,7 @@
 import {isRouteErrorResponse} from "react-router";
 
+import PromptShell from "~/components/shell/prompt_shell";
+
 import Error400 from "./error_400";
 import Error401 from "./error_401";
 import Error403 from "./error_403";
@@ -41,5 +43,13 @@ export default function ErrorBoundary(props: Route.ErrorBoundaryProps) {
 
     const BoundaryComponent = pickErrorBoundaryComponent(error);
 
-    return <BoundaryComponent error={error} />;
+    return (
+        <PromptShell.Root>
+            <PromptShell.Sidebar />
+
+            <PromptShell.Container>
+                <BoundaryComponent error={error} />
+            </PromptShell.Container>
+        </PromptShell.Root>
+    );
 }

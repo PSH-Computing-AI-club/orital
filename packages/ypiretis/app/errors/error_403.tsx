@@ -4,8 +4,11 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 export default function Error403() {
     return (
-        <PromptShell title="Access Forbidden." query="Forbidden">
-            <Text>Access to this page was forbidden.</Text>
-        </PromptShell>
+        <>
+            <PromptShell.Title title="Access Forbidden." query="Forbidden" />
+            <PromptShell.Body>
+                <Text>Access to this page was forbidden.</Text>
+            </PromptShell.Body>
+        </>
     );
 }

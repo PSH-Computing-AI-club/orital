@@ -23,6 +23,7 @@ import type {IRoomStates} from "~/.server/services/room_service";
 
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
+import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
 import NotificationIcon from "~/components/icons/notification_icon";
@@ -215,6 +216,29 @@ function PINCard() {
                     QR Code
                     <ExternalLinkIcon />
                 </Button>
+
+                <Button
+                    disabled={isDisposed}
+                    hideBelow="xl"
+                    colorPalette="blue"
+                    asChild
+                >
+                    <a href={`/r/${pin}`} target="_blank">
+                        Join
+                        <LinkIcon />
+                    </a>
+                </Button>
+
+                <IconButton
+                    disabled={isDisposed}
+                    hideFrom="xl"
+                    colorPalette="blue"
+                    asChild
+                >
+                    <a href={`/r/${pin}`} target="_blank">
+                        <LinkIcon />
+                    </a>
+                </IconButton>
 
                 <Button
                     disabled={isDisposed}

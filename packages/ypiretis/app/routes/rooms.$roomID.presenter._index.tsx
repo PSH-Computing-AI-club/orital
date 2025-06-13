@@ -210,7 +210,7 @@ function PINCard() {
                     colorPalette="red"
                     onClick={(event) => onRegenerateClick(event)}
                 >
-                    Regenerate
+                    New PIN
                     <ReloadIcon />
                 </Button>
 

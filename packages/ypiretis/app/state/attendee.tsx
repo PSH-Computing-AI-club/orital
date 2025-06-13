@@ -66,6 +66,12 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     const {children, initialRoomData} = props;
     const [room, dispatch] = useReducer(roomReducer, initialRoomData);
 
+    const onError = useCallback((event: Event) => {
+        // **TODO:** handle error here somehow
+
+        console.error(event);
+    }, []);
+
     const onMessage = useCallback(async (event: MessageEvent) => {
         const message = JSON.parse(event.data) as IAttendeeUserMessages;
 
@@ -74,10 +80,11 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
+            onError,
             onMessage,
         }),
 
-        [onMessage],
+        [onError, onMessage],
     );
 
     useWebSocket(

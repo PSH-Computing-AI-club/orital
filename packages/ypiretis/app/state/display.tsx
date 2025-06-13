@@ -78,6 +78,12 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     const {children, initialRoomData} = props;
     const [room, dispatch] = useReducer(roomReducer, initialRoomData);
 
+    const onError = useCallback((event: Event) => {
+        // **TODO:** handle error here somehow
+
+        console.error(event);
+    }, []);
+
     const onMessage = useCallback(async (event: MessageEvent) => {
         const message = JSON.parse(event.data) as IDisplayEntityMessages;
 
@@ -86,10 +92,11 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
+            onError,
             onMessage,
         }),
 
-        [onMessage],
+        [onError, onMessage],
     );
 
     useWebSocket(

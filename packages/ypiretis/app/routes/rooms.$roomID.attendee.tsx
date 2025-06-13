@@ -69,7 +69,7 @@ export function HydrateFallback() {
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to
-                    use the presenter portal.
+                    use the attendee portal.
                 </Text>
             </noscript>
 

@@ -36,6 +36,7 @@
         "react-router-hono-server": "^2.13.0",
         "remix-utils": "^8.7.0",
         "ulid": "^3.0.0",
+        "use-mask-input": "^3.4.2",
         "valibot": "^1.1.0"
     },
     "devDependencies": {

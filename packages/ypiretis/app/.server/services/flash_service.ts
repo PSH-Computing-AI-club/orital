@@ -12,11 +12,25 @@ export interface IFlashSessionData extends SessionData {
     readonly bearer?: string;
 }
 
-export const commitSession = (session: IFlashSession) =>
-    _commitSession(session);
+export const commitSession = async (session: IFlashSession) => {
+    const setCookieHeader = await _commitSession(session);
 
-export const destroySession = (session: IFlashSession) =>
-    _destroySession(session);
+    return {
+        "Set-Cookie": setCookieHeader,
+    };
+};
 
-export const getSession = (cookieHeader: string) =>
-    _getSession(cookieHeader) as Promise<IFlashSession>;
+export const destroySession = async (session: IFlashSession) => {
+    const setCookieHeader = await _destroySession(session);
+
+    return {
+        "Set-Cookie": setCookieHeader,
+    };
+};
+
+export const getSession = (request: Request) => {
+    const {headers} = request;
+    const cookieHeader = headers.get("Cookie");
+
+    return _getSession(cookieHeader) as Promise<IFlashSession>;
+};

@@ -14,15 +14,7 @@ async function getBearerValue(
 ): Promise<string | null> {
     switch (bearerType) {
         case BEARER_TYPES.cookie: {
-            const {headers} = request;
-
-            const cookieHeader = headers.get("Cookie");
-
-            if (!cookieHeader) {
-                return null;
-            }
-
-            const session = await getSession(cookieHeader);
+            const session = await getSession(request);
 
             return session.get("bearer") ?? null;
         }

@@ -261,12 +261,45 @@ export default function useWebSocket(
 
             entry.refCount -= 1;
 
-            if (
-                (webSocket.readyState === WebSocket.CONNECTING ||
-                    webSocket.readyState === WebSocket.OPEN) &&
-                entry.refCount < 1
-            ) {
-                webSocket.close(1000, "Normal Closure");
+            if (entry.refCount < 1) {
+                // **HACK:** So... React's `<StrictMode>` in development mode
+                // re-mounts all `useEffects` when first rendered. It is supposed
+                // to be for finding side effect defects in your code...
+                //
+                // That also means that the web socket will try to terminate
+                // as it is still connecting to the server. So, we need to add
+                // a complex hook interaction so that cleanly terminate the
+                // socket if it is still connecting to the server.
+                switch (webSocket.readyState) {
+                    case WebSocket.CONNECTING: {
+                        const cleanupOnClose = ((_event) => {
+                            webSocket.removeEventListener(
+                                "close",
+                                cleanupOnClose,
+                            );
+
+                            webSocket.removeEventListener(
+                                "open",
+                                cleanupOnOpen,
+                            );
+                        }) satisfies IUseWebSocketCloseCallback;
+
+                        const cleanupOnOpen = ((_event) => {
+                            if (webSocket.readyState === WebSocket.OPEN) {
+                                webSocket.close();
+                            }
+                        }) satisfies IUseWebSocketOpenCallback;
+
+                        webSocket.addEventListener("close", cleanupOnClose);
+                        webSocket.addEventListener("open", cleanupOnOpen);
+
+                        break;
+                    }
+
+                    case WebSocket.OPEN:
+                        webSocket.close(1000, "Normal Closure");
+                        break;
+                }
             }
         };
     }, [

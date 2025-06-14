@@ -26,15 +26,12 @@ import withHashLoader from "~/hooks/hash_loader";
 import useTimeout from "~/hooks/timeout";
 
 import {buildWebSocketURL} from "~/utils/url";
-import {token} from "~/utils/valibot";
 
 import type {ILoginEvents} from "./authentication_.log-in_.events";
 
 import {Route} from "./+types/authentication.log-in.pending";
 
 const HASH_LOADER_HASH_SCHEMA = v.object({
-    callbackToken: v.pipe(v.string(), token("TCLB")),
-
     callbackTokenExpiresAt: v.pipe(
         v.string(),
         v.transform((value) => parseInt(value, 10)),
@@ -81,10 +78,9 @@ const useHashLoader = withHashLoader((hash) => {
 });
 
 function AuthenticationLogInPendingView(props: {
-    callbackToken?: string;
     callbackTokenExpiresAt?: number;
 }) {
-    const {callbackToken, callbackTokenExpiresAt} = props;
+    const {callbackTokenExpiresAt} = props;
 
     const {pathname} = useLocation();
     const navigate = useNavigate();
@@ -145,12 +141,9 @@ function AuthenticationLogInPendingView(props: {
         () => ({
             onError,
             onMessage,
-            // **HACK:** Just know, this is a massive awful hack to bypass
-            // sending our token over query params.
-            protocols: `Bearer ${callbackToken}`,
         }),
 
-        [callbackToken, onError, onMessage],
+        [onError, onMessage],
     );
 
     useTimeout(
@@ -195,12 +188,11 @@ function AuthenticationLogInPendingView(props: {
 }
 
 export default function AuthenticationLogInPending() {
-    const {callbackToken, callbackTokenExpiresAt} = useHashLoader() ?? {};
+    const {callbackTokenExpiresAt} = useHashLoader() ?? {};
 
     return (
         <WebSocketCacheProvider>
             <AuthenticationLogInPendingView
-                callbackToken={callbackToken}
                 callbackTokenExpiresAt={callbackTokenExpiresAt}
             />
         </WebSocketCacheProvider>

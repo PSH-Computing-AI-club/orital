@@ -1,3 +1,5 @@
+import {BEARER_TYPES} from "~/.server/guards/guard";
+
 import {requireTokenBearer} from "~/.server/services/callback_tokens_service";
 import {
     EVENT_CONSENT_AUTHORIZED,
@@ -28,7 +30,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
 
     const {id} = await requireTokenBearer(request, {
-        isBrowserWebSocket: true,
+        bearerType: BEARER_TYPES.cookie,
     });
 
     let destructor: (() => void) | null = null;

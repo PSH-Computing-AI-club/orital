@@ -26,9 +26,9 @@ const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUser>(
     "userID",
 );
 
-export const getGrantHeader = sessionGuard.getGrantHeader;
+export const getGrantHeaders = sessionGuard.getGrantHeaders;
 
-export const getRevokeHeader = sessionGuard.getRevokeHeader;
+export const getRevokeHeaders = sessionGuard.getRevokeHeaders;
 
 export const requireAuthenticatedSession =
     sessionGuard.requireAuthenticatedSession;

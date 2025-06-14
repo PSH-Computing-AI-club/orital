@@ -15,7 +15,7 @@ import {
     findOneByAccountID as findOneUserByAccountID,
     insertOne as insertOneUser,
     requireGuestSession,
-    getGrantHeader,
+    getGrantHeaders,
 } from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
@@ -62,14 +62,12 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     session.set("userID", user.id);
 
-    const cookie = await getGrantHeader(request, session);
+    const headers = await getGrantHeaders(request, session);
 
     await deleteOneGrantToken(grantTokenID);
 
     return data("", {
-        headers: {
-            "Set-Cookie": cookie,
-        },
+        headers,
     });
 }
 

@@ -20,8 +20,11 @@ export type IGuardBearerRequisiteFunc<T = void> = (
     options?: IGuardBearerRequisiteFuncOptions,
 ) => Promise<T> | T;
 
-export type IGuardHeaderFunc<
+export type IGuardHeadersFunc<
     D extends SessionData = SessionData,
     F extends SessionData = D,
     N extends Session<D, F> = Session<D, F>,
-> = (request: Request, session: N) => Promise<string> | string;
+> = (
+    request: Request,
+    session: N,
+) => Promise<Record<string, string>> | Record<string, string>;

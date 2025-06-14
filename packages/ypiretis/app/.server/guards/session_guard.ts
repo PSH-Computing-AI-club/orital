@@ -8,7 +8,7 @@ import DATABASE from "../configuration/database";
 
 import type {IIdentifiablesTable} from "../database/tables/identifiables_table";
 
-import {IGuardRequisiteFunc, IGuardHeaderFunc} from "./guard";
+import {IGuardRequisiteFunc, IGuardHeadersFunc} from "./guard";
 
 export interface ISessionGuards<
     T extends IIdentifiablesTable,
@@ -17,9 +17,9 @@ export interface ISessionGuards<
     F extends SessionData = D,
     N extends Session<D, F> = Session<D, F>,
 > {
-    readonly getGrantHeader: IGuardHeaderFunc<D, F, N>;
+    readonly getGrantHeaders: IGuardHeadersFunc<D, F, N>;
 
-    readonly getRevokeHeader: IGuardHeaderFunc<D, F, N>;
+    readonly getRevokeHeaders: IGuardHeadersFunc<D, F, N>;
 
     readonly requireAuthenticatedSession: IGuardRequisiteFunc<{
         identifiable: I;
@@ -41,12 +41,20 @@ export default function makeSessionGuard<
     const {commitSession, destroySession, getSession} = sessionStorage;
 
     return {
-        getGrantHeader(_request, session) {
-            return commitSession(session);
+        async getGrantHeaders(_request, session) {
+            const setCookieHeader = await commitSession(session);
+
+            return {
+                "Set-Cookie": setCookieHeader,
+            };
         },
 
-        getRevokeHeader(_request, session) {
-            return destroySession(session);
+        async getRevokeHeaders(_request, session) {
+            const setCookieHeader = await destroySession(session);
+
+            return {
+                "Set-Cookie": setCookieHeader,
+            };
         },
 
         async requireAuthenticatedSession(request) {

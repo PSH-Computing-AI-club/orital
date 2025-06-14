@@ -1,6 +1,6 @@
 import {eq} from "drizzle-orm";
 
-import {SessionData} from "react-router";
+import type {SessionData} from "react-router";
 
 import DATABASE from "../configuration/database";
 import * as persistentSession from "../configuration/persistent_session";

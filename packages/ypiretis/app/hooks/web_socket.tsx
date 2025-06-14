@@ -196,8 +196,6 @@ export default function useWebSocket(
                 webSocket.removeEventListener("error", internalOnError);
                 webSocket.removeEventListener("open", internalOnOpen);
 
-                websocketCache.delete(cacheKey);
-
                 notifyReadyStateSubscribers();
             }) satisfies IUseWebSocketErrorCallback;
 

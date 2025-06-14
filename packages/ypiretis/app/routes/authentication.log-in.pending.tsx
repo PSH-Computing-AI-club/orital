@@ -22,7 +22,6 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
 import useWebSocket, {WebSocketCacheProvider} from "~/hooks/web_socket";
-import withHashLoader from "~/hooks/hash_loader";
 import type {IUseTimeoutOptions} from "~/hooks/timeout";
 import useTimeout from "~/hooks/timeout";
 
@@ -32,7 +31,7 @@ import type {ILoginEvents} from "./authentication_.log-in_.events";
 
 import {Route} from "./+types/authentication.log-in.pending";
 
-const HASH_LOADER_HASH_SCHEMA = v.object({
+const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
     callbackTokenExpiresAt: v.pipe(
         v.string(),
         v.transform((value) => parseInt(value, 10)),
@@ -69,17 +68,30 @@ export async function action(actionArgs: Route.ActionArgs) {
     });
 }
 
-const useHashLoader = withHashLoader((hash) => {
-    const searchParams = new URLSearchParams(hash);
+export function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+    const {searchParams} = new URL(request.url);
 
-    return v.parse(
-        HASH_LOADER_HASH_SCHEMA,
+    const {output, success} = v.safeParse(
+        LOADER_SEARCH_PARAMS_SCHEMA,
         Object.fromEntries(searchParams.entries()),
     );
-});
+
+    if (!success) {
+        throw data("Bad Request", {
+            status: 400,
+        });
+    }
+
+    const {callbackTokenExpiresAt} = output;
+
+    return {
+        callbackTokenExpiresAt,
+    };
+}
 
 function AuthenticationLogInPendingView(props: {
-    callbackTokenExpiresAt?: number;
+    callbackTokenExpiresAt: number;
 }) {
     const {callbackTokenExpiresAt} = props;
 
@@ -170,8 +182,7 @@ function AuthenticationLogInPendingView(props: {
     const useTimeoutOptions = useMemo<IUseTimeoutOptions>(
         () => ({
             onTimeout,
-            duration: (callbackTokenExpiresAt ?? 0) - Date.now(),
-            enabled: !!callbackTokenExpiresAt,
+            duration: callbackTokenExpiresAt - Date.now(),
         }),
         [callbackTokenExpiresAt, onTimeout],
     );
@@ -206,8 +217,11 @@ function AuthenticationLogInPendingView(props: {
     );
 }
 
-export default function AuthenticationLogInPending() {
-    const {callbackTokenExpiresAt} = useHashLoader() ?? {};
+export default function AuthenticationLogInPending(
+    props: Route.ComponentProps,
+) {
+    const {loaderData} = props;
+    const {callbackTokenExpiresAt} = loaderData;
 
     return (
         <WebSocketCacheProvider>

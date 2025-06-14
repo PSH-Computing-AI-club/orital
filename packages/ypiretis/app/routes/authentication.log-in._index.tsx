@@ -97,7 +97,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     const headers = await commitSession(session);
 
     return redirect(
-        `/authentication/log-in/pending/#?${new URLSearchParams({
+        `/authentication/log-in/pending/?${new URLSearchParams({
             callbackTokenExpiresAt:
                 callbackTokenExpiresAt.epochMilliseconds.toString(),
         })}`,

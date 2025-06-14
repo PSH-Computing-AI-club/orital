@@ -61,6 +61,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     switch (action) {
         case "update": {
             room.updateState(state);
+            break;
         }
     }
 }

@@ -54,6 +54,7 @@ export async function action(actionArgs: Route.ActionArgs) {
             const newPIN = generateUniquePIN();
 
             room.updatePIN(newPIN);
+            break;
         }
     }
 }

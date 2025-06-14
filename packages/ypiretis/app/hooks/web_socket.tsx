@@ -181,14 +181,16 @@ export default function useWebSocket(
                 }
             };
 
-            const internalOnClose = ((_event) => {
+            const internalOnClose = ((event) => {
                 webSocket.removeEventListener("close", internalOnClose);
                 webSocket.removeEventListener("error", internalOnError);
                 webSocket.removeEventListener("open", internalOnOpen);
 
-                websocketCache.delete(cacheKey);
-
                 notifyReadyStateSubscribers();
+
+                if (event.code === 1000) {
+                    websocketCache.delete(cacheKey);
+                }
             }) satisfies IUseWebSocketCloseCallback;
 
             const internalOnError = ((_event) => {
@@ -208,6 +210,8 @@ export default function useWebSocket(
             webSocket.addEventListener("close", internalOnClose);
             webSocket.addEventListener("error", internalOnError);
             webSocket.addEventListener("open", internalOnOpen);
+
+            notifyReadyStateSubscribers();
         }
 
         const {webSocket} = entry;

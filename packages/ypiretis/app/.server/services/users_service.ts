@@ -3,12 +3,11 @@ import {eq} from "drizzle-orm";
 import {SessionData} from "react-router";
 
 import DATABASE from "../configuration/database";
+import * as persistentSession from "../configuration/persistent_session";
 
 import USERS_TABLE from "../database/tables/users_table";
 
 import makeSessionGuard from "../guards/session_guard";
-
-import * as persistentSessionService from "./persistent_session_service";
 
 export type IUser = typeof USERS_TABLE.$inferSelect;
 
@@ -23,7 +22,7 @@ export interface IUserSessionData extends SessionData {
 
 const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUser>(
     USERS_TABLE,
-    persistentSessionService,
+    persistentSession,
     "userID",
 );
 

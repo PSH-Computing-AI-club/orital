@@ -1,7 +1,7 @@
 import type {SessionData} from "react-router";
 import {createCookieSessionStorage} from "react-router";
 
-import ENVIRONMENT from "../configuration/environment";
+import ENVIRONMENT from "./environment";
 
 import {UNIX_EPOCH} from "../utils/temporal";
 

@@ -6,7 +6,7 @@ import {
     getSession as _getSession,
 } from "../configuration/ephemeral_session";
 
-export type IFlashSession = Session<IFlashSessionData>;
+export type IFlashSession = Session<IFlashSessionData, IFlashSessionData>;
 
 export interface IFlashSessionData extends SessionData {
     readonly bearer?: string;

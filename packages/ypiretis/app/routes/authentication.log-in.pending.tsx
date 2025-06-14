@@ -85,11 +85,25 @@ function AuthenticationLogInPendingView(props: {
     const {pathname} = useLocation();
     const navigate = useNavigate();
 
-    const onError = useCallback((event: Event) => {
-        // **TODO:** handle error here somehow
+    const onClose = useCallback(
+        (event: CloseEvent) => {
+            const {code} = event;
 
-        console.error(event);
-    }, []);
+            if (code !== 1000) {
+                // **HACK:** We need to let the browser fully close the web socket
+                // before we perform a navigation. Otherwise, the browser will hang
+                // with the dangling web socket connection.
+                setTimeout(() => {
+                    // **TODO:** Can we force navigation to a route error boundary?
+                    // Also, we want to differentiate between status 401 and others.
+                    navigate("/authentication/log-in/unauthorized", {
+                        replace: true,
+                    });
+                }, 0);
+            }
+        },
+        [navigate],
+    );
 
     const onMessage = useCallback(
         async (event: MessageEvent) => {
@@ -139,11 +153,11 @@ function AuthenticationLogInPendingView(props: {
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
-            onError,
+            onClose,
             onMessage,
         }),
 
-        [onError, onMessage],
+        [onClose, onMessage],
     );
 
     useTimeout(

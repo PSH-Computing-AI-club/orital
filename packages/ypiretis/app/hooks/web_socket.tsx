@@ -261,7 +261,11 @@ export default function useWebSocket(
 
             entry.refCount -= 1;
 
-            if (entry.refCount < 1) {
+            if (
+                (webSocket.readyState === WebSocket.CONNECTING ||
+                    webSocket.readyState === WebSocket.OPEN) &&
+                entry.refCount < 1
+            ) {
                 webSocket.close(1000, "Normal Closure");
             }
         };

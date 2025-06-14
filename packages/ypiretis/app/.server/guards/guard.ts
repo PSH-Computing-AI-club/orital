@@ -1,7 +1,14 @@
 import type {Session, SessionData} from "react-router";
 
+export const BEARER_TYPES = {
+    cookie: "BEARER_COOKIE",
+    header: "BEARER_HEADER",
+} as const;
+
+export type IBearerTypes = (typeof BEARER_TYPES)[keyof typeof BEARER_TYPES];
+
 export interface IGuardBearerRequisiteFuncOptions {
-    readonly isBrowserWebSocket?: boolean;
+    readonly bearerType?: IBearerTypes;
 }
 
 export type IGuardRequisiteFunc<T = void> = (

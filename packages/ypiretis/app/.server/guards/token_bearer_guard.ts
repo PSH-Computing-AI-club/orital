@@ -2,9 +2,55 @@ import {data} from "react-router";
 
 import type {ITokensTable} from "../database/tables/tokens_table";
 
+import {getSession} from "../services/flash_service";
 import type {IToken, ITokensService} from "../services/tokens_service";
 
-import {IGuardBearerRequisiteFunc} from "./guard";
+import type {IBearerTypes, IGuardBearerRequisiteFunc} from "./guard";
+import {BEARER_TYPES} from "./guard";
+
+async function getBearerValue(
+    bearerType: IBearerTypes,
+    request: Request,
+): Promise<string | null> {
+    switch (bearerType) {
+        case BEARER_TYPES.cookie: {
+            const {headers} = request;
+
+            const cookieHeader = headers.get("Cookie");
+
+            if (!cookieHeader) {
+                return null;
+            }
+
+            const session = await getSession(cookieHeader);
+
+            return session.get("bearer") ?? null;
+        }
+
+        case BEARER_TYPES.header: {
+            const {headers} = request;
+
+            return headers.get("Authorization");
+        }
+    }
+}
+
+function validateBearerValue(
+    bearerType: IBearerTypes,
+    bearerValue: string,
+): string | null {
+    switch (bearerType) {
+        case BEARER_TYPES.header: {
+            if (!bearerValue.toLowerCase().startsWith("bearer ")) {
+                return null;
+            }
+
+            bearerValue = bearerValue.slice(7);
+        }
+    }
+
+    return bearerValue;
+}
 
 export default function makeTokenBearerGuard<
     T extends ITokensTable,
@@ -14,30 +60,24 @@ export default function makeTokenBearerGuard<
     const {findOneByToken} = tokensService;
 
     return async (request, options = {}) => {
-        const {isBrowserWebSocket} = options;
+        const {bearerType = BEARER_TYPES.header} = options;
 
-        const {headers} = request;
-        const authorization = headers.get(
-            isBrowserWebSocket
-                ? // **HACK:** Just know, this is a massive awful hack to bypass
-                  // sending our token over query params.
-                  "Sec-WebSocket-Protocol"
-                : "Authorization",
-        );
+        const bearerValue = await getBearerValue(bearerType, request);
 
-        if (!authorization) {
+        if (!bearerValue) {
             throw data("Unauthorized", {
                 status: 401,
             });
         }
 
-        if (!authorization.toLowerCase().startsWith("bearer ")) {
+        const tokenValue = validateBearerValue(bearerType, bearerValue);
+
+        if (!tokenValue) {
             throw data("Unauthorized", {
                 status: 401,
             });
         }
 
-        const tokenValue = authorization.slice(7);
         const token = await findOneByToken(tokenValue);
 
         if (!token) {

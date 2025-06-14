@@ -23,6 +23,7 @@ import PromptShell from "~/components/shell/prompt_shell";
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
 import useWebSocket, {WebSocketCacheProvider} from "~/hooks/web_socket";
 import withHashLoader from "~/hooks/hash_loader";
+import type {IUseTimeoutOptions} from "~/hooks/timeout";
 import useTimeout from "~/hooks/timeout";
 
 import {buildWebSocketURL} from "~/utils/url";
@@ -151,6 +152,12 @@ function AuthenticationLogInPendingView(props: {
         [navigate, pathname],
     );
 
+    const onTimeout = useCallback(() => {
+        navigate("/authentication/log-in/expired", {
+            replace: true,
+        });
+    }, [navigate]);
+
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
             onClose,
@@ -160,18 +167,16 @@ function AuthenticationLogInPendingView(props: {
         [onClose, onMessage],
     );
 
-    useTimeout(
-        () => {
-            navigate("/authentication/log-in/expired", {
-                replace: true,
-            });
-        },
-
-        {
+    const useTimeoutOptions = useMemo<IUseTimeoutOptions>(
+        () => ({
+            onTimeout,
             duration: (callbackTokenExpiresAt ?? 0) - Date.now(),
             enabled: !!callbackTokenExpiresAt,
-        },
+        }),
+        [callbackTokenExpiresAt, onTimeout],
     );
+
+    useTimeout(useTimeoutOptions);
 
     useWebSocket(
         buildWebSocketURL("/authentication/log-in/events"),

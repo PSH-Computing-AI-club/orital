@@ -9,6 +9,8 @@ import {
     Text,
 } from "@chakra-ui/react";
 
+import {useCallback, useMemo} from "react";
+
 import {Form, data, redirect, useNavigate, useNavigation} from "react-router";
 
 import * as v from "valibot";
@@ -28,6 +30,7 @@ import UserPlusIcon from "~/components/icons/user_plus_icon";
 import PromptShell from "~/components/shell/prompt_shell";
 
 import withHashLoader from "~/hooks/hash_loader";
+import type {IUseTimeoutOptions} from "~/hooks/timeout";
 import useTimeout from "~/hooks/timeout";
 
 import {
@@ -139,18 +142,22 @@ export default function AuthenticationConsent() {
     const navigate = useNavigate();
     const navigation = useNavigation();
 
-    useTimeout(
-        () => {
-            navigate("/authentication/consent/expired", {
-                replace: true,
-            });
-        },
+    const onTimeout = useCallback(() => {
+        navigate("/authentication/consent/expired", {
+            replace: true,
+        });
+    }, [navigate]);
 
-        {
+    const useTimeoutOptions = useMemo<IUseTimeoutOptions>(
+        () => ({
+            onTimeout,
             duration: (consentTokenExpiresAt ?? 0) - Date.now(),
             enabled: !!consentTokenExpiresAt,
-        },
+        }),
+        [consentTokenExpiresAt, onTimeout],
     );
+
+    useTimeout(useTimeoutOptions);
 
     return (
         <>

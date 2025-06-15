@@ -166,7 +166,12 @@ export default function useWebSocket(
 
         let entry = websocketCache.get(cacheKey) ?? null;
 
-        if (!entry) {
+        if (
+            !entry ||
+            // **HACK:** See comment in the deconstructor about how much I
+            // hate React's `<StrictMode>`.
+            entry.refCount === 0
+        ) {
             const webSocket = new WebSocket(url, protocols);
 
             entry = {

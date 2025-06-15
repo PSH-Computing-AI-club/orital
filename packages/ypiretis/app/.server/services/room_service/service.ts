@@ -232,14 +232,8 @@ export async function requireAuthenticatedPresenterConnection(
         });
     }
 
-    if (room.state === ROOM_STATES.disposed) {
+    if (room.state === ROOM_STATES.disposed || room.presenterEntity) {
         throw data("Conflict", 409);
-    }
-
-    if (room.presenterEntity) {
-        throw data("Conflict", {
-            status: 409,
-        });
     }
 
     return {

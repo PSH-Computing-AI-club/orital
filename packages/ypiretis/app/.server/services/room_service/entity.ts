@@ -255,5 +255,13 @@ export default function makeEntity<
         },
     );
 
+    entity._dispatch({
+        event: "self.stateUpdate",
+
+        data: {
+            state,
+        },
+    });
+
     return entity as unknown as E;
 }

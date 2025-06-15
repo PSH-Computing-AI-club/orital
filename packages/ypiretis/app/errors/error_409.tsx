@@ -2,7 +2,7 @@ import {Text} from "@chakra-ui/react";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-export default function Error400() {
+export default function Error409() {
     return (
         <>
             <PromptShell.Title title="Resource Conflict." query="Conflict" />

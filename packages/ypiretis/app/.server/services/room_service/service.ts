@@ -1,6 +1,9 @@
+import type {ActionFunctionArgs} from "react-router";
 import {data} from "react-router";
 
 import {ulid} from "ulid";
+
+import * as v from "valibot";
 
 import {generatePIN} from "../../utils/crypto";
 
@@ -9,6 +12,10 @@ import {requireAuthenticatedSession} from "../users_service";
 
 import type {IRoom, IRoomStates} from "./room";
 import makeRoom, {ROOM_STATES} from "./room";
+
+const ACTION_PARAMS_SCHEMA = v.object({
+    roomID: v.pipe(v.string(), v.ulid()),
+});
 
 const LIVE_ROOMS = new Map<string, IRoom>();
 
@@ -115,6 +122,23 @@ export async function insertOneLive(
     return room;
 }
 
+export function requireAuthenticatedAttendeeAction(
+    actionArgs: ActionFunctionArgs,
+): Promise<IAuthenticatedRoomConnection> {
+    const {params, request} = actionArgs;
+
+    const {output: paramsData, success} = v.safeParse(
+        ACTION_PARAMS_SCHEMA,
+        params,
+    );
+
+    if (!success) {
+        throw data("Bad Request", 400);
+    }
+
+    return requireAuthenticatedAttendeeSession(request, paramsData.roomID);
+}
+
 export async function requireAuthenticatedAttendeeConnection(
     request: Request,
     roomID: string,
@@ -210,6 +234,23 @@ export async function requireAuthenticatedDisplayConnection(
         room,
         user,
     };
+}
+
+export function requireAuthenticatedPresenterAction(
+    actionArgs: ActionFunctionArgs,
+): Promise<IAuthenticatedRoomConnection> {
+    const {params, request} = actionArgs;
+
+    const {output: paramsData, success} = v.safeParse(
+        ACTION_PARAMS_SCHEMA,
+        params,
+    );
+
+    if (!success) {
+        throw data("Bad Request", 400);
+    }
+
+    return requireAuthenticatedPresenterSession(request, paramsData.roomID);
 }
 
 export async function requireAuthenticatedPresenterConnection(

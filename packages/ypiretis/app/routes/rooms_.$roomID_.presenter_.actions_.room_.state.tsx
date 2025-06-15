@@ -4,7 +4,7 @@ import * as v from "valibot";
 
 import {
     ROOM_STATES,
-    requireAuthenticatedPresenterSession,
+    requireAuthenticatedPresenterAction,
 } from "~/.server/services/room_service";
 
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.state";
@@ -22,41 +22,24 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
     ),
 });
 
-const ACTION_PARAMS_SCHEMA = v.object({
-    roomID: v.pipe(v.string(), v.ulid()),
-});
-
 export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {params, request} = actionArgs;
+    const {room} = await requireAuthenticatedPresenterAction(actionArgs);
 
-    const {output: paramsData, success: isValidParams} = v.safeParse(
-        ACTION_PARAMS_SCHEMA,
-        params,
-    );
-
-    if (!isValidParams) {
-        throw data("Bad Request", 400);
-    }
-
-    const {room} = await requireAuthenticatedPresenterSession(
-        request,
-        paramsData.roomID,
-    );
-
+    const {request} = actionArgs;
     const requestFormData = await request.formData();
 
-    const {output: formData, success: isValidFormData} = v.safeParse(
+    const {output, success} = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
         Object.fromEntries(requestFormData.entries()),
     );
 
-    if (!isValidFormData) {
+    if (!success) {
         throw data("Bad Request", 400);
     }
 
-    const {action, state} = formData;
+    const {action, state} = output;
 
     switch (action) {
         case "update": {

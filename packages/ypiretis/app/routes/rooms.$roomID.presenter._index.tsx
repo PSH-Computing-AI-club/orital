@@ -102,6 +102,56 @@ function matchUserTagText(user: IAttendee | ISession): string {
     return "Presenter";
 }
 
+function sortUsers(users: (IAttendee | ISession)[]): (IAttendee | ISession)[] {
+    return users.sort((attendeeA, attendeeB) => {
+        const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
+        const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
+
+        return fullNameA >= fullNameB ? 1 : 0;
+    });
+}
+
+function getUsers(
+    modeValue: "active" | "pending" | null,
+): (IAttendee | ISession)[] {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
+    switch (modeValue) {
+        case "pending": {
+            const users = attendees.filter((attendee) => {
+                const {state} = attendee;
+
+                return state === "STATE_AWAITING";
+            });
+
+            return sortUsers(users);
+        }
+    }
+
+    const session = useAuthenticatedSessionContext();
+
+    const connectedAttendees: IAttendee[] = [];
+    const disconnectedAttendees: IAttendee[] = [];
+
+    for (const attendee of attendees) {
+        switch (attendee.state) {
+            case "STATE_CONNECTED":
+                connectedAttendees.push(attendee);
+                break;
+
+            case "STATE_DISPOSED":
+                disconnectedAttendees.push(attendee);
+                break;
+        }
+    }
+
+    sortUsers(connectedAttendees);
+    sortUsers(disconnectedAttendees);
+
+    return [session, ...connectedAttendees, ...disconnectedAttendees];
+}
+
 function AttendeeListItem(props: IAttendeeListItemProps) {
     const {user} = props;
     const {accountID, firstName, lastName} = user;
@@ -145,27 +195,13 @@ function AttendeesCard() {
         "active",
     );
 
+    const users = getUsers(modeValue);
+
     function onModeValueChange(event: SegmentGroupValueChangeDetails): void {
         const {value} = event;
 
         setModeValue(value as "active" | "pending" | null);
     }
-
-    const {room} = usePresenterContext();
-    const {attendees} = room;
-
-    const session = useAuthenticatedSessionContext();
-
-    const users: (IAttendee | ISession)[] = [...attendees].sort(
-        (attendeeA, attendeeB) => {
-            const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
-            const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
-
-            return fullNameA >= fullNameB ? 1 : 0;
-        },
-    );
-
-    users.unshift(session);
 
     return (
         <>

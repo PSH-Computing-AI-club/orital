@@ -221,6 +221,9 @@ export function PresenterContextProvider(
     const {children, initialContextData} = props;
     const [context, dispatch] = useReducer(contextReducer, initialContextData);
 
+    const {room} = initialContextData;
+    const {roomID} = room;
+
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow
 
@@ -242,10 +245,12 @@ export function PresenterContextProvider(
         [onError, onMessage],
     );
 
-    useWebSocket(
-        buildWebSocketURL(`/rooms/${context.room.roomID}/presenter/events`),
-        useWebSocketOptions,
+    const connectionURL = useMemo<URL>(
+        () => buildWebSocketURL(`/rooms/${roomID}/presenter/events`),
+        [roomID],
     );
+
+    useWebSocket(connectionURL, useWebSocketOptions);
 
     return (
         <CONTEXT_PRESENTER.Provider value={context}>

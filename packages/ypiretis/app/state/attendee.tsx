@@ -93,6 +93,9 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     const {children, initialContextData} = props;
     const [context, dispatch] = useReducer(contextReducer, initialContextData);
 
+    const {room} = initialContextData;
+    const {roomID} = room;
+
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow
 
@@ -114,10 +117,12 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
         [onError, onMessage],
     );
 
-    useWebSocket(
-        buildWebSocketURL(`/rooms/${context.room.roomID}/attendee/events`),
-        useWebSocketOptions,
+    const connectionURL = useMemo<URL>(
+        () => buildWebSocketURL(`/rooms/${roomID}/attendee/events`),
+        [roomID],
     );
+
+    useWebSocket(connectionURL, useWebSocketOptions);
 
     return (
         <CONTEXT_ATTENDEE.Provider value={context}>

@@ -1,4 +1,8 @@
-import type {ButtonProps, EditableValueChangeDetails} from "@chakra-ui/react";
+import type {
+    ButtonProps,
+    EditableValueChangeDetails,
+    SegmentGroupValueChangeDetails,
+} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -7,6 +11,7 @@ import {
     GridItem,
     HStack,
     IconButton,
+    SegmentGroup,
     SimpleGrid,
     Span,
     PinInput,
@@ -136,6 +141,16 @@ function AttendeeList(props: IAttendeeListProps) {
 }
 
 function AttendeesCard() {
+    const [modeValue, setModeValue] = useState<"active" | "pending" | null>(
+        "active",
+    );
+
+    function onModeValueChange(event: SegmentGroupValueChangeDetails): void {
+        const {value} = event;
+
+        setModeValue(value as "active" | "pending" | null);
+    }
+
     const {room} = usePresenterContext();
     const {attendees} = room;
 
@@ -155,12 +170,30 @@ function AttendeesCard() {
     return (
         <>
             <Card.Body gap="4" maxBlockSize="full" overflow="hidden">
-                <Card.Title
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                >
+                <Card.Title display="flex" gap="2" alignItems="center">
                     Attendees
+                    <SegmentGroup.Root
+                        value={modeValue}
+                        size="sm"
+                        marginInlineStart="auto"
+                        onValueChange={onModeValueChange}
+                    >
+                        <SegmentGroup.Indicator bg="bg" />
+
+                        <SegmentGroup.Item value="active">
+                            <SegmentGroup.ItemText>
+                                Active
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+
+                        <SegmentGroup.Item value="pending">
+                            <SegmentGroup.ItemText>
+                                Pending
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+                    </SegmentGroup.Root>
                     <UsersIcon />
                 </Card.Title>
 
@@ -174,14 +207,7 @@ function AttendeesCard() {
                     overflowInline="hidden"
                     overflowBlock="auto"
                 >
-                    <AttendeeListItem user={session} isPresenter />
-
-                    {attendees.map((attendee) => (
-                        <AttendeeListItem
-                            key={attendee.accountID}
-                            user={attendee}
-                        />
-                    ))}
+                    <AttendeeList users={users} />
                 </VStack>
             </Card.Body>
         </>

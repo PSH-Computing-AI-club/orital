@@ -16,7 +16,11 @@ export type * from "./room";
 export {ROOM_STATES, RoomDisposedError} from "./room";
 
 export type * from "./presenter_user";
-export {isPresenterUser} from "./presenter_user";
+export {
+    PRESENTER_ENTITY_ID,
+    PRESENTER_USER_STATES,
+    isPresenterUser,
+} from "./presenter_user";
 
 export type * from "./user";
 export {isUser} from "./user";

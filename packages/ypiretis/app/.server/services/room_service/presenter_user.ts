@@ -15,6 +15,13 @@ const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 
 export const PRESENTER_ENTITY_ID = 1;
 
+export const PRESENTER_USER_STATES = {
+    ...ENTITY_STATES,
+} as const;
+
+export type IPresenterUserStates =
+    (typeof PRESENTER_USER_STATES)[keyof typeof PRESENTER_USER_STATES];
+
 export type IPresenterUserMessages =
     | IRoomAttendeeAddedMessage
     | IRoomAttendeeDisposedMessage
@@ -25,7 +32,8 @@ export type IPresenterUserMessages =
 
 export interface IPresenterUserOptions extends IUserOptions {}
 
-export interface IPresenterUser extends IUser<IPresenterUserMessages> {
+export interface IPresenterUser
+    extends IUser<IPresenterUserMessages, IPresenterUserStates> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
 
     [SYMBOL_ENTITY_ON_DISPOSE](): void;
@@ -44,7 +52,9 @@ export default function makePresenterUser(
 ): IPresenterUser {
     const {room} = options;
 
-    const user = makeUser<IPresenterUserMessages>(options);
+    const user = makeUser<IPresenterUserMessages, IPresenterUserStates>(
+        options,
+    );
 
     const presenter = {
         ...user,

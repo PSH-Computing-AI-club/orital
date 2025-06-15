@@ -135,8 +135,8 @@ export default function makeEntity<
         [SYMBOL_ENTITY_BRAND]: true,
 
         [SYMBOL_ENTITY_ON_DISPOSE]() {
-            stateUpdateSubscription.dispose();
-            titleUpdateSubscription.dispose();
+            roomStateUpdateSubscription.dispose();
+            roomTitleUpdateSubscription.dispose();
         },
 
         EVENT_STATE_UPDATE,
@@ -196,7 +196,7 @@ export default function makeEntity<
         },
     } satisfies IGenericEntity;
 
-    const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
+    const roomStateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {
             if (entity.state !== ENTITY_STATES.connected) {
                 return;
@@ -214,7 +214,7 @@ export default function makeEntity<
         },
     );
 
-    const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
+    const roomTitleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
         (event) => {
             if (entity.state !== ENTITY_STATES.connected) {
                 return;

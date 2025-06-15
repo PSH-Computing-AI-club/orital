@@ -62,14 +62,14 @@ export default function makePresenterUser(
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             user[SYMBOL_ENTITY_ON_DISPOSE]();
 
-            entityAddedSubscription.dispose();
-            entityDisposedSubscription.dispose();
+            roomEntityAddedSubscription.dispose();
+            roomEntityDisposedSubscription.dispose();
 
-            pinUpdateSubscription.dispose();
+            roomPINUpdateSubscription.dispose();
         },
     } satisfies IPresenterUser;
 
-    const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
+    const roomEntityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
             if (presenter.state !== ENTITY_STATES.connected) {
                 return;
@@ -105,7 +105,7 @@ export default function makePresenterUser(
         },
     );
 
-    const entityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
+    const roomEntityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
         (event) => {
             if (presenter.state !== ENTITY_STATES.connected) {
                 return;
@@ -137,21 +137,23 @@ export default function makePresenterUser(
         },
     );
 
-    const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
-        if (presenter.state !== ENTITY_STATES.connected) {
-            return;
-        }
+    const roomPINUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe(
+        (event) => {
+            if (presenter.state !== ENTITY_STATES.connected) {
+                return;
+            }
 
-        const {newPIN} = event;
+            const {newPIN} = event;
 
-        presenter._dispatch({
-            event: "room.pinUpdate",
+            presenter._dispatch({
+                event: "room.pinUpdate",
 
-            data: {
-                pin: newPIN,
-            },
-        });
-    });
+                data: {
+                    pin: newPIN,
+                },
+            });
+        },
+    );
 
     return presenter;
 }

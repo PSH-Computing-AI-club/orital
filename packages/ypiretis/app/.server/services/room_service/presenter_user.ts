@@ -93,6 +93,10 @@ export default function makePresenterUser(
 
                 const attendeeStateSubscription =
                     entity.EVENT_STATE_UPDATE.subscribe((event) => {
+                        if (presenter.state !== ENTITY_STATES.connected) {
+                            return;
+                        }
+
                         const {newState} = event;
 
                         presenter._dispatch({
@@ -125,6 +129,10 @@ export default function makePresenterUser(
 
                 const displayStateSubscription =
                     entity.EVENT_STATE_UPDATE.subscribe((event) => {
+                        if (presenter.state !== ENTITY_STATES.connected) {
+                            return;
+                        }
+
                         const {newState} = event;
 
                         presenter._dispatch({

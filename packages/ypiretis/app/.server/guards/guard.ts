@@ -24,7 +24,4 @@ export type IGuardHeadersFunc<
     D extends SessionData = SessionData,
     F extends SessionData = D,
     N extends Session<D, F> = Session<D, F>,
-> = (
-    request: Request,
-    session: N,
-) => Promise<Record<string, string>> | Record<string, string>;
+> = (request: Request, session: N) => Promise<HeadersInit> | HeadersInit;

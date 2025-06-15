@@ -138,23 +138,23 @@ function AuthenticationLogInPendingView(props: {
                         },
                     });
 
-                    if (!response.ok) {
+                    if (response.ok) {
+                        await navigate("/", {
+                            replace: true,
+                        });
+                    } else {
                         // **TODO:** Can we force navigation to a route error boundary?
                         // Also, we want to differentiate between status 401 and others.
-                        navigate("/authentication/log-in/unauthorized", {
+                        await navigate("/authentication/log-in/unauthorized", {
                             replace: true,
                         });
                     }
-
-                    navigate("/", {
-                        replace: true,
-                    });
 
                     break;
                 }
 
                 case "revoked":
-                    navigate("/authentication/log-in/revoked", {
+                    await navigate("/authentication/log-in/revoked", {
                         replace: true,
                     });
 

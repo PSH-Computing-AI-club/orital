@@ -218,12 +218,14 @@ function AuthenticationLogInPendingView(props: {
         [callbackTokenExpiresAt, onTimeout],
     );
 
+    const connectionURL = useMemo<URL>(
+        () => buildWebSocketURL("/authentication/log-in/events"),
+        [],
+    );
+
     useTimeout(useTimeoutOptions);
 
-    useWebSocket(
-        buildWebSocketURL("/authentication/log-in/events"),
-        useWebSocketOptions,
-    );
+    useWebSocket(connectionURL, useWebSocketOptions);
 
     return <HydrateFallback />;
 }

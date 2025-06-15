@@ -200,6 +200,16 @@ function contextReducer(
                 },
             };
         }
+
+        case "self.stateUpdate": {
+            const {state} = data;
+
+            return {
+                ...context,
+
+                state,
+            };
+        }
     }
 
     return context;

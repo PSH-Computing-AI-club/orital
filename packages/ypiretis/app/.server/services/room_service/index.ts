@@ -2,7 +2,7 @@ export type * from "./attendee_user";
 export {ATTENDEE_USER_STATES, isAttendeeUser} from "./attendee_user";
 
 export type * from "./display_entity";
-export {isDisplayEntity} from "./display_entity";
+export {DISPLAY_ENTITY_STATES, isDisplayEntity} from "./display_entity";
 
 export type * from "./entity";
 export {

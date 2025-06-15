@@ -59,7 +59,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {accountID, firstName, lastName} = user;
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
-        const {id: entityID, user} = attendee;
+        const {id: entityID, state, user} = attendee;
         const {accountID, firstName, lastName} = user;
 
         return {
@@ -67,14 +67,16 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             entityID,
             firstName,
             lastName,
+            state,
         };
     }) satisfies IAttendee[];
 
     const initialDisplays = Array.from(displays.values()).map((display) => {
-        const {id: entityID} = display;
+        const {id: entityID, state} = display;
 
         return {
             entityID,
+            state,
         };
     }) satisfies IDisplay[];
 

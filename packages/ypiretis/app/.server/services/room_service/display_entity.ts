@@ -1,15 +1,23 @@
 import type {IEntity, IEntityMessages, IEntityOptions} from "./entity";
-import makeEntity, {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
+import makeEntity, {ENTITY_STATES, SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
 
 import type {IRoomPINUpdateMessage} from "./messages";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 
+export const DISPLAY_ENTITY_STATES = {
+    ...ENTITY_STATES,
+} as const;
+
+export type IDisplayEntityStates =
+    (typeof DISPLAY_ENTITY_STATES)[keyof typeof DISPLAY_ENTITY_STATES];
+
 export type IDisplayEntityMessages = IRoomPINUpdateMessage | IEntityMessages;
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 
-export interface IDisplayEntity extends IEntity<IDisplayEntityMessages> {
+export interface IDisplayEntity
+    extends IEntity<IDisplayEntityMessages, IDisplayEntityStates> {
     [SYMBOL_DISPLAY_ENTITY_BRAND]: true;
 }
 
@@ -26,7 +34,9 @@ export default function makeDisplayEntity(
 ): IDisplayEntity {
     const {room} = options;
 
-    const entity = makeEntity<IDisplayEntityMessages>(options);
+    const entity = makeEntity<IDisplayEntityMessages, IDisplayEntityStates>(
+        options,
+    );
 
     const display = {
         ...entity,

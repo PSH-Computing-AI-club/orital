@@ -141,6 +141,17 @@ function AttendeesCard() {
 
     const session = useAuthenticatedSessionContext();
 
+    const users: (IAttendee | ISession)[] = [...attendees].sort(
+        (attendeeA, attendeeB) => {
+            const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
+            const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
+
+            return fullNameA >= fullNameB ? 1 : 0;
+        },
+    );
+
+    users.unshift(session);
+
     return (
         <>
             <Card.Body gap="4" maxBlockSize="full" overflow="hidden">

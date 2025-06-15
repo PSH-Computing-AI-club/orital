@@ -35,8 +35,6 @@ export interface IPresenterUserOptions extends IUserOptions {}
 export interface IPresenterUser
     extends IUser<IPresenterUserMessages, IPresenterUserStates> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
-
-    [SYMBOL_ENTITY_ON_DISPOSE](): void;
 }
 
 export function isPresenterUser(value: unknown): value is IPresenterUser {

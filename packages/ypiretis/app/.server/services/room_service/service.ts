@@ -10,8 +10,12 @@ import {generatePIN} from "../../utils/crypto";
 import type {IUser} from "../users_service";
 import {requireAuthenticatedSession} from "../users_service";
 
+import type {IAttendeeUser} from "./attendee_user";
+import {ATTENDEE_USER_STATES} from "./attendee_user";
 import type {IRoom, IRoomStates} from "./room";
 import makeRoom, {ROOM_STATES} from "./room";
+import type {IPresenterUser} from "./presenter_user";
+import {PRESENTER_USER_STATES} from "./presenter_user";
 
 const ACTION_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
@@ -21,10 +25,20 @@ const LIVE_ROOMS = new Map<string, IRoom>();
 
 let idCounter = -1;
 
-export interface IAuthenticatedRoomConnection {
+export interface IAuthenticatedRoomSession {
     readonly room: IRoom;
 
     readonly user: IUser;
+}
+
+export interface IAuthenticatedAttendeeRoomSession
+    extends IAuthenticatedRoomSession {
+    readonly attendee: IAttendeeUser;
+}
+
+export interface IAuthenticatedPresenterRoomSession
+    extends IAuthenticatedRoomSession {
+    readonly presenter: IPresenterUser;
 }
 
 export interface IInsertOneOptions {
@@ -122,9 +136,9 @@ export async function insertOneLive(
     return room;
 }
 
-export function requireAuthenticatedAttendeeAction(
+export async function requireAuthenticatedAttendeeAction(
     actionArgs: ActionFunctionArgs,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedAttendeeRoomSession> {
     const {params, request} = actionArgs;
 
     const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
@@ -133,18 +147,31 @@ export function requireAuthenticatedAttendeeAction(
         throw data("Bad Request", 400);
     }
 
-    return requireAuthenticatedAttendeeSession(request, output.roomID);
+    const session = await requireAuthenticatedAttendeeSession(
+        request,
+        output.roomID,
+    );
+
+    const {attendee} = session;
+
+    if (attendee.state !== ATTENDEE_USER_STATES.connected) {
+        throw data("Conflict", {
+            status: 409,
+        });
+    }
+
+    return session;
 }
 
 export async function requireAuthenticatedAttendeeConnection(
     request: Request,
     roomID: string,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID);
+    const room = LIVE_ROOMS.get(roomID) ?? null;
 
-    if (!room) {
+    if (room === null) {
         throw data("Not Found", {
             status: 404,
         });
@@ -173,27 +200,27 @@ export async function requireAuthenticatedAttendeeConnection(
 export async function requireAuthenticatedAttendeeSession(
     request: Request,
     roomID: string,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedAttendeeRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID);
+    const room = LIVE_ROOMS.get(roomID) ?? null;
 
-    if (!room) {
+    if (room === null) {
         throw data("Not Found", {
             status: 404,
         });
     }
 
-    let hasAttendee: boolean = false;
+    let foundAttendee: IAttendeeUser | null = null;
 
     for (const attendee of room.attendees.values()) {
         if (attendee.user.id === user.id) {
-            hasAttendee = true;
+            foundAttendee = attendee;
             break;
         }
     }
 
-    if (!hasAttendee) {
+    if (foundAttendee === null) {
         throw data("Forbidden", {
             status: 403,
         });
@@ -206,18 +233,20 @@ export async function requireAuthenticatedAttendeeSession(
     return {
         room,
         user,
+
+        attendee: foundAttendee,
     };
 }
 
 export async function requireAuthenticatedDisplayConnection(
     request: Request,
     roomID: string,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID);
+    const room = LIVE_ROOMS.get(roomID) ?? null;
 
-    if (!room) {
+    if (room === null) {
         throw data("Not Found", {
             status: 404,
         });
@@ -233,9 +262,9 @@ export async function requireAuthenticatedDisplayConnection(
     };
 }
 
-export function requireAuthenticatedPresenterAction(
+export async function requireAuthenticatedPresenterAction(
     actionArgs: ActionFunctionArgs,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedPresenterRoomSession> {
     const {params, request} = actionArgs;
 
     const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
@@ -244,13 +273,26 @@ export function requireAuthenticatedPresenterAction(
         throw data("Bad Request", 400);
     }
 
-    return requireAuthenticatedPresenterSession(request, output.roomID);
+    const session = await requireAuthenticatedPresenterSession(
+        request,
+        output.roomID,
+    );
+
+    const {presenter} = session;
+
+    if (presenter.state !== PRESENTER_USER_STATES.connected) {
+        throw data("Conflict", {
+            status: 409,
+        });
+    }
+
+    return session;
 }
 
 export async function requireAuthenticatedPresenterConnection(
     request: Request,
     roomID: string,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS.get(roomID) ?? null;
@@ -280,7 +322,7 @@ export async function requireAuthenticatedPresenterConnection(
 export async function requireAuthenticatedPresenterSession(
     request: Request,
     roomID: string,
-): Promise<IAuthenticatedRoomConnection> {
+): Promise<IAuthenticatedPresenterRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS.get(roomID) ?? null;
@@ -301,7 +343,14 @@ export async function requireAuthenticatedPresenterSession(
         throw data("Conflict", 409);
     }
 
+    const {presenterEntity: presenter} = room;
+
+    if (presenter === null) {
+        throw data("Conflict", 409);
+    }
+
     return {
+        presenter,
         room,
         user,
     };

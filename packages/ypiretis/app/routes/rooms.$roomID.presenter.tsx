@@ -5,7 +5,7 @@ import {Outlet, data} from "react-router";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedPresenterSession} from "~/.server/services/room_service";
+import {requireAuthenticatedPresenterConnection} from "~/.server/services/room_service";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
@@ -47,7 +47,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {room, user} = await requireAuthenticatedPresenterSession(
+    const {room, user} = await requireAuthenticatedPresenterConnection(
         request,
         output.roomID,
     );

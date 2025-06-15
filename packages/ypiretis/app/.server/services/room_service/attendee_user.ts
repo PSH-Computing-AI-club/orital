@@ -4,14 +4,14 @@ import makeUser from "./user";
 
 const SYMBOL_ATTENDEE_USER_BRAND: unique symbol = Symbol();
 
-export const ATTENDEE_STATES = {
+export const ATTENDEE_USER_STATES = {
     ...ENTITY_STATES,
 
     awaiting: "STATE_AWAITING",
 } as const;
 
 export type IAttendeeUserStates =
-    (typeof ATTENDEE_STATES)[keyof typeof ATTENDEE_STATES];
+    (typeof ATTENDEE_USER_STATES)[keyof typeof ATTENDEE_USER_STATES];
 
 export type IAttendeeUserMessages = IUserMessages;
 
@@ -40,8 +40,8 @@ export default function makeAttendeeUser(
         // **HACK:** We cannot the room states from this file without causing
         // a circular dependency.
         room.state === "STATE_PERMISSIVE"
-            ? ATTENDEE_STATES.awaiting
-            : ATTENDEE_STATES.connected;
+            ? ATTENDEE_USER_STATES.awaiting
+            : ATTENDEE_USER_STATES.connected;
 
     return {
         ...user,

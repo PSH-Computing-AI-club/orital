@@ -1,5 +1,5 @@
 export type * from "./attendee_user";
-export {ATTENDEE_STATES, isAttendeeUser} from "./attendee_user";
+export {ATTENDEE_USER_STATES, isAttendeeUser} from "./attendee_user";
 
 export type * from "./display_entity";
 export {isDisplayEntity} from "./display_entity";

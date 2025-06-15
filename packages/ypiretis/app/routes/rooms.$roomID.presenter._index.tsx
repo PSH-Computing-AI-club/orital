@@ -217,7 +217,10 @@ function AttendeeList(props: IAttendeeListProps) {
     // **TODO:** use a virtualized list implementation here
 
     return users.map((user) => (
-        <AttendeeListItem key={user.accountID} user={user} />
+        <AttendeeListItem
+            key={`${"state" in user ? "attendee" : "presenter"}-${user.accountID}`}
+            user={user}
+        />
     ));
 }
 

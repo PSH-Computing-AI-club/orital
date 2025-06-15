@@ -9,7 +9,7 @@ import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_se
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
-import type {IRoom} from "~/state/attendee";
+import type {IAttendeeContext} from "~/state/attendee";
 import {AttendeeContextProvider} from "~/state/attendee";
 
 import type {ISession} from "~/state/session";
@@ -49,11 +49,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {accountID, firstName, lastName} = user;
 
     return {
-        initialRoomData: {
-            roomID,
-            state,
-            title,
-        } satisfies IRoom,
+        initialContextData: {
+            room: {
+                roomID,
+                state,
+                title,
+            },
+        } satisfies IAttendeeContext,
 
         session: {
             accountID,
@@ -80,12 +82,14 @@ export function HydrateFallback() {
 
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialRoomData, session} = loaderData;
+    const {initialContextData, session} = loaderData;
 
     return (
         <WebSocketCacheProvider>
             <SessionContextProvider session={session}>
-                <AttendeeContextProvider initialRoomData={initialRoomData}>
+                <AttendeeContextProvider
+                    initialContextData={initialContextData}
+                >
                     <Outlet />
                 </AttendeeContextProvider>
             </SessionContextProvider>

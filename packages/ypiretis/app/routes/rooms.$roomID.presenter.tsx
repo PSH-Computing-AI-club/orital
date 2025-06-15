@@ -16,7 +16,7 @@ import AppShell from "~/components/shell/app_shell";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
-import type {IAttendee, IDisplay, IRoom} from "~/state/presenter";
+import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
 import {PresenterContextProvider} from "~/state/presenter";
 
 import type {ISession} from "~/state/session";
@@ -76,15 +76,17 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     }) satisfies IDisplay[];
 
     return {
-        initialRoomData: {
-            attendees: initialAttendees,
-            displays: initialDisplays,
+        initialContextData: {
+            room: {
+                attendees: initialAttendees,
+                displays: initialDisplays,
 
-            pin,
-            roomID,
-            state,
-            title,
-        } satisfies IRoom,
+                pin,
+                roomID,
+                state,
+                title,
+            },
+        } satisfies IPresenterContext,
 
         session: {
             accountID,
@@ -111,9 +113,10 @@ export function HydrateFallback() {
 
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialRoomData, session} = loaderData;
+    const {initialContextData, session} = loaderData;
 
-    const {roomID} = initialRoomData;
+    const {room} = initialContextData;
+    const {roomID} = room;
 
     return (
         <AppShell.Root>
@@ -154,7 +157,9 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
             <WebSocketCacheProvider>
                 <SessionContextProvider session={session}>
-                    <PresenterContextProvider initialRoomData={initialRoomData}>
+                    <PresenterContextProvider
+                        initialContextData={initialContextData}
+                    >
                         <Outlet />
                     </PresenterContextProvider>
                 </SessionContextProvider>

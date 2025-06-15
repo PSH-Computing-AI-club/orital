@@ -100,7 +100,9 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
 }
 
 function AttendeesCard() {
-    const {attendees} = usePresenterContext();
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
     const session = useAuthenticatedSessionContext();
 
     return (
@@ -140,7 +142,8 @@ function AttendeesCard() {
 }
 
 function PINCard() {
-    const {pin, roomID, state} = usePresenterContext();
+    const {room} = usePresenterContext();
+    const {pin, roomID, state} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
@@ -325,7 +328,8 @@ function StateCardIcon(props: PropsWithChildren) {
 }
 
 function StateCard() {
-    const {state} = usePresenterContext();
+    const {room} = usePresenterContext();
+    const {state} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
@@ -417,7 +421,8 @@ function StateCard() {
 }
 
 export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
-    const {state, title} = usePresenterContext();
+    const {room} = usePresenterContext();
+    const {state, title} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 

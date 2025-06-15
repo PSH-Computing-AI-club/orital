@@ -8,8 +8,6 @@ export const ATTENDEE_STATES = {
     ...ENTITY_STATES,
 
     awaiting: "STATE_AWAITING",
-
-    permitted: "STATE_PERMITTED",
 } as const;
 
 export type IAttendeeUserStates =

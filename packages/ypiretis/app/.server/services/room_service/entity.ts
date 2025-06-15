@@ -198,6 +198,10 @@ export default function makeEntity<
 
     const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {
+            if (entity.state !== ENTITY_STATES.connected) {
+                return;
+            }
+
             const {newState} = event;
 
             entity._dispatch({
@@ -212,6 +216,10 @@ export default function makeEntity<
 
     const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
         (event) => {
+            if (entity.state !== ENTITY_STATES.connected) {
+                return;
+            }
+
             const {newTitle} = event;
 
             entity._dispatch({

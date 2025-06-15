@@ -1,6 +1,6 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
-import {SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
+import {ENTITY_STATES, SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
 import type {
     IRoomAttendeeAddedMessage,
     IRoomAttendeeDisposedMessage,
@@ -63,6 +63,10 @@ export default function makePresenterUser(
 
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
+            if (presenter.state !== ENTITY_STATES.connected) {
+                return;
+            }
+
             const {entity} = event;
 
             if (isAttendeeUser(entity)) {
@@ -95,6 +99,10 @@ export default function makePresenterUser(
 
     const entityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
         (event) => {
+            if (presenter.state !== ENTITY_STATES.connected) {
+                return;
+            }
+
             const {entity} = event;
 
             if (isAttendeeUser(entity)) {
@@ -122,6 +130,10 @@ export default function makePresenterUser(
     );
 
     const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
+        if (presenter.state !== ENTITY_STATES.connected) {
+            return;
+        }
+
         const {newPIN} = event;
 
         presenter._dispatch({

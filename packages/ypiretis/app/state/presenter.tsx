@@ -75,6 +75,60 @@ function contextReducer(
     const {data, event} = message;
 
     switch (event) {
+        case "attendeeUser.stateUpdate": {
+            const {entityID, state} = data;
+
+            const {room} = context;
+            const {attendees} = room;
+
+            return {
+                ...context,
+
+                room: {
+                    ...room,
+
+                    attendees: attendees.map((attendee) => {
+                        if (attendee.entityID === entityID) {
+                            return {
+                                ...attendee,
+
+                                state,
+                            };
+                        }
+
+                        return attendee;
+                    }),
+                },
+            };
+        }
+
+        case "displayEntity.stateUpdate": {
+            const {entityID, state} = data;
+
+            const {room} = context;
+            const {displays} = room;
+
+            return {
+                ...context,
+
+                room: {
+                    ...room,
+
+                    displays: displays.map((display) => {
+                        if (display.entityID === entityID) {
+                            return {
+                                ...display,
+
+                                state,
+                            };
+                        }
+
+                        return display;
+                    }),
+                },
+            };
+        }
+
         case "room.attendeeAdded": {
             const {accountID, entityID, firstName, lastName, state} = data;
 

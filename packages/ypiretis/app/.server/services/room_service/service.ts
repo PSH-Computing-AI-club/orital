@@ -127,16 +127,13 @@ export function requireAuthenticatedAttendeeAction(
 ): Promise<IAuthenticatedRoomConnection> {
     const {params, request} = actionArgs;
 
-    const {output: paramsData, success} = v.safeParse(
-        ACTION_PARAMS_SCHEMA,
-        params,
-    );
+    const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
 
     if (!success) {
         throw data("Bad Request", 400);
     }
 
-    return requireAuthenticatedAttendeeSession(request, paramsData.roomID);
+    return requireAuthenticatedAttendeeSession(request, output.roomID);
 }
 
 export async function requireAuthenticatedAttendeeConnection(
@@ -241,16 +238,13 @@ export function requireAuthenticatedPresenterAction(
 ): Promise<IAuthenticatedRoomConnection> {
     const {params, request} = actionArgs;
 
-    const {output: paramsData, success} = v.safeParse(
-        ACTION_PARAMS_SCHEMA,
-        params,
-    );
+    const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
 
     if (!success) {
         throw data("Bad Request", 400);
     }
 
-    return requireAuthenticatedPresenterSession(request, paramsData.roomID);
+    return requireAuthenticatedPresenterSession(request, output.roomID);
 }
 
 export async function requireAuthenticatedPresenterConnection(

@@ -8,6 +8,8 @@ import {
 } from "react";
 
 import type {
+    IAttendeeUserStates,
+    IDisplayEntityStates,
     IPresenterUserMessages,
     IPresenterUserStates,
     IRoomStates,
@@ -34,9 +36,13 @@ export interface IUser extends IEntity {
     readonly lastName: string;
 }
 
-export interface IDisplay extends IEntity {}
+export interface IDisplay extends IEntity {
+    readonly state: IDisplayEntityStates;
+}
 
-export interface IAttendee extends IUser {}
+export interface IAttendee extends IUser {
+    readonly state: IAttendeeUserStates;
+}
 
 export interface IRoom {
     readonly attendees: IAttendee[];
@@ -70,7 +76,7 @@ function contextReducer(
 
     switch (event) {
         case "room.attendeeAdded": {
-            const {accountID, entityID, firstName, lastName} = data;
+            const {accountID, entityID, firstName, lastName, state} = data;
 
             const {room} = context;
             const {attendees} = room;
@@ -89,6 +95,7 @@ function contextReducer(
                             entityID,
                             firstName,
                             lastName,
+                            state,
                         },
                     ],
                 },
@@ -115,7 +122,7 @@ function contextReducer(
         }
 
         case "room.displayAdded": {
-            const {entityID} = data;
+            const {entityID, state} = data;
 
             const {room} = context;
             const {displays} = room;
@@ -131,6 +138,7 @@ function contextReducer(
 
                         {
                             entityID,
+                            state,
                         },
                     ],
                 },

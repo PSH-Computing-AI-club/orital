@@ -48,6 +48,8 @@ export type IRoomAttendeeAddedMessage = IEntityMessage<
         readonly firstName: string;
 
         readonly lastName: string;
+
+        readonly state: IAttendeeUserStates;
     }
 >;
 
@@ -62,6 +64,8 @@ export type IRoomDisplayAddedMessage = IEntityMessage<
     "room.displayAdded",
     {
         readonly entityID: number;
+
+        readonly state: IDisplayEntityStates;
     }
 >;
 

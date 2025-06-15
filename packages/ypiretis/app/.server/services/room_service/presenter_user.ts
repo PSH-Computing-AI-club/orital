@@ -88,7 +88,7 @@ export default function makePresenterUser(
             const {entity} = event;
 
             if (isAttendeeUser(entity)) {
-                const {id, user} = entity;
+                const {id, state, user} = entity;
                 const {accountID, firstName, lastName} = user;
 
                 const attendeeStateSubscription =
@@ -117,10 +117,11 @@ export default function makePresenterUser(
                         entityID: id,
                         firstName,
                         lastName,
+                        state,
                     },
                 });
             } else if (isDisplayEntity(entity)) {
-                const {id} = entity;
+                const {id, state} = entity;
 
                 const displayStateSubscription =
                     entity.EVENT_STATE_UPDATE.subscribe((event) => {
@@ -145,6 +146,7 @@ export default function makePresenterUser(
 
                     data: {
                         entityID: id,
+                        state,
                     },
                 });
             }

@@ -1,4 +1,5 @@
 import type {IAttendeeUserStates} from "./attendee_user";
+import type {IDisplayEntityStates} from "./display_entity";
 import type {IEntityStates} from "./entity";
 import type {IPresenterUserStates} from "./presenter_user";
 import type {IRoomStates} from "./room";
@@ -18,6 +19,24 @@ export interface IEntityMessage<
 
     readonly data: D;
 }
+
+export type IAttendeeUserStateUpdate = IEntityMessage<
+    "attendeeUser.stateUpdate",
+    {
+        readonly entityID: number;
+
+        readonly state: IAttendeeUserStates;
+    }
+>;
+
+export type IDisplayEntityStateUpdate = IEntityMessage<
+    "displayEntity.stateUpdate",
+    {
+        readonly entityID: number;
+
+        readonly state: IDisplayEntityStates;
+    }
+>;
 
 export type IRoomAttendeeAddedMessage = IEntityMessage<
     "room.attendeeAdded",

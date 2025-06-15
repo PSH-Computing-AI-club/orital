@@ -2,6 +2,8 @@ import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
 import {ENTITY_STATES, SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
 import type {
+    IAttendeeUserStateUpdate,
+    IDisplayEntityStateUpdate,
     IRoomAttendeeAddedMessage,
     IRoomAttendeeDisposedMessage,
     IRoomDisplayAddedMessage,
@@ -25,6 +27,8 @@ export type IPresenterUserStates =
     (typeof PRESENTER_USER_STATES)[keyof typeof PRESENTER_USER_STATES];
 
 export type IPresenterUserMessages =
+    | IAttendeeUserStateUpdate
+    | IDisplayEntityStateUpdate
     | IRoomAttendeeAddedMessage
     | IRoomAttendeeDisposedMessage
     | IRoomDisplayAddedMessage
@@ -72,6 +76,9 @@ export default function makePresenterUser(
         },
     } satisfies IPresenterUser;
 
+    const attendeeSubscriptions = new Map<number, () => void>();
+    const displaySubscriptions = new Map<number, () => void>();
+
     const roomEntityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
             if (presenter.state !== ENTITY_STATES.connected) {
@@ -83,6 +90,24 @@ export default function makePresenterUser(
             if (isAttendeeUser(entity)) {
                 const {id, user} = entity;
                 const {accountID, firstName, lastName} = user;
+
+                const attendeeStateSubscription =
+                    entity.EVENT_STATE_UPDATE.subscribe((event) => {
+                        const {newState} = event;
+
+                        presenter._dispatch({
+                            event: "attendeeUser.stateUpdate",
+
+                            data: {
+                                entityID: id,
+                                state: newState,
+                            },
+                        });
+                    });
+
+                attendeeSubscriptions.set(id, () => {
+                    attendeeStateSubscription.dispose();
+                });
 
                 presenter._dispatch({
                     event: "room.attendeeAdded",
@@ -96,6 +121,24 @@ export default function makePresenterUser(
                 });
             } else if (isDisplayEntity(entity)) {
                 const {id} = entity;
+
+                const displayStateSubscription =
+                    entity.EVENT_STATE_UPDATE.subscribe((event) => {
+                        const {newState} = event;
+
+                        presenter._dispatch({
+                            event: "displayEntity.stateUpdate",
+
+                            data: {
+                                entityID: id,
+                                state: newState,
+                            },
+                        });
+                    });
+
+                displaySubscriptions.set(id, () => {
+                    displayStateSubscription.dispose();
+                });
 
                 presenter._dispatch({
                     event: "room.displayAdded",
@@ -119,6 +162,12 @@ export default function makePresenterUser(
             if (isAttendeeUser(entity)) {
                 const {id} = entity;
 
+                const disposeCallback = attendeeSubscriptions.get(id) ?? null;
+
+                if (disposeCallback !== null) {
+                    disposeCallback();
+                }
+
                 presenter._dispatch({
                     event: "room.attendeeDisposed",
 
@@ -128,6 +177,12 @@ export default function makePresenterUser(
                 });
             } else if (isDisplayEntity(entity)) {
                 const {id} = entity;
+
+                const disposeCallback = displaySubscriptions.get(id) ?? null;
+
+                if (disposeCallback !== null) {
+                    disposeCallback();
+                }
 
                 presenter._dispatch({
                     event: "room.displayDisposed",

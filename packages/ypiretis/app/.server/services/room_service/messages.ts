@@ -1,3 +1,6 @@
+import type {IAttendeeUserStates} from "./attendee_user";
+import type {IEntityStates} from "./entity";
+import type {IPresenterUserStates} from "./presenter_user";
 import type {IRoomStates} from "./room";
 
 export type IEntityMessageData =
@@ -68,5 +71,26 @@ export type IRoomTitleUpdateMessage = IEntityMessage<
     "room.titleUpdate",
     {
         readonly title: string;
+    }
+>;
+
+export type ISelfStateUpdateMessage = IEntityMessage<
+    "self.stateUpdate",
+    {
+        readonly state: IEntityStates;
+    }
+>;
+
+export type ISelfAttendeeUserStateUpdateMessage = IEntityMessage<
+    "self.stateUpdate",
+    {
+        readonly state: IAttendeeUserStates;
+    }
+>;
+
+export type ISelfPresenterUserStateUpdateMessage = IEntityMessage<
+    "self.stateUpdate",
+    {
+        readonly state: IPresenterUserStates;
     }
 >;

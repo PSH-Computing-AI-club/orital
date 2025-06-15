@@ -9,6 +9,7 @@ import type {
     IEntityMessageData,
     IRoomStateUpdateMessage,
     IRoomTitleUpdateMessage,
+    ISelfStateUpdateMessage,
 } from "./messages";
 import type {IRoom} from "./room";
 
@@ -24,7 +25,10 @@ export const ENTITY_STATES = {
 
 export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
-export type IEntityMessages = IRoomStateUpdateMessage | IRoomTitleUpdateMessage;
+export type IEntityMessages =
+    | IRoomStateUpdateMessage
+    | IRoomTitleUpdateMessage
+    | ISelfStateUpdateMessage;
 
 export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 
@@ -137,6 +141,7 @@ export default function makeEntity<
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             roomStateUpdateSubscription.dispose();
             roomTitleUpdateSubscription.dispose();
+            entityStateUpdateSubscription.dispose();
         },
 
         EVENT_STATE_UPDATE,
@@ -195,6 +200,24 @@ export default function makeEntity<
             room._entityDisposed(this as unknown as IGenericEntity);
         },
     } satisfies IGenericEntity;
+
+    const entityStateUpdateSubscription = EVENT_STATE_UPDATE.subscribe(
+        (event) => {
+            if (entity.state !== ENTITY_STATES.connected) {
+                return;
+            }
+
+            const {newState} = event;
+
+            entity._dispatch({
+                event: "self.stateUpdate",
+
+                data: {
+                    state: newState,
+                },
+            });
+        },
+    );
 
     const roomStateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {

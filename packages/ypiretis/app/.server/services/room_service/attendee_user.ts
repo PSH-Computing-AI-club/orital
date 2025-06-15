@@ -33,11 +33,21 @@ export function isAttendeeUser(value: unknown): value is IAttendeeUser {
 export default function makeAttendeeUser(
     options: IAttendeeUserOptions,
 ): IAttendeeUser {
+    const {room} = options;
     const user = makeUser<IAttendeeUserMessages, IAttendeeUserStates>(options);
+
+    const initialState: IAttendeeUserStates =
+        // **HACK:** We cannot the room states from this file without causing
+        // a circular dependency.
+        room.state === "STATE_PERMISSIVE"
+            ? ATTENDEE_STATES.awaiting
+            : ATTENDEE_STATES.connected;
 
     return {
         ...user,
 
         [SYMBOL_ATTENDEE_USER_BRAND]: true,
+
+        state: initialState,
     };
 }

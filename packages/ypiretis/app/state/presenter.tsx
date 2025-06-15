@@ -200,12 +200,9 @@ function contextReducer(
                 },
             };
         }
-
-        default:
-            throw new TypeError(
-                `bad argument #1 to 'contextReducer' (event type '${event}' not recognized)`,
-            );
     }
+
+    return context;
 }
 
 export function PresenterContextProvider(

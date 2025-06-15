@@ -84,12 +84,9 @@ function contextReducer(
                 state,
             };
         }
-
-        default:
-            throw new TypeError(
-                `bad argument #1 to 'contextReducer' (event type '${event}' not recognized)`,
-            );
     }
+
+    return context;
 }
 
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {

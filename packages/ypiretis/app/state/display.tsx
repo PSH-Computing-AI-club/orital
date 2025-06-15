@@ -66,12 +66,9 @@ function roomReducer(room: IRoom, message: IDisplayEntityMessages): IRoom {
                 title,
             };
         }
-
-        default:
-            throw new TypeError(
-                `bad argument #1 to 'roomReducer' (event type '${event}' not recognized)`,
-            );
     }
+
+    return room;
 }
 
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {

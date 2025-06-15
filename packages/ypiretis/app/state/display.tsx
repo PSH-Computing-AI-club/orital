@@ -8,8 +8,9 @@ import {
 } from "react";
 
 import type {
-    IRoomStates,
     IDisplayEntityMessages,
+    IDisplayEntityStates,
+    IRoomStates,
 } from "~/.server/services/room_service";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
@@ -31,6 +32,8 @@ export interface IRoom {
 
 export interface IDisplayContext {
     readonly room: IRoom;
+
+    readonly state: IDisplayEntityStates;
 }
 
 export interface IDisplayContextProviderProps extends PropsWithChildren {
@@ -86,6 +89,16 @@ function contextReducer(
 
                     title,
                 },
+            };
+        }
+
+        case "self.stateUpdate": {
+            const {state} = data;
+
+            return {
+                ...context,
+
+                state,
             };
         }
     }

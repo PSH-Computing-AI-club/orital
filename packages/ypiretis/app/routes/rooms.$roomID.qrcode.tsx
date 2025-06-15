@@ -13,7 +13,10 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_service";
+import {
+    DISPLAY_ENTITY_STATES,
+    requireAuthenticatedDisplayConnection,
+} from "~/.server/services/room_service";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
@@ -63,6 +66,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 state,
                 title,
             },
+
+            state: DISPLAY_ENTITY_STATES.disposed,
         } satisfies IDisplayContext,
     };
 }

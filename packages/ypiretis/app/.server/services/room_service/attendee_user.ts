@@ -1,4 +1,8 @@
 import {ENTITY_STATES} from "./entity";
+import type {
+    ISelfAttendeeUserStateUpdateMessage,
+    ISelfStateUpdateMessage,
+} from "./messages";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
 
@@ -13,7 +17,9 @@ export const ATTENDEE_USER_STATES = {
 export type IAttendeeUserStates =
     (typeof ATTENDEE_USER_STATES)[keyof typeof ATTENDEE_USER_STATES];
 
-export type IAttendeeUserMessages = IUserMessages;
+export type IAttendeeUserMessages =
+    | ISelfAttendeeUserStateUpdateMessage
+    | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 

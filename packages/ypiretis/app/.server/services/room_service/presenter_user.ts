@@ -7,6 +7,8 @@ import type {
     IRoomDisplayAddedMessage,
     IRoomDisplayDisposedMessage,
     IRoomPINUpdateMessage,
+    ISelfPresenterUserStateUpdateMessage,
+    ISelfStateUpdateMessage,
 } from "./messages";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
@@ -28,7 +30,8 @@ export type IPresenterUserMessages =
     | IRoomDisplayAddedMessage
     | IRoomDisplayDisposedMessage
     | IRoomPINUpdateMessage
-    | IUserMessages;
+    | ISelfPresenterUserStateUpdateMessage
+    | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IPresenterUserOptions extends IUserOptions {}
 

@@ -106,10 +106,10 @@ function AuthenticationLogInPendingView(props: {
                 // **HACK:** We need to let the browser fully close the web socket
                 // before we perform a navigation. Otherwise, the browser will hang
                 // with the dangling web socket connection.
-                setTimeout(() => {
+                setTimeout(async () => {
                     // **TODO:** Can we force navigation to a route error boundary?
                     // Also, we want to differentiate between status 401 and others.
-                    navigate("/authentication/log-in/unauthorized", {
+                    await navigate("/authentication/log-in/unauthorized", {
                         replace: true,
                     });
                 }, 0);

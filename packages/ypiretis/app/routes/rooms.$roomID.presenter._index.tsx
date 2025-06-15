@@ -214,6 +214,8 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
 function AttendeeList(props: IAttendeeListProps) {
     const {users} = props;
 
+    // **TODO:** use a virtualized list implementation here
+
     return users.map((user) => (
         <AttendeeListItem key={user.accountID} user={user} />
     ));

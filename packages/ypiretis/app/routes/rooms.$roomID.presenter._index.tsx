@@ -36,7 +36,9 @@ import UsersIcon from "~/components/icons/users_icon";
 
 import AppShell from "~/components/shell/app_shell";
 
+import type {IAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
+import type {ISession} from "~/state/session";
 import {useAuthenticatedSessionContext} from "~/state/session";
 
 import {buildFormData} from "~/utils/forms";
@@ -66,30 +68,51 @@ interface IAttendeeListItemProps {
         readonly lastName: string;
     };
 }
+function matchUserIcon(user: IAttendee | ISession) {
+    if ("state" in user) {
+        return UserIcon;
+    }
+
+    return TeachIcon;
+}
+
+function matchUserTagPalette(user: IAttendee | ISession) {
+    if ("state" in user) {
+        return "cyan";
+    }
+
+    return "orange";
+}
+
+function matchUserTagText(user: IAttendee | ISession): string {
+    if ("state" in user) {
+        return "Attendee";
+    }
+
+    return "Presenter";
+}
 
 function AttendeeListItem(props: IAttendeeListItemProps) {
-    const {isPresenter, user} = props;
+    const {user} = props;
     const {accountID, firstName, lastName} = user;
+
+    const UserIcon = matchUserIcon(user);
+    const userTagPalette = matchUserTagPalette(user);
+    const userTagText = matchUserTagText(user);
 
     return (
         <HStack gap="2" bg="bg" padding="3" fontSize="xs">
-            {isPresenter ? (
-                <TeachIcon fontSize="2xl" />
-            ) : (
-                <UserIcon fontSize="2xl" />
-            )}
+            <UserIcon fontSize="2xl" />
 
             <VStack gap="0" alignItems="flex-start" lineHeight="shorter">
                 <HStack>
                     {firstName} {lastName}
                     <Tag.Root
                         variant="solid"
-                        colorPalette={isPresenter ? "orange" : "cyan"}
+                        colorPalette={userTagPalette}
                         size="sm"
                     >
-                        <Tag.Label>
-                            {isPresenter ? "Presenter" : "Attendee"}
-                        </Tag.Label>
+                        <Tag.Label>{userTagText}</Tag.Label>
                     </Tag.Root>
                 </HStack>
 

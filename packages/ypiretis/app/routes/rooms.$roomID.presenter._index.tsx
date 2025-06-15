@@ -68,6 +68,11 @@ interface IAttendeeListItemProps {
         readonly lastName: string;
     };
 }
+
+interface IAttendeeListProps {
+    readonly users: (IAttendee | ISession)[];
+}
+
 function matchUserIcon(user: IAttendee | ISession) {
     if ("state" in user) {
         return UserIcon;
@@ -120,6 +125,14 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
             </VStack>
         </HStack>
     );
+}
+
+function AttendeeList(props: IAttendeeListProps) {
+    const {users} = props;
+
+    return users.map((user) => (
+        <AttendeeListItem key={user.accountID} user={user} />
+    ));
 }
 
 function AttendeesCard() {

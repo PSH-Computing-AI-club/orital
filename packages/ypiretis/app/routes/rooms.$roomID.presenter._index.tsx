@@ -37,6 +37,8 @@ import ReloadIcon from "~/components/icons/reload_icon";
 import ShieldIcon from "~/components/icons/shield_icon";
 import TeachIcon from "~/components/icons/teach_icon";
 import UserIcon from "~/components/icons/user_icon";
+import UserPlusIcon from "~/components/icons/user_plus_icon";
+import UserXIcon from "~/components/icons/user_x_icon";
 import UsersIcon from "~/components/icons/users_icon";
 
 import AppShell from "~/components/shell/app_shell";
@@ -80,7 +82,16 @@ interface IAttendeeListProps {
 
 function matchUserIcon(user: IAttendee | ISession) {
     if ("state" in user) {
-        return UserIcon;
+        switch (user.state) {
+            case "STATE_CONNECTED":
+                return UserIcon;
+
+            case "STATE_DISPOSED":
+                return UserXIcon;
+
+            case "STATE_AWAITING":
+                return UserPlusIcon;
+        }
     }
 
     return TeachIcon;
@@ -88,7 +99,16 @@ function matchUserIcon(user: IAttendee | ISession) {
 
 function matchUserTagPalette(user: IAttendee | ISession) {
     if ("state" in user) {
-        return "cyan";
+        switch (user.state) {
+            case "STATE_CONNECTED":
+                return "cyan";
+
+            case "STATE_DISPOSED":
+                return "red";
+
+            case "STATE_AWAITING":
+                return "yellow";
+        }
     }
 
     return "orange";
@@ -96,7 +116,16 @@ function matchUserTagPalette(user: IAttendee | ISession) {
 
 function matchUserTagText(user: IAttendee | ISession): string {
     if ("state" in user) {
-        return "Attendee";
+        switch (user.state) {
+            case "STATE_CONNECTED":
+                return "Attendee";
+
+            case "STATE_DISPOSED":
+                return "Disconnected";
+
+            case "STATE_AWAITING":
+                return "Awaiting Approval";
+        }
     }
 
     return "Presenter";

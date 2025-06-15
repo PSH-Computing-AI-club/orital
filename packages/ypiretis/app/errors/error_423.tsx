@@ -7,7 +7,7 @@ export default function Error423() {
         <>
             <PromptShell.Title title="Resource Locked." query="Locked" />
             <PromptShell.Body>
-                <Text>This page was accessed is in a locked state.</Text>
+                <Text>This page that was accessed is in a locked state.</Text>
             </PromptShell.Body>
         </>
     );

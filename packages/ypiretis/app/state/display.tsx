@@ -17,7 +17,7 @@ import useWebSocket from "~/hooks/web_socket";
 
 import {buildWebSocketURL} from "~/utils/url";
 
-const CONTEXT_DISPLAY = createContext<IRoom | null>(null);
+const CONTEXT_DISPLAY = createContext<IDisplayContext | null>(null);
 
 export interface IRoom {
     readonly pin: string;
@@ -29,51 +29,73 @@ export interface IRoom {
     readonly title: string;
 }
 
-export interface IDisplayContextProviderProps extends PropsWithChildren {
-    readonly initialRoomData: IRoom;
+export interface IDisplayContext {
+    readonly room: IRoom;
 }
 
-function roomReducer(room: IRoom, message: IDisplayEntityMessages): IRoom {
+export interface IDisplayContextProviderProps extends PropsWithChildren {
+    readonly initialContextData: IDisplayContext;
+}
+
+function contextReducer(
+    context: IDisplayContext,
+    message: IDisplayEntityMessages,
+): IDisplayContext {
     const {data, event} = message;
 
     switch (event) {
         case "room.pinUpdate": {
             const {pin} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                pin,
+                room: {
+                    ...room,
+
+                    pin,
+                },
             };
         }
 
         case "room.stateUpdate": {
             const {state} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                state,
+                room: {
+                    ...room,
+
+                    state,
+                },
             };
         }
 
         case "room.titleUpdate": {
             const {title} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                title,
+                room: {
+                    ...room,
+
+                    title,
+                },
             };
         }
     }
 
-    return room;
+    return context;
 }
 
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {
-    const {children, initialRoomData} = props;
-    const [room, dispatch] = useReducer(roomReducer, initialRoomData);
+    const {children, initialContextData} = props;
+    const [context, dispatch] = useReducer(contextReducer, initialContextData);
 
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow
@@ -97,18 +119,18 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     );
 
     useWebSocket(
-        buildWebSocketURL(`/rooms/${room.roomID}/display/events`),
+        buildWebSocketURL(`/rooms/${context.room.roomID}/display/events`),
         useWebSocketOptions,
     );
 
     return (
-        <CONTEXT_DISPLAY.Provider value={room}>
+        <CONTEXT_DISPLAY.Provider value={context}>
             {children}
         </CONTEXT_DISPLAY.Provider>
     );
 }
 
-export function useDisplayContext(): IRoom {
+export function useDisplayContext(): IDisplayContext {
     const context = useContext(CONTEXT_DISPLAY);
 
     if (context === null) {

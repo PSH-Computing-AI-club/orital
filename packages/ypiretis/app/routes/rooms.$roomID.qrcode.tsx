@@ -17,7 +17,7 @@ import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_ser
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
-import type {IRoom} from "~/state/display";
+import type {IDisplayContext} from "~/state/display";
 import {DisplayContextProvider, useDisplayContext} from "~/state/display";
 
 import {APP_NAME} from "~/utils/constants";
@@ -56,12 +56,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {pin, roomID, state, title} = room;
 
     return {
-        initialRoomData: {
-            pin,
-            roomID,
-            state,
-            title,
-        } satisfies IRoom,
+        initialContextData: {
+            room: {
+                pin,
+                roomID,
+                state,
+                title,
+            },
+        } satisfies IDisplayContext,
     };
 }
 
@@ -81,7 +83,8 @@ export function HydrateFallback() {
 }
 
 function QRCodeView() {
-    const {pin, roomID, title} = useDisplayContext();
+    const {room} = useDisplayContext();
+    const {pin, roomID, title} = room;
 
     const roomURL = buildAppURL(`/attendee/${roomID}`).toString();
     const joinURL = buildAppURL(`/r/${pin}`).toString();
@@ -137,11 +140,11 @@ function QRCodeView() {
 
 export default function RoomsQRCode(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialRoomData} = loaderData;
+    const {initialContextData} = loaderData;
 
     return (
         <WebSocketCacheProvider>
-            <DisplayContextProvider initialRoomData={initialRoomData}>
+            <DisplayContextProvider initialContextData={initialContextData}>
                 <QRCodeView />
             </DisplayContextProvider>
         </WebSocketCacheProvider>

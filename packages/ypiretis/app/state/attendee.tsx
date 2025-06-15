@@ -8,8 +8,9 @@ import {
 } from "react";
 
 import type {
-    IRoomStates,
     IAttendeeUserMessages,
+    IAttendeeUserStates,
+    IRoomStates,
 } from "~/.server/services/room_service";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
@@ -29,6 +30,8 @@ export interface IRoom {
 
 export interface IAttendeeContext {
     readonly room: IRoom;
+
+    readonly state: IAttendeeUserStates;
 }
 
 export interface IAttendeeContextProviderProps extends PropsWithChildren {
@@ -69,6 +72,16 @@ function contextReducer(
 
                     title,
                 },
+            };
+        }
+
+        case "self.stateUpdate": {
+            const {state} = data;
+
+            return {
+                ...context,
+
+                state,
             };
         }
 

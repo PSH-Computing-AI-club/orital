@@ -5,7 +5,10 @@ import {Outlet, data} from "react-router";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedPresenterConnection} from "~/.server/services/room_service";
+import {
+    PRESENTER_USER_STATES,
+    requireAuthenticatedPresenterConnection,
+} from "~/.server/services/room_service";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
@@ -86,6 +89,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 state,
                 title,
             },
+
+            state: PRESENTER_USER_STATES.disposed,
         } satisfies IPresenterContext,
 
         session: {

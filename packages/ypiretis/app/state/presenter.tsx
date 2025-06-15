@@ -8,8 +8,9 @@ import {
 } from "react";
 
 import type {
-    IRoomStates,
     IPresenterUserMessages,
+    IPresenterUserStates,
+    IRoomStates,
 } from "~/.server/services/room_service";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
@@ -53,6 +54,8 @@ export interface IRoom {
 
 export interface IPresenterContext {
     readonly room: IRoom;
+
+    readonly state: IPresenterUserStates;
 }
 
 export interface IPresenterContextProviderProps extends PropsWithChildren {

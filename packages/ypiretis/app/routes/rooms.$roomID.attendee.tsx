@@ -5,7 +5,10 @@ import {Outlet, data} from "react-router";
 
 import * as v from "valibot";
 
-import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_service";
+import {
+    ATTENDEE_USER_STATES,
+    requireAuthenticatedAttendeeConnection,
+} from "~/.server/services/room_service";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
@@ -55,6 +58,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 state,
                 title,
             },
+
+            state: ATTENDEE_USER_STATES.disposed,
         } satisfies IAttendeeContext,
 
         session: {

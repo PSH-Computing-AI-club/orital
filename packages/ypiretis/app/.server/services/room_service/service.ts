@@ -177,8 +177,12 @@ export async function requireAuthenticatedAttendeeConnection(
         });
     }
 
-    if (room.state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
+    switch (room.state) {
+        case ROOM_STATES.disposed:
+            throw data("Conflict", 409);
+
+        case ROOM_STATES.locked:
+            throw data("Locked", 423);
     }
 
     for (const attendee of room.attendees.values()) {

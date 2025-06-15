@@ -17,7 +17,7 @@ import useWebSocket from "~/hooks/web_socket";
 
 import {buildWebSocketURL} from "~/utils/url";
 
-const CONTEXT_PRESENTER = createContext<IRoom | null>(null);
+const CONTEXT_PRESENTER = createContext<IPresenterContext | null>(null);
 
 export interface IEntity {
     readonly entityID: number;
@@ -51,105 +51,156 @@ export interface IRoom {
     readonly title: string;
 }
 
-export interface IPresenterContextProviderProps extends PropsWithChildren {
-    readonly initialRoomData: IRoom;
+export interface IPresenterContext {
+    readonly room: IRoom;
 }
 
-function roomReducer(room: IRoom, message: IPresenterUserMessages): IRoom {
+export interface IPresenterContextProviderProps extends PropsWithChildren {
+    readonly initialContextData: IPresenterContext;
+}
+
+function contextReducer(
+    context: IPresenterContext,
+    message: IPresenterUserMessages,
+): IPresenterContext {
     const {data, event} = message;
 
     switch (event) {
         case "room.attendeeAdded": {
             const {accountID, entityID, firstName, lastName} = data;
 
+            const {room} = context;
+            const {attendees} = room;
+
             return {
-                ...room,
+                ...context,
 
-                attendees: [
-                    ...room.attendees,
+                room: {
+                    ...room,
 
-                    {
-                        accountID,
-                        entityID,
-                        firstName,
-                        lastName,
-                    },
-                ],
+                    attendees: [
+                        ...attendees,
+
+                        {
+                            accountID,
+                            entityID,
+                            firstName,
+                            lastName,
+                        },
+                    ],
+                },
             };
         }
 
         case "room.attendeeDisposed": {
             const {entityID} = data;
 
-            return {
-                ...room,
+            const {room} = context;
+            const {attendees} = room;
 
-                attendees: room.attendees.filter(
-                    (attendee) => attendee.entityID !== entityID,
-                ),
+            return {
+                ...context,
+
+                room: {
+                    ...room,
+
+                    attendees: attendees.filter(
+                        (attendee) => attendee.entityID !== entityID,
+                    ),
+                },
             };
         }
 
         case "room.displayAdded": {
             const {entityID} = data;
 
-            return {
-                ...room,
-                displays: [
-                    ...room.displays,
+            const {room} = context;
+            const {displays} = room;
 
-                    {
-                        entityID,
-                    },
-                ],
+            return {
+                ...context,
+
+                room: {
+                    ...room,
+
+                    displays: [
+                        ...displays,
+
+                        {
+                            entityID,
+                        },
+                    ],
+                },
             };
         }
 
         case "room.displayDisposed": {
             const {entityID} = data;
 
-            return {
-                ...room,
+            const {room} = context;
+            const {displays} = room;
 
-                displays: room.displays.filter(
-                    (display) => display.entityID !== entityID,
-                ),
+            return {
+                ...context,
+
+                room: {
+                    ...room,
+
+                    displays: displays.filter(
+                        (display) => display.entityID !== entityID,
+                    ),
+                },
             };
         }
 
         case "room.pinUpdate": {
             const {pin} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                pin,
+                room: {
+                    ...room,
+
+                    pin,
+                },
             };
         }
 
         case "room.stateUpdate": {
             const {state} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                state,
+                room: {
+                    ...room,
+
+                    state,
+                },
             };
         }
 
         case "room.titleUpdate": {
             const {title} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                title,
+                room: {
+                    ...room,
+
+                    title,
+                },
             };
         }
 
         default:
             throw new TypeError(
-                `bad argument #1 to 'roomReducer' (event type '${event}' not recognized)`,
+                `bad argument #1 to 'contextReducer' (event type '${event}' not recognized)`,
             );
     }
 }
@@ -157,8 +208,8 @@ function roomReducer(room: IRoom, message: IPresenterUserMessages): IRoom {
 export function PresenterContextProvider(
     props: IPresenterContextProviderProps,
 ) {
-    const {children, initialRoomData} = props;
-    const [room, dispatch] = useReducer(roomReducer, initialRoomData);
+    const {children, initialContextData} = props;
+    const [context, dispatch] = useReducer(contextReducer, initialContextData);
 
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow
@@ -182,18 +233,18 @@ export function PresenterContextProvider(
     );
 
     useWebSocket(
-        buildWebSocketURL(`/rooms/${room.roomID}/presenter/events`),
+        buildWebSocketURL(`/rooms/${context.room.roomID}/presenter/events`),
         useWebSocketOptions,
     );
 
     return (
-        <CONTEXT_PRESENTER.Provider value={room}>
+        <CONTEXT_PRESENTER.Provider value={context}>
             {children}
         </CONTEXT_PRESENTER.Provider>
     );
 }
 
-export function usePresenterContext(): IRoom {
+export function usePresenterContext(): IPresenterContext {
     const context = useContext(CONTEXT_PRESENTER);
 
     if (context === null) {

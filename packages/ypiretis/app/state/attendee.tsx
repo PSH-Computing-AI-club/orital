@@ -17,7 +17,7 @@ import useWebSocket from "~/hooks/web_socket";
 
 import {buildWebSocketURL} from "~/utils/url";
 
-const CONTEXT_ATTENDEE = createContext<IRoom | null>(null);
+const CONTEXT_ATTENDEE = createContext<IAttendeeContext | null>(null);
 
 export interface IRoom {
     readonly roomID: string;
@@ -27,44 +27,61 @@ export interface IRoom {
     readonly title: string;
 }
 
-export interface IAttendeeContextProviderProps extends PropsWithChildren {
-    readonly initialRoomData: IRoom;
+export interface IAttendeeContext {
+    readonly room: IRoom;
 }
 
-function roomReducer(room: IRoom, message: IAttendeeUserMessages): IRoom {
+export interface IAttendeeContextProviderProps extends PropsWithChildren {
+    readonly initialContextData: IAttendeeContext;
+}
+
+function contextReducer(
+    context: IAttendeeContext,
+    message: IAttendeeUserMessages,
+): IAttendeeContext {
     const {data, event} = message;
 
     switch (event) {
         case "room.stateUpdate": {
             const {state} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                state,
+                room: {
+                    ...room,
+
+                    state,
+                },
             };
         }
 
         case "room.titleUpdate": {
             const {title} = data;
+            const {room} = context;
 
             return {
-                ...room,
+                ...context,
 
-                title,
+                room: {
+                    ...room,
+
+                    title,
+                },
             };
         }
 
         default:
             throw new TypeError(
-                `bad argument #1 to 'roomReducer' (event type '${event}' not recognized)`,
+                `bad argument #1 to 'contextReducer' (event type '${event}' not recognized)`,
             );
     }
 }
 
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
-    const {children, initialRoomData} = props;
-    const [room, dispatch] = useReducer(roomReducer, initialRoomData);
+    const {children, initialContextData} = props;
+    const [context, dispatch] = useReducer(contextReducer, initialContextData);
 
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow
@@ -88,18 +105,18 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     );
 
     useWebSocket(
-        buildWebSocketURL(`/rooms/${room.roomID}/attendee/events`),
+        buildWebSocketURL(`/rooms/${context.room.roomID}/attendee/events`),
         useWebSocketOptions,
     );
 
     return (
-        <CONTEXT_ATTENDEE.Provider value={room}>
+        <CONTEXT_ATTENDEE.Provider value={context}>
             {children}
         </CONTEXT_ATTENDEE.Provider>
     );
 }
 
-export function useAttendeeContext(): IRoom {
+export function useAttendeeContext(): IAttendeeContext {
     const context = useContext(CONTEXT_ATTENDEE);
 
     if (context === null) {

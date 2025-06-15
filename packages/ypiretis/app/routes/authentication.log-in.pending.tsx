@@ -2,6 +2,7 @@ import {Strong, Text} from "@chakra-ui/react";
 
 import {useCallback, useMemo} from "react";
 
+import type {ShouldRevalidateFunction} from "react-router";
 import {data, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
@@ -39,6 +40,10 @@ const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
     ),
 });
 
+export const shouldRevalidate = ((_revalidateArgs) => {
+    return false;
+}) satisfies ShouldRevalidateFunction;
+
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
@@ -68,7 +73,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     });
 }
 
-export function loader(loaderArgs: Route.LoaderArgs) {
+export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
     const {request} = loaderArgs;
     const {searchParams} = new URL(request.url);
 
@@ -88,6 +93,32 @@ export function loader(loaderArgs: Route.LoaderArgs) {
     return {
         callbackTokenExpiresAt,
     };
+}
+
+clientLoader.hydrate = true as const;
+
+export function HydrateFallback() {
+    return (
+        <>
+            <PromptShell.Title title="Log-In Pending." query="Pending" />
+
+            <PromptShell.Body>
+                <noscript>
+                    <Text>
+                        JavaScript is{" "}
+                        <Strong color="red.solid">required</Strong> to log-in.
+                    </Text>
+                </noscript>
+
+                <Text>
+                    Check your email for the{" "}
+                    <Strong color="cyan.solid">log-in link</Strong>.
+                </Text>
+
+                <Text>Awaiting pending authorization...</Text>
+            </PromptShell.Body>
+        </>
+    );
 }
 
 function AuthenticationLogInPendingView(props: {
@@ -194,27 +225,7 @@ function AuthenticationLogInPendingView(props: {
         useWebSocketOptions,
     );
 
-    return (
-        <>
-            <PromptShell.Title title="Log-In Pending." query="Pending" />
-
-            <PromptShell.Body>
-                <noscript>
-                    <Text>
-                        JavaScript is{" "}
-                        <Strong color="red.solid">required</Strong> to log-in.
-                    </Text>
-                </noscript>
-
-                <Text>
-                    Check your email for the{" "}
-                    <Strong color="cyan.solid">log-in link</Strong>.
-                </Text>
-
-                <Text>Awaiting pending authorization...</Text>
-            </PromptShell.Body>
-        </>
-    );
+    return <HydrateFallback />;
 }
 
 export default function AuthenticationLogInPending(

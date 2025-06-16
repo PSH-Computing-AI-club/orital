@@ -1,9 +1,7 @@
 import type {IEntity, IEntityOptions} from "./entity";
 import makeEntity, {ENTITY_STATES} from "./entity";
 import type {IDisplayEntityMessages} from "./messages";
-import {SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
-
-const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
+import {SYMBOL_DISPLAY_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
 export const DISPLAY_ENTITY_STATES = {
     ...ENTITY_STATES,

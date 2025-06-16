@@ -4,6 +4,37 @@ import type {IEntityStates} from "./entity";
 import type {IPresenterUserStates} from "./presenter_user";
 import type {IRoomStates} from "./room";
 
+export const MESSAGE_EVENTS = {
+    attendeeUserStateUpdate: "attendeeUser.stateUpdate",
+
+    displayEntityStateUpdate: "displayEntity.stateUpdate",
+
+    roomAttendeeAdded: "room.attendeeAdded",
+
+    roomAttendeeDisposed: "room.attendeeDisposed",
+
+    roomDisplayAdded: "room.displayAdded",
+
+    roomDisplayDisposed: "room.displayDisposed",
+
+    roomPinUpdate: "room.pinUpdate",
+
+    roomStateUpdate: "room.stateUpdate",
+
+    roomTitleUpdate: "room.titleUpdate",
+
+    selfBanned: "self.banned",
+
+    selfKicked: "self.kicked",
+
+    selfRejected: "self.rejected",
+
+    selfStateUpdate: "self.stateUpdate",
+} as const;
+
+export type IMessageEvents =
+    (typeof MESSAGE_EVENTS)[keyof typeof MESSAGE_EVENTS];
+
 export type IEntityMessages =
     | IRoomStateUpdateMessage
     | IRoomTitleUpdateMessage
@@ -46,7 +77,7 @@ export interface IMessage {
 }
 
 export interface IAttendeeUserStateUpdateMessage extends IMessage {
-    readonly event: "attendeeUser.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.attendeeUserStateUpdate;
 
     readonly data: {
         readonly entityID: number;
@@ -56,7 +87,7 @@ export interface IAttendeeUserStateUpdateMessage extends IMessage {
 }
 
 export interface IDisplayEntityStateUpdateMessage extends IMessage {
-    readonly event: "displayEntity.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.displayEntityStateUpdate;
 
     readonly data: {
         readonly entityID: number;
@@ -66,7 +97,7 @@ export interface IDisplayEntityStateUpdateMessage extends IMessage {
 }
 
 export interface IRoomAttendeeAddedMessage extends IMessage {
-    readonly event: "room.attendeeAdded";
+    readonly event: typeof MESSAGE_EVENTS.roomAttendeeAdded;
 
     readonly data: {
         readonly accountID: string;
@@ -82,7 +113,7 @@ export interface IRoomAttendeeAddedMessage extends IMessage {
 }
 
 export interface IRoomAttendeeDisposedMessage extends IMessage {
-    readonly event: "room.attendeeDisposed";
+    readonly event: typeof MESSAGE_EVENTS.roomAttendeeDisposed;
 
     readonly data: {
         readonly entityID: number;
@@ -90,7 +121,7 @@ export interface IRoomAttendeeDisposedMessage extends IMessage {
 }
 
 export interface IRoomDisplayAddedMessage extends IMessage {
-    readonly event: "room.displayAdded";
+    readonly event: typeof MESSAGE_EVENTS.roomDisplayAdded;
 
     readonly data: {
         readonly entityID: number;
@@ -100,7 +131,7 @@ export interface IRoomDisplayAddedMessage extends IMessage {
 }
 
 export interface IRoomDisplayDisposedMessage extends IMessage {
-    readonly event: "room.displayDisposed";
+    readonly event: typeof MESSAGE_EVENTS.roomDisplayDisposed;
 
     readonly data: {
         readonly entityID: number;
@@ -108,7 +139,7 @@ export interface IRoomDisplayDisposedMessage extends IMessage {
 }
 
 export interface IRoomPINUpdateMessage extends IMessage {
-    readonly event: "room.pinUpdate";
+    readonly event: typeof MESSAGE_EVENTS.roomPinUpdate;
 
     readonly data: {
         readonly pin: string;
@@ -116,7 +147,7 @@ export interface IRoomPINUpdateMessage extends IMessage {
 }
 
 export interface IRoomStateUpdateMessage extends IMessage {
-    readonly event: "room.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.roomStateUpdate;
 
     readonly data: {
         readonly state: IRoomStates;
@@ -124,7 +155,7 @@ export interface IRoomStateUpdateMessage extends IMessage {
 }
 
 export interface IRoomTitleUpdateMessage extends IMessage {
-    readonly event: "room.titleUpdate";
+    readonly event: typeof MESSAGE_EVENTS.roomTitleUpdate;
 
     readonly data: {
         readonly title: string;
@@ -132,19 +163,19 @@ export interface IRoomTitleUpdateMessage extends IMessage {
 }
 
 export interface ISelfBannedMessage extends IMessage {
-    readonly event: "self.banned";
+    readonly event: typeof MESSAGE_EVENTS.selfBanned;
 }
 
 export interface ISelfKickedMessage extends IMessage {
-    readonly event: "self.kicked";
+    readonly event: typeof MESSAGE_EVENTS.selfKicked;
 }
 
 export interface ISelfRejectedMessage extends IMessage {
-    readonly event: "self.rejected";
+    readonly event: typeof MESSAGE_EVENTS.selfRejected;
 }
 
 export interface ISelfStateUpdateMessage extends IMessage {
-    readonly event: "self.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.selfStateUpdate;
 
     readonly data: {
         readonly state: IEntityStates;
@@ -152,7 +183,7 @@ export interface ISelfStateUpdateMessage extends IMessage {
 }
 
 export interface ISelfAttendeeUserStateUpdateMessage extends IMessage {
-    readonly event: "self.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.selfStateUpdate;
 
     readonly data: {
         readonly state: IAttendeeUserStates;
@@ -160,7 +191,7 @@ export interface ISelfAttendeeUserStateUpdateMessage extends IMessage {
 }
 
 export interface ISelfPresenterUserStateUpdateMessage extends IMessage {
-    readonly event: "self.stateUpdate";
+    readonly event: typeof MESSAGE_EVENTS.selfStateUpdate;
 
     readonly data: {
         readonly state: IPresenterUserStates;

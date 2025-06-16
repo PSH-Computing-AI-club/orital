@@ -3,7 +3,10 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import type {IAttendeeUser} from "~/.server/services/room_service";
-import {requireAuthenticatedAttendeeConnection} from "~/.server/services/room_service";
+import {
+    ENTITY_STATES,
+    requireAuthenticatedAttendeeConnection,
+} from "~/.server/services/room_service";
 
 import {webSocket} from "~/.server/utils/web_socket";
 
@@ -31,7 +34,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     webSocket({
         onClose(_event, _connection) {
-            attendee?._dispose();
+            if (
+                attendee !== null &&
+                attendee.state !== ENTITY_STATES.disposed
+            ) {
+                attendee._dispose();
+            }
         },
 
         onOpen(_event, connection) {

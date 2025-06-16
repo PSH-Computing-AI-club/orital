@@ -3,7 +3,10 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import type {IDisplayEntity} from "~/.server/services/room_service";
-import {requireAuthenticatedDisplayConnection} from "~/.server/services/room_service";
+import {
+    ENTITY_STATES,
+    requireAuthenticatedDisplayConnection,
+} from "~/.server/services/room_service";
 
 import {webSocket} from "~/.server/utils/web_socket";
 
@@ -31,7 +34,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     webSocket({
         onClose(_event, _connection) {
-            display?._dispose();
+            if (display !== null && display.state !== ENTITY_STATES.disposed) {
+                display._dispose();
+            }
         },
 
         onOpen(_event, connection) {

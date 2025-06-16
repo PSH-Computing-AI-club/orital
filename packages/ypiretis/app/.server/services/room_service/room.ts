@@ -80,7 +80,11 @@ export interface IRoom {
 
     readonly EVENT_TITLE_UPDATE: IEvent<IRoomTitleUpdateEvent>;
 
+    readonly approvedAccountIDs: ReadonlySet<string>;
+
     readonly attendees: ReadonlyMap<number, IAttendeeUser>;
+
+    readonly bannedAccountIDs: ReadonlySet<string>;
 
     readonly displays: ReadonlyMap<number, IDisplayEntity>;
 
@@ -97,6 +101,12 @@ export interface IRoom {
     readonly title: string;
 
     readonly state: IRoomStates;
+
+    _attendeeApproved(attendee: IAttendeeUser): void;
+
+    _attendeeBanned(attendee: IAttendeeUser): void;
+
+    _attendeeKicked(attendee: IAttendeeUser): void;
 
     _entityDisposed(entity: IGenericEntity): void;
 
@@ -138,6 +148,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
     const EVENT_TITLE_UPDATE = makeEvent<IRoomTitleUpdateEvent>();
 
+    const approvedAccountIDs = new Set<string>();
+    const bannedAccountIDs = new Set<string>();
+
     const attendees = new Map<number, IAttendeeUser>();
     const attendeePool = makeIDPool();
 
@@ -163,7 +176,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         EVENT_STATE_UPDATE,
         EVENT_TITLE_UPDATE,
 
+        approvedAccountIDs,
         attendees,
+        bannedAccountIDs,
         displays,
         id,
         presenter,
@@ -183,6 +198,28 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         get title() {
             return title;
+        },
+
+        _attendeeApproved(attendee) {
+            const {user} = attendee;
+            const {accountID} = user;
+
+            approvedAccountIDs.add(accountID);
+        },
+
+        _attendeeBanned(attendee) {
+            const {user} = attendee;
+            const {accountID} = user;
+
+            approvedAccountIDs.delete(accountID);
+            bannedAccountIDs.add(accountID);
+        },
+
+        _attendeeKicked(attendee) {
+            const {user} = attendee;
+            const {accountID} = user;
+
+            approvedAccountIDs.delete(accountID);
         },
 
         _entityDisposed(entity) {

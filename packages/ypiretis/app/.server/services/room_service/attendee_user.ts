@@ -1,6 +1,8 @@
 import {ENTITY_STATES} from "./entity";
 import type {
     ISelfAttendeeUserStateUpdateMessage,
+    ISelfBannedMessage,
+    ISelfKickedMessage,
     ISelfStateUpdateMessage,
 } from "./messages";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
@@ -19,6 +21,8 @@ export type IAttendeeUserStates =
 
 export type IAttendeeUserMessages =
     | ISelfAttendeeUserStateUpdateMessage
+    | ISelfBannedMessage
+    | ISelfKickedMessage
     | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
@@ -26,6 +30,12 @@ export interface IAttendeeUserOptions extends IUserOptions {}
 export interface IAttendeeUser
     extends IUser<IAttendeeUserMessages, IAttendeeUserStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
+
+    approve(): void;
+
+    ban(): void;
+
+    kick(): void;
 }
 
 export function isAttendeeUser(value: unknown): value is IAttendeeUser {
@@ -55,5 +65,41 @@ export default function makeAttendeeUser(
         [SYMBOL_ATTENDEE_USER_BRAND]: true,
 
         state: initialState,
+
+        approve() {
+            const {state} = this;
+
+            if (state !== ATTENDEE_USER_STATES.awaiting) {
+                throw new TypeError(
+                    "bad dispatch to 'IAttendeeUser.approve' (attendee is not currently awaiting approval)",
+                );
+            }
+
+            room._attendeeApproved(this);
+
+            this._updateState(ATTENDEE_USER_STATES.connected);
+        },
+
+        ban() {
+            room._attendeeBanned(this);
+
+            this._dispatch({
+                event: "self.banned",
+                data: null,
+            });
+
+            this._disconnect();
+        },
+
+        kick() {
+            room._attendeeKicked(this);
+
+            this._dispatch({
+                event: "self.kicked",
+                data: null,
+            });
+
+            this._disconnect();
+        },
     };
 }

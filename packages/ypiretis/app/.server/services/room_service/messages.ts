@@ -98,9 +98,9 @@ export type IRoomTitleUpdateMessage = IEntityMessage<
     }
 >;
 
-export type ISelfBannedMessage = IEntityMessage<"self.banned", {}>;
+export type ISelfBannedMessage = IEntityMessage<"self.banned">;
 
-export type ISelfKickedMessage = IEntityMessage<"self.kicked", {}>;
+export type ISelfKickedMessage = IEntityMessage<"self.kicked">;
 
 export type ISelfStateUpdateMessage = IEntityMessage<
     "self.stateUpdate",

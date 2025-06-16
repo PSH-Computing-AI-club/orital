@@ -1,13 +1,7 @@
 import {ENTITY_STATES} from "./entity";
-import type {
-    ISelfAttendeeUserStateUpdateMessage,
-    ISelfBannedMessage,
-    ISelfKickedMessage,
-    ISelfRejectedMessage,
-    ISelfStateUpdateMessage,
-} from "./messages";
+import type {IAttendeeUserMessages} from "./messages";
 import {SYMBOL_ATTENDEE_USER_BRAND} from "./symbols";
-import type {IUser, IUserMessages, IUserOptions} from "./user";
+import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
 
 export const ATTENDEE_USER_STATES = {
@@ -18,13 +12,6 @@ export const ATTENDEE_USER_STATES = {
 
 export type IAttendeeUserStates =
     (typeof ATTENDEE_USER_STATES)[keyof typeof ATTENDEE_USER_STATES];
-
-export type IAttendeeUserMessages =
-    | ISelfAttendeeUserStateUpdateMessage
-    | ISelfBannedMessage
-    | ISelfKickedMessage
-    | ISelfRejectedMessage
-    | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 

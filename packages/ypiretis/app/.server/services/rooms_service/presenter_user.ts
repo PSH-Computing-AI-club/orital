@@ -1,19 +1,9 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
 import {ENTITY_STATES} from "./entity";
-import type {
-    IAttendeeUserStateUpdate,
-    IDisplayEntityStateUpdate,
-    IRoomAttendeeAddedMessage,
-    IRoomAttendeeDisposedMessage,
-    IRoomDisplayAddedMessage,
-    IRoomDisplayDisposedMessage,
-    IRoomPINUpdateMessage,
-    ISelfPresenterUserStateUpdateMessage,
-    ISelfStateUpdateMessage,
-} from "./messages";
+import type {IPresenterUserMessages} from "./messages";
 import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
-import type {IUser, IUserMessages, IUserOptions} from "./user";
+import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
 
 export const PRESENTER_ENTITY_ID = 1;
@@ -24,17 +14,6 @@ export const PRESENTER_USER_STATES = {
 
 export type IPresenterUserStates =
     (typeof PRESENTER_USER_STATES)[keyof typeof PRESENTER_USER_STATES];
-
-export type IPresenterUserMessages =
-    | IAttendeeUserStateUpdate
-    | IDisplayEntityStateUpdate
-    | IRoomAttendeeAddedMessage
-    | IRoomAttendeeDisposedMessage
-    | IRoomDisplayAddedMessage
-    | IRoomDisplayDisposedMessage
-    | IRoomPINUpdateMessage
-    | ISelfPresenterUserStateUpdateMessage
-    | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IPresenterUserOptions extends IUserOptions {}
 

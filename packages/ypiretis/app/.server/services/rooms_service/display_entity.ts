@@ -1,6 +1,6 @@
-import type {IEntity, IEntityMessages, IEntityOptions} from "./entity";
+import type {IEntity, IEntityOptions} from "./entity";
 import makeEntity, {ENTITY_STATES} from "./entity";
-import type {IRoomPINUpdateMessage} from "./messages";
+import type {IDisplayEntityMessages} from "./messages";
 import {SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
@@ -11,8 +11,6 @@ export const DISPLAY_ENTITY_STATES = {
 
 export type IDisplayEntityStates =
     (typeof DISPLAY_ENTITY_STATES)[keyof typeof DISPLAY_ENTITY_STATES];
-
-export type IDisplayEntityMessages = IRoomPINUpdateMessage | IEntityMessages;
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 

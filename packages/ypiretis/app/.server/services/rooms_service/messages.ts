@@ -124,3 +124,30 @@ export type ISelfPresenterUserStateUpdateMessage = IEntityMessage<
         readonly state: IPresenterUserStates;
     }
 >;
+
+export type IEntityMessages =
+    | IRoomStateUpdateMessage
+    | IRoomTitleUpdateMessage
+    | ISelfStateUpdateMessage;
+
+export type IDisplayEntityMessages = IRoomPINUpdateMessage | IEntityMessages;
+
+export type IUserMessages = IEntityMessages;
+
+export type IAttendeeUserMessages =
+    | ISelfAttendeeUserStateUpdateMessage
+    | ISelfBannedMessage
+    | ISelfKickedMessage
+    | ISelfRejectedMessage
+    | Exclude<IUserMessages, ISelfStateUpdateMessage>;
+
+export type IPresenterUserMessages =
+    | IAttendeeUserStateUpdate
+    | IDisplayEntityStateUpdate
+    | IRoomAttendeeAddedMessage
+    | IRoomAttendeeDisposedMessage
+    | IRoomDisplayAddedMessage
+    | IRoomDisplayDisposedMessage
+    | IRoomPINUpdateMessage
+    | ISelfPresenterUserStateUpdateMessage
+    | Exclude<IUserMessages, ISelfStateUpdateMessage>;

@@ -5,11 +5,9 @@ import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
 import type {
+    IEntityMessages,
     IEntityMessage,
     IEntityMessageData,
-    IRoomStateUpdateMessage,
-    IRoomTitleUpdateMessage,
-    ISelfStateUpdateMessage,
 } from "./messages";
 import type {IRoom} from "./room";
 import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
@@ -21,11 +19,6 @@ export const ENTITY_STATES = {
 } as const;
 
 export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
-
-export type IEntityMessages =
-    | IRoomStateUpdateMessage
-    | IRoomTitleUpdateMessage
-    | ISelfStateUpdateMessage;
 
 export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 

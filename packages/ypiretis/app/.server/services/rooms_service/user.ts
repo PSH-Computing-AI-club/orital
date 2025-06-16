@@ -1,16 +1,13 @@
 import type {IUser as IServiceUser} from "../users_service";
 
-import type {
-    IEntity,
-    IEntityMessages,
-    IEntityOptions,
-    IEntityStates,
-} from "./entity";
+import type {IEntity, IEntityOptions, IEntityStates} from "./entity";
 import makeEntity from "./entity";
-import type {IEntityMessage, IEntityMessageData} from "./messages";
+import type {
+    IEntityMessage,
+    IEntityMessageData,
+    IUserMessages,
+} from "./messages";
 import {SYMBOL_USER_BRAND} from "./symbols";
-
-export type IUserMessages = IEntityMessages;
 
 export type IGenericUser = IUser<IUserMessages, IEntityStates>;
 

@@ -69,6 +69,8 @@ export interface IEntity<
     _dispatch(event: T): void;
 
     _dispose(): void;
+
+    _updateState(s: IEntityStates): void;
 }
 
 export class EntityConnectionError extends Error {
@@ -124,17 +126,6 @@ export default function makeEntity<
     let hasDisconnected = false;
     let state: IEntityStates = ENTITY_STATES.connected;
 
-    function _updateState(value: IEntityStates): void {
-        const oldState = state;
-
-        state = value;
-
-        EVENT_STATE_UPDATE.dispatch({
-            oldState,
-            newState: value,
-        });
-    }
-
     const entity = {
         [SYMBOL_ENTITY_BRAND]: true,
 
@@ -189,7 +180,7 @@ export default function makeEntity<
                 );
             }
 
-            _updateState(ENTITY_STATES.disposed);
+            this._updateState(ENTITY_STATES.disposed);
 
             connection = null;
 
@@ -198,6 +189,17 @@ export default function makeEntity<
             }
 
             room._entityDisposed(this as unknown as IGenericEntity);
+        },
+
+        _updateState(value) {
+            const oldState = state;
+
+            state = value;
+
+            EVENT_STATE_UPDATE.dispatch({
+                oldState,
+                newState: value,
+            });
         },
     } satisfies IGenericEntity;
 

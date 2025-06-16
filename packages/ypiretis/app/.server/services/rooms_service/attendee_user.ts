@@ -1,3 +1,4 @@
+import {EntityStateError} from "./errors";
 import type {IAttendeeUserMessages} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
 import type {IAttendeeUserStates} from "./states";
@@ -58,7 +59,7 @@ export default function makeAttendeeUser(
             const {state} = this;
 
             if (state !== ATTENDEE_USER_STATES.awaiting) {
-                throw new TypeError(
+                throw new EntityStateError(
                     "bad dispatch to 'IAttendeeUser.approve' (attendee is not currently awaiting approval)",
                 );
             }
@@ -98,7 +99,7 @@ export default function makeAttendeeUser(
             const {state} = this;
 
             if (state !== ATTENDEE_USER_STATES.awaiting) {
-                throw new TypeError(
+                throw new EntityStateError(
                     "bad dispatch to 'IAttendeeUser.reject' (attendee is not currently awaiting approval)",
                 );
             }

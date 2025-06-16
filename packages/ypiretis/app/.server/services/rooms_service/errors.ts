@@ -14,6 +14,14 @@ export class EntityDisposedError extends Error {
     }
 }
 
+export class EntityStateError extends Error {
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
+
+        this.name = EntityStateError.name;
+    }
+}
+
 export class InvalidEntityTypeError extends Error {
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);

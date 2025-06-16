@@ -12,10 +12,7 @@ import type {
     ISelfStateUpdateMessage,
 } from "./messages";
 import type {IRoom} from "./room";
-
-const SYMBOL_ENTITY_BRAND: unique symbol = Symbol();
-
-export const SYMBOL_ENTITY_ON_DISPOSE: unique symbol = Symbol();
+import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
 export const ENTITY_STATES = {
     connected: "STATE_CONNECTED",

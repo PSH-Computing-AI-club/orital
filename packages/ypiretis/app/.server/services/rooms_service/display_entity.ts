@@ -1,7 +1,7 @@
 import type {IEntity, IEntityMessages, IEntityOptions} from "./entity";
-import makeEntity, {ENTITY_STATES, SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
-
+import makeEntity, {ENTITY_STATES} from "./entity";
 import type {IRoomPINUpdateMessage} from "./messages";
+import {SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
 const SYMBOL_DISPLAY_ENTITY_BRAND: unique symbol = Symbol();
 

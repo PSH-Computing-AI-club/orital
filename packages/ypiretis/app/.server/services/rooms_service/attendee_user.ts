@@ -6,10 +6,9 @@ import type {
     ISelfRejectedMessage,
     ISelfStateUpdateMessage,
 } from "./messages";
+import {SYMBOL_ATTENDEE_USER_BRAND} from "./symbols";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
-
-const SYMBOL_ATTENDEE_USER_BRAND: unique symbol = Symbol();
 
 export const ATTENDEE_USER_STATES = {
     ...ENTITY_STATES,

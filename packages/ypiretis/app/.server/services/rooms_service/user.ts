@@ -8,8 +8,7 @@ import type {
 } from "./entity";
 import makeEntity from "./entity";
 import type {IEntityMessage, IEntityMessageData} from "./messages";
-
-const SYMBOL_USER_BRAND: unique symbol = Symbol();
+import {SYMBOL_USER_BRAND} from "./symbols";
 
 export type IUserMessages = IEntityMessages;
 

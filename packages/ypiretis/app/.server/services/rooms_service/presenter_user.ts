@@ -1,6 +1,6 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
-import {ENTITY_STATES, SYMBOL_ENTITY_ON_DISPOSE} from "./entity";
+import {ENTITY_STATES} from "./entity";
 import type {
     IAttendeeUserStateUpdate,
     IDisplayEntityStateUpdate,
@@ -12,10 +12,9 @@ import type {
     ISelfPresenterUserStateUpdateMessage,
     ISelfStateUpdateMessage,
 } from "./messages";
+import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
 import makeUser from "./user";
-
-const SYMBOL_PRESENTER_USER_BRAND: unique symbol = Symbol();
 
 export const PRESENTER_ENTITY_ID = 1;
 

@@ -10,7 +10,7 @@ import makeAttendeeUser, {isAttendeeUser} from "./attendee_user";
 import type {IDisplayEntity} from "./display_entity";
 import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
-import {InvalidEntityTypeError, RoomDisposedError} from "./errors";
+import {InvalidEntityTypeError, RoomStateError} from "./errors";
 import type {IPresenterUser} from "./presenter_user";
 import makePresenterUser, {
     PRESENTER_ENTITY_ID,
@@ -238,7 +238,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         addAttendee(connection, user) {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.addAttendee' (room '${pin}' was previously disposed)`,
                 );
             }
@@ -264,7 +264,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         addDisplay(connection) {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.addDisplay' (room '${pin}' was previously disposed)`,
                 );
             }
@@ -307,7 +307,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         dispose() {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.dispose' (room '${pin}' was previously disposed)`,
                 );
             }
@@ -340,7 +340,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         updatePIN(value) {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed)`,
                 );
             }
@@ -358,7 +358,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         updateState(value) {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed)`,
                 );
             }
@@ -368,7 +368,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         updateTitle(value) {
             if (state === ROOM_STATES.disposed) {
-                throw new RoomDisposedError(
+                throw new RoomStateError(
                     `bad dispatch to 'IRoom.updateTitle' (room '${pin}' was previously disposed)`,
                 );
             }

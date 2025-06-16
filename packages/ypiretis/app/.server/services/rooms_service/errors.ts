@@ -22,10 +22,10 @@ export class InvalidEntityTypeError extends Error {
     }
 }
 
-export class RoomDisposedError extends Error {
+export class RoomStateError extends Error {
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);
 
-        this.name = RoomDisposedError.name;
+        this.name = RoomStateError.name;
     }
 }

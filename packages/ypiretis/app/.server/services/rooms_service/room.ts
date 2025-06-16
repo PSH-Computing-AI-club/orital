@@ -26,11 +26,11 @@ import {
     SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
 
-export interface IRoomEntityAddedEvent {
+export interface IEntityAddedEvent {
     readonly entity: IGenericEntity;
 }
 
-export interface IRoomEntityDisposedEvent {
+export interface IEntityDisposedEvent {
     readonly entity: IGenericEntity;
 }
 
@@ -89,9 +89,9 @@ export interface IRoom {
         newState: IEntityStates,
     ): void;
 
-    readonly EVENT_ENTITY_ADDED: IEvent<IRoomEntityAddedEvent>;
+    readonly EVENT_ENTITY_ADDED: IEvent<IEntityAddedEvent>;
 
-    readonly EVENT_ENTITY_DISPOSED: IEvent<IRoomEntityDisposedEvent>;
+    readonly EVENT_ENTITY_DISPOSED: IEvent<IEntityDisposedEvent>;
 
     readonly EVENT_ENTITY_STATE_UPDATE: IEvent<IEntityStateUpdateEvent>;
 
@@ -146,8 +146,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     let presenterEntity: IPresenterUser | null = null;
 
-    const EVENT_ENTITY_ADDED = makeEvent<IRoomEntityAddedEvent>();
-    const EVENT_ENTITY_DISPOSED = makeEvent<IRoomEntityDisposedEvent>();
+    const EVENT_ENTITY_ADDED = makeEvent<IEntityAddedEvent>();
+    const EVENT_ENTITY_DISPOSED = makeEvent<IEntityDisposedEvent>();
     const EVENT_ENTITY_STATE_UPDATE = makeEvent<IEntityStateUpdateEvent>();
 
     const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();

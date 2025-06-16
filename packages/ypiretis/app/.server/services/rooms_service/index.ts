@@ -9,6 +9,9 @@ export {isEntity} from "./entity";
 
 export * from "./errors";
 
+export type * from "./presenter_user";
+export {PRESENTER_ENTITY_ID, isPresenterUser} from "./presenter_user";
+
 export type {
     IEntityAddedEvent as IRoomEntityAddedEvent,
     IEntityDisposedEvent as IRoomEntityDisposedEvent,
@@ -18,9 +21,6 @@ export type {
     IRoomTitleUpdateEvent,
     IRoom,
 } from "./room";
-
-export type * from "./presenter_user";
-export {PRESENTER_ENTITY_ID, isPresenterUser} from "./presenter_user";
 
 export * from "./service";
 

@@ -131,13 +131,14 @@ function matchUserTagText(user: IAttendee | ISession): string {
     return "Presenter";
 }
 
-function sortUsers(users: (IAttendee | ISession)[]): (IAttendee | ISession)[] {
-    return users.sort((attendeeA, attendeeB) => {
-        const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
-        const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
+function sortUsers(
+    attendeeA: IAttendee | ISession,
+    attendeeB: IAttendee | ISession,
+): number {
+    const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
+    const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
 
-        return fullNameA >= fullNameB ? 1 : 0;
-    });
+    return fullNameA >= fullNameB ? 1 : 0;
 }
 
 function getUsers(
@@ -148,13 +149,13 @@ function getUsers(
 
     switch (modeValue) {
         case "pending": {
-            const users = attendees.filter((attendee) => {
-                const {state} = attendee;
+            return attendees
+                .filter((attendee) => {
+                    const {state} = attendee;
 
-                return state === "STATE_AWAITING";
-            });
-
-            return sortUsers(users);
+                    return state === "STATE_AWAITING";
+                })
+                .sort(sortUsers);
         }
     }
 
@@ -175,8 +176,8 @@ function getUsers(
         }
     }
 
-    sortUsers(connectedAttendees);
-    sortUsers(disconnectedAttendees);
+    connectedAttendees.sort(sortUsers);
+    disconnectedAttendees.sort(sortUsers);
 
     return [session, ...connectedAttendees, ...disconnectedAttendees];
 }

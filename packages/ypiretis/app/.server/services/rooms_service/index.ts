@@ -9,6 +9,8 @@ export {isEntity} from "./entity";
 
 export * from "./errors";
 
+export * from "./messages";
+
 export type * from "./presenter_user";
 export {PRESENTER_ENTITY_ID, isPresenterUser} from "./presenter_user";
 

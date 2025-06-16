@@ -6,6 +6,7 @@ import type {IRoomStates} from "./room";
 
 export type IEntityMessageData =
     | boolean
+    | null
     | number
     | string
     | IEntityMessageData[]
@@ -13,7 +14,7 @@ export type IEntityMessageData =
 
 export interface IEntityMessage<
     N extends string,
-    D extends IEntityMessageData,
+    D extends IEntityMessageData = null,
 > {
     readonly event: N;
 
@@ -96,6 +97,10 @@ export type IRoomTitleUpdateMessage = IEntityMessage<
         readonly title: string;
     }
 >;
+
+export type ISelfBannedMessage = IEntityMessage<"self.banned", {}>;
+
+export type ISelfKickedMessage = IEntityMessage<"self.kicked", {}>;
 
 export type ISelfStateUpdateMessage = IEntityMessage<
     "self.stateUpdate",

@@ -148,7 +148,7 @@ export default function makeEntity<
                 newState: value,
             });
 
-            room[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, value);
+            room[SYMBOL_ENTITY_ON_STATE_UPDATE](this, oldState, value);
         },
     } satisfies IGenericEntity;
 

@@ -31,6 +31,7 @@ import ExternalLinkIcon from "~/components/icons/external_link_icon";
 import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
+import MoreVerticalIcon from "~/components/icons/more_vertical_icon";
 import NotificationIcon from "~/components/icons/notification_icon";
 import PinIcon from "~/components/icons/pin_icon";
 import ReloadIcon from "~/components/icons/reload_icon";
@@ -64,16 +65,12 @@ const UX_TITLE_SCHEMA = v.pipe(
     title,
 );
 
+interface IAttendeeListItemActionsProps {
+    readonly user: IAttendee | ISession;
+}
+
 interface IAttendeeListItemProps {
-    readonly isPresenter?: boolean;
-
-    readonly user: {
-        readonly accountID: string;
-
-        readonly firstName: string;
-
-        readonly lastName: string;
-    };
+    readonly user: IAttendee | ISession;
 }
 
 interface IAttendeeListProps {
@@ -188,6 +185,22 @@ function getUsers(
     return [session, ...connectedAttendees, ...disconnectedAttendees];
 }
 
+function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
+    const {user} = props;
+
+    const isAttendee = "state" in user;
+
+    if (!isAttendee) {
+        return <></>;
+    }
+
+    return (
+        <IconButton variant="ghost" size="xs" marginInlineStart="auto">
+            <MoreVerticalIcon />
+        </IconButton>
+    );
+}
+
 function AttendeeListItem(props: IAttendeeListItemProps) {
     const {user} = props;
     const {accountID, firstName, lastName} = user;
@@ -214,6 +227,8 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
 
                 <Span color="fg.muted">{accountID}</Span>
             </VStack>
+
+            <AttendeeListItemActions user={user} />
         </HStack>
     );
 }

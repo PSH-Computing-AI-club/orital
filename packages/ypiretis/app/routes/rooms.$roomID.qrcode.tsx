@@ -89,9 +89,8 @@ export function HydrateFallback() {
 
 function QRCodeView() {
     const {room} = useDisplayContext();
-    const {pin, roomID, title} = room;
+    const {pin, title} = room;
 
-    const roomURL = buildAppURL(`/attendee/${roomID}`).toString();
     const joinURL = buildAppURL(`/r/${pin}`).toString();
 
     return (
@@ -114,7 +113,7 @@ function QRCodeView() {
 
                 <Flex justifyContent="center">
                     <QrCode.Root
-                        value={roomURL}
+                        value={joinURL}
                         encoding={{ecc: "H"}}
                         bg="bg"
                         padding="6"

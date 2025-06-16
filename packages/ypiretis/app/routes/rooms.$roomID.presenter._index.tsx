@@ -35,6 +35,7 @@ import ExternalLinkIcon from "~/components/icons/external_link_icon";
 import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
+import LogoutIcon from "~/components/icons/logout_icon";
 import MoreVerticalIcon from "~/components/icons/more_vertical_icon";
 import NotificationIcon from "~/components/icons/notification_icon";
 import PinIcon from "~/components/icons/pin_icon";
@@ -42,7 +43,6 @@ import ReloadIcon from "~/components/icons/reload_icon";
 import ShieldIcon from "~/components/icons/shield_icon";
 import TeachIcon from "~/components/icons/teach_icon";
 import UserIcon from "~/components/icons/user_icon";
-import UserPlusIcon from "~/components/icons/user_plus_icon";
 import UserXIcon from "~/components/icons/user_x_icon";
 import UsersIcon from "~/components/icons/users_icon";
 
@@ -86,13 +86,13 @@ function matchUserIcon(user: IAttendee | ISession) {
     if (isAttendee) {
         switch (user.state) {
             case "STATE_AWAITING":
-                return UserPlusIcon;
+                return NotificationIcon;
 
             case "STATE_CONNECTED":
                 return UserIcon;
 
             case "STATE_DISPOSED":
-                return UserXIcon;
+                return LogoutIcon;
         }
     }
 

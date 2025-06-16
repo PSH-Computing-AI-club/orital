@@ -11,6 +11,8 @@ import {
     GridItem,
     HStack,
     IconButton,
+    Menu,
+    Portal,
     SegmentGroup,
     SimpleGrid,
     Span,
@@ -194,11 +196,84 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         return <></>;
     }
 
-    return (
-        <IconButton variant="ghost" size="xs" marginInlineStart="auto">
-            <MoreVerticalIcon />
-        </IconButton>
-    );
+    const {state} = user;
+
+    switch (state) {
+        case "STATE_AWAITING":
+            return (
+                <Menu.Root>
+                    <Menu.Trigger asChild>
+                        <IconButton
+                            variant="ghost"
+                            size="xs"
+                            marginInlineStart="auto"
+                        >
+                            <MoreVerticalIcon />
+                        </IconButton>
+                    </Menu.Trigger>
+
+                    <Portal>
+                        <Menu.Positioner>
+                            <Menu.Content>
+                                <Menu.Item
+                                    value="approve-join"
+                                    color="fg.success"
+                                    _hover={{
+                                        bg: "bg.success",
+                                        color: "fg.success",
+                                    }}
+                                >
+                                    Approve Join
+                                </Menu.Item>
+
+                                <Menu.Item
+                                    value="reject-join"
+                                    color="fg.error"
+                                    _hover={{bg: "bg.error", color: "fg.error"}}
+                                >
+                                    Reject Join
+                                </Menu.Item>
+                            </Menu.Content>
+                        </Menu.Positioner>
+                    </Portal>
+                </Menu.Root>
+            );
+
+        case "STATE_CONNECTED":
+            return (
+                <Menu.Root>
+                    <Menu.Trigger asChild>
+                        <IconButton
+                            variant="ghost"
+                            size="xs"
+                            marginInlineStart="auto"
+                        >
+                            <MoreVerticalIcon />
+                        </IconButton>
+                    </Menu.Trigger>
+
+                    <Menu.Positioner>
+                        <Menu.Content>
+                            <Menu.Item
+                                value="kick-attendee"
+                                color="fg.error"
+                                _hover={{bg: "bg.error", color: "fg.error"}}
+                            >
+                                Kick Attendee
+                            </Menu.Item>
+
+                            <Menu.Item
+                                value="ban-attendee"
+                                color="fg.error"
+                                _hover={{bg: "bg.error", color: "fg.error"}}
+                            >
+                                Ban Attendee
+                            </Menu.Item>
+                        </Menu.Content>
+                    </Menu.Positioner>
+                </Menu.Root>
+            );
+    }
 }
 
 function AttendeeListItem(props: IAttendeeListItemProps) {

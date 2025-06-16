@@ -54,6 +54,7 @@ import {useAuthenticatedSessionContext} from "~/state/session";
 import {buildFormData} from "~/utils/forms";
 import {title} from "~/utils/valibot";
 
+import type {IActionFormData as IAttendeeActionFormData} from "./rooms_.$roomID_.presenter_.actions_.attendees_.$entityID_.manage";
 import type {IActionFormData as IPINActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.pin";
 import type {IActionFormData as IStateActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.state";
 import type {IActionFormData as ITitleActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.title";
@@ -196,9 +197,40 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         return <></>;
     }
 
-    const {state} = user;
+    const {room} = usePresenterContext();
+    const {state: roomState} = room;
 
-    switch (state) {
+    const {entityID, state: userState} = user;
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
+    const isDisposed = roomState === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
+    function makeActionEventHandler(
+        action: IAttendeeActionFormData["action"],
+    ): (
+        event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+    ) => Promise<void> {
+        return async (_event) => {
+            setFetchingAction(true);
+
+            await fetch(`./presenter/actions/attendees/${entityID}/manage`, {
+                method: "POST",
+                body: buildFormData<IAttendeeActionFormData>({
+                    action,
+                }),
+            });
+
+            setFetchingAction(false);
+        };
+    }
+
+    const onApproveClick = makeActionEventHandler("approve");
+    const onBanClick = makeActionEventHandler("ban");
+    const onKickClick = makeActionEventHandler("kick");
+    const onRejectClick = makeActionEventHandler("reject");
+
+    switch (userState) {
         case "STATE_AWAITING":
             return (
                 <Menu.Root>
@@ -216,20 +248,24 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                         <Menu.Positioner>
                             <Menu.Content>
                                 <Menu.Item
+                                    disabled={!canFetchAction}
                                     value="approve-join"
                                     color="fg.success"
                                     _hover={{
                                         bg: "bg.success",
                                         color: "fg.success",
                                     }}
+                                    onClick={onApproveClick}
                                 >
                                     Approve Join
                                 </Menu.Item>
 
                                 <Menu.Item
+                                    disabled={!canFetchAction}
                                     value="reject-join"
                                     color="fg.error"
                                     _hover={{bg: "bg.error", color: "fg.error"}}
+                                    onClick={onRejectClick}
                                 >
                                     Reject Join
                                 </Menu.Item>
@@ -255,17 +291,21 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                     <Menu.Positioner>
                         <Menu.Content>
                             <Menu.Item
+                                disabled={!canFetchAction}
                                 value="kick-attendee"
                                 color="fg.error"
                                 _hover={{bg: "bg.error", color: "fg.error"}}
+                                onClick={onKickClick}
                             >
                                 Kick Attendee
                             </Menu.Item>
 
                             <Menu.Item
+                                disabled={!canFetchAction}
                                 value="ban-attendee"
                                 color="fg.error"
                                 _hover={{bg: "bg.error", color: "fg.error"}}
+                                onClick={onBanClick}
                             >
                                 Ban Attendee
                             </Menu.Item>

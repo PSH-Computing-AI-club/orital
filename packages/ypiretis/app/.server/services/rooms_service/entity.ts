@@ -40,6 +40,11 @@ export interface IEntity<
 
     [SYMBOL_ENTITY_ON_DISPOSE]: () => void;
 
+    [SYMBOL_ENTITY_ON_STATE_UPDATE]: (
+        oldState: ExtendLiterals<S, IEntityStates>,
+        newState: ExtendLiterals<S, IEntityStates>,
+    ) => void;
+
     readonly EVENT_STATE_UPDATE: IEvent<
         IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
     >;
@@ -89,7 +94,16 @@ export default function makeEntity<
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             roomStateUpdateSubscription.dispose();
             roomTitleUpdateSubscription.dispose();
-            entityStateUpdateSubscription.dispose();
+        },
+
+        [SYMBOL_ENTITY_ON_STATE_UPDATE](_oldState, newState) {
+            entity._dispatch({
+                event: MESSAGE_EVENTS.selfStateUpdate,
+
+                data: {
+                    state: newState,
+                },
+            });
         },
 
         get state() {
@@ -151,24 +165,6 @@ export default function makeEntity<
             room[SYMBOL_ENTITY_ON_STATE_UPDATE](this, oldState, value);
         },
     } satisfies IGenericEntity;
-
-    const entityStateUpdateSubscription = EVENT_STATE_UPDATE.subscribe(
-        (event) => {
-            if (entity.state !== ENTITY_STATES.connected) {
-                return;
-            }
-
-            const {newState} = event;
-
-            entity._dispatch({
-                event: MESSAGE_EVENTS.selfStateUpdate,
-
-                data: {
-                    state: newState,
-                },
-            });
-        },
-    );
 
     const roomStateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {

@@ -78,15 +78,15 @@ export default function makeEntity<
     const entity = {
         [SYMBOL_ENTITY_BRAND]: true,
 
+        EVENT_STATE_UPDATE,
+
+        id,
+
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             roomStateUpdateSubscription.dispose();
             roomTitleUpdateSubscription.dispose();
             entityStateUpdateSubscription.dispose();
         },
-
-        EVENT_STATE_UPDATE,
-
-        id,
 
         get state() {
             return state;
@@ -131,7 +131,7 @@ export default function makeEntity<
                 this[SYMBOL_ENTITY_ON_DISPOSE]();
             }
 
-            room._entityDisposed(this as unknown as IGenericEntity);
+            room[SYMBOL_ENTITY_ON_DISPOSE](this as unknown as IGenericEntity);
         },
 
         _updateState(value) {

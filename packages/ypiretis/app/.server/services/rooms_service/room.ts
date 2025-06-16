@@ -17,6 +17,12 @@ import makePresenterUser, {
     isPresenterUser,
 } from "./presenter_user";
 import type {IRoomStates} from "./states";
+import {
+    SYMBOL_ATTENDEE_USER_ON_APPROVED,
+    SYMBOL_ATTENDEE_USER_ON_BANNED,
+    SYMBOL_ATTENDEE_USER_ON_KICKED,
+    SYMBOL_ENTITY_ON_DISPOSE,
+} from "./symbols";
 import {ENTITY_STATES, ROOM_STATES} from "./states";
 
 export interface IRoomEntityAddedEvent {
@@ -60,6 +66,14 @@ export interface IRoomOptions {
 }
 
 export interface IRoom {
+    [SYMBOL_ATTENDEE_USER_ON_APPROVED](attendee: IAttendeeUser): void;
+
+    [SYMBOL_ATTENDEE_USER_ON_BANNED](attendee: IAttendeeUser): void;
+
+    [SYMBOL_ATTENDEE_USER_ON_KICKED](attendee: IAttendeeUser): void;
+
+    [SYMBOL_ENTITY_ON_DISPOSE](entity: IGenericEntity): void;
+
     readonly EVENT_ENTITY_ADDED: IEvent<IRoomEntityAddedEvent>;
 
     readonly EVENT_ENTITY_DISPOSED: IEvent<IRoomEntityDisposedEvent>;
@@ -91,14 +105,6 @@ export interface IRoom {
     readonly title: string;
 
     readonly state: IRoomStates;
-
-    _attendeeApproved(attendee: IAttendeeUser): void;
-
-    _attendeeBanned(attendee: IAttendeeUser): void;
-
-    _attendeeKicked(attendee: IAttendeeUser): void;
-
-    _entityDisposed(entity: IGenericEntity): void;
 
     addAttendee(connection: IWSContext, user: IUser): IAttendeeUser;
 
@@ -182,14 +188,14 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             return title;
         },
 
-        _attendeeApproved(attendee) {
+        [SYMBOL_ATTENDEE_USER_ON_APPROVED](attendee) {
             const {user} = attendee;
             const {accountID} = user;
 
             approvedAccountIDs.add(accountID);
         },
 
-        _attendeeBanned(attendee) {
+        [SYMBOL_ATTENDEE_USER_ON_BANNED](attendee) {
             const {user} = attendee;
             const {accountID} = user;
 
@@ -197,14 +203,14 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             bannedAccountIDs.add(accountID);
         },
 
-        _attendeeKicked(attendee) {
+        [SYMBOL_ATTENDEE_USER_ON_KICKED](attendee) {
             const {user} = attendee;
             const {accountID} = user;
 
             approvedAccountIDs.delete(accountID);
         },
 
-        _entityDisposed(entity) {
+        [SYMBOL_ENTITY_ON_DISPOSE](entity) {
             if (isAttendeeUser(entity)) {
                 const {id} = entity;
 

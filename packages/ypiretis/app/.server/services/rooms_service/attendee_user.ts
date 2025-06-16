@@ -3,7 +3,12 @@ import type {IAttendeeUserMessages} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
 import type {IAttendeeUserStates} from "./states";
 import {ATTENDEE_USER_STATES, ROOM_STATES} from "./states";
-import {SYMBOL_ATTENDEE_USER_BRAND} from "./symbols";
+import {
+    SYMBOL_ATTENDEE_USER_BRAND,
+    SYMBOL_ATTENDEE_USER_ON_APPROVED,
+    SYMBOL_ATTENDEE_USER_ON_BANNED,
+    SYMBOL_ATTENDEE_USER_ON_KICKED,
+} from "./symbols";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
 
@@ -64,13 +69,13 @@ export default function makeAttendeeUser(
                 );
             }
 
-            room._attendeeApproved(this);
+            room[SYMBOL_ATTENDEE_USER_ON_APPROVED](this);
 
             this._updateState(ATTENDEE_USER_STATES.connected);
         },
 
         ban() {
-            room._attendeeBanned(this);
+            room[SYMBOL_ATTENDEE_USER_ON_BANNED](this);
 
             this._dispatch({
                 event: MESSAGE_EVENTS.selfBanned,
@@ -83,7 +88,7 @@ export default function makeAttendeeUser(
         },
 
         kick() {
-            room._attendeeKicked(this);
+            room[SYMBOL_ATTENDEE_USER_ON_KICKED](this);
 
             this._dispatch({
                 event: MESSAGE_EVENTS.selfKicked,

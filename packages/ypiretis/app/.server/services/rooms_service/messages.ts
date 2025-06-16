@@ -4,24 +4,21 @@ import type {IEntityStates} from "./entity";
 import type {IPresenterUserStates} from "./presenter_user";
 import type {IRoomStates} from "./room";
 
-export type IEntityMessageData =
+export type IMessageData =
     | boolean
     | null
     | number
     | string
-    | IEntityMessageData[]
-    | {[key: number | string]: IEntityMessageData};
+    | IMessageData[]
+    | {[key: number | string]: IMessageData};
 
-export interface IEntityMessage<
-    N extends string,
-    D extends IEntityMessageData = null,
-> {
+export interface IMessage<N extends string, D extends IMessageData = null> {
     readonly event: N;
 
     readonly data: D;
 }
 
-export type IAttendeeUserStateUpdate = IEntityMessage<
+export type IAttendeeUserStateUpdate = IMessage<
     "attendeeUser.stateUpdate",
     {
         readonly entityID: number;
@@ -30,7 +27,7 @@ export type IAttendeeUserStateUpdate = IEntityMessage<
     }
 >;
 
-export type IDisplayEntityStateUpdate = IEntityMessage<
+export type IDisplayEntityStateUpdate = IMessage<
     "displayEntity.stateUpdate",
     {
         readonly entityID: number;
@@ -39,7 +36,7 @@ export type IDisplayEntityStateUpdate = IEntityMessage<
     }
 >;
 
-export type IRoomAttendeeAddedMessage = IEntityMessage<
+export type IRoomAttendeeAddedMessage = IMessage<
     "room.attendeeAdded",
     {
         readonly accountID: string;
@@ -54,14 +51,14 @@ export type IRoomAttendeeAddedMessage = IEntityMessage<
     }
 >;
 
-export type IRoomAttendeeDisposedMessage = IEntityMessage<
+export type IRoomAttendeeDisposedMessage = IMessage<
     "room.attendeeDisposed",
     {
         readonly entityID: number;
     }
 >;
 
-export type IRoomDisplayAddedMessage = IEntityMessage<
+export type IRoomDisplayAddedMessage = IMessage<
     "room.displayAdded",
     {
         readonly entityID: number;
@@ -70,55 +67,55 @@ export type IRoomDisplayAddedMessage = IEntityMessage<
     }
 >;
 
-export type IRoomDisplayDisposedMessage = IEntityMessage<
+export type IRoomDisplayDisposedMessage = IMessage<
     "room.displayDisposed",
     {
         readonly entityID: number;
     }
 >;
 
-export type IRoomPINUpdateMessage = IEntityMessage<
+export type IRoomPINUpdateMessage = IMessage<
     "room.pinUpdate",
     {
         readonly pin: string;
     }
 >;
 
-export type IRoomStateUpdateMessage = IEntityMessage<
+export type IRoomStateUpdateMessage = IMessage<
     "room.stateUpdate",
     {
         readonly state: IRoomStates;
     }
 >;
 
-export type IRoomTitleUpdateMessage = IEntityMessage<
+export type IRoomTitleUpdateMessage = IMessage<
     "room.titleUpdate",
     {
         readonly title: string;
     }
 >;
 
-export type ISelfBannedMessage = IEntityMessage<"self.banned">;
+export type ISelfBannedMessage = IMessage<"self.banned">;
 
-export type ISelfKickedMessage = IEntityMessage<"self.kicked">;
+export type ISelfKickedMessage = IMessage<"self.kicked">;
 
-export type ISelfRejectedMessage = IEntityMessage<"self.rejected">;
+export type ISelfRejectedMessage = IMessage<"self.rejected">;
 
-export type ISelfStateUpdateMessage = IEntityMessage<
+export type ISelfStateUpdateMessage = IMessage<
     "self.stateUpdate",
     {
         readonly state: IEntityStates;
     }
 >;
 
-export type ISelfAttendeeUserStateUpdateMessage = IEntityMessage<
+export type ISelfAttendeeUserStateUpdateMessage = IMessage<
     "self.stateUpdate",
     {
         readonly state: IAttendeeUserStates;
     }
 >;
 
-export type ISelfPresenterUserStateUpdateMessage = IEntityMessage<
+export type ISelfPresenterUserStateUpdateMessage = IMessage<
     "self.stateUpdate",
     {
         readonly state: IPresenterUserStates;

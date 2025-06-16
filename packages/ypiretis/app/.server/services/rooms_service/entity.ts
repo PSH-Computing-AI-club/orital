@@ -4,11 +4,7 @@ import makeEvent from "../../../utils/event";
 import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
-import type {
-    IEntityMessages,
-    IEntityMessage,
-    IEntityMessageData,
-} from "./messages";
+import type {IEntityMessages, IMessage, IMessageData} from "./messages";
 import type {IRoom} from "./room";
 import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
@@ -37,10 +33,10 @@ export interface IEntityOptions {
 }
 
 export interface IEntity<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
 > {
     [SYMBOL_ENTITY_BRAND]: true;
 
@@ -88,10 +84,10 @@ export class InvalidEntityTypeError extends Error {
 }
 
 export function isEntity<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
 >(value: unknown): value is IEntity<T, S> {
     return (
         value !== null &&
@@ -101,10 +97,10 @@ export function isEntity<
 }
 
 export default function makeEntity<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
     E extends IEntity<T, S, N, D> = IEntity<T, S, N, D>,
 >(options: IEntityOptions): E {
     const {id, room} = options;

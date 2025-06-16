@@ -2,11 +2,7 @@ import type {IUser as IServiceUser} from "../users_service";
 
 import type {IEntity, IEntityOptions, IEntityStates} from "./entity";
 import makeEntity from "./entity";
-import type {
-    IEntityMessage,
-    IEntityMessageData,
-    IUserMessages,
-} from "./messages";
+import type {IMessage, IMessageData, IUserMessages} from "./messages";
 import {SYMBOL_USER_BRAND} from "./symbols";
 
 export type IGenericUser = IUser<IUserMessages, IEntityStates>;
@@ -16,10 +12,10 @@ export interface IUserOptions extends IEntityOptions {
 }
 
 export interface IUser<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
 > extends IEntity<T, S> {
     [SYMBOL_USER_BRAND]: true;
 
@@ -27,10 +23,10 @@ export interface IUser<
 }
 
 export function isUser<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
 >(value: unknown): value is IUser<T, S> {
     return (
         value !== null &&
@@ -40,10 +36,10 @@ export function isUser<
 }
 
 export default function makeUser<
-    T extends IEntityMessage<N, D>,
+    T extends IMessage<N, D>,
     S extends string = IEntityStates,
     N extends string = string,
-    D extends IEntityMessageData = IEntityMessageData,
+    D extends IMessageData = IMessageData,
 >(options: IUserOptions): IUser<T, S, N, D> {
     const {user} = options;
 

@@ -177,6 +177,13 @@ export async function requireAuthenticatedAttendeeConnection(
         });
     }
 
+    const {bannedAccountIDs} = room;
+    const {accountID} = user;
+
+    if (bannedAccountIDs.has(accountID)) {
+        throw data("Forbidden", 403);
+    }
+
     switch (room.state) {
         case ROOM_STATES.disposed:
             throw data("Conflict", 409);

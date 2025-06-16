@@ -268,6 +268,7 @@ function AttendeesCard() {
                         value={modeValue}
                         size="sm"
                         marginInlineStart="auto"
+                        fontWeight="normal"
                         onValueChange={onModeValueChange}
                     >
                         <SegmentGroup.Indicator bg="bg" />

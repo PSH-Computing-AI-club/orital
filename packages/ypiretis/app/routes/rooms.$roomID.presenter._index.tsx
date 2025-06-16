@@ -28,6 +28,8 @@ import * as v from "valibot";
 
 import type {IRoomStates} from "~/.server/services/rooms_service";
 
+import CheckIcon from "~/components/icons/check_icon";
+import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
 import LinkIcon from "~/components/icons/link_icon";
@@ -255,7 +257,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                                     }}
                                     onClick={onApproveClick}
                                 >
-                                    Approve Join
+                                    <CheckIcon />
+
+                                    <Box flexGrow="1">Approve Join</Box>
                                 </Menu.Item>
 
                                 <Menu.Item
@@ -265,7 +269,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                                     _hover={{bg: "bg.error", color: "fg.error"}}
                                     onClick={onRejectClick}
                                 >
-                                    Reject Join
+                                    <CloseIcon />
+
+                                    <Box flexGrow="1">Reject Join</Box>
                                 </Menu.Item>
                             </Menu.Content>
                         </Menu.Positioner>
@@ -295,7 +301,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                                 _hover={{bg: "bg.error", color: "fg.error"}}
                                 onClick={onKickClick}
                             >
-                                Kick Attendee
+                                <UserXIcon />
+
+                                <Box flexGrow="1">Kick Attendee</Box>
                             </Menu.Item>
 
                             <Menu.Item
@@ -305,7 +313,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                                 _hover={{bg: "bg.error", color: "fg.error"}}
                                 onClick={onBanClick}
                             >
-                                Ban Attendee
+                                <ShieldIcon />
+
+                                <Box flexGrow="1">Ban Attendee</Box>
                             </Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>

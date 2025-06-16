@@ -42,17 +42,49 @@ export default function makePresenterUser(
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             user[SYMBOL_ENTITY_ON_DISPOSE]();
 
-            roomEntityAddedSubscription.dispose();
-            roomEntityDisposedSubscription.dispose();
+            entityAddedSubscription.dispose();
+            entityDisposedSubscription.dispose();
+            entityStateSubscription.dispose();
 
-            roomPINUpdateSubscription.dispose();
+            pinUpdateSubscription.dispose();
         },
     } satisfies IPresenterUser;
 
-    const attendeeSubscriptions = new Map<number, () => void>();
-    const displaySubscriptions = new Map<number, () => void>();
+    const entityStateSubscription = room.EVENT_ENTITY_STATE_UPDATE.subscribe(
+        (event) => {
+            if (presenter.state !== PRESENTER_USER_STATES.connected) {
+                return;
+            }
 
-    const roomEntityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
+            const {entity} = event;
+
+            if (isAttendeeUser(entity)) {
+                const {id, state} = entity;
+
+                presenter._dispatch({
+                    event: MESSAGE_EVENTS.attendeeUserStateUpdate,
+
+                    data: {
+                        entityID: id,
+                        state,
+                    },
+                });
+            } else if (isDisplayEntity(entity)) {
+                const {id, state} = entity;
+
+                presenter._dispatch({
+                    event: MESSAGE_EVENTS.displayEntityStateUpdate,
+
+                    data: {
+                        entityID: id,
+                        state,
+                    },
+                });
+            }
+        },
+    );
+
+    const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
             if (presenter.state !== PRESENTER_USER_STATES.connected) {
                 return;
@@ -63,30 +95,6 @@ export default function makePresenterUser(
             if (isAttendeeUser(entity)) {
                 const {id, state, user} = entity;
                 const {accountID, firstName, lastName} = user;
-
-                const attendeeStateSubscription =
-                    entity.EVENT_STATE_UPDATE.subscribe((event) => {
-                        if (
-                            presenter.state !== PRESENTER_USER_STATES.connected
-                        ) {
-                            return;
-                        }
-
-                        const {newState} = event;
-
-                        presenter._dispatch({
-                            event: MESSAGE_EVENTS.attendeeUserStateUpdate,
-
-                            data: {
-                                entityID: id,
-                                state: newState,
-                            },
-                        });
-                    });
-
-                attendeeSubscriptions.set(id, () => {
-                    attendeeStateSubscription.dispose();
-                });
 
                 presenter._dispatch({
                     event: MESSAGE_EVENTS.roomAttendeeAdded,
@@ -102,30 +110,6 @@ export default function makePresenterUser(
             } else if (isDisplayEntity(entity)) {
                 const {id, state} = entity;
 
-                const displayStateSubscription =
-                    entity.EVENT_STATE_UPDATE.subscribe((event) => {
-                        if (
-                            presenter.state !== PRESENTER_USER_STATES.connected
-                        ) {
-                            return;
-                        }
-
-                        const {newState} = event;
-
-                        presenter._dispatch({
-                            event: MESSAGE_EVENTS.displayEntityStateUpdate,
-
-                            data: {
-                                entityID: id,
-                                state: newState,
-                            },
-                        });
-                    });
-
-                displaySubscriptions.set(id, () => {
-                    displayStateSubscription.dispose();
-                });
-
                 presenter._dispatch({
                     event: MESSAGE_EVENTS.roomDisplayAdded,
 
@@ -138,7 +122,7 @@ export default function makePresenterUser(
         },
     );
 
-    const roomEntityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
+    const entityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
         (event) => {
             if (presenter.state !== PRESENTER_USER_STATES.connected) {
                 return;
@@ -149,12 +133,6 @@ export default function makePresenterUser(
             if (isAttendeeUser(entity)) {
                 const {id} = entity;
 
-                const disposeCallback = attendeeSubscriptions.get(id) ?? null;
-
-                if (disposeCallback !== null) {
-                    disposeCallback();
-                }
-
                 presenter._dispatch({
                     event: MESSAGE_EVENTS.roomAttendeeDisposed,
 
@@ -164,12 +142,6 @@ export default function makePresenterUser(
                 });
             } else if (isDisplayEntity(entity)) {
                 const {id} = entity;
-
-                const disposeCallback = displaySubscriptions.get(id) ?? null;
-
-                if (disposeCallback !== null) {
-                    disposeCallback();
-                }
 
                 presenter._dispatch({
                     event: MESSAGE_EVENTS.roomDisplayDisposed,
@@ -182,23 +154,21 @@ export default function makePresenterUser(
         },
     );
 
-    const roomPINUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe(
-        (event) => {
-            if (presenter.state !== PRESENTER_USER_STATES.connected) {
-                return;
-            }
+    const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
+        if (presenter.state !== PRESENTER_USER_STATES.connected) {
+            return;
+        }
 
-            const {newPIN} = event;
+        const {newPIN} = event;
 
-            presenter._dispatch({
-                event: MESSAGE_EVENTS.roomPinUpdate,
+        presenter._dispatch({
+            event: MESSAGE_EVENTS.roomPinUpdate,
 
-                data: {
-                    pin: newPIN,
-                },
-            });
-        },
-    );
+            data: {
+                pin: newPIN,
+            },
+        });
+    });
 
     return presenter;
 }

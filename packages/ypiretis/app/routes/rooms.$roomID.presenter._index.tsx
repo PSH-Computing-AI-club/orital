@@ -81,7 +81,9 @@ interface IAttendeeListProps {
 }
 
 function matchUserIcon(user: IAttendee | ISession) {
-    if ("state" in user) {
+    const isAttendee = "state" in user;
+
+    if (isAttendee) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return UserPlusIcon;
@@ -98,7 +100,9 @@ function matchUserIcon(user: IAttendee | ISession) {
 }
 
 function matchUserTagPalette(user: IAttendee | ISession) {
-    if ("state" in user) {
+    const isAttendee = "state" in user;
+
+    if (isAttendee) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "yellow";
@@ -115,7 +119,9 @@ function matchUserTagPalette(user: IAttendee | ISession) {
 }
 
 function matchUserTagText(user: IAttendee | ISession): string {
-    if ("state" in user) {
+    const isAttendee = "state" in user;
+
+    if (isAttendee) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "Awaiting Approval";

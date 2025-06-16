@@ -144,13 +144,7 @@ export default function makeEntity<
         },
 
         _disconnect() {
-            if (!connection) {
-                throw new EntityConnectionError(
-                    `bad dispatch to 'IEntity._disconnect' (the connection to the entity was already closed)`,
-                );
-            }
-
-            if (!hasDisconnected) {
+            if (connection && !hasDisconnected) {
                 hasDisconnected = true;
                 connection.close();
             }

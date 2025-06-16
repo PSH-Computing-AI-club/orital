@@ -360,11 +360,25 @@ function AttendeeList(props: IAttendeeListProps) {
 }
 
 function AttendeesCard() {
+    const session = useAuthenticatedSessionContext();
+
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
     const [modeValue, setModeValue] = useState<"active" | "pending" | null>(
         "active",
     );
 
-    const users = getUsers(modeValue);
+    const activeUsers = [
+        session,
+        ...attendees.filter((attendee) => attendee.state === "STATE_CONNECTED"),
+    ];
+
+    const pendingUsers = attendees.filter(
+        (attendee) => attendee.state === "STATE_AWAITING",
+    );
+
+    const listedUsers = getUsers(modeValue);
 
     function onModeValueChange(event: SegmentGroupValueChangeDetails): void {
         const {value} = event;
@@ -394,7 +408,7 @@ function AttendeesCard() {
                                         : undefined
                                 }
                             >
-                                Active
+                                Active ({activeUsers.length})
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />
                         </SegmentGroup.Item>
@@ -407,7 +421,7 @@ function AttendeesCard() {
                                         : undefined
                                 }
                             >
-                                Pending
+                                Pending ({pendingUsers.length})
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />
                         </SegmentGroup.Item>
@@ -425,7 +439,7 @@ function AttendeesCard() {
                     overflowInline="hidden"
                     overflowBlock="auto"
                 >
-                    <AttendeeList users={users} />
+                    <AttendeeList users={listedUsers} />
                 </VStack>
             </Card.Body>
         </>

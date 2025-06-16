@@ -92,7 +92,9 @@ export default function makeAttendeeUser(
                 data: null,
             });
 
-            this._disconnect();
+            setTimeout(() => {
+                this._disconnect();
+            }, 0);
         },
 
         kick() {
@@ -103,7 +105,9 @@ export default function makeAttendeeUser(
                 data: null,
             });
 
-            this._disconnect();
+            setTimeout(() => {
+                this._disconnect();
+            }, 0);
         },
 
         reject() {
@@ -120,7 +124,9 @@ export default function makeAttendeeUser(
                 data: null,
             });
 
-            this._disconnect();
+            setTimeout(() => {
+                this._disconnect();
+            }, 0);
         },
     };
 }

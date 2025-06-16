@@ -274,14 +274,26 @@ function AttendeesCard() {
                         <SegmentGroup.Indicator bg="bg" />
 
                         <SegmentGroup.Item value="active">
-                            <SegmentGroup.ItemText>
+                            <SegmentGroup.ItemText
+                                color={
+                                    modeValue === "active"
+                                        ? "green.fg"
+                                        : undefined
+                                }
+                            >
                                 Active
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />
                         </SegmentGroup.Item>
 
                         <SegmentGroup.Item value="pending">
-                            <SegmentGroup.ItemText>
+                            <SegmentGroup.ItemText
+                                color={
+                                    modeValue === "pending"
+                                        ? "yellow.fg"
+                                        : undefined
+                                }
+                            >
                                 Pending
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />

@@ -1,6 +1,6 @@
 import {redirect} from "react-router";
 
-import {insertOneLive} from "~/.server/services/room_service";
+import {insertOneLive} from "~/.server/services/rooms_service";
 import {findOne} from "~/.server/services/users_service";
 
 export async function loader() {

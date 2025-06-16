@@ -2,11 +2,11 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import type {IDisplayEntity} from "~/.server/services/room_service";
+import type {IDisplayEntity} from "~/.server/services/rooms_service";
 import {
     ENTITY_STATES,
     requireAuthenticatedDisplayConnection,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {webSocket} from "~/.server/utils/web_socket";
 

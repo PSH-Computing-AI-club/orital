@@ -16,7 +16,7 @@ import * as v from "valibot";
 import {
     DISPLAY_ENTITY_STATES,
     requireAuthenticatedDisplayConnection,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 

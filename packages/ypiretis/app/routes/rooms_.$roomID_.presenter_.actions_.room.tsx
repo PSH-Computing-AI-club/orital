@@ -6,7 +6,7 @@ import {
     ROOM_STATES,
     generateUniquePIN,
     requireAuthenticatedPresenterAction,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {title} from "~/utils/valibot";
 

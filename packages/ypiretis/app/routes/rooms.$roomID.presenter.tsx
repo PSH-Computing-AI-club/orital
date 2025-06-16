@@ -8,7 +8,7 @@ import * as v from "valibot";
 import {
     PRESENTER_USER_STATES,
     requireAuthenticatedPresenterConnection,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";

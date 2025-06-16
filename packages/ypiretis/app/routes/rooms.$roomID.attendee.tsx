@@ -8,7 +8,7 @@ import * as v from "valibot";
 import {
     ATTENDEE_USER_STATES,
     requireAuthenticatedAttendeeConnection,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 

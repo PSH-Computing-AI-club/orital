@@ -5,7 +5,7 @@ import * as v from "valibot";
 import {
     ATTENDEE_USER_STATES,
     requireAuthenticatedPresenterAction,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 

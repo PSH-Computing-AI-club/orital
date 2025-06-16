@@ -11,7 +11,7 @@ import type {
     IDisplayEntityMessages,
     IDisplayEntityStates,
     IRoomStates,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
 import useWebSocket from "~/hooks/web_socket";

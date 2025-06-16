@@ -26,7 +26,7 @@ import {useState} from "react";
 
 import * as v from "valibot";
 
-import type {IRoomStates} from "~/.server/services/room_service";
+import type {IRoomStates} from "~/.server/services/rooms_service";
 
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";

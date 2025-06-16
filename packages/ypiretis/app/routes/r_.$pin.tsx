@@ -2,7 +2,7 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/room_service";
+import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/rooms_service";
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import {pin as pinValidator} from "~/utils/valibot";

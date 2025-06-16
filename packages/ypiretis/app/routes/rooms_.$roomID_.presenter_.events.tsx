@@ -2,11 +2,11 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import type {IPresenterUser} from "~/.server/services/room_service";
+import type {IPresenterUser} from "~/.server/services/rooms_service";
 import {
     ENTITY_STATES,
     requireAuthenticatedPresenterConnection,
-} from "~/.server/services/room_service";
+} from "~/.server/services/rooms_service";
 
 import {webSocket} from "~/.server/utils/web_socket";
 

@@ -1,0 +1,97 @@
+import {data} from "react-router";
+
+import * as v from "valibot";
+
+import {
+    ROOM_STATES,
+    generateUniquePIN,
+    requireAuthenticatedPresenterAction,
+} from "~/.server/services/room_service";
+
+import {title} from "~/utils/valibot";
+
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.pin";
+
+const PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("pin.regenerate")),
+});
+
+const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("state.update")),
+
+    state: v.pipe(
+        v.string(),
+        v.picklist([
+            ROOM_STATES.locked,
+            ROOM_STATES.permissive,
+            ROOM_STATES.unlocked,
+        ]),
+    ),
+});
+
+const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("title.update")),
+
+    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
+});
+
+const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
+    PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA,
+    STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA,
+]);
+
+export type IPINRegenerateActionFormData = v.InferOutput<
+    typeof PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type IStateUpdateActionFormData = v.InferOutput<
+    typeof STATE_UPDATE_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type ITitleUpdateActionFormData = v.InferOutput<
+    typeof TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
+
+export async function action(actionArgs: Route.ActionArgs) {
+    const {room} = await requireAuthenticatedPresenterAction(actionArgs);
+
+    const {request} = actionArgs;
+    const requestFormData = await request.formData();
+
+    const {output, success} = v.safeParse(
+        ACTION_FORM_DATA_SCHEMA,
+        Object.fromEntries(requestFormData.entries()),
+    );
+
+    if (!success) {
+        throw data("Bad Request", 400);
+    }
+
+    const {action} = output;
+
+    switch (action) {
+        case "pin.regenerate": {
+            const newPIN = generateUniquePIN();
+
+            room.updatePIN(newPIN);
+            break;
+        }
+
+        case "state.update": {
+            const {state} = output;
+
+            room.updateState(state);
+            break;
+        }
+
+        case "title.update": {
+            const {title} = output;
+
+            room.updateTitle(title);
+            break;
+        }
+    }
+}

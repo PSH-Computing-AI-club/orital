@@ -54,10 +54,8 @@ import {useAuthenticatedSessionContext} from "~/state/session";
 import {buildFormData} from "~/utils/forms";
 import {title} from "~/utils/valibot";
 
-import type {IActionFormData as IAttendeeActionFormData} from "./rooms_.$roomID_.presenter_.actions_.attendees_.$entityID_.manage";
-import type {IActionFormData as IPINActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.pin";
-import type {IActionFormData as IStateActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.state";
-import type {IActionFormData as ITitleActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room_.title";
+import type {IActionFormData as IAttendeeActionFormData} from "./rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
+import type {IActionFormData as IRoomActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room";
 
 import {Route} from "./+types/rooms.$roomID.presenter._index";
 
@@ -214,7 +212,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         return async (_event) => {
             setFetchingAction(true);
 
-            await fetch(`./presenter/actions/attendees/${entityID}/manage`, {
+            await fetch(`./presenter/actions/attendees/${entityID}`, {
                 method: "POST",
                 body: buildFormData<IAttendeeActionFormData>({
                     action,
@@ -225,10 +223,10 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         };
     }
 
-    const onApproveClick = makeActionEventHandler("approve");
-    const onBanClick = makeActionEventHandler("ban");
-    const onKickClick = makeActionEventHandler("kick");
-    const onRejectClick = makeActionEventHandler("reject");
+    const onApproveClick = makeActionEventHandler("moderate.approve");
+    const onBanClick = makeActionEventHandler("moderate.ban");
+    const onKickClick = makeActionEventHandler("moderate.kick");
+    const onRejectClick = makeActionEventHandler("moderate.reject");
 
     switch (userState) {
         case "STATE_AWAITING":
@@ -454,10 +452,10 @@ function PINCard() {
     ): Promise<void> {
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/pin", {
+        await fetch("./presenter/actions/room", {
             method: "POST",
-            body: buildFormData<IPINActionFormData>({
-                action: "regenerate",
+            body: buildFormData<IRoomActionFormData>({
+                action: "pin.regenerate",
             }),
         });
 
@@ -639,10 +637,10 @@ function StateCard() {
 
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/state", {
+        await fetch("./presenter/actions/room", {
             method: "POST",
-            body: buildFormData<IStateActionFormData>({
-                action: "update",
+            body: buildFormData<IRoomActionFormData>({
+                action: "state.update",
                 state: newState,
             }),
         });
@@ -733,10 +731,10 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
 
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room/title", {
+        await fetch("./presenter/actions/room", {
             method: "POST",
-            body: buildFormData<ITitleActionFormData>({
-                action: "update",
+            body: buildFormData<IRoomActionFormData>({
+                action: "title.update",
                 title: newTitle,
             }),
         });

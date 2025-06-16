@@ -17,12 +17,44 @@ const ACTION_PARAMS_SCHEMA = v.object({
     ),
 });
 
-const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(
-        v.string(),
-        v.picklist(["approve", "ban", "kick", "reject"]),
-    ),
+const MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("moderate.approve")),
 });
+
+const MODERATE_BAN_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("moderate.ban")),
+});
+
+const MODERATE_REJECT_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("moderate.reject")),
+});
+
+const MODERATE_KICK_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("moderate.kick")),
+});
+
+const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
+    MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA,
+    MODERATE_BAN_ACTION_FORM_DATA_SCHEMA,
+    MODERATE_KICK_ACTION_FORM_DATA_SCHEMA,
+    MODERATE_REJECT_ACTION_FORM_DATA_SCHEMA,
+]);
+
+export type IModerateApproveActionFormData = v.InferOutput<
+    typeof MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type IModerateBanActionFormData = v.InferOutput<
+    typeof MODERATE_BAN_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type IModerateRejectActionFormData = v.InferOutput<
+    typeof MODERATE_REJECT_ACTION_FORM_DATA_SCHEMA
+>;
+
+export type IModerateKickActionFormData = v.InferOutput<
+    typeof MODERATE_KICK_ACTION_FORM_DATA_SCHEMA
+>;
 
 export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 
@@ -63,7 +95,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     const {action} = formData;
 
     switch (action) {
-        case "approve":
+        case "moderate.approve":
             if (attendee.state !== ATTENDEE_USER_STATES.awaiting) {
                 throw data("Conflict", {
                     status: 409,
@@ -73,15 +105,15 @@ export async function action(actionArgs: Route.ActionArgs) {
             attendee.approve();
             break;
 
-        case "ban":
+        case "moderate.ban":
             attendee.ban();
             break;
 
-        case "kick":
+        case "moderate.kick":
             attendee.kick();
             break;
 
-        case "reject":
+        case "moderate.reject":
             attendee.reject();
             break;
     }

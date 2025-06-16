@@ -1,14 +1,8 @@
 import type {IEntity, IEntityOptions} from "./entity";
-import makeEntity, {ENTITY_STATES} from "./entity";
+import makeEntity from "./entity";
 import type {IDisplayEntityMessages} from "./messages";
+import type {IDisplayEntityStates} from "./states";
 import {SYMBOL_DISPLAY_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
-
-export const DISPLAY_ENTITY_STATES = {
-    ...ENTITY_STATES,
-} as const;
-
-export type IDisplayEntityStates =
-    (typeof DISPLAY_ENTITY_STATES)[keyof typeof DISPLAY_ENTITY_STATES];
 
 export interface IDisplayEntityOptions extends IEntityOptions {}
 

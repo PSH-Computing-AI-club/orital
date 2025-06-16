@@ -6,15 +6,9 @@ import type {IWSContext} from "../../utils/web_socket";
 
 import type {IEntityMessages, IMessage} from "./messages";
 import type {IRoom} from "./room";
+import type {IEntityStates} from "./states";
+import {ENTITY_STATES} from "./states";
 import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
-
-export const ENTITY_STATES = {
-    connected: "STATE_CONNECTED",
-
-    disposed: "STATE_DISPOSED",
-} as const;
-
-export type IEntityStates = (typeof ENTITY_STATES)[keyof typeof ENTITY_STATES];
 
 export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 
@@ -32,7 +26,10 @@ export interface IEntityOptions {
     readonly room: IRoom;
 }
 
-export interface IEntity<E extends IMessage, S extends string = IEntityStates> {
+export interface IEntity<
+    E extends IMessage = IEntityMessages,
+    S extends string = IEntityStates,
+> {
     [SYMBOL_ENTITY_BRAND]: true;
 
     [SYMBOL_ENTITY_ON_DISPOSE]: () => void;

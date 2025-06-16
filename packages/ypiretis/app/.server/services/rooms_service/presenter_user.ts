@@ -1,19 +1,13 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
-import {ENTITY_STATES} from "./entity";
 import type {IPresenterUserMessages} from "./messages";
+import type {IPresenterUserStates} from "./states";
+import {PRESENTER_USER_STATES} from "./states";
 import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
 
 export const PRESENTER_ENTITY_ID = 1;
-
-export const PRESENTER_USER_STATES = {
-    ...ENTITY_STATES,
-} as const;
-
-export type IPresenterUserStates =
-    (typeof PRESENTER_USER_STATES)[keyof typeof PRESENTER_USER_STATES];
 
 export interface IPresenterUserOptions extends IUserOptions {}
 
@@ -59,7 +53,7 @@ export default function makePresenterUser(
 
     const roomEntityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
-            if (presenter.state !== ENTITY_STATES.connected) {
+            if (presenter.state !== PRESENTER_USER_STATES.connected) {
                 return;
             }
 
@@ -71,7 +65,9 @@ export default function makePresenterUser(
 
                 const attendeeStateSubscription =
                     entity.EVENT_STATE_UPDATE.subscribe((event) => {
-                        if (presenter.state !== ENTITY_STATES.connected) {
+                        if (
+                            presenter.state !== PRESENTER_USER_STATES.connected
+                        ) {
                             return;
                         }
 
@@ -107,7 +103,9 @@ export default function makePresenterUser(
 
                 const displayStateSubscription =
                     entity.EVENT_STATE_UPDATE.subscribe((event) => {
-                        if (presenter.state !== ENTITY_STATES.connected) {
+                        if (
+                            presenter.state !== PRESENTER_USER_STATES.connected
+                        ) {
                             return;
                         }
 
@@ -141,7 +139,7 @@ export default function makePresenterUser(
 
     const roomEntityDisposedSubscription = room.EVENT_ENTITY_DISPOSED.subscribe(
         (event) => {
-            if (presenter.state !== ENTITY_STATES.connected) {
+            if (presenter.state !== PRESENTER_USER_STATES.connected) {
                 return;
             }
 
@@ -185,7 +183,7 @@ export default function makePresenterUser(
 
     const roomPINUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe(
         (event) => {
-            if (presenter.state !== ENTITY_STATES.connected) {
+            if (presenter.state !== PRESENTER_USER_STATES.connected) {
                 return;
             }
 

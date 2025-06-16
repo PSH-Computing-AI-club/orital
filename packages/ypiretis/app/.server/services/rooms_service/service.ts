@@ -11,11 +11,15 @@ import type {IUser} from "../users_service";
 import {requireAuthenticatedSession} from "../users_service";
 
 import type {IAttendeeUser} from "./attendee_user";
-import {ATTENDEE_USER_STATES} from "./attendee_user";
-import type {IRoom, IRoomStates} from "./room";
-import makeRoom, {ROOM_STATES} from "./room";
+import type {IRoom} from "./room";
+import makeRoom from "./room";
 import type {IPresenterUser} from "./presenter_user";
-import {PRESENTER_USER_STATES} from "./presenter_user";
+import type {IRoomStates} from "./states";
+import {
+    ATTENDEE_USER_STATES,
+    PRESENTER_USER_STATES,
+    ROOM_STATES,
+} from "./states";
 
 const ACTION_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),

@@ -10,24 +10,14 @@ import makeAttendeeUser, {isAttendeeUser} from "./attendee_user";
 import type {IDisplayEntity} from "./display_entity";
 import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
-import {ENTITY_STATES, InvalidEntityTypeError} from "./entity";
+import {InvalidEntityTypeError} from "./entity";
 import type {IPresenterUser} from "./presenter_user";
 import makePresenterUser, {
     PRESENTER_ENTITY_ID,
     isPresenterUser,
 } from "./presenter_user";
-
-export const ROOM_STATES = {
-    disposed: "STATE_DISPOSED",
-
-    locked: "STATE_LOCKED",
-
-    permissive: "STATE_PERMISSIVE",
-
-    unlocked: "STATE_UNLOCKED",
-} as const;
-
-export type IRoomStates = (typeof ROOM_STATES)[keyof typeof ROOM_STATES];
+import type {IRoomStates} from "./states";
+import {ENTITY_STATES, ROOM_STATES} from "./states";
 
 export interface IRoomEntityAddedEvent {
     readonly entity: IGenericEntity;

@@ -1,17 +1,9 @@
-import {ENTITY_STATES} from "./entity";
 import type {IAttendeeUserMessages} from "./messages";
+import type {IAttendeeUserStates} from "./states";
+import {ATTENDEE_USER_STATES} from "./states";
 import {SYMBOL_ATTENDEE_USER_BRAND} from "./symbols";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
-
-export const ATTENDEE_USER_STATES = {
-    ...ENTITY_STATES,
-
-    awaiting: "STATE_AWAITING",
-} as const;
-
-export type IAttendeeUserStates =
-    (typeof ATTENDEE_USER_STATES)[keyof typeof ATTENDEE_USER_STATES];
 
 export interface IAttendeeUserOptions extends IUserOptions {}
 

@@ -1,8 +1,10 @@
-import type {IAttendeeUserStates} from "./attendee_user";
-import type {IDisplayEntityStates} from "./display_entity";
-import type {IEntityStates} from "./entity";
-import type {IPresenterUserStates} from "./presenter_user";
-import type {IRoomStates} from "./room";
+import type {
+    IAttendeeUserStates,
+    IDisplayEntityStates,
+    IEntityStates,
+    IPresenterUserStates,
+    IRoomStates,
+} from "./states";
 
 export const MESSAGE_EVENTS = {
     attendeeUserStateUpdate: "attendeeUser.stateUpdate",

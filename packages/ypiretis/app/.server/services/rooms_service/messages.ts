@@ -21,8 +21,8 @@ export type IAttendeeUserMessages =
     | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export type IPresenterUserMessages =
-    | IAttendeeUserStateUpdate
-    | IDisplayEntityStateUpdate
+    | IAttendeeUserStateUpdateMessage
+    | IDisplayEntityStateUpdateMessage
     | IRoomAttendeeAddedMessage
     | IRoomAttendeeDisposedMessage
     | IRoomDisplayAddedMessage
@@ -45,7 +45,7 @@ export interface IMessage {
     readonly data: IMessageData;
 }
 
-export interface IAttendeeUserStateUpdate extends IMessage {
+export interface IAttendeeUserStateUpdateMessage extends IMessage {
     readonly event: "attendeeUser.stateUpdate";
 
     readonly data: {
@@ -55,7 +55,7 @@ export interface IAttendeeUserStateUpdate extends IMessage {
     };
 }
 
-export interface IDisplayEntityStateUpdate extends IMessage {
+export interface IDisplayEntityStateUpdateMessage extends IMessage {
     readonly event: "displayEntity.stateUpdate";
 
     readonly data: {

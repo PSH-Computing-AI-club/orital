@@ -4,7 +4,7 @@ import makeEvent from "../../../utils/event";
 import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
-import type {IEntityMessages, IMessage, IMessageData} from "./messages";
+import type {IEntityMessages, IMessage} from "./messages";
 import type {IRoom} from "./room";
 import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
@@ -32,12 +32,7 @@ export interface IEntityOptions {
     readonly room: IRoom;
 }
 
-export interface IEntity<
-    T extends IMessage<N, D>,
-    S extends string = IEntityStates,
-    N extends string = string,
-    D extends IMessageData = IMessageData,
-> {
+export interface IEntity<E extends IMessage, S extends string = IEntityStates> {
     [SYMBOL_ENTITY_BRAND]: true;
 
     [SYMBOL_ENTITY_ON_DISPOSE]: () => void;
@@ -52,7 +47,7 @@ export interface IEntity<
 
     _disconnect(): void;
 
-    _dispatch(event: T): void;
+    _dispatch(event: E): void;
 
     _dispose(): void;
 
@@ -83,12 +78,7 @@ export class InvalidEntityTypeError extends Error {
     }
 }
 
-export function isEntity<
-    T extends IMessage<N, D>,
-    S extends string = IEntityStates,
-    N extends string = string,
-    D extends IMessageData = IMessageData,
->(value: unknown): value is IEntity<T, S> {
+export function isEntity(value: unknown): value is IGenericEntity {
     return (
         value !== null &&
         typeof value === "object" &&
@@ -97,12 +87,10 @@ export function isEntity<
 }
 
 export default function makeEntity<
-    T extends IMessage<N, D>,
+    E extends IMessage,
     S extends string = IEntityStates,
-    N extends string = string,
-    D extends IMessageData = IMessageData,
-    E extends IEntity<T, S, N, D> = IEntity<T, S, N, D>,
->(options: IEntityOptions): E {
+    I extends IEntity<E, S> = IEntity<E, S>,
+>(options: IEntityOptions): I {
     const {id, room} = options;
 
     const EVENT_STATE_UPDATE =
@@ -245,5 +233,5 @@ export default function makeEntity<
         },
     });
 
-    return entity as unknown as E;
+    return entity as unknown as I;
 }

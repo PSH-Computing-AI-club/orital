@@ -5,15 +5,15 @@ import {MESSAGE_EVENTS} from "./messages";
 import type {IPresenterUserStates} from "./states";
 import {PRESENTER_USER_STATES} from "./states";
 import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
-import type {IUser, IUserOptions} from "./user";
-import makeUser from "./user";
+import type {IUserEntity, IUserEntityOptions} from "./user_entity";
+import makeUserEntity from "./user_entity";
 
 export const PRESENTER_ENTITY_ID = 1;
 
-export interface IPresenterUserOptions extends IUserOptions {}
+export interface IPresenterUserOptions extends IUserEntityOptions {}
 
 export interface IPresenterUser
-    extends IUser<IPresenterUserMessages, IPresenterUserStates> {
+    extends IUserEntity<IPresenterUserMessages, IPresenterUserStates> {
     [SYMBOL_PRESENTER_USER_BRAND]: true;
 }
 
@@ -30,7 +30,7 @@ export default function makePresenterUser(
 ): IPresenterUser {
     const {room} = options;
 
-    const user = makeUser<IPresenterUserMessages, IPresenterUserStates>(
+    const user = makeUserEntity<IPresenterUserMessages, IPresenterUserStates>(
         options,
     );
 

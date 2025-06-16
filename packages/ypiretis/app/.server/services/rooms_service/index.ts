@@ -14,9 +14,9 @@ export type * from "./room";
 export type * from "./presenter_user";
 export {PRESENTER_ENTITY_ID, isPresenterUser} from "./presenter_user";
 
-export type * from "./user";
-export {isUser} from "./user";
-
 export * from "./service";
 
 export * from "./states";
+
+export type * from "./user_entity";
+export {isUserEntity as isUser} from "./user_entity";

@@ -9,13 +9,13 @@ import {
     SYMBOL_ATTENDEE_USER_ON_BANNED,
     SYMBOL_ATTENDEE_USER_ON_KICKED,
 } from "./symbols";
-import type {IUser, IUserOptions} from "./user";
-import makeUser from "./user";
+import type {IUserEntity, IUserEntityOptions} from "./user_entity";
+import makeUserEntity from "./user_entity";
 
-export interface IAttendeeUserOptions extends IUserOptions {}
+export interface IAttendeeUserOptions extends IUserEntityOptions {}
 
 export interface IAttendeeUser
-    extends IUser<IAttendeeUserMessages, IAttendeeUserStates> {
+    extends IUserEntity<IAttendeeUserMessages, IAttendeeUserStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
 
     approve(): void;
@@ -43,9 +43,10 @@ export default function makeAttendeeUser(
     const {approvedAccountIDs, state: roomState} = room;
     const {accountID} = userData;
 
-    const userEntity = makeUser<IAttendeeUserMessages, IAttendeeUserStates>(
-        options,
-    );
+    const userEntity = makeUserEntity<
+        IAttendeeUserMessages,
+        IAttendeeUserStates
+    >(options);
 
     const initialState: IAttendeeUserStates =
         roomState === ROOM_STATES.permissive &&

@@ -83,14 +83,14 @@ interface IAttendeeListProps {
 function matchUserIcon(user: IAttendee | ISession) {
     if ("state" in user) {
         switch (user.state) {
+            case "STATE_AWAITING":
+                return UserPlusIcon;
+
             case "STATE_CONNECTED":
                 return UserIcon;
 
             case "STATE_DISPOSED":
                 return UserXIcon;
-
-            case "STATE_AWAITING":
-                return UserPlusIcon;
         }
     }
 
@@ -100,14 +100,14 @@ function matchUserIcon(user: IAttendee | ISession) {
 function matchUserTagPalette(user: IAttendee | ISession) {
     if ("state" in user) {
         switch (user.state) {
+            case "STATE_AWAITING":
+                return "yellow";
+
             case "STATE_CONNECTED":
                 return "cyan";
 
             case "STATE_DISPOSED":
                 return "red";
-
-            case "STATE_AWAITING":
-                return "yellow";
         }
     }
 
@@ -117,14 +117,14 @@ function matchUserTagPalette(user: IAttendee | ISession) {
 function matchUserTagText(user: IAttendee | ISession): string {
     if ("state" in user) {
         switch (user.state) {
+            case "STATE_AWAITING":
+                return "Awaiting Approval";
+
             case "STATE_CONNECTED":
                 return "Attendee";
 
             case "STATE_DISPOSED":
                 return "Disconnected";
-
-            case "STATE_AWAITING":
-                return "Awaiting Approval";
         }
     }
 

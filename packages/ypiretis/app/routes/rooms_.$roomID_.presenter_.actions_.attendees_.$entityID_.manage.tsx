@@ -18,7 +18,10 @@ const ACTION_PARAMS_SCHEMA = v.object({
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.picklist(["approve", "ban", "kick"])),
+    action: v.pipe(
+        v.string(),
+        v.picklist(["approve", "ban", "kick", "reject"]),
+    ),
 });
 
 export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
@@ -76,6 +79,10 @@ export async function action(actionArgs: Route.ActionArgs) {
 
         case "kick":
             attendee.kick();
+            break;
+
+        case "reject":
+            attendee.reject();
             break;
     }
 }

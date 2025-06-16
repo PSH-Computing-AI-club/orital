@@ -3,6 +3,7 @@ import type {
     ISelfAttendeeUserStateUpdateMessage,
     ISelfBannedMessage,
     ISelfKickedMessage,
+    ISelfRejectedMessage,
     ISelfStateUpdateMessage,
 } from "./messages";
 import type {IUser, IUserMessages, IUserOptions} from "./user";
@@ -23,6 +24,7 @@ export type IAttendeeUserMessages =
     | ISelfAttendeeUserStateUpdateMessage
     | ISelfBannedMessage
     | ISelfKickedMessage
+    | ISelfRejectedMessage
     | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export interface IAttendeeUserOptions extends IUserOptions {}
@@ -36,6 +38,8 @@ export interface IAttendeeUser
     ban(): void;
 
     kick(): void;
+
+    reject(): void;
 }
 
 export function isAttendeeUser(value: unknown): value is IAttendeeUser {
@@ -96,6 +100,23 @@ export default function makeAttendeeUser(
 
             this._dispatch({
                 event: "self.kicked",
+                data: null,
+            });
+
+            this._disconnect();
+        },
+
+        reject() {
+            const {state} = this;
+
+            if (state !== ATTENDEE_USER_STATES.awaiting) {
+                throw new TypeError(
+                    "bad dispatch to 'IAttendeeUser.reject' (attendee is not currently awaiting approval)",
+                );
+            }
+
+            this._dispatch({
+                event: "self.rejected",
                 data: null,
             });
 

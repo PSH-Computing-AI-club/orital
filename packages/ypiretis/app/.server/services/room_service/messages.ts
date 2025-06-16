@@ -102,6 +102,8 @@ export type ISelfBannedMessage = IEntityMessage<"self.banned">;
 
 export type ISelfKickedMessage = IEntityMessage<"self.kicked">;
 
+export type ISelfRejectedMessage = IEntityMessage<"self.rejected">;
+
 export type ISelfStateUpdateMessage = IEntityMessage<
     "self.stateUpdate",
     {

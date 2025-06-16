@@ -5,10 +5,11 @@ export type * from "./display_entity";
 export {isDisplayEntity} from "./display_entity";
 
 export type * from "./entity";
-export {EntityDisposedError, InvalidEntityTypeError, isEntity} from "./entity";
+export {isEntity} from "./entity";
+
+export * from "./errors";
 
 export type * from "./room";
-export {RoomDisposedError} from "./room";
 
 export type * from "./presenter_user";
 export {PRESENTER_ENTITY_ID, isPresenterUser} from "./presenter_user";

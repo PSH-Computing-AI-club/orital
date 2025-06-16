@@ -4,6 +4,7 @@ import makeEvent from "../../../utils/event";
 import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
+import {EntityConnectionError, EntityDisposedError} from "./errors";
 import type {IEntityMessages, IMessage} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
 import type {IRoom} from "./room";
@@ -50,30 +51,6 @@ export interface IEntity<
     _dispose(): void;
 
     _updateState(s: IEntityStates): void;
-}
-
-export class EntityConnectionError extends Error {
-    constructor(message: string, options?: ErrorOptions) {
-        super(message, options);
-
-        this.name = EntityConnectionError.name;
-    }
-}
-
-export class EntityDisposedError extends Error {
-    constructor(message: string, options?: ErrorOptions) {
-        super(message, options);
-
-        this.name = EntityDisposedError.name;
-    }
-}
-
-export class InvalidEntityTypeError extends Error {
-    constructor(message: string, options?: ErrorOptions) {
-        super(message, options);
-
-        this.name = InvalidEntityTypeError.name;
-    }
 }
 
 export function isEntity(value: unknown): value is IGenericEntity {

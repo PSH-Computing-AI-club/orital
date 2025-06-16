@@ -10,7 +10,7 @@ import makeAttendeeUser, {isAttendeeUser} from "./attendee_user";
 import type {IDisplayEntity} from "./display_entity";
 import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
-import {InvalidEntityTypeError} from "./entity";
+import {InvalidEntityTypeError, RoomDisposedError} from "./errors";
 import type {IPresenterUser} from "./presenter_user";
 import makePresenterUser, {
     PRESENTER_ENTITY_ID,
@@ -115,14 +115,6 @@ export interface IRoom {
     ): void;
 
     updateTitle(title: string): void;
-}
-
-export class RoomDisposedError extends Error {
-    constructor(message: string, options?: ErrorOptions) {
-        super(message, options);
-
-        this.name = RoomDisposedError.name;
-    }
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {

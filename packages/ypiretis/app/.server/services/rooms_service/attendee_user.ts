@@ -1,6 +1,7 @@
 import type {IAttendeeUserMessages} from "./messages";
+import {MESSAGE_EVENTS} from "./messages";
 import type {IAttendeeUserStates} from "./states";
-import {ATTENDEE_USER_STATES} from "./states";
+import {ATTENDEE_USER_STATES, ROOM_STATES} from "./states";
 import {SYMBOL_ATTENDEE_USER_BRAND} from "./symbols";
 import type {IUser, IUserOptions} from "./user";
 import makeUser from "./user";
@@ -41,9 +42,8 @@ export default function makeAttendeeUser(
     );
 
     const initialState: IAttendeeUserStates =
-        // **HACK:** We cannot the room states from this file without causing
-        // a circular dependency.
-        roomState === "STATE_PERMISSIVE" && !approvedAccountIDs.has(accountID)
+        roomState === ROOM_STATES.permissive &&
+        !approvedAccountIDs.has(accountID)
             ? ATTENDEE_USER_STATES.awaiting
             : ATTENDEE_USER_STATES.connected;
 
@@ -72,7 +72,7 @@ export default function makeAttendeeUser(
             room._attendeeBanned(this);
 
             this._dispatch({
-                event: "self.banned",
+                event: MESSAGE_EVENTS.selfBanned,
                 data: null,
             });
 
@@ -85,7 +85,7 @@ export default function makeAttendeeUser(
             room._attendeeKicked(this);
 
             this._dispatch({
-                event: "self.kicked",
+                event: MESSAGE_EVENTS.selfKicked,
                 data: null,
             });
 
@@ -104,7 +104,7 @@ export default function makeAttendeeUser(
             }
 
             this._dispatch({
-                event: "self.rejected",
+                event: MESSAGE_EVENTS.selfRejected,
                 data: null,
             });
 

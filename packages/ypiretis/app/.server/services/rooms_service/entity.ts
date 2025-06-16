@@ -5,6 +5,7 @@ import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
 import type {IEntityMessages, IMessage} from "./messages";
+import {MESSAGE_EVENTS} from "./messages";
 import type {IRoom} from "./room";
 import type {IEntityStates} from "./states";
 import {ENTITY_STATES} from "./states";
@@ -177,7 +178,7 @@ export default function makeEntity<
             const {newState} = event;
 
             entity._dispatch({
-                event: "self.stateUpdate",
+                event: MESSAGE_EVENTS.selfStateUpdate,
 
                 data: {
                     state: newState,
@@ -195,7 +196,7 @@ export default function makeEntity<
             const {newState} = event;
 
             entity._dispatch({
-                event: "room.stateUpdate",
+                event: MESSAGE_EVENTS.roomStateUpdate,
 
                 data: {
                     state: newState,
@@ -213,7 +214,7 @@ export default function makeEntity<
             const {newTitle} = event;
 
             entity._dispatch({
-                event: "room.titleUpdate",
+                event: MESSAGE_EVENTS.roomTitleUpdate,
 
                 data: {
                     title: newTitle,
@@ -223,7 +224,7 @@ export default function makeEntity<
     );
 
     entity._dispatch({
-        event: "self.stateUpdate",
+        event: MESSAGE_EVENTS.selfStateUpdate,
 
         data: {
             state,

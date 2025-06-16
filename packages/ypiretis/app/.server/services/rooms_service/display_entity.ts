@@ -1,6 +1,7 @@
 import type {IEntity, IEntityOptions} from "./entity";
 import makeEntity from "./entity";
 import type {IDisplayEntityMessages} from "./messages";
+import {MESSAGE_EVENTS} from "./messages";
 import type {IDisplayEntityStates} from "./states";
 import {SYMBOL_DISPLAY_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
@@ -44,7 +45,7 @@ export default function makeDisplayEntity(
         const {newPIN} = event;
 
         display._dispatch({
-            event: "room.pinUpdate",
+            event: MESSAGE_EVENTS.roomPinUpdate,
 
             data: {
                 pin: newPIN,

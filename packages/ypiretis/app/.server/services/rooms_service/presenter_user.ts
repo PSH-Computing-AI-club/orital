@@ -1,6 +1,7 @@
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
 import type {IPresenterUserMessages} from "./messages";
+import {MESSAGE_EVENTS} from "./messages";
 import type {IPresenterUserStates} from "./states";
 import {PRESENTER_USER_STATES} from "./states";
 import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
@@ -74,7 +75,7 @@ export default function makePresenterUser(
                         const {newState} = event;
 
                         presenter._dispatch({
-                            event: "attendeeUser.stateUpdate",
+                            event: MESSAGE_EVENTS.attendeeUserStateUpdate,
 
                             data: {
                                 entityID: id,
@@ -88,7 +89,7 @@ export default function makePresenterUser(
                 });
 
                 presenter._dispatch({
-                    event: "room.attendeeAdded",
+                    event: MESSAGE_EVENTS.roomAttendeeAdded,
 
                     data: {
                         accountID,
@@ -112,7 +113,7 @@ export default function makePresenterUser(
                         const {newState} = event;
 
                         presenter._dispatch({
-                            event: "displayEntity.stateUpdate",
+                            event: MESSAGE_EVENTS.displayEntityStateUpdate,
 
                             data: {
                                 entityID: id,
@@ -126,7 +127,7 @@ export default function makePresenterUser(
                 });
 
                 presenter._dispatch({
-                    event: "room.displayAdded",
+                    event: MESSAGE_EVENTS.roomDisplayAdded,
 
                     data: {
                         entityID: id,
@@ -155,7 +156,7 @@ export default function makePresenterUser(
                 }
 
                 presenter._dispatch({
-                    event: "room.attendeeDisposed",
+                    event: MESSAGE_EVENTS.roomAttendeeDisposed,
 
                     data: {
                         entityID: id,
@@ -171,7 +172,7 @@ export default function makePresenterUser(
                 }
 
                 presenter._dispatch({
-                    event: "room.displayDisposed",
+                    event: MESSAGE_EVENTS.roomDisplayDisposed,
 
                     data: {
                         entityID: id,
@@ -190,7 +191,7 @@ export default function makePresenterUser(
             const {newPIN} = event;
 
             presenter._dispatch({
-                event: "room.pinUpdate",
+                event: MESSAGE_EVENTS.roomPinUpdate,
 
                 data: {
                     pin: newPIN,

@@ -10,7 +10,7 @@ import {
 
 import {title} from "~/utils/valibot";
 
-import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room_.pin";
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room";
 
 const PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("pin.regenerate")),

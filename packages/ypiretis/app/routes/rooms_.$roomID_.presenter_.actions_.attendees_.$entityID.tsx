@@ -7,7 +7,7 @@ import {
     requireAuthenticatedPresenterAction,
 } from "~/.server/services/room_service";
 
-import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID_.manage";
+import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 
 const ACTION_PARAMS_SCHEMA = v.object({
     entityID: v.pipe(

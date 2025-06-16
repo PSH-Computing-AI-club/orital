@@ -48,7 +48,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         output.roomID,
     );
 
-    const {roomID, state, title} = room;
+    const {roomID, state} = room;
     const {accountID, firstName, lastName} = user;
 
     return {
@@ -56,7 +56,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             room: {
                 roomID,
                 state,
-                title,
+                title: "",
             },
 
             state: ATTENDEE_USER_STATES.disposed,

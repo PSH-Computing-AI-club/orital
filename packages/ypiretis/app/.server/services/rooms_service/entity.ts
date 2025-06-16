@@ -10,7 +10,11 @@ import {MESSAGE_EVENTS} from "./messages";
 import type {IRoom} from "./room";
 import type {IEntityStates} from "./states";
 import {ENTITY_STATES} from "./states";
-import {SYMBOL_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
+import {
+    SYMBOL_ENTITY_BRAND,
+    SYMBOL_ENTITY_ON_DISPOSE,
+    SYMBOL_ENTITY_ON_STATE_UPDATE,
+} from "./symbols";
 
 export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 
@@ -143,6 +147,8 @@ export default function makeEntity<
                 oldState,
                 newState: value,
             });
+
+            room[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, value);
         },
     } satisfies IGenericEntity;
 

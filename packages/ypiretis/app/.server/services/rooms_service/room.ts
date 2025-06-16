@@ -16,14 +16,15 @@ import makePresenterUser, {
     PRESENTER_ENTITY_ID,
     isPresenterUser,
 } from "./presenter_user";
-import type {IRoomStates} from "./states";
+import type {IEntityStates, IRoomStates} from "./states";
+import {ENTITY_STATES, ROOM_STATES} from "./states";
 import {
     SYMBOL_ATTENDEE_USER_ON_APPROVED,
     SYMBOL_ATTENDEE_USER_ON_BANNED,
     SYMBOL_ATTENDEE_USER_ON_KICKED,
     SYMBOL_ENTITY_ON_DISPOSE,
+    SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
-import {ENTITY_STATES, ROOM_STATES} from "./states";
 
 export interface IRoomEntityAddedEvent {
     readonly entity: IGenericEntity;
@@ -33,22 +34,30 @@ export interface IRoomEntityDisposedEvent {
     readonly entity: IGenericEntity;
 }
 
-export interface IRoomPINUpdateEvent {
-    readonly oldPIN: string;
+export interface IEntityStateUpdateEvent {
+    readonly entity: IGenericEntity;
 
+    readonly newState: IEntityStates;
+
+    readonly oldState: IEntityStates;
+}
+
+export interface IRoomPINUpdateEvent {
     readonly newPIN: string;
+
+    readonly oldPIN: string;
 }
 
 export interface IRoomStateUpdateEvent {
-    readonly oldState: IRoomStates;
-
     readonly newState: IRoomStates;
+
+    readonly oldState: IRoomStates;
 }
 
 export interface IRoomTitleUpdateEvent {
-    readonly oldTitle: string;
-
     readonly newTitle: string;
+
+    readonly oldTitle: string;
 }
 
 export interface IRoomOptions {
@@ -74,9 +83,17 @@ export interface IRoom {
 
     [SYMBOL_ENTITY_ON_DISPOSE](entity: IGenericEntity): void;
 
+    [SYMBOL_ENTITY_ON_STATE_UPDATE](
+        entity: IGenericEntity,
+        oldState: IEntityStates,
+        newState: IEntityStates,
+    ): void;
+
     readonly EVENT_ENTITY_ADDED: IEvent<IRoomEntityAddedEvent>;
 
     readonly EVENT_ENTITY_DISPOSED: IEvent<IRoomEntityDisposedEvent>;
+
+    readonly EVENT_ENTITY_STATE_UPDATE: IEvent<IEntityStateUpdateEvent>;
 
     readonly EVENT_PIN_UPDATE: IEvent<IRoomPINUpdateEvent>;
 
@@ -131,6 +148,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     const EVENT_ENTITY_ADDED = makeEvent<IRoomEntityAddedEvent>();
     const EVENT_ENTITY_DISPOSED = makeEvent<IRoomEntityDisposedEvent>();
+    const EVENT_ENTITY_STATE_UPDATE = makeEvent<IEntityStateUpdateEvent>();
 
     const EVENT_PIN_UPDATE = makeEvent<IRoomPINUpdateEvent>();
     const EVENT_STATE_UPDATE = makeEvent<IRoomStateUpdateEvent>();
@@ -159,6 +177,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     return {
         EVENT_ENTITY_ADDED,
         EVENT_ENTITY_DISPOSED,
+        EVENT_ENTITY_STATE_UPDATE,
 
         EVENT_PIN_UPDATE,
         EVENT_STATE_UPDATE,
@@ -240,6 +259,14 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                     "bad argument #0 to 'IRoom._entityDisposed' (entity is not a recognized entity type)",
                 );
             }
+        },
+
+        [SYMBOL_ENTITY_ON_STATE_UPDATE](entity, oldState, newState) {
+            EVENT_ENTITY_STATE_UPDATE.dispatch({
+                entity,
+                newState,
+                oldState,
+            });
         },
 
         addAttendee(connection, user) {

@@ -8,6 +8,7 @@ import {
     SYMBOL_ATTENDEE_USER_ON_APPROVED,
     SYMBOL_ATTENDEE_USER_ON_BANNED,
     SYMBOL_ATTENDEE_USER_ON_KICKED,
+    SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
 import type {IUserEntity, IUserEntityOptions} from "./user_entity";
 import makeUserEntity from "./user_entity";
@@ -54,12 +55,29 @@ export default function makeAttendeeUser(
             ? ATTENDEE_USER_STATES.awaiting
             : ATTENDEE_USER_STATES.connected;
 
-    return {
+    const attendee = {
         ...userEntity,
 
         [SYMBOL_ATTENDEE_USER_BRAND]: true,
 
         state: initialState,
+
+        [SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState) {
+            userEntity[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState);
+
+            if (
+                oldState === ATTENDEE_USER_STATES.awaiting &&
+                newState === ATTENDEE_USER_STATES.connected
+            ) {
+                this._dispatch({
+                    event: MESSAGE_EVENTS.roomTitleUpdate,
+
+                    data: {
+                        title: room.title,
+                    },
+                });
+            }
+        },
 
         approve() {
             const {state} = this;
@@ -119,5 +137,17 @@ export default function makeAttendeeUser(
                 this._disconnect();
             }, 0);
         },
-    };
+    } satisfies IAttendeeUser;
+
+    if (initialState === ATTENDEE_USER_STATES.connected) {
+        attendee._dispatch({
+            event: MESSAGE_EVENTS.roomTitleUpdate,
+
+            data: {
+                title: room.title,
+            },
+        });
+    }
+
+    return attendee;
 }

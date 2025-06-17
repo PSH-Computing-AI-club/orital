@@ -7,7 +7,7 @@ export default function AuthenticationConsentExpired() {
         <>
             <PromptShell.Title
                 title="Login Expired."
-                query="Expired."
+                query="Expired"
                 color="red.solid"
             />
 

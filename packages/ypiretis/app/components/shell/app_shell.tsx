@@ -35,6 +35,8 @@ interface IAppShellSidebarContainerProps extends PropsWithChildren {}
 export interface IAppShellButtonProps extends PropsWithChildren {
     readonly colorPalette?: ColorPalette;
 
+    readonly disabled?: boolean;
+
     readonly onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -67,10 +69,11 @@ export interface IAppShellRootProps extends PropsWithChildren {}
 export interface IAppShellSidebarProps extends PropsWithChildren {}
 
 function AppShellButton(props: IAppShellButtonProps) {
-    const {children, colorPalette, onClick} = props;
+    const {children, colorPalette, disabled = false, onClick} = props;
 
     return (
         <Button
+            disabled={disabled}
             variant="ghost"
             colorPalette={colorPalette}
             size="2xs"

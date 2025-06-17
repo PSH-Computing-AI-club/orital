@@ -16,6 +16,10 @@ const PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("pin.regenerate")),
 });
 
+const STATE_DISPOSE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("state.dispose")),
+});
+
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("state.update")),
 
@@ -37,6 +41,7 @@ const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA,
+    STATE_DISPOSE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
     TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
@@ -79,6 +84,10 @@ export async function action(actionArgs: Route.ActionArgs) {
             room.updatePIN(newPIN);
             break;
         }
+
+        case "state.dispose":
+            room.dispose();
+            break;
 
         case "state.update": {
             const {state} = output;

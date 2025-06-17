@@ -1,5 +1,8 @@
 import {Strong, Text} from "@chakra-ui/react";
 
+import type {MouseEvent} from "react";
+import {useState} from "react";
+
 import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet, data} from "react-router";
 
@@ -24,6 +27,10 @@ import {PresenterContextProvider} from "~/state/presenter";
 
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
+
+import {buildFormData} from "~/utils/forms";
+
+import type {IActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room";
 
 import {Route} from "./+types/rooms.$roomID.presenter";
 
@@ -123,7 +130,27 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {initialContextData, session} = loaderData;
 
     const {room} = initialContextData;
-    const {roomID} = room;
+    const {roomID, state} = room;
+
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
+    async function onDisposeClick(
+        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ): Promise<void> {
+        setFetchingAction(true);
+
+        await fetch("./presenter/actions/room", {
+            method: "POST",
+            body: buildFormData<IActionFormData>({
+                action: "state.dispose",
+            }),
+        });
+
+        setFetchingAction(false);
+    }
 
     return (
         <AppShell.Root>
@@ -152,8 +179,9 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
                 </AppShell.Link>
 
                 <AppShell.Button
+                    disabled={!canFetchAction}
                     colorPalette="red"
-                    onClick={() => console.log("hello world!")}
+                    onClick={onDisposeClick}
                 >
                     <AppShell.Icon>
                         <CloseIcon />

@@ -93,14 +93,18 @@ function messageReducer(
     return context;
 }
 
-function useMessageHandler(): (
+function useMessageHandler(
     context: IAttendeeContext,
-    message: IAttendeeUserMessages,
-) => void {
+): (message: IAttendeeUserMessages) => void {
+    const contextRef = useRef(context);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
     return useCallback(
-        (_context, message) => {
+        (message) => {
             const {data, event} = message;
 
             switch (event) {
@@ -134,13 +138,12 @@ function useMessageHandler(): (
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     const {children, initialContextData} = props;
 
-    const handleMessage = useMessageHandler();
     const [context, reduceMessage] = useReducer(
         messageReducer,
         initialContextData,
     );
 
-    const contextRef = useRef(context);
+    const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -153,10 +156,9 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
 
     const onMessage = useCallback(
         async (event: MessageEvent) => {
-            const context = contextRef.current;
             const message = JSON.parse(event.data) as IAttendeeUserMessages;
 
-            handleMessage(context, message);
+            handleMessage(message);
             reduceMessage(message);
         },
         [handleMessage, reduceMessage],
@@ -175,10 +177,6 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
         () => buildWebSocketURL(`/rooms/${roomID}/attendee/events`),
         [roomID],
     );
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
 
     useWebSocket(connectionURL, useWebSocketOptions);
 

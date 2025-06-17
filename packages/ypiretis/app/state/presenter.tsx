@@ -281,14 +281,18 @@ function messageReducer(
     return context;
 }
 
-function useMessageHandler(): (
+function useMessageHandler(
     context: IPresenterContext,
-    message: IPresenterUserMessages,
-) => void {
+): (message: IPresenterUserMessages) => void {
+    const contextRef = useRef(context);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
     return useCallback(
-        (_context, message) => {
+        (message) => {
             const {data, event} = message;
 
             switch (event) {
@@ -309,13 +313,12 @@ export function PresenterContextProvider(
 ) {
     const {children, initialContextData} = props;
 
-    const handleMessage = useMessageHandler();
     const [context, reduceMessage] = useReducer(
         messageReducer,
         initialContextData,
     );
 
-    const contextRef = useRef(context);
+    const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -328,10 +331,9 @@ export function PresenterContextProvider(
 
     const onMessage = useCallback(
         async (event: MessageEvent) => {
-            const context = contextRef.current;
             const message = JSON.parse(event.data) as IPresenterUserMessages;
 
-            handleMessage(context, message);
+            handleMessage(message);
             reduceMessage(message);
         },
         [handleMessage, reduceMessage],
@@ -350,10 +352,6 @@ export function PresenterContextProvider(
         () => buildWebSocketURL(`/rooms/${roomID}/presenter/events`),
         [roomID],
     );
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
 
     useWebSocket(connectionURL, useWebSocketOptions);
 

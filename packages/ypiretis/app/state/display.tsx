@@ -110,14 +110,18 @@ function messageReducer(
     return context;
 }
 
-function useMessageHandler(): (
+function useMessageHandler(
     context: IDisplayContext,
-    message: IDisplayEntityMessages,
-) => void {
+): (message: IDisplayEntityMessages) => void {
+    const contextRef = useRef(context);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
     return useCallback(
-        (_context, message) => {
+        (message) => {
             const {data, event} = message;
 
             switch (event) {
@@ -136,13 +140,12 @@ function useMessageHandler(): (
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     const {children, initialContextData} = props;
 
-    const handleMessage = useMessageHandler();
     const [context, reduceMessage] = useReducer(
         messageReducer,
         initialContextData,
     );
 
-    const contextRef = useRef(context);
+    const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -155,10 +158,9 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
 
     const onMessage = useCallback(
         async (event: MessageEvent) => {
-            const context = contextRef.current;
             const message = JSON.parse(event.data) as IDisplayEntityMessages;
 
-            handleMessage(context, message);
+            handleMessage(message);
             reduceMessage(message);
         },
         [handleMessage, reduceMessage],
@@ -177,10 +179,6 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
         () => buildWebSocketURL(`/rooms/${roomID}/display/events`),
         [roomID],
     );
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
 
     useWebSocket(connectionURL, useWebSocketOptions);
 

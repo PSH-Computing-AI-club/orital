@@ -101,9 +101,16 @@ function useMessageHandler(): (
 
     return useCallback(
         (_context, message) => {
-            const {data: _data, event} = message;
+            const {data, event} = message;
 
             switch (event) {
+                case "room.stateUpdate":
+                    if (data.state === "STATE_DISPOSED") {
+                        navigate("/rooms/closed");
+                    }
+
+                    break;
+
                 case "self.banned":
                     navigate("/rooms/banned");
 

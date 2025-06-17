@@ -3,9 +3,13 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useReducer,
+    useRef,
 } from "react";
+
+import {useNavigate} from "react-router";
 
 import type {
     IAttendeeUserStates,
@@ -277,15 +281,41 @@ function messageReducer(
     return context;
 }
 
+function useMessageHandler(): (
+    context: IPresenterContext,
+    message: IPresenterUserMessages,
+) => void {
+    const navigate = useNavigate();
+
+    return useCallback(
+        (_context, message) => {
+            const {data, event} = message;
+
+            switch (event) {
+                case "room.stateUpdate":
+                    if (data.state === "STATE_DISPOSED") {
+                        navigate("/rooms/closed");
+                    }
+
+                    break;
+            }
+        },
+        [navigate],
+    );
+}
+
 export function PresenterContextProvider(
     props: IPresenterContextProviderProps,
 ) {
     const {children, initialContextData} = props;
 
+    const handleMessage = useMessageHandler();
     const [context, reduceMessage] = useReducer(
         messageReducer,
         initialContextData,
     );
+
+    const contextRef = useRef(context);
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -296,11 +326,16 @@ export function PresenterContextProvider(
         console.error(event);
     }, []);
 
-    const onMessage = useCallback(async (event: MessageEvent) => {
-        const message = JSON.parse(event.data) as IPresenterUserMessages;
+    const onMessage = useCallback(
+        async (event: MessageEvent) => {
+            const context = contextRef.current;
+            const message = JSON.parse(event.data) as IPresenterUserMessages;
 
-        reduceMessage(message);
-    }, []);
+            handleMessage(context, message);
+            reduceMessage(message);
+        },
+        [handleMessage, reduceMessage],
+    );
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
@@ -315,6 +350,10 @@ export function PresenterContextProvider(
         () => buildWebSocketURL(`/rooms/${roomID}/presenter/events`),
         [roomID],
     );
+
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
 
     useWebSocket(connectionURL, useWebSocketOptions);
 

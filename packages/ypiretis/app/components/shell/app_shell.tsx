@@ -4,11 +4,13 @@ import {
     Bleed,
     Button,
     Container,
+    Drawer,
     Editable,
+    Flex,
     Heading,
     IconButton,
     Image,
-    Flex,
+    Portal,
     VStack,
 } from "@chakra-ui/react";
 
@@ -20,12 +22,15 @@ import {useLocation} from "react-router";
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import EditBoxIcon from "~/components/icons/edit_box_icon";
+import MenuIcon from "~/components/icons/menu_icon";
 
 import {APP_NAME} from "~/utils/constants";
 import {buildAppURL} from "~/utils/url";
 
 import type {To} from "react-router";
 import {Link} from "react-router";
+
+interface IAppShellSidebarContainerProps extends PropsWithChildren {}
 
 export interface IAppShellButtonProps extends PropsWithChildren {
     readonly colorPalette?: ColorPalette;
@@ -203,7 +208,6 @@ function AppShellTitle(props: IAppShellTitleProps) {
                 // **HACK:** See similar comment for `AppShellEditableTitle`.
             }
             <title>{`${title} :: ${APP_NAME}`}</title>
-            <Heading>{title}</Heading>
         </>
     );
 }
@@ -242,7 +246,7 @@ function AppShellContainer(props: IAppShellContainerProps) {
             display={fluid ? undefined : "flex"}
             flexDirection={fluid ? undefined : "column"}
             flexGrow="1"
-            marginLeft="32"
+            marginInlineStart={{base: "32", lgDown: "0"}}
             maxBlockSize={fluid ? undefined : "dvh"}
             minBlockSize={fluid ? undefined : "dvh"}
             overflowX="hidden"
@@ -263,41 +267,70 @@ function AppShellContainer(props: IAppShellContainerProps) {
     );
 }
 
+function AppShellSidebarContainer(props: IAppShellSidebarContainerProps) {
+    const {children} = props;
+
+    return (
+        <VStack gap="2" padding="2" blockSize="full">
+            <Bleed
+                blockStart="2"
+                inline="2"
+                bg="bg.inverted"
+                borderBlockEndColor="border"
+                borderBlockEndStyle="solid"
+                borderBlockEndWidth="thin"
+                padding="4"
+                alignSelf="stretch"
+            >
+                <Image
+                    src="/images/logo.prompt.webp"
+                    marginInline="auto"
+                    width="10"
+                />
+            </Bleed>
+
+            {children}
+        </VStack>
+    );
+}
+
 function AppShellSidebar(props: IAppShellSidebarProps) {
     const {children} = props;
 
     return (
-        <Box
-            pos="fixed"
-            bg="bg"
-            borderInlineEndColor="border"
-            borderInlineEndStyle="solid"
-            borderInlineEndWidth="thin"
-            blockSize="dvh"
-            minInlineSize="32"
-            maxInlineSize="32"
-        >
-            <VStack gap="2" padding="2" blockSize="full">
-                <Bleed
-                    blockStart="2"
-                    inline="2"
-                    bg="bg.inverted"
-                    borderBlockEndColor="border"
-                    borderBlockEndStyle="solid"
-                    borderBlockEndWidth="thin"
-                    padding="4"
-                    alignSelf="stretch"
-                >
-                    <Image
-                        src="/images/logo.prompt.webp"
-                        marginInline="auto"
-                        width="10"
-                    />
-                </Bleed>
+        <>
+            <Box
+                hideBelow="lg"
+                pos="fixed"
+                bg="bg"
+                borderInlineEndColor="border"
+                borderInlineEndStyle="solid"
+                borderInlineEndWidth="thin"
+                blockSize="dvh"
+                minInlineSize="32"
+                maxInlineSize="32"
+            >
+                <AppShellSidebarContainer>{children}</AppShellSidebarContainer>
+            </Box>
 
-                {children}
-            </VStack>
-        </Box>
+            <Portal>
+                <Drawer.Backdrop hideFrom="lg" />
+
+                <Drawer.Positioner hideFrom="lg">
+                    <Drawer.CloseTrigger
+                        position="fixed"
+                        inset="0"
+                        cursor="pointer"
+                    />
+
+                    <Drawer.Content minInlineSize="32" maxInlineSize="32">
+                        <AppShellSidebarContainer>
+                            {children}
+                        </AppShellSidebarContainer>
+                    </Drawer.Content>
+                </Drawer.Positioner>
+            </Portal>
+        </>
     );
 }
 
@@ -305,9 +338,23 @@ function AppShellRoot(props: IAppShellRootProps) {
     const {children} = props;
 
     return (
-        <Flex align="stretch" inlineSize="dvw">
-            {children}
-        </Flex>
+        <Drawer.Root placement="start">
+            <Flex align="stretch" inlineSize="dvw">
+                {children}
+            </Flex>
+
+            <Drawer.Trigger asChild>
+                <IconButton
+                    hideFrom="lg"
+                    colorPalette="cyan"
+                    position="fixed"
+                    insetBlockEnd="2"
+                    insetInlineEnd="2"
+                >
+                    <MenuIcon />
+                </IconButton>
+            </Drawer.Trigger>
+        </Drawer.Root>
     );
 }
 

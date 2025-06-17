@@ -345,30 +345,36 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
-            for (const attendee of attendees.values()) {
-                const {state} = attendee;
-
-                if (state !== ENTITY_STATES.disposed) {
-                    attendee._disconnect();
-                }
-            }
-
-            for (const display of displays.values()) {
-                const {state} = display;
-
-                if (state !== ENTITY_STATES.disposed) {
-                    display._disconnect();
-                }
-            }
-
-            if (
-                presenterEntity !== null &&
-                presenterEntity.state !== ENTITY_STATES.disposed
-            ) {
-                presenterEntity._disconnect();
-            }
-
             _updateState(ROOM_STATES.disposed);
+
+            // **HACK:** We need to delay this an event pump cycle so that the
+            // connected clients can be updated on room state before their connections
+            // are terminated.
+
+            setTimeout(() => {
+                for (const attendee of attendees.values()) {
+                    const {state} = attendee;
+
+                    if (state !== ENTITY_STATES.disposed) {
+                        attendee._disconnect();
+                    }
+                }
+
+                for (const display of displays.values()) {
+                    const {state} = display;
+
+                    if (state !== ENTITY_STATES.disposed) {
+                        display._disconnect();
+                    }
+                }
+
+                if (
+                    presenterEntity !== null &&
+                    presenterEntity.state !== ENTITY_STATES.disposed
+                ) {
+                    presenterEntity._disconnect();
+                }
+            }, 0);
         },
 
         updatePIN(value) {

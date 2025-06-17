@@ -1,4 +1,4 @@
-import type {PropsWithChildren} from "react";
+import type {ActionDispatch, PropsWithChildren} from "react";
 import {
     createContext,
     useCallback,
@@ -72,213 +72,214 @@ export interface IPresenterContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IPresenterContext;
 }
 
-function messageReducer(
-    context: IPresenterContext,
-    message: IPresenterUserMessages,
-): IPresenterContext {
-    const {data, event} = message;
+function useMessageReducer(
+    initialContextData: IPresenterContext,
+): [IPresenterContext, ActionDispatch<[IPresenterUserMessages]>] {
+    return useReducer((context, message) => {
+        const {data, event} = message;
 
-    switch (event) {
-        case "attendeeUser.stateUpdate": {
-            const {entityID, state} = data;
+        switch (event) {
+            case "attendeeUser.stateUpdate": {
+                const {entityID, state} = data;
 
-            const {room} = context;
-            const {attendees} = room;
+                const {room} = context;
+                const {attendees} = room;
 
-            return {
-                ...context,
+                return {
+                    ...context,
 
-                room: {
-                    ...room,
+                    room: {
+                        ...room,
 
-                    attendees: attendees.map((attendee) => {
-                        if (attendee.entityID === entityID) {
-                            return {
-                                ...attendee,
+                        attendees: attendees.map((attendee) => {
+                            if (attendee.entityID === entityID) {
+                                return {
+                                    ...attendee,
 
+                                    state,
+                                };
+                            }
+
+                            return attendee;
+                        }),
+                    },
+                };
+            }
+
+            case "displayEntity.stateUpdate": {
+                const {entityID, state} = data;
+
+                const {room} = context;
+                const {displays} = room;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        displays: displays.map((display) => {
+                            if (display.entityID === entityID) {
+                                return {
+                                    ...display,
+
+                                    state,
+                                };
+                            }
+
+                            return display;
+                        }),
+                    },
+                };
+            }
+
+            case "room.attendeeAdded": {
+                const {accountID, entityID, firstName, lastName, state} = data;
+
+                const {room} = context;
+                const {attendees} = room;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        attendees: [
+                            ...attendees,
+
+                            {
+                                accountID,
+                                entityID,
+                                firstName,
+                                lastName,
                                 state,
-                            };
-                        }
+                            },
+                        ],
+                    },
+                };
+            }
 
-                        return attendee;
-                    }),
-                },
-            };
-        }
+            case "room.attendeeDisposed": {
+                const {entityID} = data;
 
-        case "displayEntity.stateUpdate": {
-            const {entityID, state} = data;
+                const {room} = context;
+                const {attendees} = room;
 
-            const {room} = context;
-            const {displays} = room;
+                return {
+                    ...context,
 
-            return {
-                ...context,
+                    room: {
+                        ...room,
 
-                room: {
-                    ...room,
+                        attendees: attendees.filter(
+                            (attendee) => attendee.entityID !== entityID,
+                        ),
+                    },
+                };
+            }
 
-                    displays: displays.map((display) => {
-                        if (display.entityID === entityID) {
-                            return {
-                                ...display,
+            case "room.displayAdded": {
+                const {entityID, state} = data;
 
+                const {room} = context;
+                const {displays} = room;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        displays: [
+                            ...displays,
+
+                            {
+                                entityID,
                                 state,
-                            };
-                        }
+                            },
+                        ],
+                    },
+                };
+            }
 
-                        return display;
-                    }),
-                },
-            };
-        }
+            case "room.displayDisposed": {
+                const {entityID} = data;
 
-        case "room.attendeeAdded": {
-            const {accountID, entityID, firstName, lastName, state} = data;
+                const {room} = context;
+                const {displays} = room;
 
-            const {room} = context;
-            const {attendees} = room;
+                return {
+                    ...context,
 
-            return {
-                ...context,
+                    room: {
+                        ...room,
 
-                room: {
-                    ...room,
+                        displays: displays.filter(
+                            (display) => display.entityID !== entityID,
+                        ),
+                    },
+                };
+            }
 
-                    attendees: [
-                        ...attendees,
+            case "room.pinUpdate": {
+                const {pin} = data;
+                const {room} = context;
 
-                        {
-                            accountID,
-                            entityID,
-                            firstName,
-                            lastName,
-                            state,
-                        },
-                    ],
-                },
-            };
-        }
+                return {
+                    ...context,
 
-        case "room.attendeeDisposed": {
-            const {entityID} = data;
+                    room: {
+                        ...room,
 
-            const {room} = context;
-            const {attendees} = room;
+                        pin,
+                    },
+                };
+            }
 
-            return {
-                ...context,
+            case "room.stateUpdate": {
+                const {state} = data;
+                const {room} = context;
 
-                room: {
-                    ...room,
+                return {
+                    ...context,
 
-                    attendees: attendees.filter(
-                        (attendee) => attendee.entityID !== entityID,
-                    ),
-                },
-            };
-        }
+                    room: {
+                        ...room,
 
-        case "room.displayAdded": {
-            const {entityID, state} = data;
+                        state,
+                    },
+                };
+            }
 
-            const {room} = context;
-            const {displays} = room;
+            case "room.titleUpdate": {
+                const {title} = data;
+                const {room} = context;
 
-            return {
-                ...context,
+                return {
+                    ...context,
 
-                room: {
-                    ...room,
+                    room: {
+                        ...room,
 
-                    displays: [
-                        ...displays,
+                        title,
+                    },
+                };
+            }
 
-                        {
-                            entityID,
-                            state,
-                        },
-                    ],
-                },
-            };
-        }
+            case "self.stateUpdate": {
+                const {state} = data;
 
-        case "room.displayDisposed": {
-            const {entityID} = data;
-
-            const {room} = context;
-            const {displays} = room;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
-
-                    displays: displays.filter(
-                        (display) => display.entityID !== entityID,
-                    ),
-                },
-            };
-        }
-
-        case "room.pinUpdate": {
-            const {pin} = data;
-            const {room} = context;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
-
-                    pin,
-                },
-            };
-        }
-
-        case "room.stateUpdate": {
-            const {state} = data;
-            const {room} = context;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
+                return {
+                    ...context,
 
                     state,
-                },
-            };
+                };
+            }
         }
 
-        case "room.titleUpdate": {
-            const {title} = data;
-            const {room} = context;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
-
-                    title,
-                },
-            };
-        }
-
-        case "self.stateUpdate": {
-            const {state} = data;
-
-            return {
-                ...context,
-
-                state,
-            };
-        }
-    }
-
-    return context;
+        return context;
+    }, initialContextData);
 }
 
 function useMessageHandler(
@@ -313,11 +314,7 @@ export function PresenterContextProvider(
 ) {
     const {children, initialContextData} = props;
 
-    const [context, reduceMessage] = useReducer(
-        messageReducer,
-        initialContextData,
-    );
-
+    const [context, reduceMessage] = useMessageReducer(initialContextData);
     const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;

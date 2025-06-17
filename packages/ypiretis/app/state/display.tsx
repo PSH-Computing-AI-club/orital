@@ -1,4 +1,4 @@
-import type {PropsWithChildren} from "react";
+import type {ActionDispatch, PropsWithChildren} from "react";
 import {
     createContext,
     useCallback,
@@ -44,70 +44,71 @@ export interface IDisplayContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IDisplayContext;
 }
 
-function messageReducer(
-    context: IDisplayContext,
-    message: IDisplayEntityMessages,
-): IDisplayContext {
-    const {data, event} = message;
+function useMessageReducer(
+    initialContextData: IDisplayContext,
+): [IDisplayContext, ActionDispatch<[IDisplayEntityMessages]>] {
+    return useReducer((context, message) => {
+        const {data, event} = message;
 
-    switch (event) {
-        case "room.pinUpdate": {
-            const {pin} = data;
-            const {room} = context;
+        switch (event) {
+            case "room.pinUpdate": {
+                const {pin} = data;
+                const {room} = context;
 
-            return {
-                ...context,
+                return {
+                    ...context,
 
-                room: {
-                    ...room,
+                    room: {
+                        ...room,
 
-                    pin,
-                },
-            };
-        }
+                        pin,
+                    },
+                };
+            }
 
-        case "room.stateUpdate": {
-            const {state} = data;
-            const {room} = context;
+            case "room.stateUpdate": {
+                const {state} = data;
+                const {room} = context;
 
-            return {
-                ...context,
+                return {
+                    ...context,
 
-                room: {
-                    ...room,
+                    room: {
+                        ...room,
+
+                        state,
+                    },
+                };
+            }
+
+            case "room.titleUpdate": {
+                const {title} = data;
+                const {room} = context;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        title,
+                    },
+                };
+            }
+
+            case "self.stateUpdate": {
+                const {state} = data;
+
+                return {
+                    ...context,
 
                     state,
-                },
-            };
+                };
+            }
         }
 
-        case "room.titleUpdate": {
-            const {title} = data;
-            const {room} = context;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
-
-                    title,
-                },
-            };
-        }
-
-        case "self.stateUpdate": {
-            const {state} = data;
-
-            return {
-                ...context,
-
-                state,
-            };
-        }
-    }
-
-    return context;
+        return context;
+    }, initialContextData);
 }
 
 function useMessageHandler(
@@ -140,11 +141,7 @@ function useMessageHandler(
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     const {children, initialContextData} = props;
 
-    const [context, reduceMessage] = useReducer(
-        messageReducer,
-        initialContextData,
-    );
-
+    const [context, reduceMessage] = useMessageReducer(initialContextData);
     const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;

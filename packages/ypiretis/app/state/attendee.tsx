@@ -1,4 +1,4 @@
-import type {PropsWithChildren} from "react";
+import type {ActionDispatch, PropsWithChildren} from "react";
 import {
     createContext,
     useCallback,
@@ -42,55 +42,56 @@ export interface IAttendeeContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IAttendeeContext;
 }
 
-function messageReducer(
-    context: IAttendeeContext,
-    message: IAttendeeUserMessages,
-): IAttendeeContext {
-    const {data, event} = message;
+function useMessageReducer(
+    initialContextData: IAttendeeContext,
+): [IAttendeeContext, ActionDispatch<[IAttendeeUserMessages]>] {
+    return useReducer((context, message) => {
+        const {data, event} = message;
 
-    switch (event) {
-        case "room.stateUpdate": {
-            const {state} = data;
-            const {room} = context;
+        switch (event) {
+            case "room.stateUpdate": {
+                const {state} = data;
+                const {room} = context;
 
-            return {
-                ...context,
+                return {
+                    ...context,
 
-                room: {
-                    ...room,
+                    room: {
+                        ...room,
+
+                        state,
+                    },
+                };
+            }
+
+            case "room.titleUpdate": {
+                const {title} = data;
+                const {room} = context;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        title,
+                    },
+                };
+            }
+
+            case "self.stateUpdate": {
+                const {state} = data;
+
+                return {
+                    ...context,
 
                     state,
-                },
-            };
+                };
+            }
         }
 
-        case "room.titleUpdate": {
-            const {title} = data;
-            const {room} = context;
-
-            return {
-                ...context,
-
-                room: {
-                    ...room,
-
-                    title,
-                },
-            };
-        }
-
-        case "self.stateUpdate": {
-            const {state} = data;
-
-            return {
-                ...context,
-
-                state,
-            };
-        }
-    }
-
-    return context;
+        return context;
+    }, initialContextData);
 }
 
 function useMessageHandler(
@@ -138,11 +139,7 @@ function useMessageHandler(
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     const {children, initialContextData} = props;
 
-    const [context, reduceMessage] = useReducer(
-        messageReducer,
-        initialContextData,
-    );
-
+    const [context, reduceMessage] = useMessageReducer(initialContextData);
     const handleMessage = useMessageHandler(context);
 
     const {room} = initialContextData;

@@ -3,9 +3,13 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useReducer,
+    useRef,
 } from "react";
+
+import {useNavigate} from "react-router";
 
 import type {
     IAttendeeUserMessages,
@@ -38,7 +42,7 @@ export interface IAttendeeContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IAttendeeContext;
 }
 
-function contextReducer(
+function messageReducer(
     context: IAttendeeContext,
     message: IAttendeeUserMessages,
 ): IAttendeeContext {
@@ -89,9 +93,47 @@ function contextReducer(
     return context;
 }
 
+function useMessageHandler(): (
+    context: IAttendeeContext,
+    message: IAttendeeUserMessages,
+) => void {
+    const navigate = useNavigate();
+
+    return useCallback(
+        (_context, message) => {
+            const {data: _data, event} = message;
+
+            switch (event) {
+                case "self.banned":
+                    navigate("/rooms/banned");
+
+                    break;
+
+                case "self.kicked":
+                    navigate("/rooms/kicked");
+
+                    break;
+
+                case "self.rejected":
+                    navigate("/rooms/rejected");
+
+                    break;
+            }
+        },
+        [navigate],
+    );
+}
+
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
     const {children, initialContextData} = props;
-    const [context, dispatch] = useReducer(contextReducer, initialContextData);
+
+    const handleMessage = useMessageHandler();
+    const [context, reduceMessage] = useReducer(
+        messageReducer,
+        initialContextData,
+    );
+
+    const contextRef = useRef(context);
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -102,11 +144,16 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
         console.error(event);
     }, []);
 
-    const onMessage = useCallback(async (event: MessageEvent) => {
-        const message = JSON.parse(event.data) as IAttendeeUserMessages;
+    const onMessage = useCallback(
+        async (event: MessageEvent) => {
+            const context = contextRef.current;
+            const message = JSON.parse(event.data) as IAttendeeUserMessages;
 
-        dispatch(message);
-    }, []);
+            handleMessage(context, message);
+            reduceMessage(message);
+        },
+        [handleMessage, reduceMessage],
+    );
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(
         () => ({
@@ -121,6 +168,10 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
         () => buildWebSocketURL(`/rooms/${roomID}/attendee/events`),
         [roomID],
     );
+
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
 
     useWebSocket(connectionURL, useWebSocketOptions);
 

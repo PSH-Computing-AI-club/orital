@@ -40,7 +40,7 @@ export interface IDisplayContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IDisplayContext;
 }
 
-function contextReducer(
+function messageReducer(
     context: IDisplayContext,
     message: IDisplayEntityMessages,
 ): IDisplayContext {
@@ -108,7 +108,11 @@ function contextReducer(
 
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     const {children, initialContextData} = props;
-    const [context, dispatch] = useReducer(contextReducer, initialContextData);
+
+    const [context, reduceMessage] = useReducer(
+        messageReducer,
+        initialContextData,
+    );
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -122,7 +126,7 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
     const onMessage = useCallback(async (event: MessageEvent) => {
         const message = JSON.parse(event.data) as IDisplayEntityMessages;
 
-        dispatch(message);
+        reduceMessage(message);
     }, []);
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(

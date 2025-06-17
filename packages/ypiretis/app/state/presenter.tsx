@@ -68,7 +68,7 @@ export interface IPresenterContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IPresenterContext;
 }
 
-function contextReducer(
+function messageReducer(
     context: IPresenterContext,
     message: IPresenterUserMessages,
 ): IPresenterContext {
@@ -281,7 +281,11 @@ export function PresenterContextProvider(
     props: IPresenterContextProviderProps,
 ) {
     const {children, initialContextData} = props;
-    const [context, dispatch] = useReducer(contextReducer, initialContextData);
+
+    const [context, reduceMessage] = useReducer(
+        messageReducer,
+        initialContextData,
+    );
 
     const {room} = initialContextData;
     const {roomID} = room;
@@ -295,7 +299,7 @@ export function PresenterContextProvider(
     const onMessage = useCallback(async (event: MessageEvent) => {
         const message = JSON.parse(event.data) as IPresenterUserMessages;
 
-        dispatch(message);
+        reduceMessage(message);
     }, []);
 
     const useWebSocketOptions = useMemo<IUseWebSocketOptions>(

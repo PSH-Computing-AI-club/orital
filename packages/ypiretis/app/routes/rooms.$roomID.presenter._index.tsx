@@ -28,6 +28,7 @@ import * as v from "valibot";
 
 import type {IRoomStates} from "~/.server/services/rooms_service";
 
+import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
@@ -42,7 +43,6 @@ import PinIcon from "~/components/icons/pin_icon";
 import ReloadIcon from "~/components/icons/reload_icon";
 import ShieldIcon from "~/components/icons/shield_icon";
 import TeachIcon from "~/components/icons/teach_icon";
-import UserIcon from "~/components/icons/user_icon";
 import UserXIcon from "~/components/icons/user_x_icon";
 import UsersIcon from "~/components/icons/users_icon";
 
@@ -89,7 +89,7 @@ function matchUserIcon(user: IAttendee | ISession) {
                 return NotificationIcon;
 
             case "STATE_CONNECTED":
-                return UserIcon;
+                return AvatarIcon;
 
             case "STATE_DISPOSED":
                 return LogoutIcon;

@@ -89,6 +89,69 @@ function AppShellButton(props: IAppShellButtonProps) {
     );
 }
 
+function AppShellDivider() {
+    return (
+        <Box
+            borderBlockStartColor="border"
+            borderBlockStartStyle="solid"
+            borderBlockStartWidth="thin"
+            marginBlockStart="auto"
+            width="full"
+        />
+    );
+}
+
+function AppShellIcon(props: IAppShellIconProps) {
+    const {children} = props;
+
+    return (
+        <Box width="2.5em" height="2.5em" asChild>
+            {children}
+        </Box>
+    );
+}
+
+function AppShellLink(props: IAppShellLinkProps) {
+    const {children, to} = props;
+    const location = useLocation();
+
+    const currentURL = buildAppURL(location);
+    const toURL = buildAppURL(to);
+
+    const isActive = currentURL.toString() === toURL.toString();
+
+    return (
+        <Button
+            variant="ghost"
+            colorPalette={isActive ? "cyan" : undefined}
+            size="2xs"
+            flexDirection="column"
+            fontWeight="bold"
+            width="full"
+            paddingY="10"
+            gap="2"
+            asChild
+        >
+            <Link to={to}>{children}</Link>
+        </Button>
+    );
+}
+
+function AppShellTitle(props: IAppShellTitleProps) {
+    const {title} = props;
+
+    return (
+        <>
+            {
+                // **HACK:** React's special handling of the `<title>` element
+                // requires that it has no child elements. That is, it is only
+                // a singular primitive value.
+            }
+            <title>{`${title} :: ${APP_NAME}`}</title>
+        </>
+    );
+}
+
 function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
     const {
         disabled = false,
@@ -126,9 +189,7 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
     return (
         <>
             {
-                // **HACK:** React's special handling of the `<title>` element
-                // requires that it has no child elements. That is, it is only
-                // a singular primitive value.
+                // **HACK:** See similar comment for `AppShellTitle`.
             }
             <title>{`${title} :: ${APP_NAME}`}</title>
 
@@ -177,67 +238,6 @@ function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
                 </Editable.Root>
             </Heading>
         </>
-    );
-}
-
-function AppShellDivider() {
-    return (
-        <Box
-            borderBlockStartColor="border"
-            borderBlockStartStyle="solid"
-            borderBlockStartWidth="thin"
-            marginBlockStart="auto"
-            width="full"
-        />
-    );
-}
-
-function AppShellIcon(props: IAppShellIconProps) {
-    const {children} = props;
-
-    return (
-        <Box width="2.5em" height="2.5em" asChild>
-            {children}
-        </Box>
-    );
-}
-
-function AppShellTitle(props: IAppShellTitleProps) {
-    const {title} = props;
-
-    return (
-        <>
-            {
-                // **HACK:** See similar comment for `AppShellEditableTitle`.
-            }
-            <title>{`${title} :: ${APP_NAME}`}</title>
-        </>
-    );
-}
-
-function AppShellLink(props: IAppShellLinkProps) {
-    const {children, to} = props;
-    const location = useLocation();
-
-    const currentURL = buildAppURL(location);
-    const toURL = buildAppURL(to);
-
-    const isActive = currentURL.toString() === toURL.toString();
-
-    return (
-        <Button
-            variant="ghost"
-            colorPalette={isActive ? "cyan" : undefined}
-            size="2xs"
-            flexDirection="column"
-            fontWeight="bold"
-            width="full"
-            paddingY="10"
-            gap="2"
-            asChild
-        >
-            <Link to={to}>{children}</Link>
-        </Button>
     );
 }
 

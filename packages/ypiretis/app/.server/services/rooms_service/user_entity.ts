@@ -38,7 +38,9 @@ export default function makeUserEntity<E extends IMessage, S extends string>(
     const userEntity = {
         ...entity,
 
-        [SYMBOL_USER_BRAND]: true,
+        get [SYMBOL_USER_BRAND]() {
+            return true as const;
+        },
 
         user,
     } satisfies IUserEntity<E, S>;

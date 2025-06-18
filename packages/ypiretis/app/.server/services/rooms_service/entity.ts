@@ -81,11 +81,13 @@ export default function makeEntity<E extends IMessage, S extends string>(
     let state = initialState as S;
 
     const entity = {
-        [SYMBOL_ENTITY_BRAND]: true,
+        get [SYMBOL_ENTITY_BRAND]() {
+            return true as const;
+        },
 
-        EVENT_STATE_UPDATE,
-
-        id,
+        get EVENT_STATE_UPDATE() {
+            return EVENT_STATE_UPDATE;
+        },
 
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             roomStateUpdateSubscription.dispose();
@@ -100,6 +102,10 @@ export default function makeEntity<E extends IMessage, S extends string>(
                     state: newState as IEntityStates,
                 },
             } satisfies ISelfStateUpdateMessage as unknown as E);
+        },
+
+        get id() {
+            return id;
         },
 
         get state() {

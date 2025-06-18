@@ -38,7 +38,9 @@ export default function makePresenterUser(
     const presenter = {
         ...user,
 
-        [SYMBOL_PRESENTER_USER_BRAND]: true,
+        get [SYMBOL_PRESENTER_USER_BRAND]() {
+            return true as const;
+        },
 
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             user[SYMBOL_ENTITY_ON_DISPOSE]();

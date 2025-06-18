@@ -202,30 +202,64 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     }
 
     return {
-        EVENT_ATTENDEE_HAND_UPDATE,
-        EVENT_ENTITY_ADDED,
-        EVENT_ENTITY_DISPOSED,
-        EVENT_ENTITY_STATE_UPDATE,
+        get EVENT_ATTENDEE_HAND_UPDATE() {
+            return EVENT_ATTENDEE_HAND_UPDATE;
+        },
 
-        EVENT_PIN_UPDATE,
-        EVENT_STATE_UPDATE,
-        EVENT_TITLE_UPDATE,
+        get EVENT_ENTITY_ADDED() {
+            return EVENT_ENTITY_ADDED;
+        },
 
-        approvedAccountIDs,
-        attendees,
-        bannedAccountIDs,
+        get EVENT_ENTITY_DISPOSED() {
+            return EVENT_ENTITY_DISPOSED;
+        },
 
-        displays,
-        id,
-        presenter,
-        roomID,
+        get EVENT_ENTITY_STATE_UPDATE() {
+            return EVENT_ENTITY_STATE_UPDATE;
+        },
+
+        get EVENT_PIN_UPDATE() {
+            return EVENT_PIN_UPDATE;
+        },
+
+        get EVENT_STATE_UPDATE() {
+            return EVENT_STATE_UPDATE;
+        },
+
+        get EVENT_TITLE_UPDATE() {
+            return EVENT_TITLE_UPDATE;
+        },
+
+        get approvedAccountIDs() {
+            return approvedAccountIDs;
+        },
+
+        get attendees() {
+            return attendees;
+        },
+
+        get bannedAccountIDs() {
+            return bannedAccountIDs;
+        },
 
         get createdAt() {
             return createdAt;
         },
 
+        get displays() {
+            return displays;
+        },
+
+        get id() {
+            return id;
+        },
+
         get pin() {
             return pin;
+        },
+
+        get presenter() {
+            return presenter;
         },
 
         get presenterEntity() {
@@ -234,6 +268,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         get presenterLastDisposed() {
             return presenterLastDisposed;
+        },
+
+        get roomID() {
+            return roomID;
         },
 
         get state() {

@@ -72,7 +72,9 @@ export default function makeAttendeeUser(
     const attendee = {
         ...userEntity,
 
-        [SYMBOL_ATTENDEE_USER_BRAND]: true,
+        get [SYMBOL_ATTENDEE_USER_BRAND]() {
+            return true as const;
+        },
 
         [SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState) {
             userEntity[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState);

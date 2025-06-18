@@ -33,7 +33,9 @@ export default function makeDisplayEntity(
     const display = {
         ...entity,
 
-        [SYMBOL_DISPLAY_ENTITY_BRAND]: true,
+        get [SYMBOL_DISPLAY_ENTITY_BRAND]() {
+            return true as const;
+        },
 
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             entity[SYMBOL_ENTITY_ON_DISPOSE]();

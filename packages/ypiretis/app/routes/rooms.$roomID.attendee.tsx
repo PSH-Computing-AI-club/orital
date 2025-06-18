@@ -18,7 +18,7 @@ import {AttendeeContextProvider} from "~/state/attendee";
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
 
-import {Route} from "./+types/rooms.$roomID.presenter";
+import {Route} from "./+types/rooms.$roomID.attendee";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),

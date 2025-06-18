@@ -66,13 +66,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {accountID, firstName, lastName} = user;
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
-        const {id: entityID, state, user} = attendee;
+        const {id: entityID, isRaisingHand, state, user} = attendee;
         const {accountID, firstName, lastName} = user;
 
         return {
             accountID,
             entityID,
             firstName,
+            isRaisingHand,
             lastName,
             state,
         };

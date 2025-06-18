@@ -53,6 +53,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     return {
         initialContextData: {
+            isRaisingHand: false,
+
             room: {
                 roomID,
                 state,

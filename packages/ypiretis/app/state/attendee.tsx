@@ -33,6 +33,8 @@ export interface IRoom {
 }
 
 export interface IAttendeeContext {
+    readonly isRaisingHand: boolean;
+
     readonly room: IRoom;
 
     readonly state: IAttendeeUserStates;
@@ -76,6 +78,16 @@ function useMessageReducer(
 
                         title,
                     },
+                };
+            }
+
+            case "self.hand": {
+                const {isRaisingHand} = data;
+
+                return {
+                    ...context,
+
+                    isRaisingHand,
                 };
             }
 

@@ -45,6 +45,8 @@ export interface IDisplay extends IEntity {
 }
 
 export interface IAttendee extends IUser {
+    readonly isRaisingHand: boolean;
+
     readonly state: IAttendeeUserStates;
 }
 
@@ -152,6 +154,7 @@ function useMessageReducer(
                                 accountID,
                                 entityID,
                                 firstName,
+                                isRaisingHand: false,
                                 lastName,
                                 state,
                             },
@@ -175,6 +178,33 @@ function useMessageReducer(
                         attendees: attendees.filter(
                             (attendee) => attendee.entityID !== entityID,
                         ),
+                    },
+                };
+            }
+
+            case "attendeeUser.handUpdate": {
+                const {entityID, isRaisingHand} = data;
+
+                const {room} = context;
+                const {attendees} = room;
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        attendees: attendees.map((attendee) => {
+                            if (attendee.entityID === entityID) {
+                                return {
+                                    ...attendee,
+
+                                    isRaisingHand,
+                                };
+                            }
+
+                            return attendee;
+                        }),
                     },
                 };
             }

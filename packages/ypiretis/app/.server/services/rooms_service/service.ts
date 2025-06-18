@@ -1,3 +1,5 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import type {ActionFunctionArgs} from "react-router";
 import {data} from "react-router";
 
@@ -85,6 +87,7 @@ export async function insertOneLive(
     } = options;
 
     // **TODO:** Pull from options object when DB integration is ready
+    const createdAt = Temporal.Now.instant();
     const id = ++idCounter;
     const pin = generateUniquePIN();
     const roomID = ulid();
@@ -92,6 +95,7 @@ export async function insertOneLive(
     // **TODO:** add to db
 
     const room = makeRoom({
+        createdAt,
         id,
         pin,
         presenter,

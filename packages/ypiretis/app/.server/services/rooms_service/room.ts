@@ -1,6 +1,8 @@
-import {makeIDPool} from "../../utils/id_pool";
+import {Temporal} from "@js-temporal/polyfill";
+
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
+import {makeIDPool} from "../../utils/id_pool";
 import type {IWSContext} from "../../utils/web_socket";
 
 import {IUser} from "../users_service";
@@ -68,6 +70,8 @@ export interface IRoomTitleUpdateEvent {
 }
 
 export interface IRoomOptions {
+    readonly createdAt: Temporal.Instant;
+
     readonly id: number;
 
     readonly pin: string;
@@ -121,6 +125,8 @@ export interface IRoom {
 
     readonly bannedAccountIDs: ReadonlySet<string>;
 
+    readonly createdAt: Temporal.Instant;
+
     readonly displays: ReadonlyMap<number, IDisplayEntity>;
 
     readonly id: number;
@@ -130,6 +136,8 @@ export interface IRoom {
     readonly presenter: IUser;
 
     readonly presenterEntity: IPresenterUser | null;
+
+    readonly presenterLastDisposed: Temporal.Instant;
 
     readonly roomID: string;
 
@@ -155,10 +163,8 @@ export interface IRoom {
 }
 
 export default function makeRoom(options: IRoomOptions): IRoom {
-    const {id, roomID, presenter} = options;
+    const {createdAt, id, roomID, presenter} = options;
     let {pin, state, title} = options;
-
-    let presenterEntity: IPresenterUser | null = null;
 
     const EVENT_ATTENDEE_HAND_UPDATE = makeEvent<IAttendeeHandUpdate>();
 
@@ -178,6 +184,11 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     const displays = new Map<number, IDisplayEntity>();
     const displayPool = makeIDPool();
+
+    let presenterEntity: IPresenterUser | null = null;
+    // **NOTE:** When a room is created the presenter is not necessarily
+    // connected yet, or will.
+    let presenterLastDisposed: Temporal.Instant = createdAt;
 
     function _updateState(value: IRoomStates): void {
         const oldState = state;
@@ -203,10 +214,15 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         approvedAccountIDs,
         attendees,
         bannedAccountIDs,
+
         displays,
         id,
         presenter,
         roomID,
+
+        get createdAt() {
+            return createdAt;
+        },
 
         get pin() {
             return pin;
@@ -214,6 +230,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         get presenterEntity() {
             return presenterEntity;
+        },
+
+        get presenterLastDisposed() {
+            return presenterLastDisposed;
         },
 
         get state() {
@@ -396,6 +416,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                     presenterEntity !== null &&
                     presenterEntity.state !== ENTITY_STATES.disposed
                 ) {
+                    presenterLastDisposed = Temporal.Now.instant();
+
                     presenterEntity._disconnect();
                 }
             }, 0);

@@ -1,5 +1,8 @@
 import {Strong, Text} from "@chakra-ui/react";
 
+import type {MouseEvent} from "react";
+import {useState} from "react";
+
 import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet, data} from "react-router";
 
@@ -10,15 +13,24 @@ import {
     requireAuthenticatedAttendeeConnection,
 } from "~/.server/services/rooms_service";
 
+import AppShell from "~/components/shell/app_shell";
+
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendeeContext} from "~/state/attendee";
-import {AttendeeContextProvider} from "~/state/attendee";
+import {AttendeeContextProvider, useAttendeeContext} from "~/state/attendee";
 
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
 
+import {buildFormData} from "~/utils/forms";
+
+import type {IActionFormData} from "./rooms_.$roomID_.attendee_.actions_.self";
+
 import {Route} from "./+types/rooms.$roomID.attendee";
+import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
+import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
+import LogoutIcon from "~/components/icons/logout_icon";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
@@ -87,19 +99,74 @@ export function HydrateFallback() {
     );
 }
 
+function Sidebar() {
+    const {room, isRaisingHand} = useAttendeeContext();
+    const {state} = room;
+
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
+    async function onHandClick(
+        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ): Promise<void> {
+        setFetchingAction(true);
+
+        await fetch("./attendee/actions/self", {
+            method: "POST",
+            body: buildFormData<IActionFormData>({
+                action: isRaisingHand
+                    ? "participation.dismissHand"
+                    : "participation.raiseHand",
+            }),
+        });
+
+        setFetchingAction(false);
+    }
+
+    return (
+        <AppShell.Sidebar>
+            <AppShell.Button disabled={!canFetchAction} onClick={onHandClick}>
+                <AppShell.Icon>
+                    {isRaisingHand ? (
+                        <HumanHandsupIcon />
+                    ) : (
+                        <HumanHandsdownIcon />
+                    )}
+                </AppShell.Icon>
+                {isRaisingHand ? "Lower Hand" : "Raise Hand"}
+            </AppShell.Button>
+
+            <AppShell.Divider />
+
+            <AppShell.Link to="/rooms/left" colorPalette="red">
+                <AppShell.Icon>
+                    <LogoutIcon />
+                </AppShell.Icon>
+                Leave Room
+            </AppShell.Link>
+        </AppShell.Sidebar>
+    );
+}
+
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {initialContextData, session} = loaderData;
 
     return (
-        <WebSocketCacheProvider>
-            <SessionContextProvider session={session}>
-                <AttendeeContextProvider
-                    initialContextData={initialContextData}
-                >
-                    <Outlet />
-                </AttendeeContextProvider>
-            </SessionContextProvider>
-        </WebSocketCacheProvider>
+        <AppShell.Root>
+            <WebSocketCacheProvider>
+                <SessionContextProvider session={session}>
+                    <AttendeeContextProvider
+                        initialContextData={initialContextData}
+                    >
+                        <Sidebar />
+
+                        <Outlet />
+                    </AttendeeContextProvider>
+                </SessionContextProvider>
+            </WebSocketCacheProvider>
+        </AppShell.Root>
     );
 }

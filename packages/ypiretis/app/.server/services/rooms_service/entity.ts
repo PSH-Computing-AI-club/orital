@@ -3,7 +3,7 @@ import makeEvent from "../../../utils/event";
 
 import type {IWSContext} from "../../utils/web_socket";
 
-import {EntityConnectionError, EntityDisposedError} from "./errors";
+import {EntityConnectionError, EntityStateError} from "./errors";
 import type {
     IEntityMessages,
     IMessage,
@@ -132,7 +132,7 @@ export default function makeEntity<E extends IMessage, S extends string>(
 
         _dispose() {
             if (state === ENTITY_STATES.disposed) {
-                throw new EntityDisposedError(
+                throw new EntityStateError(
                     `bad dispatch to 'IEntity._dispose' (the entity was already disposed)`,
                 );
             }

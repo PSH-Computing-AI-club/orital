@@ -69,36 +69,6 @@ export default function makePresenterUser(
         },
     );
 
-    const entityStateSubscription = room.EVENT_ENTITY_STATE_UPDATE.subscribe(
-        (event) => {
-            const {entity} = event;
-
-            if (isAttendeeUser(entity)) {
-                const {id, state} = entity;
-
-                presenter._dispatch({
-                    event: MESSAGE_EVENTS.attendeeUserStateUpdate,
-
-                    data: {
-                        entityID: id,
-                        state,
-                    },
-                });
-            } else if (isDisplayEntity(entity)) {
-                const {id, state} = entity;
-
-                presenter._dispatch({
-                    event: MESSAGE_EVENTS.displayEntityStateUpdate,
-
-                    data: {
-                        entityID: id,
-                        state,
-                    },
-                });
-            }
-        },
-    );
-
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {
             const {entity} = event;
@@ -155,6 +125,38 @@ export default function makePresenterUser(
 
                     data: {
                         entityID: id,
+                    },
+                });
+            }
+        },
+    );
+
+    const entityStateSubscription = room.EVENT_ENTITY_STATE_UPDATE.subscribe(
+        (event) => {
+            const {entity} = event;
+
+            if (isAttendeeUser(entity)) {
+                const {newState} = event;
+                const {id} = entity;
+
+                presenter._dispatch({
+                    event: MESSAGE_EVENTS.attendeeUserStateUpdate,
+
+                    data: {
+                        entityID: id,
+                        state: newState,
+                    },
+                });
+            } else if (isDisplayEntity(entity)) {
+                const {newState} = event;
+                const {id} = entity;
+
+                presenter._dispatch({
+                    event: MESSAGE_EVENTS.displayEntityStateUpdate,
+
+                    data: {
+                        entityID: id,
+                        state: newState,
                     },
                 });
             }

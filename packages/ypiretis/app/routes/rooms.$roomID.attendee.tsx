@@ -100,13 +100,15 @@ export function HydrateFallback() {
 }
 
 function Sidebar() {
-    const {room, isRaisingHand} = useAttendeeContext();
+    const {room, isRaisingHand, state: attendeeState} = useAttendeeContext();
     const {state} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     const isDisposed = state === "STATE_DISPOSED";
     const canFetchAction = !(isDisposed || fetchingAction);
+
+    const canUseHand = attendeeState === "STATE_CONNECTED";
 
     async function onHandClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -128,7 +130,7 @@ function Sidebar() {
     return (
         <AppShell.Sidebar>
             <AppShell.Button
-                disabled={!canFetchAction}
+                disabled={!canFetchAction || !canUseHand}
                 colorPalette={isRaisingHand ? "cyan" : undefined}
                 onClick={onHandClick}
             >

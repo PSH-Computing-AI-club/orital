@@ -33,6 +33,7 @@ import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
+import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
@@ -89,7 +90,7 @@ function matchUserIcon(user: IAttendee | ISession) {
                 return NotificationIcon;
 
             case "STATE_CONNECTED":
-                return AvatarIcon;
+                return user.isRaisingHand ? HumanHandsupIcon : AvatarIcon;
 
             case "STATE_DISPOSED":
                 return LogoutIcon;

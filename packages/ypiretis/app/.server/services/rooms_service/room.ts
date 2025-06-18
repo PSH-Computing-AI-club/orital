@@ -21,10 +21,17 @@ import {ENTITY_STATES, ROOM_STATES} from "./states";
 import {
     SYMBOL_ATTENDEE_USER_ON_APPROVED,
     SYMBOL_ATTENDEE_USER_ON_BANNED,
+    SYMBOL_ATTENDEE_USER_ON_HAND,
     SYMBOL_ATTENDEE_USER_ON_KICKED,
     SYMBOL_ENTITY_ON_DISPOSE,
     SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
+
+export interface IAttendeeHandUpdate {
+    readonly attendee: IAttendeeUser;
+
+    readonly isRaisingHand: boolean;
+}
 
 export interface IEntityAddedEvent {
     readonly entity: IGenericEntity;
@@ -79,6 +86,11 @@ export interface IRoom {
 
     [SYMBOL_ATTENDEE_USER_ON_BANNED](attendee: IAttendeeUser): void;
 
+    [SYMBOL_ATTENDEE_USER_ON_HAND](
+        attendee: IAttendeeUser,
+        isRaisingHand: boolean,
+    ): void;
+
     [SYMBOL_ATTENDEE_USER_ON_KICKED](attendee: IAttendeeUser): void;
 
     [SYMBOL_ENTITY_ON_DISPOSE](entity: IGenericEntity): void;
@@ -88,6 +100,8 @@ export interface IRoom {
         oldState: IEntityStates,
         newState: IEntityStates,
     ): void;
+
+    readonly EVENT_ATTENDEE_HAND_UPDATE: IEvent<IAttendeeHandUpdate>;
 
     readonly EVENT_ENTITY_ADDED: IEvent<IEntityAddedEvent>;
 
@@ -146,6 +160,8 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     let presenterEntity: IPresenterUser | null = null;
 
+    const EVENT_ATTENDEE_HAND_UPDATE = makeEvent<IAttendeeHandUpdate>();
+
     const EVENT_ENTITY_ADDED = makeEvent<IEntityAddedEvent>();
     const EVENT_ENTITY_DISPOSED = makeEvent<IEntityDisposedEvent>();
     const EVENT_ENTITY_STATE_UPDATE = makeEvent<IEntityStateUpdateEvent>();
@@ -175,6 +191,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     }
 
     return {
+        EVENT_ATTENDEE_HAND_UPDATE,
         EVENT_ENTITY_ADDED,
         EVENT_ENTITY_DISPOSED,
         EVENT_ENTITY_STATE_UPDATE,
@@ -220,6 +237,13 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
             approvedAccountIDs.delete(accountID);
             bannedAccountIDs.add(accountID);
+        },
+
+        [SYMBOL_ATTENDEE_USER_ON_HAND](attendee, isRaisingHand) {
+            EVENT_ATTENDEE_HAND_UPDATE.dispatch({
+                attendee,
+                isRaisingHand,
+            });
         },
 
         [SYMBOL_ATTENDEE_USER_ON_KICKED](attendee) {

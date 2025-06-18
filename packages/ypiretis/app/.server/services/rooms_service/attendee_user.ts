@@ -8,6 +8,7 @@ import {
     SYMBOL_ATTENDEE_USER_ON_APPROVED,
     SYMBOL_ATTENDEE_USER_ON_BANNED,
     SYMBOL_ATTENDEE_USER_ON_KICKED,
+    SYMBOL_ATTENDEE_USER_ON_HAND,
     SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
 import type {IUserEntity, IUserEntityOptions} from "./user_entity";
@@ -20,11 +21,17 @@ export interface IAttendeeUser
     extends IUserEntity<IAttendeeUserMessages, IAttendeeUserStates> {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
 
+    readonly isRaisingHand: boolean;
+
     approve(): void;
 
     ban(): void;
 
+    dismissHand(): void;
+
     kick(): void;
+
+    raiseHand(): void;
 
     reject(): void;
 }
@@ -60,6 +67,8 @@ export default function makeAttendeeUser(
         state: initialState ?? preferredState,
     });
 
+    let isRaisingHand: boolean = false;
+
     const attendee = {
         ...userEntity,
 
@@ -80,6 +89,10 @@ export default function makeAttendeeUser(
                     },
                 });
             }
+        },
+
+        get isRaisingHand() {
+            return isRaisingHand;
         },
 
         approve() {
@@ -109,6 +122,25 @@ export default function makeAttendeeUser(
             }, 0);
         },
 
+        dismissHand() {
+            if (!isRaisingHand) {
+                throw new EntityStateError(
+                    "bad dispatch to 'IAttendeeUser.dismissHand' (attendee is not raising their hand)",
+                );
+            }
+
+            isRaisingHand = false;
+
+            this._dispatch({
+                event: MESSAGE_EVENTS.selfHand,
+                data: {
+                    isRaisingHand: false,
+                },
+            });
+
+            room[SYMBOL_ATTENDEE_USER_ON_HAND](this, false);
+        },
+
         kick() {
             room[SYMBOL_ATTENDEE_USER_ON_KICKED](this);
 
@@ -120,6 +152,25 @@ export default function makeAttendeeUser(
             setTimeout(() => {
                 this._disconnect();
             }, 0);
+        },
+
+        raiseHand() {
+            if (isRaisingHand) {
+                throw new EntityStateError(
+                    "bad dispatch to 'IAttendeeUser.raiseHand' (attendee is already raising their hand)",
+                );
+            }
+
+            isRaisingHand = true;
+
+            this._dispatch({
+                event: MESSAGE_EVENTS.selfHand,
+                data: {
+                    isRaisingHand: true,
+                },
+            });
+
+            room[SYMBOL_ATTENDEE_USER_ON_HAND](this, true);
         },
 
         reject() {

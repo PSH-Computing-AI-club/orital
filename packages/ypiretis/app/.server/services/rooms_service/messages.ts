@@ -7,6 +7,8 @@ import type {
 } from "./states";
 
 export const MESSAGE_EVENTS = {
+    attendeeUserHandUpdate: "attendeeUser.handUpdate",
+
     attendeeUserStateUpdate: "attendeeUser.stateUpdate",
 
     displayEntityStateUpdate: "displayEntity.stateUpdate",
@@ -31,6 +33,8 @@ export const MESSAGE_EVENTS = {
 
     selfRejected: "self.rejected",
 
+    selfHand: "self.hand",
+
     selfStateUpdate: "self.stateUpdate",
 } as const;
 
@@ -49,11 +53,13 @@ export type IUserMessages = IEntityMessages;
 export type IAttendeeUserMessages =
     | ISelfAttendeeUserStateUpdateMessage
     | ISelfBannedMessage
+    | ISelfHandMessage
     | ISelfKickedMessage
     | ISelfRejectedMessage
     | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export type IPresenterUserMessages =
+    | IAttendeeUserHandUpdateMessage
     | IAttendeeUserStateUpdateMessage
     | IDisplayEntityStateUpdateMessage
     | IRoomAttendeeAddedMessage
@@ -76,6 +82,16 @@ export interface IMessage {
     readonly event: string;
 
     readonly data: IMessageData;
+}
+
+export interface IAttendeeUserHandUpdateMessage extends IMessage {
+    readonly event: typeof MESSAGE_EVENTS.attendeeUserHandUpdate;
+
+    readonly data: {
+        readonly entityID: number;
+
+        readonly isRaisingHand: boolean;
+    };
 }
 
 export interface IAttendeeUserStateUpdateMessage extends IMessage {
@@ -166,6 +182,14 @@ export interface IRoomTitleUpdateMessage extends IMessage {
 
 export interface ISelfBannedMessage extends IMessage {
     readonly event: typeof MESSAGE_EVENTS.selfBanned;
+}
+
+export interface ISelfHandMessage extends IMessage {
+    readonly event: typeof MESSAGE_EVENTS.selfHand;
+
+    readonly data: {
+        readonly isRaisingHand: boolean;
+    };
 }
 
 export interface ISelfKickedMessage extends IMessage {

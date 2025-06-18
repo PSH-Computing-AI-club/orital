@@ -13,7 +13,8 @@ import {
 import type {IUserEntity, IUserEntityOptions} from "./user_entity";
 import makeUserEntity from "./user_entity";
 
-export interface IAttendeeUserOptions extends IUserEntityOptions {}
+export interface IAttendeeUserOptions
+    extends IUserEntityOptions<IAttendeeUserStates> {}
 
 export interface IAttendeeUser
     extends IUserEntity<IAttendeeUserMessages, IAttendeeUserStates> {
@@ -39,28 +40,30 @@ export function isAttendeeUser(value: unknown): value is IAttendeeUser {
 export default function makeAttendeeUser(
     options: IAttendeeUserOptions,
 ): IAttendeeUser {
-    const {room, user: userData} = options;
+    const {room, user: userData, state: initialState} = options;
 
     const {approvedAccountIDs, state: roomState} = room;
     const {accountID} = userData;
 
-    const userEntity = makeUserEntity<
-        IAttendeeUserMessages,
-        IAttendeeUserStates
-    >(options);
-
-    const initialState: IAttendeeUserStates =
+    const preferredState =
         roomState === ROOM_STATES.permissive &&
         !approvedAccountIDs.has(accountID)
             ? ATTENDEE_USER_STATES.awaiting
             : ATTENDEE_USER_STATES.connected;
 
+    const userEntity = makeUserEntity<
+        IAttendeeUserMessages,
+        IAttendeeUserStates
+    >({
+        ...options,
+
+        state: initialState ?? preferredState,
+    });
+
     const attendee = {
         ...userEntity,
 
         [SYMBOL_ATTENDEE_USER_BRAND]: true,
-
-        state: initialState,
 
         [SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState) {
             userEntity[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState);

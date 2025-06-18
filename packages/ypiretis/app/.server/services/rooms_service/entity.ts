@@ -1,11 +1,16 @@
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
 
-import type {ExtendLiterals} from "../../utils/types";
 import type {IWSContext} from "../../utils/web_socket";
 
 import {EntityConnectionError, EntityDisposedError} from "./errors";
-import type {IEntityMessages, IMessage} from "./messages";
+import type {
+    IEntityMessages,
+    IMessage,
+    IRoomStateUpdateMessage,
+    IRoomTitleUpdateMessage,
+    ISelfStateUpdateMessage,
+} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
 import type {IRoom} from "./room";
 import type {IEntityStates} from "./states";
@@ -19,39 +24,33 @@ import {
 export type IGenericEntity = IEntity<IEntityMessages, IEntityStates>;
 
 export interface IEntityStateUpdateEvent<S extends string> {
-    readonly oldState: ExtendLiterals<S, IEntityStates>;
+    readonly oldState: S;
 
-    readonly newState: ExtendLiterals<S, IEntityStates>;
+    readonly newState: S;
 }
 
-export interface IEntityOptions {
+export interface IEntityOptions<S extends string> {
     readonly connection: IWSContext;
 
     readonly id: number;
 
     readonly room: IRoom;
+
+    readonly state?: S;
 }
 
-export interface IEntity<
-    E extends IMessage = IEntityMessages,
-    S extends string = IEntityStates,
-> {
+export interface IEntity<E extends IMessage, S extends string> {
     [SYMBOL_ENTITY_BRAND]: true;
 
     [SYMBOL_ENTITY_ON_DISPOSE]: () => void;
 
-    [SYMBOL_ENTITY_ON_STATE_UPDATE]: (
-        oldState: ExtendLiterals<S, IEntityStates>,
-        newState: ExtendLiterals<S, IEntityStates>,
-    ) => void;
+    [SYMBOL_ENTITY_ON_STATE_UPDATE]: (oldState: S, newState: S) => void;
 
-    readonly EVENT_STATE_UPDATE: IEvent<
-        IEntityStateUpdateEvent<ExtendLiterals<S, IEntityStates>>
-    >;
+    readonly EVENT_STATE_UPDATE: IEvent<IEntityStateUpdateEvent<S>>;
 
     readonly id: number;
 
-    readonly state: ExtendLiterals<S, IEntityStates>;
+    readonly state: S;
 
     _disconnect(): void;
 
@@ -59,7 +58,7 @@ export interface IEntity<
 
     _dispose(): void;
 
-    _updateState(s: IEntityStates): void;
+    _updateState(s: S): void;
 }
 
 export function isEntity(value: unknown): value is IGenericEntity {
@@ -70,19 +69,16 @@ export function isEntity(value: unknown): value is IGenericEntity {
     );
 }
 
-export default function makeEntity<
-    E extends IMessage,
-    S extends string = IEntityStates,
-    I extends IEntity<E, S> = IEntity<E, S>,
->(options: IEntityOptions): I {
-    const {id, room} = options;
+export default function makeEntity<E extends IMessage, S extends string>(
+    options: IEntityOptions<S>,
+): IEntity<E, S> {
+    const {id, room, state: initialState = ENTITY_STATES.connected} = options;
 
-    const EVENT_STATE_UPDATE =
-        makeEvent<IEntityStateUpdateEvent<IEntityStates>>();
+    const EVENT_STATE_UPDATE = makeEvent<IEntityStateUpdateEvent<S>>();
 
     let connection: IWSContext | null = options.connection;
     let hasDisconnected = false;
-    let state: IEntityStates = ENTITY_STATES.connected;
+    let state = initialState as S;
 
     const entity = {
         [SYMBOL_ENTITY_BRAND]: true,
@@ -97,13 +93,13 @@ export default function makeEntity<
         },
 
         [SYMBOL_ENTITY_ON_STATE_UPDATE](_oldState, newState) {
-            entity._dispatch({
+            this._dispatch({
                 event: MESSAGE_EVENTS.selfStateUpdate,
 
                 data: {
-                    state: newState,
+                    state: newState as IEntityStates,
                 },
-            });
+            } satisfies ISelfStateUpdateMessage as unknown as E);
         },
 
         get state() {
@@ -141,7 +137,7 @@ export default function makeEntity<
                 );
             }
 
-            this._updateState(ENTITY_STATES.disposed);
+            this._updateState(ENTITY_STATES.disposed as S);
 
             connection = null;
 
@@ -162,9 +158,13 @@ export default function makeEntity<
                 newState: value,
             });
 
-            room[SYMBOL_ENTITY_ON_STATE_UPDATE](this, oldState, value);
+            room[SYMBOL_ENTITY_ON_STATE_UPDATE](
+                this as unknown as IGenericEntity,
+                oldState as IEntityStates,
+                value as IEntityStates,
+            );
         },
-    } satisfies IGenericEntity;
+    } satisfies IEntity<E, S>;
 
     const roomStateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
         (event) => {
@@ -180,7 +180,7 @@ export default function makeEntity<
                 data: {
                     state: newState,
                 },
-            });
+            } satisfies IRoomStateUpdateMessage as unknown as E);
         },
     );
 
@@ -198,7 +198,7 @@ export default function makeEntity<
                 data: {
                     title: newTitle,
                 },
-            });
+            } satisfies IRoomTitleUpdateMessage as unknown as E);
         },
     );
 
@@ -206,9 +206,9 @@ export default function makeEntity<
         event: MESSAGE_EVENTS.selfStateUpdate,
 
         data: {
-            state,
+            state: state as IEntityStates,
         },
-    });
+    } satisfies ISelfStateUpdateMessage as unknown as E);
 
-    return entity as unknown as I;
+    return entity;
 }

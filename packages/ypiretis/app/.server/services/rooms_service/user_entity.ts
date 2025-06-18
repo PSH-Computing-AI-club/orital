@@ -8,14 +8,13 @@ import {SYMBOL_USER_BRAND} from "./symbols";
 
 export type IGenericUserEntity = IUserEntity<IUserMessages, IUserStates>;
 
-export interface IUserEntityOptions extends IEntityOptions {
+export interface IUserEntityOptions<S extends string>
+    extends IEntityOptions<S> {
     readonly user: IUser;
 }
 
-export interface IUserEntity<
-    E extends IMessage = IUserMessages,
-    S extends string = IUserStates,
-> extends IEntity<E, S> {
+export interface IUserEntity<E extends IMessage, S extends string>
+    extends IEntity<E, S> {
     [SYMBOL_USER_BRAND]: true;
 
     readonly user: IUser;
@@ -29,19 +28,20 @@ export function isUserEntity(value: unknown): value is IGenericUserEntity {
     );
 }
 
-export default function makeUserEntity<
-    E extends IMessage = IUserMessages,
-    S extends string = IUserStates,
->(options: IUserEntityOptions): IUserEntity<E, S> {
+export default function makeUserEntity<E extends IMessage, S extends string>(
+    options: IUserEntityOptions<S>,
+): IUserEntity<E, S> {
     const {user} = options;
 
     const entity = makeEntity<E, S>(options);
 
-    return {
+    const userEntity = {
         ...entity,
 
         [SYMBOL_USER_BRAND]: true,
 
         user,
-    };
+    } satisfies IUserEntity<E, S>;
+
+    return userEntity;
 }

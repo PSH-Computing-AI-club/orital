@@ -10,7 +10,8 @@ import makeUserEntity from "./user_entity";
 
 export const PRESENTER_ENTITY_ID = 1;
 
-export interface IPresenterUserOptions extends IUserEntityOptions {}
+export interface IPresenterUserOptions
+    extends IUserEntityOptions<IPresenterUserStates> {}
 
 export interface IPresenterUser
     extends IUserEntity<IPresenterUserMessages, IPresenterUserStates> {

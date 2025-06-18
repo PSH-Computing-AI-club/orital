@@ -5,7 +5,8 @@ import {MESSAGE_EVENTS} from "./messages";
 import type {IDisplayEntityStates} from "./states";
 import {SYMBOL_DISPLAY_ENTITY_BRAND, SYMBOL_ENTITY_ON_DISPOSE} from "./symbols";
 
-export interface IDisplayEntityOptions extends IEntityOptions {}
+export interface IDisplayEntityOptions
+    extends IEntityOptions<IDisplayEntityStates> {}
 
 export interface IDisplayEntity
     extends IEntity<IDisplayEntityMessages, IDisplayEntityStates> {

@@ -158,16 +158,26 @@ function getModeUsers(
     switch (modeValue) {
         case "active": {
             const session = useAuthenticatedSessionContext();
-            const connectedUsers: (IAttendee | ISession)[] = attendees
-                .filter((attendee) => {
-                    const {state} = attendee;
 
-                    return state === "STATE_CONNECTED";
-                })
-                .sort(sortUsers);
+            const loweredHandAttendees: IAttendee[] = [];
+            const raisedHandAttendees: IAttendee[] = [];
 
-            connectedUsers.unshift(session);
-            return connectedUsers;
+            for (const attendee of attendees) {
+                if (attendee.state !== "STATE_CONNECTED") {
+                    continue;
+                }
+
+                if (attendee.isRaisingHand) {
+                    loweredHandAttendees.push(attendee);
+                } else {
+                    raisedHandAttendees.push(attendee);
+                }
+            }
+
+            loweredHandAttendees.sort(sortUsers);
+            raisedHandAttendees.sort(sortUsers);
+
+            return [session, ...loweredHandAttendees, ...raisedHandAttendees];
         }
 
         case "disconnected":

@@ -127,7 +127,11 @@ function Sidebar() {
 
     return (
         <AppShell.Sidebar>
-            <AppShell.Button disabled={!canFetchAction} onClick={onHandClick}>
+            <AppShell.Button
+                disabled={!canFetchAction}
+                colorPalette={isRaisingHand ? "cyan" : undefined}
+                onClick={onHandClick}
+            >
                 <AppShell.Icon>
                     {isRaisingHand ? (
                         <HumanHandsupIcon />

@@ -104,6 +104,20 @@ export const ENVIRONMENT_SCHEMA = v.object({
         v.transform((value) => Temporal.Duration.from(value)),
     ),
 
+    ROOMS_DISCONNECT_TTL: v.pipe(
+        v.string(),
+        duration,
+        v.transform((value) => Temporal.Duration.from(value)),
+    ),
+
+    ROOMS_LIFETIME_TTL: v.pipe(
+        v.string(),
+        duration,
+        v.transform((value) => Temporal.Duration.from(value)),
+    ),
+
+    CRONJOB_ROOMS_DISCONNECT_CLEANUP: cron_expression,
+    CRONJOB_ROOMS_LIFETIME_CLEANUP: cron_expression,
     CRONJOB_TOKENS_CLEANUP: cron_expression,
 
     QUEUE_EMAILS_MAX: v.pipe(

@@ -43,6 +43,8 @@ export interface IAppShellButtonProps extends PropsWithChildren {
 export interface IAppShellIconProps extends PropsWithChildren {}
 
 export interface IAppShellLinkProps extends PropsWithChildren {
+    readonly colorPalette?: ColorPalette;
+
     readonly to: To;
 }
 
@@ -112,18 +114,21 @@ function AppShellIcon(props: IAppShellIconProps) {
 }
 
 function AppShellLink(props: IAppShellLinkProps) {
-    const {children, to} = props;
+    const {children, colorPalette, to} = props;
     const location = useLocation();
 
     const currentURL = buildAppURL(location);
     const toURL = buildAppURL(to);
 
     const isActive = currentURL.toString() === toURL.toString();
+    const preferredColorPalette: ColorPalette | undefined = isActive
+        ? "cyan"
+        : undefined;
 
     return (
         <Button
             variant="ghost"
-            colorPalette={isActive ? "cyan" : undefined}
+            colorPalette={colorPalette ?? preferredColorPalette}
             size="2xs"
             flexDirection="column"
             fontWeight="bold"

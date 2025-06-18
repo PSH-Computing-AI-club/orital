@@ -139,7 +139,7 @@ function Sidebar() {
                         <HumanHandsdownIcon />
                     )}
                 </AppShell.Icon>
-                {isRaisingHand ? "Lower Hand" : "Raise Hand"}
+                {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
             </AppShell.Button>
 
             <AppShell.Divider />

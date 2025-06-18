@@ -44,6 +44,33 @@ export interface IDisplayContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IDisplayContext;
 }
 
+function useMessageHandler(
+    context: IDisplayContext,
+): (message: IDisplayEntityMessages) => void {
+    const contextRef = useRef(context);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
+    return useCallback(
+        (message) => {
+            const {data, event} = message;
+
+            switch (event) {
+                case "room.stateUpdate":
+                    if (data.state === "STATE_DISPOSED") {
+                        navigate("/rooms/closed");
+                    }
+
+                    break;
+            }
+        },
+        [navigate],
+    );
+}
+
 function useMessageReducer(
     initialContextData: IDisplayContext,
 ): [IDisplayContext, ActionDispatch<[IDisplayEntityMessages]>] {
@@ -109,33 +136,6 @@ function useMessageReducer(
 
         return context;
     }, initialContextData);
-}
-
-function useMessageHandler(
-    context: IDisplayContext,
-): (message: IDisplayEntityMessages) => void {
-    const contextRef = useRef(context);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
-
-    return useCallback(
-        (message) => {
-            const {data, event} = message;
-
-            switch (event) {
-                case "room.stateUpdate":
-                    if (data.state === "STATE_DISPOSED") {
-                        navigate("/rooms/closed");
-                    }
-
-                    break;
-            }
-        },
-        [navigate],
-    );
 }
 
 export function DisplayContextProvider(props: IDisplayContextProviderProps) {

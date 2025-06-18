@@ -74,6 +74,33 @@ export interface IPresenterContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IPresenterContext;
 }
 
+function useMessageHandler(
+    context: IPresenterContext,
+): (message: IPresenterUserMessages) => void {
+    const contextRef = useRef(context);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
+    return useCallback(
+        (message) => {
+            const {data, event} = message;
+
+            switch (event) {
+                case "room.stateUpdate":
+                    if (data.state === "STATE_DISPOSED") {
+                        navigate("/rooms/closed");
+                    }
+
+                    break;
+            }
+        },
+        [navigate],
+    );
+}
+
 function useMessageReducer(
     initialContextData: IPresenterContext,
 ): [IPresenterContext, ActionDispatch<[IPresenterUserMessages]>] {
@@ -310,33 +337,6 @@ function useMessageReducer(
 
         return context;
     }, initialContextData);
-}
-
-function useMessageHandler(
-    context: IPresenterContext,
-): (message: IPresenterUserMessages) => void {
-    const contextRef = useRef(context);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
-
-    return useCallback(
-        (message) => {
-            const {data, event} = message;
-
-            switch (event) {
-                case "room.stateUpdate":
-                    if (data.state === "STATE_DISPOSED") {
-                        navigate("/rooms/closed");
-                    }
-
-                    break;
-            }
-        },
-        [navigate],
-    );
 }
 
 export function PresenterContextProvider(

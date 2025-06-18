@@ -44,6 +44,48 @@ export interface IAttendeeContextProviderProps extends PropsWithChildren {
     readonly initialContextData: IAttendeeContext;
 }
 
+function useMessageHandler(
+    context: IAttendeeContext,
+): (message: IAttendeeUserMessages) => void {
+    const contextRef = useRef(context);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        contextRef.current = context;
+    }, [context]);
+
+    return useCallback(
+        (message) => {
+            const {data, event} = message;
+
+            switch (event) {
+                case "room.stateUpdate":
+                    if (data.state === "STATE_DISPOSED") {
+                        navigate("/rooms/closed");
+                    }
+
+                    break;
+
+                case "self.banned":
+                    navigate("/rooms/banned");
+
+                    break;
+
+                case "self.kicked":
+                    navigate("/rooms/kicked");
+
+                    break;
+
+                case "self.rejected":
+                    navigate("/rooms/rejected");
+
+                    break;
+            }
+        },
+        [navigate],
+    );
+}
+
 function useMessageReducer(
     initialContextData: IAttendeeContext,
 ): [IAttendeeContext, ActionDispatch<[IAttendeeUserMessages]>] {
@@ -104,48 +146,6 @@ function useMessageReducer(
 
         return context;
     }, initialContextData);
-}
-
-function useMessageHandler(
-    context: IAttendeeContext,
-): (message: IAttendeeUserMessages) => void {
-    const contextRef = useRef(context);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        contextRef.current = context;
-    }, [context]);
-
-    return useCallback(
-        (message) => {
-            const {data, event} = message;
-
-            switch (event) {
-                case "room.stateUpdate":
-                    if (data.state === "STATE_DISPOSED") {
-                        navigate("/rooms/closed");
-                    }
-
-                    break;
-
-                case "self.banned":
-                    navigate("/rooms/banned");
-
-                    break;
-
-                case "self.kicked":
-                    navigate("/rooms/kicked");
-
-                    break;
-
-                case "self.rejected":
-                    navigate("/rooms/rejected");
-
-                    break;
-            }
-        },
-        [navigate],
-    );
 }
 
 export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {

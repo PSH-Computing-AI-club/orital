@@ -43,6 +43,8 @@ export default function makePresenterUser(
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             user[SYMBOL_ENTITY_ON_DISPOSE]();
 
+            attendeeHandUpdate.dispose();
+
             entityAddedSubscription.dispose();
             entityDisposedSubscription.dispose();
             entityStateSubscription.dispose();
@@ -50,6 +52,22 @@ export default function makePresenterUser(
             pinUpdateSubscription.dispose();
         },
     } satisfies IPresenterUser;
+
+    const attendeeHandUpdate = room.EVENT_ATTENDEE_HAND_UPDATE.subscribe(
+        (event) => {
+            const {attendee, isRaisingHand} = event;
+            const {id} = attendee;
+
+            presenter._dispatch({
+                event: MESSAGE_EVENTS.attendeeUserHandUpdate,
+
+                data: {
+                    entityID: id,
+                    isRaisingHand,
+                },
+            });
+        },
+    );
 
     const entityStateSubscription = room.EVENT_ENTITY_STATE_UPDATE.subscribe(
         (event) => {

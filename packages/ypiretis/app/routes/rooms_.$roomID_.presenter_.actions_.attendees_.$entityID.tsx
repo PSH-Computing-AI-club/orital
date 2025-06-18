@@ -33,11 +33,16 @@ const MODERATE_KICK_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("moderate.kick")),
 });
 
+const PARTICIPATION_DISMISS_HAND_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("participation.dismissHand")),
+});
+
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA,
     MODERATE_BAN_ACTION_FORM_DATA_SCHEMA,
     MODERATE_KICK_ACTION_FORM_DATA_SCHEMA,
     MODERATE_REJECT_ACTION_FORM_DATA_SCHEMA,
+    PARTICIPATION_DISMISS_HAND_ACTION_FORM_DATA_SCHEMA,
 ]);
 
 export type IModerateApproveActionFormData = v.InferOutput<
@@ -115,6 +120,16 @@ export async function action(actionArgs: Route.ActionArgs) {
 
         case "moderate.reject":
             attendee.reject();
+            break;
+
+        case "participation.dismissHand":
+            if (!attendee.isRaisingHand) {
+                throw data("Conflict", {
+                    status: 409,
+                });
+            }
+
+            attendee.dismissHand();
             break;
     }
 }

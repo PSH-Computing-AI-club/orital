@@ -33,6 +33,7 @@ import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
+import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
 import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
@@ -201,7 +202,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {room} = usePresenterContext();
     const {state: roomState} = room;
 
-    const {entityID, state: userState} = user;
+    const {entityID, isRaisingHand, state: userState} = user;
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     const isDisposed = roomState === "STATE_DISPOSED";
@@ -228,6 +229,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
     const onApproveClick = makeActionEventHandler("moderate.approve");
     const onBanClick = makeActionEventHandler("moderate.ban");
+    const onDismissHandClick = makeActionEventHandler(
+        "participation.dismissHand",
+    );
     const onKickClick = makeActionEventHandler("moderate.kick");
     const onRejectClick = makeActionEventHandler("moderate.reject");
 
@@ -295,6 +299,18 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
                     <Menu.Positioner>
                         <Menu.Content>
+                            <Menu.Item
+                                disabled={!canFetchAction || !isRaisingHand}
+                                value="dismiss-hand"
+                                onClick={onDismissHandClick}
+                            >
+                                <HumanHandsdownIcon />
+
+                                <Box flexGrow="1">Dismiss Hand</Box>
+                            </Menu.Item>
+
+                            <Menu.Separator />
+
                             <Menu.Item
                                 disabled={!canFetchAction}
                                 value="kick-attendee"

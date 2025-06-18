@@ -23,7 +23,7 @@ import AppShell from "~/components/shell/app_shell";
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
-import {PresenterContextProvider} from "~/state/presenter";
+import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
 
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
@@ -126,11 +126,8 @@ export function HydrateFallback() {
     );
 }
 
-export default function RoomsPresenterLayout(props: Route.ComponentProps) {
-    const {loaderData} = props;
-    const {initialContextData, session} = loaderData;
-
-    const {room} = initialContextData;
+function Sidebar() {
+    const {room} = usePresenterContext();
     const {roomID, state} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
@@ -154,48 +151,57 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     }
 
     return (
+        <AppShell.Sidebar>
+            <AppShell.Link to={`/rooms/${roomID}/presenter`}>
+                <AppShell.Icon>
+                    <DashboardIcon />
+                </AppShell.Icon>
+                Dashboard
+            </AppShell.Link>
+
+            <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
+                <AppShell.Icon>
+                    <ChartIcon />
+                </AppShell.Icon>
+                Polls
+            </AppShell.Link>
+
+            <AppShell.Divider />
+
+            <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
+                <AppShell.Icon>
+                    <SlidersIcon />
+                </AppShell.Icon>
+                Settings
+            </AppShell.Link>
+
+            <AppShell.Button
+                disabled={!canFetchAction}
+                colorPalette="red"
+                onClick={onDisposeClick}
+            >
+                <AppShell.Icon>
+                    <CloseIcon />
+                </AppShell.Icon>
+                Close Room
+            </AppShell.Button>
+        </AppShell.Sidebar>
+    );
+}
+
+export default function RoomsPresenterLayout(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {initialContextData, session} = loaderData;
+
+    return (
         <AppShell.Root>
-            <AppShell.Sidebar>
-                <AppShell.Link to={`/rooms/${roomID}/presenter`}>
-                    <AppShell.Icon>
-                        <DashboardIcon />
-                    </AppShell.Icon>
-                    Dashboard
-                </AppShell.Link>
-
-                <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
-                    <AppShell.Icon>
-                        <ChartIcon />
-                    </AppShell.Icon>
-                    Polls
-                </AppShell.Link>
-
-                <AppShell.Divider />
-
-                <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
-                    <AppShell.Icon>
-                        <SlidersIcon />
-                    </AppShell.Icon>
-                    Settings
-                </AppShell.Link>
-
-                <AppShell.Button
-                    disabled={!canFetchAction}
-                    colorPalette="red"
-                    onClick={onDisposeClick}
-                >
-                    <AppShell.Icon>
-                        <CloseIcon />
-                    </AppShell.Icon>
-                    Close Room
-                </AppShell.Button>
-            </AppShell.Sidebar>
-
             <WebSocketCacheProvider>
                 <SessionContextProvider session={session}>
                     <PresenterContextProvider
                         initialContextData={initialContextData}
                     >
+                        <Sidebar />
+
                         <Outlet />
                     </PresenterContextProvider>
                 </SessionContextProvider>

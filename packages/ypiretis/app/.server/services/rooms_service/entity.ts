@@ -141,10 +141,7 @@ export default function makeEntity<E extends IMessage, S extends string>(
 
             connection = null;
 
-            if (this[SYMBOL_ENTITY_ON_DISPOSE]) {
-                this[SYMBOL_ENTITY_ON_DISPOSE]();
-            }
-
+            this[SYMBOL_ENTITY_ON_DISPOSE]();
             room[SYMBOL_ENTITY_ON_DISPOSE](this as unknown as IGenericEntity);
         },
 

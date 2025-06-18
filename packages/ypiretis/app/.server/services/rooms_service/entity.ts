@@ -150,6 +150,8 @@ export default function makeEntity<E extends IMessage, S extends string>(
 
             state = value;
 
+            this[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, value);
+
             EVENT_STATE_UPDATE.dispatch({
                 oldState,
                 newState: value,

@@ -149,13 +149,36 @@ function sortUsers(
     return fullNameA >= fullNameB ? 1 : 0;
 }
 
-function getUsers(
-    modeValue: "active" | "pending" | null,
+function getModeUsers(
+    modeValue: "active" | "disconnected" | "pending" | null,
 ): (IAttendee | ISession)[] {
     const {room} = usePresenterContext();
     const {attendees} = room;
 
     switch (modeValue) {
+        case "active": {
+            const session = useAuthenticatedSessionContext();
+            const connectedUsers: (IAttendee | ISession)[] = attendees
+                .filter((attendee) => {
+                    const {state} = attendee;
+
+                    return state === "STATE_CONNECTED";
+                })
+                .sort(sortUsers);
+
+            connectedUsers.unshift(session);
+            return connectedUsers;
+        }
+
+        case "disconnected":
+            return attendees
+                .filter((attendee) => {
+                    const {state} = attendee;
+
+                    return state === "STATE_DISPOSED";
+                })
+                .sort(sortUsers);
+
         case "pending": {
             return attendees
                 .filter((attendee) => {
@@ -167,27 +190,9 @@ function getUsers(
         }
     }
 
-    const session = useAuthenticatedSessionContext();
-
-    const connectedAttendees: IAttendee[] = [];
-    const disconnectedAttendees: IAttendee[] = [];
-
-    for (const attendee of attendees) {
-        switch (attendee.state) {
-            case "STATE_CONNECTED":
-                connectedAttendees.push(attendee);
-                break;
-
-            case "STATE_DISPOSED":
-                disconnectedAttendees.push(attendee);
-                break;
-        }
-    }
-
-    connectedAttendees.sort(sortUsers);
-    disconnectedAttendees.sort(sortUsers);
-
-    return [session, ...connectedAttendees, ...disconnectedAttendees];
+    throw new TypeError(
+        `bad dispatch to 'getModeUsers' (unsupported mode '${modeValue}')`,
+    );
 }
 
 function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
@@ -387,25 +392,25 @@ function AttendeeList(props: IAttendeeListProps) {
 }
 
 function AttendeesCard() {
-    const session = useAuthenticatedSessionContext();
+    const [modeValue, setModeValue] = useState<
+        "active" | "disconnected" | "pending" | null
+    >("active");
 
-    const {room} = usePresenterContext();
-    const {attendees} = room;
+    const activeUsers = getModeUsers("active");
+    const disconnectedUsers = getModeUsers("disconnected");
+    const pendingUsers = getModeUsers("pending");
 
-    const [modeValue, setModeValue] = useState<"active" | "pending" | null>(
-        "active",
-    );
+    let listedUsers = activeUsers;
 
-    const activeUsers = [
-        session,
-        ...attendees.filter((attendee) => attendee.state === "STATE_CONNECTED"),
-    ];
+    switch (modeValue) {
+        case "disconnected":
+            listedUsers = disconnectedUsers;
+            break;
 
-    const pendingUsers = attendees.filter(
-        (attendee) => attendee.state === "STATE_AWAITING",
-    );
-
-    const listedUsers = getUsers(modeValue);
+        case "pending":
+            listedUsers = pendingUsers;
+            break;
+    }
 
     function onModeValueChange(event: SegmentGroupValueChangeDetails): void {
         const {value} = event;
@@ -449,6 +454,19 @@ function AttendeesCard() {
                                 }
                             >
                                 Pending ({pendingUsers.length})
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+
+                        <SegmentGroup.Item value="disconnected">
+                            <SegmentGroup.ItemText
+                                color={
+                                    modeValue === "disconnected"
+                                        ? "red.fg"
+                                        : undefined
+                                }
+                            >
+                                Disconnected ({disconnectedUsers.length})
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />
                         </SegmentGroup.Item>

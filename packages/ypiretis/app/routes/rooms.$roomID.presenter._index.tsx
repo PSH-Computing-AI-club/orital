@@ -82,10 +82,12 @@ interface IAttendeeListProps {
     readonly users: (IAttendee | ISession)[];
 }
 
-function matchUserIcon(user: IAttendee | ISession) {
-    const isAttendee = "state" in user;
+function isAttendee(value: unknown): value is IAttendee {
+    return value !== null && typeof value === "object" && "state" in value;
+}
 
-    if (isAttendee) {
+function matchUserIcon(user: IAttendee | ISession) {
+    if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return NotificationIcon;
@@ -102,9 +104,7 @@ function matchUserIcon(user: IAttendee | ISession) {
 }
 
 function matchUserTagPalette(user: IAttendee | ISession) {
-    const isAttendee = "state" in user;
-
-    if (isAttendee) {
+    if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "yellow";
@@ -121,9 +121,7 @@ function matchUserTagPalette(user: IAttendee | ISession) {
 }
 
 function matchUserTagText(user: IAttendee | ISession): string {
-    const isAttendee = "state" in user;
-
-    if (isAttendee) {
+    if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "Awaiting Approval";
@@ -208,9 +206,7 @@ function getModeUsers(
 function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {user} = props;
 
-    const isAttendee = "state" in user;
-
-    if (!isAttendee) {
+    if (!isAttendee(user)) {
         return <></>;
     }
 
@@ -391,7 +387,7 @@ function AttendeeList(props: IAttendeeListProps) {
 
     return users.map((user) => (
         <AttendeeListItem
-            key={`${"state" in user ? "attendee" : "presenter"}-${user.accountID}`}
+            key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
             user={user}
         />
     ));

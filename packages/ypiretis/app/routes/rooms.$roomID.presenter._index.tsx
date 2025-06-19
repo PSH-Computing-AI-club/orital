@@ -253,7 +253,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         >
             <Menu.TriggerItem>
                 <ChevronLeftIcon />
-                Email Attendee
+                E-Mail Attendee
             </Menu.TriggerItem>
 
             <Portal>

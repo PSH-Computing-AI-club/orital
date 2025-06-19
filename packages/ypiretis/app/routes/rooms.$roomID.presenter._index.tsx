@@ -30,6 +30,7 @@ import type {IRoomStates} from "~/.server/services/rooms_service";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
+import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
@@ -55,6 +56,7 @@ import {usePresenterContext} from "~/state/presenter";
 import type {ISession} from "~/state/session";
 import {useAuthenticatedSessionContext} from "~/state/session";
 
+import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
 import {buildFormData} from "~/utils/forms";
 import {title} from "~/utils/valibot";
 
@@ -213,7 +215,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {room} = usePresenterContext();
     const {state: roomState} = room;
 
-    const {entityID, isRaisingHand, state: userState} = user;
+    const {accountID, entityID, isRaisingHand, state: userState} = user;
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     const isDisposed = roomState === "STATE_DISPOSED";
@@ -240,12 +242,53 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
     const menuItems: ReactElement[] = [];
 
+    const accountEmailAddress = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
+
+    menuItems.push(
+        <Menu.Root
+            key="email-user"
+            positioning={{placement: "left", gutter: 2}}
+        >
+            <Menu.TriggerItem>
+                <ChevronLeftIcon />
+                Email Attendee
+            </Menu.TriggerItem>
+
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.Item value="via-web-outlook" asChild>
+                            <a
+                                href={`https://outlook.office.com/mail/deeplink/compose?to=${accountEmailAddress}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                via Web Outlook
+                            </a>
+                        </Menu.Item>
+
+                        <Menu.Item value="via-mail-client" asChild>
+                            <a
+                                href={`mailto:${accountEmailAddress}`}
+                                target="_blank"
+                            >
+                                via Mail Client
+                            </a>
+                        </Menu.Item>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>,
+    );
+
     switch (userState) {
         case "STATE_AWAITING": {
             const onApproveClick = makeActionEventHandler("moderate.approve");
             const onRejectClick = makeActionEventHandler("moderate.reject");
 
             menuItems.push(
+                <Menu.Separator />,
+
                 <Menu.Item
                     key="approve-join"
                     disabled={!canFetchAction}
@@ -287,6 +330,8 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
             const onKickClick = makeActionEventHandler("moderate.kick");
 
             menuItems.push(
+                <Menu.Separator />,
+
                 <Menu.Item
                     key="dismiss-hand"
                     disabled={!canFetchAction || !isRaisingHand}

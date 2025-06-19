@@ -9,7 +9,7 @@ import {findAllLive} from "../services/rooms_service";
 
 const LIFETIME_TTL = ENVIRONMENT.ROOMS_LIFETIME_TTL;
 
-export const CRONJOB_DURATION = ENVIRONMENT.CRONJOB_ROOMS_LIFETIME_CLEANUP;
+export const CRONJOB_SCHEDULE = ENVIRONMENT.CRONJOB_ROOMS_LIFETIME_CLEANUP;
 
 export default async function CronjobRoomsLifetimeCleanup() {
     const rooms = findAllLive();

@@ -13,7 +13,7 @@ import CONSENT_TOKENS_TABLE from "../database/tables/consent_tokens_table";
 import GRANT_TOKENS_TABLE from "../database/tables/grant_tokens_table";
 import type {ITokensTable} from "../database/tables/tokens_table";
 
-export const CRONJOB_DURATION = ENVIRONMENT.CRONJOB_TOKENS_CLEANUP;
+export const CRONJOB_SCHEDULE = ENVIRONMENT.CRONJOB_TOKENS_CLEANUP;
 
 export default async function CronjobTokensCleanup() {
     const now = Temporal.Now.instant();

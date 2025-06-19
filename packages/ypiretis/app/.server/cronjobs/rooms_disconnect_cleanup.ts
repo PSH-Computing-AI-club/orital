@@ -9,7 +9,7 @@ import {findAllLive} from "../services/rooms_service";
 
 const DISCONNECT_TTL = ENVIRONMENT.ROOMS_DISCONNECT_TTL;
 
-export const CRONJOB_DURATION = ENVIRONMENT.CRONJOB_ROOMS_DISCONNECT_CLEANUP;
+export const CRONJOB_SCHEDULE = ENVIRONMENT.CRONJOB_ROOMS_DISCONNECT_CLEANUP;
 
 export default async function CronjobRoomsDisconnectCleanup() {
     const rooms = findAllLive();

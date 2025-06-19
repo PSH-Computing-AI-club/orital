@@ -1,33 +1,33 @@
 import {Cron} from "croner";
 
 import CronjobRoomDisconnectCleanup, {
-    CRONJOB_DURATION as CRONJOB_DURATION_ROOMS_DISCONNECT_CLEANUP,
+    CRONJOB_SCHEDULE as CRONJOB_SCHEDULE_ROOMS_DISCONNECT_CLEANUP,
 } from "./rooms_disconnect_cleanup";
 import CronjobRoomLifetimeCleanup, {
-    CRONJOB_DURATION as CRONJOB_DURATION_ROOMS_LIFETIME_CLEANUP,
+    CRONJOB_SCHEDULE as CRONJOB_SCHEDULE_ROOMS_LIFETIME_CLEANUP,
 } from "./rooms_lifetime_cleanup";
 import CronjobTokensCleanup, {
-    CRONJOB_DURATION as CRONJOB_DURATION_TOKENS_CLEANUP,
+    CRONJOB_SCHEDULE as CRONJOB_SCHEDULE_TOKENS_CLEANUP,
 } from "./tokens_cleanup";
-
-export type ICronjobsDisposeFunc = () => void;
 
 const CRONJOBS = [
     {
         callback: CronjobRoomDisconnectCleanup,
-        duration: CRONJOB_DURATION_ROOMS_DISCONNECT_CLEANUP,
+        schedule: CRONJOB_SCHEDULE_ROOMS_DISCONNECT_CLEANUP,
     },
 
     {
         callback: CronjobRoomLifetimeCleanup,
-        duration: CRONJOB_DURATION_ROOMS_LIFETIME_CLEANUP,
+        schedule: CRONJOB_SCHEDULE_ROOMS_LIFETIME_CLEANUP,
     },
 
     {
         callback: CronjobTokensCleanup,
-        duration: CRONJOB_DURATION_TOKENS_CLEANUP,
+        schedule: CRONJOB_SCHEDULE_TOKENS_CLEANUP,
     },
-] satisfies {callback: () => Promise<void>; duration: string}[];
+] satisfies {callback: () => Promise<void>; schedule: string}[];
+
+export type ICronjobsDisposeFunc = () => void;
 
 export default function startCronjobs(): ICronjobsDisposeFunc {
     // **TODO:** Add robust logging.
@@ -36,9 +36,9 @@ export default function startCronjobs(): ICronjobsDisposeFunc {
     // - overrun logging
 
     const cronjobs = CRONJOBS.map((cronjob) => {
-        const {callback, duration} = cronjob;
+        const {callback, schedule} = cronjob;
 
-        return new Cron(duration, {protect: true}, callback);
+        return new Cron(schedule, {protect: true}, callback);
     });
 
     return () => {

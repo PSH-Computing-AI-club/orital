@@ -251,6 +251,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
             menuItems.push(
                 <Menu.Item
+                    key="approve-join"
                     disabled={!canFetchAction}
                     value="approve-join"
                     color="fg.success"
@@ -266,6 +267,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                 </Menu.Item>,
 
                 <Menu.Item
+                    key="reject-join"
                     disabled={!canFetchAction}
                     value="reject-join"
                     color="fg.error"
@@ -290,6 +292,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
             menuItems.push(
                 <Menu.Item
+                    key="dismiss-hand"
                     disabled={!canFetchAction || !isRaisingHand}
                     value="dismiss-hand"
                     onClick={onDismissHandClick}
@@ -302,6 +305,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                 <Menu.Separator />,
 
                 <Menu.Item
+                    key="kick-attendee"
                     disabled={!canFetchAction}
                     value="kick-attendee"
                     color="fg.error"
@@ -314,6 +318,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                 </Menu.Item>,
 
                 <Menu.Item
+                    key="ban-attendee"
                     disabled={!canFetchAction}
                     value="ban-attendee"
                     color="fg.error"

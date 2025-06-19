@@ -31,6 +31,7 @@ import type {IRoomStates} from "~/.server/services/rooms_service";
 import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
+import ChevronUpIcon from "~/components/icons/chevron_up_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import ExternalLinkIcon from "~/components/icons/external_link_icon";
@@ -40,6 +41,7 @@ import LinkIcon from "~/components/icons/link_icon";
 import LockIcon from "~/components/icons/lock_icon";
 import LockOpenIcon from "~/components/icons/lock_open_icon";
 import LogoutIcon from "~/components/icons/logout_icon";
+import MailIcon from "~/components/icons/mail_icon";
 import MoreVerticalIcon from "~/components/icons/more_vertical_icon";
 import NotificationIcon from "~/components/icons/notification_icon";
 import PinIcon from "~/components/icons/pin_icon";
@@ -446,6 +448,64 @@ function AttendeeList(props: IAttendeeListProps) {
     ));
 }
 
+function AttendeesCardActions() {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
+    const accountEmailAddresses = attendees
+        .filter((attendee) => {
+            const {state} = attendee;
+
+            return state === "STATE_CONNECTED" || state === "STATE_DISPOSED";
+        })
+        .map((attendee) => {
+            const {accountID} = attendee;
+
+            return `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
+        })
+        .sort((emailA, emailB) => {
+            return emailA.toLowerCase() >= emailB.toLowerCase() ? 1 : 0;
+        })
+        .join(",");
+
+    return (
+        <Menu.Root positioning={{placement: "top-end"}}>
+            <Menu.Trigger asChild>
+                <Button size={{base: "md", lgDown: "sm"}} colorPalette="cyan">
+                    <MailIcon />
+                    E-Mail Attendees
+                    <ChevronUpIcon />
+                </Button>
+            </Menu.Trigger>
+
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.Item value="via-web-outlook" asChild>
+                            <a
+                                href={`https://outlook.office.com/mail/deeplink/compose?to=${accountEmailAddresses}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                via Web Outlook
+                            </a>
+                        </Menu.Item>
+
+                        <Menu.Item value="via-mail-client" asChild>
+                            <a
+                                href={`mailto:${accountEmailAddresses}`}
+                                target="_blank"
+                            >
+                                via Mail Client
+                            </a>
+                        </Menu.Item>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
+    );
+}
+
 function AttendeesCard() {
     const [modeValue, setModeValue] = useState<
         "active" | "disconnected" | "pending" | null
@@ -542,6 +602,10 @@ function AttendeesCard() {
                     <AttendeeList users={listedUsers} />
                 </VStack>
             </Card.Body>
+
+            <Card.Footer justifyContent="flex-end">
+                <AttendeesCardActions />
+            </Card.Footer>
         </>
     );
 }

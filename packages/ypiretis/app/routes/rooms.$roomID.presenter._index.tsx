@@ -21,7 +21,7 @@ import {
     Tag,
 } from "@chakra-ui/react";
 
-import type {MouseEvent, PropsWithChildren} from "react";
+import type {MouseEvent, PropsWithChildren, ReactElement} from "react";
 import {useState} from "react";
 
 import * as v from "valibot";
@@ -242,118 +242,109 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         };
     }
 
-    const onApproveClick = makeActionEventHandler("moderate.approve");
-    const onBanClick = makeActionEventHandler("moderate.ban");
-    const onDismissHandClick = makeActionEventHandler(
-        "participation.dismissHand",
-    );
-    const onKickClick = makeActionEventHandler("moderate.kick");
-    const onRejectClick = makeActionEventHandler("moderate.reject");
+    const menuItems: ReactElement[] = [];
 
     switch (userState) {
-        case "STATE_AWAITING":
-            return (
-                <Menu.Root>
-                    <Menu.Trigger asChild>
-                        <IconButton
-                            variant="ghost"
-                            size="xs"
-                            marginInlineStart="auto"
-                        >
-                            <MoreVerticalIcon />
-                        </IconButton>
-                    </Menu.Trigger>
+        case "STATE_AWAITING": {
+            const onApproveClick = makeActionEventHandler("moderate.approve");
+            const onRejectClick = makeActionEventHandler("moderate.reject");
 
-                    <Portal>
-                        <Menu.Positioner>
-                            <Menu.Content>
-                                <Menu.Item
-                                    disabled={!canFetchAction}
-                                    value="approve-join"
-                                    color="fg.success"
-                                    _hover={{
-                                        bg: "bg.success",
-                                        color: "fg.success",
-                                    }}
-                                    onClick={onApproveClick}
-                                >
-                                    <CheckIcon />
+            menuItems.push(
+                <Menu.Item
+                    disabled={!canFetchAction}
+                    value="approve-join"
+                    color="fg.success"
+                    _hover={{
+                        bg: "bg.success",
+                        color: "fg.success",
+                    }}
+                    onClick={onApproveClick}
+                >
+                    <CheckIcon />
 
-                                    <Box flexGrow="1">Approve Join</Box>
-                                </Menu.Item>
+                    <Box flexGrow="1">Approve Join</Box>
+                </Menu.Item>,
 
-                                <Menu.Item
-                                    disabled={!canFetchAction}
-                                    value="reject-join"
-                                    color="fg.error"
-                                    _hover={{bg: "bg.error", color: "fg.error"}}
-                                    onClick={onRejectClick}
-                                >
-                                    <CloseIcon />
+                <Menu.Item
+                    disabled={!canFetchAction}
+                    value="reject-join"
+                    color="fg.error"
+                    _hover={{bg: "bg.error", color: "fg.error"}}
+                    onClick={onRejectClick}
+                >
+                    <CloseIcon />
 
-                                    <Box flexGrow="1">Reject Join</Box>
-                                </Menu.Item>
-                            </Menu.Content>
-                        </Menu.Positioner>
-                    </Portal>
-                </Menu.Root>
+                    <Box flexGrow="1">Reject Join</Box>
+                </Menu.Item>,
             );
 
-        case "STATE_CONNECTED":
-            return (
-                <Menu.Root>
-                    <Menu.Trigger asChild>
-                        <IconButton
-                            variant="ghost"
-                            size="xs"
-                            marginInlineStart="auto"
-                        >
-                            <MoreVerticalIcon />
-                        </IconButton>
-                    </Menu.Trigger>
+            break;
+        }
 
-                    <Menu.Positioner>
-                        <Menu.Content>
-                            <Menu.Item
-                                disabled={!canFetchAction || !isRaisingHand}
-                                value="dismiss-hand"
-                                onClick={onDismissHandClick}
-                            >
-                                <HumanHandsdownIcon />
-
-                                <Box flexGrow="1">Dismiss Hand</Box>
-                            </Menu.Item>
-
-                            <Menu.Separator />
-
-                            <Menu.Item
-                                disabled={!canFetchAction}
-                                value="kick-attendee"
-                                color="fg.error"
-                                _hover={{bg: "bg.error", color: "fg.error"}}
-                                onClick={onKickClick}
-                            >
-                                <UserXIcon />
-
-                                <Box flexGrow="1">Kick Attendee</Box>
-                            </Menu.Item>
-
-                            <Menu.Item
-                                disabled={!canFetchAction}
-                                value="ban-attendee"
-                                color="fg.error"
-                                _hover={{bg: "bg.error", color: "fg.error"}}
-                                onClick={onBanClick}
-                            >
-                                <ShieldIcon />
-
-                                <Box flexGrow="1">Ban Attendee</Box>
-                            </Menu.Item>
-                        </Menu.Content>
-                    </Menu.Positioner>
-                </Menu.Root>
+        case "STATE_CONNECTED": {
+            const onBanClick = makeActionEventHandler("moderate.ban");
+            const onDismissHandClick = makeActionEventHandler(
+                "participation.dismissHand",
             );
+            const onKickClick = makeActionEventHandler("moderate.kick");
+
+            menuItems.push(
+                <Menu.Item
+                    disabled={!canFetchAction || !isRaisingHand}
+                    value="dismiss-hand"
+                    onClick={onDismissHandClick}
+                >
+                    <HumanHandsdownIcon />
+
+                    <Box flexGrow="1">Dismiss Hand</Box>
+                </Menu.Item>,
+
+                <Menu.Separator />,
+
+                <Menu.Item
+                    disabled={!canFetchAction}
+                    value="kick-attendee"
+                    color="fg.error"
+                    _hover={{bg: "bg.error", color: "fg.error"}}
+                    onClick={onKickClick}
+                >
+                    <UserXIcon />
+
+                    <Box flexGrow="1">Kick Attendee</Box>
+                </Menu.Item>,
+
+                <Menu.Item
+                    disabled={!canFetchAction}
+                    value="ban-attendee"
+                    color="fg.error"
+                    _hover={{bg: "bg.error", color: "fg.error"}}
+                    onClick={onBanClick}
+                >
+                    <ShieldIcon />
+
+                    <Box flexGrow="1">Ban Attendee</Box>
+                </Menu.Item>,
+            );
+
+            break;
+        }
     }
+
+    return (
+        <Menu.Root>
+            <Menu.Trigger asChild>
+                <IconButton variant="ghost" size="xs" marginInlineStart="auto">
+                    <MoreVerticalIcon />
+                </IconButton>
+            </Menu.Trigger>
+
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>{menuItems}</Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
+    );
 }
 
 function AttendeeListItem(props: IAttendeeListItemProps) {

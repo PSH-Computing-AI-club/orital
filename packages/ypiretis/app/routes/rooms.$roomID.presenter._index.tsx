@@ -249,7 +249,7 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     menuItems.push(
         <Menu.Root
             key="email-user"
-            positioning={{placement: "left", gutter: 2}}
+            positioning={{placement: "left-start", gutter: 2}}
         >
             <Menu.TriggerItem>
                 <ChevronLeftIcon />

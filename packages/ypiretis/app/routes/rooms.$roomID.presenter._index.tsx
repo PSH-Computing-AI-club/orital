@@ -402,7 +402,15 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
     const userTagText = matchUserTagText(user);
 
     return (
-        <HStack gap="2" bg="bg" padding="3" fontSize="xs">
+        <HStack
+            gap="2"
+            bg="bg"
+            padding="3"
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
+            fontSize="xs"
+        >
             <UserIcon fontSize="2xl" />
 
             <VStack gap="0" alignItems="flex-start" lineHeight="shorter">

@@ -82,6 +82,62 @@ interface IAttendeeListProps {
     readonly users: (IAttendee | ISession)[];
 }
 
+function getModeUsers(
+    modeValue: "active" | "disconnected" | "pending" | null,
+): (IAttendee | ISession)[] {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
+    switch (modeValue) {
+        case "active": {
+            const session = useAuthenticatedSessionContext();
+
+            const loweredHandAttendees: IAttendee[] = [];
+            const raisedHandAttendees: IAttendee[] = [];
+
+            for (const attendee of attendees) {
+                if (attendee.state !== "STATE_CONNECTED") {
+                    continue;
+                }
+
+                if (attendee.isRaisingHand) {
+                    loweredHandAttendees.push(attendee);
+                } else {
+                    raisedHandAttendees.push(attendee);
+                }
+            }
+
+            loweredHandAttendees.sort(sortUsers);
+            raisedHandAttendees.sort(sortUsers);
+
+            return [session, ...loweredHandAttendees, ...raisedHandAttendees];
+        }
+
+        case "disconnected":
+            return attendees
+                .filter((attendee) => {
+                    const {state} = attendee;
+
+                    return state === "STATE_DISPOSED";
+                })
+                .sort(sortUsers);
+
+        case "pending": {
+            return attendees
+                .filter((attendee) => {
+                    const {state} = attendee;
+
+                    return state === "STATE_AWAITING";
+                })
+                .sort(sortUsers);
+        }
+    }
+
+    throw new TypeError(
+        `bad dispatch to 'getModeUsers' (unsupported mode '${modeValue}')`,
+    );
+}
+
 function isAttendee(value: unknown): value is IAttendee {
     return value !== null && typeof value === "object" && "state" in value;
 }
@@ -145,62 +201,6 @@ function sortUsers(
     const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
 
     return fullNameA >= fullNameB ? 1 : 0;
-}
-
-function getModeUsers(
-    modeValue: "active" | "disconnected" | "pending" | null,
-): (IAttendee | ISession)[] {
-    const {room} = usePresenterContext();
-    const {attendees} = room;
-
-    switch (modeValue) {
-        case "active": {
-            const session = useAuthenticatedSessionContext();
-
-            const loweredHandAttendees: IAttendee[] = [];
-            const raisedHandAttendees: IAttendee[] = [];
-
-            for (const attendee of attendees) {
-                if (attendee.state !== "STATE_CONNECTED") {
-                    continue;
-                }
-
-                if (attendee.isRaisingHand) {
-                    loweredHandAttendees.push(attendee);
-                } else {
-                    raisedHandAttendees.push(attendee);
-                }
-            }
-
-            loweredHandAttendees.sort(sortUsers);
-            raisedHandAttendees.sort(sortUsers);
-
-            return [session, ...loweredHandAttendees, ...raisedHandAttendees];
-        }
-
-        case "disconnected":
-            return attendees
-                .filter((attendee) => {
-                    const {state} = attendee;
-
-                    return state === "STATE_DISPOSED";
-                })
-                .sort(sortUsers);
-
-        case "pending": {
-            return attendees
-                .filter((attendee) => {
-                    const {state} = attendee;
-
-                    return state === "STATE_AWAITING";
-                })
-                .sort(sortUsers);
-        }
-    }
-
-    throw new TypeError(
-        `bad dispatch to 'getModeUsers' (unsupported mode '${modeValue}')`,
-    );
 }
 
 function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {

@@ -399,7 +399,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         addAttendee(connection, user) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomStateError(
-                    `bad dispatch to 'IRoom.addAttendee' (room '${pin}' was previously disposed)`,
+                    `bad dispatch to 'IRoom.addAttendee' (room '${roomID}' was previously disposed)`,
                 );
             }
 
@@ -425,7 +425,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         addDisplay(connection) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomStateError(
-                    `bad dispatch to 'IRoom.addDisplay' (room '${pin}' was previously disposed)`,
+                    `bad dispatch to 'IRoom.addDisplay' (room '${roomID}' was previously disposed)`,
                 );
             }
 
@@ -468,7 +468,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         dispose() {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomStateError(
-                    `bad dispatch to 'IRoom.dispose' (room '${pin}' was previously disposed)`,
+                    `bad dispatch to 'IRoom.dispose' (room '${roomID}' was previously disposed)`,
                 );
             }
 
@@ -509,7 +509,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         updatePIN(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomStateError(
-                    `bad dispatch to 'IRoom.updatePIN' (room '${pin}' was previously disposed)`,
+                    `bad dispatch to 'IRoom.updatePIN' (room '${roomID}' was previously disposed)`,
                 );
             }
 
@@ -527,7 +527,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
         updateState(value) {
             if (state === ROOM_STATES.disposed) {
                 throw new RoomStateError(
-                    `bad dispatch to 'IRoom.updateState' (room '${pin}' was previously disposed)`,
+                    `bad dispatch to 'IRoom.updateState' (room '${roomID}' was previously disposed)`,
                 );
             }
 

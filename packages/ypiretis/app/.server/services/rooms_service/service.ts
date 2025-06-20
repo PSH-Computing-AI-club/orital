@@ -1,4 +1,4 @@
-import {eq} from "drizzle-orm";
+import {and, eq} from "drizzle-orm";
 
 import type {ActionFunctionArgs} from "react-router";
 import {data} from "react-router";
@@ -132,6 +132,34 @@ export async function insertOneLive(
         },
     );
 
+    const attendeeBannedSubscription = room.EVENT_ATTENDEE_BANNED.subscribe(
+        async (event) => {
+            const {attendee} = event;
+            const {id: userID} = attendee;
+
+            await DATABASE.delete(ATTENDEES_TABLE).where(
+                and(
+                    eq(ATTENDEES_TABLE.userID, userID),
+                    eq(ATTENDEES_TABLE.roomID, internalRoomID),
+                ),
+            );
+        },
+    );
+
+    const attendeeKickedSubscription = room.EVENT_ATTENDEE_APPROVED.subscribe(
+        async (event) => {
+            const {attendee} = event;
+            const {id: userID} = attendee;
+
+            await DATABASE.delete(ATTENDEES_TABLE).where(
+                and(
+                    eq(ATTENDEES_TABLE.userID, userID),
+                    eq(ATTENDEES_TABLE.roomID, internalRoomID),
+                ),
+            );
+        },
+    );
+
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         async (event) => {
             const {entity} = event;
@@ -168,6 +196,8 @@ export async function insertOneLive(
 
             if (newState === ROOM_STATES.disposed) {
                 attendeeApprovedSubscription.dispose();
+                attendeeBannedSubscription.dispose();
+                attendeeKickedSubscription.dispose();
                 entityAddedSubscription.dispose();
                 pinUpdateSubscription.dispose();
                 stateUpdateSubscription.dispose();

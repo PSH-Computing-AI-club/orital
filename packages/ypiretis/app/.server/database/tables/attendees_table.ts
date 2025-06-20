@@ -13,7 +13,6 @@ const ATTENDEES_TABLE = sqliteTable("attendees", {
 
     roomID: integer("room_id")
         .notNull()
-        .unique()
         .references(() => ROOMS_TABLE.id, {onDelete: "cascade"}),
 
     userID: integer("user_id")

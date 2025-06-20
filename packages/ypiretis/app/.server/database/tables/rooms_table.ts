@@ -21,7 +21,7 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
-    title: text("title", {length: 32}).notNull(),
+    title: text("title", {length: 32}).notNull().default("A Presentation Room"),
 
     createdAt: temporalInstant("created_at")
         .notNull()

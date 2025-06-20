@@ -1,5 +1,5 @@
 import {relations} from "drizzle-orm";
-import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import {integer, sqliteTable} from "drizzle-orm/sqlite-core";
 
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
@@ -11,12 +11,12 @@ import USERS_TABLE from "./users_table";
 const ATTENDEES_TABLE = sqliteTable("attendees", {
     id: integer("id").primaryKey({autoIncrement: true}),
 
-    roomID: text("room_id")
+    roomID: integer("room_id")
         .notNull()
         .unique()
         .references(() => ROOMS_TABLE.id, {onDelete: "cascade"}),
 
-    userID: text("user_id")
+    userID: integer("user_id")
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 

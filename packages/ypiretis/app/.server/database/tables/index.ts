@@ -8,4 +8,5 @@
 export {default as callbackTokens} from "./callback_tokens_table";
 export {default as consentTokens} from "./consent_tokens_table";
 export {default as grantTokens} from "./grant_tokens_table";
+export {default as rooms} from "./rooms_table";
 export {default as users} from "./users_table";

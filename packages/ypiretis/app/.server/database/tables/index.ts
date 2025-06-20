@@ -5,6 +5,7 @@
 // This allows the collective exports be used as a schema by `drizzle` and `drizzle-kit`
 // to provide query API types and migration support.
 
+export {default as attendees} from "./attendees_table";
 export {default as callbackTokens} from "./callback_tokens_table";
 export {default as consentTokens} from "./consent_tokens_table";
 export {default as grantTokens} from "./grant_tokens_table";

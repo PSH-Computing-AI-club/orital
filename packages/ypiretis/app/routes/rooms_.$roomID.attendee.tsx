@@ -13,6 +13,10 @@ import {
     requireAuthenticatedAttendeeConnection,
 } from "~/.server/services/rooms_service";
 
+import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
+import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
+import LogoutIcon from "~/components/icons/logout_icon";
+
 import AppShell from "~/components/shell/app_shell";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
@@ -28,9 +32,6 @@ import {buildFormData} from "~/utils/forms";
 import type {IActionFormData} from "./rooms_.$roomID_.attendee_.actions_.self";
 
 import {Route} from "./+types/rooms_.$roomID.attendee";
-import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
-import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
-import LogoutIcon from "~/components/icons/logout_icon";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),

@@ -183,8 +183,6 @@ export async function insertOneLive(
         async (event) => {
             const {newTitle} = event;
 
-            console.log("woopwoop");
-
             await DATABASE.update(ROOMS_TABLE)
                 .set({title: newTitle})
                 .where(eq(ROOMS_TABLE.id, internalRoomID));

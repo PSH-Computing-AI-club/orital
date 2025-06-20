@@ -146,7 +146,7 @@ export async function insertOneLive(
         },
     );
 
-    const attendeeKickedSubscription = room.EVENT_ATTENDEE_APPROVED.subscribe(
+    const attendeeKickedSubscription = room.EVENT_ATTENDEE_KICKED.subscribe(
         async (event) => {
             const {attendee} = event;
             const {id: userID} = attendee;

@@ -36,9 +36,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    if (room.state === ROOM_STATES.disposed) {
+    const {roomID, state} = room;
+
+    if (state === ROOM_STATES.disposed) {
         throw data("Conflict", 409);
     }
 
-    return redirect(`/rooms/${room.roomID}/attendee`);
+    return redirect(`/rooms/${roomID}/attendee`);
 }

@@ -31,7 +31,9 @@ const ACTION_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
 });
 
-const LIVE_ROOMS = new Map<string, IRoom>();
+const LIVE_ROOMS_BY_PIN = new Map<string, IRoom>();
+
+const LIVE_ROOMS_BY_ROOM_ID = new Map<string, IRoom>();
 
 export interface IAuthenticatedRoomSession {
     readonly room: IRoom;
@@ -58,21 +60,21 @@ export interface IInsertOneOptions {
 }
 
 export function findAllLive(): IRoom[] {
-    return Array.from(LIVE_ROOMS.values());
+    return Array.from(LIVE_ROOMS_BY_ROOM_ID.values());
 }
 
 export function findOneLiveByRoomID(roomID: string): IRoom | null {
-    return LIVE_ROOMS.get(roomID) ?? null;
+    return LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 }
 
 export function findOneLiveByPIN(pin: string): IRoom | null {
-    return LIVE_ROOMS.get(pin) ?? null;
+    return LIVE_ROOMS_BY_PIN.get(pin) ?? null;
 }
 
 export function generateUniquePIN(): string {
     let pin = generatePIN();
 
-    while (LIVE_ROOMS.has(pin)) {
+    while (LIVE_ROOMS_BY_PIN.has(pin)) {
         pin = generatePIN();
     }
 
@@ -99,6 +101,7 @@ export async function insertOneLive(
         roomID,
         title: storedTitle,
     } = storedRoom;
+
     const pin = generateUniquePIN();
 
     const room = makeRoom({
@@ -111,12 +114,8 @@ export async function insertOneLive(
         title: storedTitle,
     });
 
-    // **HACK:** We are actually doing a clever hack here. The room ID
-    // ULIDs (26 characters) will never be the length of a PIN (6 characters).
-    //
-    // So, we can just use the same map for dual-indexing.
-    LIVE_ROOMS.set(room.roomID, room);
-    LIVE_ROOMS.set(room.pin, room);
+    LIVE_ROOMS_BY_PIN.set(pin, room);
+    LIVE_ROOMS_BY_ROOM_ID.set(roomID, room);
 
     const attendeeApprovedSubscription = room.EVENT_ATTENDEE_APPROVED.subscribe(
         async (event) => {
@@ -186,8 +185,8 @@ export async function insertOneLive(
     const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
         const {newPIN, oldPIN} = event;
 
-        LIVE_ROOMS.set(newPIN, room);
-        LIVE_ROOMS.delete(oldPIN);
+        LIVE_ROOMS_BY_PIN.set(newPIN, room);
+        LIVE_ROOMS_BY_PIN.delete(oldPIN);
     });
 
     const stateUpdateSubscription = room.EVENT_STATE_UPDATE.subscribe(
@@ -195,6 +194,8 @@ export async function insertOneLive(
             const {newState} = event;
 
             if (newState === ROOM_STATES.disposed) {
+                const {pin} = room;
+
                 attendeeApprovedSubscription.dispose();
                 attendeeBannedSubscription.dispose();
                 attendeeKickedSubscription.dispose();
@@ -203,8 +204,8 @@ export async function insertOneLive(
                 stateUpdateSubscription.dispose();
                 titleUpdateSubscription.dispose();
 
-                LIVE_ROOMS.delete(room.pin);
-                LIVE_ROOMS.delete(room.roomID);
+                LIVE_ROOMS_BY_PIN.delete(pin);
+                LIVE_ROOMS_BY_ROOM_ID.delete(roomID);
             }
         },
     );
@@ -255,7 +256,7 @@ export async function requireAuthenticatedAttendeeConnection(
 ): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID) ?? null;
+    const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
     if (room === null) {
         throw data("Not Found", {
@@ -300,7 +301,7 @@ export async function requireAuthenticatedAttendeeSession(
 ): Promise<IAuthenticatedAttendeeRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID) ?? null;
+    const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
     if (room === null) {
         throw data("Not Found", {
@@ -341,7 +342,7 @@ export async function requireAuthenticatedDisplayConnection(
 ): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID) ?? null;
+    const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
     if (room === null) {
         throw data("Not Found", {
@@ -392,7 +393,7 @@ export async function requireAuthenticatedPresenterConnection(
 ): Promise<IAuthenticatedRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID) ?? null;
+    const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
     if (room === null) {
         throw data("Not Found", {
@@ -422,7 +423,7 @@ export async function requireAuthenticatedPresenterSession(
 ): Promise<IAuthenticatedPresenterRoomSession> {
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const room = LIVE_ROOMS.get(roomID) ?? null;
+    const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
     if (room === null) {
         throw data("Not Found", {

@@ -118,6 +118,20 @@ export async function insertOneLive(
     LIVE_ROOMS.set(room.roomID, room);
     LIVE_ROOMS.set(room.pin, room);
 
+    const attendeeApprovedSubscription = room.EVENT_ATTENDEE_APPROVED.subscribe(
+        async (event) => {
+            const {attendee} = event;
+            const {id: userID} = attendee;
+
+            await DATABASE.insert(ATTENDEES_TABLE)
+                .values({
+                    userID: userID,
+                    roomID: internalRoomID,
+                })
+                .onConflictDoNothing();
+        },
+    );
+
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         async (event) => {
             const {entity} = event;
@@ -153,6 +167,7 @@ export async function insertOneLive(
             const {newState} = event;
 
             if (newState === ROOM_STATES.disposed) {
+                attendeeApprovedSubscription.dispose();
                 entityAddedSubscription.dispose();
                 pinUpdateSubscription.dispose();
                 stateUpdateSubscription.dispose();

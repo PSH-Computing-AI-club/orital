@@ -7,6 +7,7 @@ import * as v from "valibot";
 
 import DATABASE from "../../configuration/database";
 
+import ATTENDEES_TABLE from "../../database/tables/attendees_table";
 import ROOMS_TABLE from "../../database/tables/rooms_table";
 
 import {generatePIN} from "../../utils/crypto";
@@ -15,6 +16,7 @@ import type {IUser} from "../users_service";
 import {requireAuthenticatedSession} from "../users_service";
 
 import type {IAttendeeUser} from "./attendee_user";
+import {isAttendeeUser} from "./attendee_user";
 import type {IRoom} from "./room";
 import makeRoom from "./room";
 import type {IPresenterUser} from "./presenter_user";
@@ -91,16 +93,21 @@ export async function insertOneLive(
         })
         .returning();
 
-    const {createdAt, id, roomID, title: storedTitle} = storedRoom;
+    const {
+        createdAt,
+        id: internalRoomID,
+        roomID,
+        title: storedTitle,
+    } = storedRoom;
     const pin = generateUniquePIN();
 
     const room = makeRoom({
         createdAt,
-        id,
         pin,
         presenter,
         roomID,
         state,
+        id: internalRoomID,
         title: storedTitle,
     });
 
@@ -110,6 +117,29 @@ export async function insertOneLive(
     // So, we can just use the same map for dual-indexing.
     LIVE_ROOMS.set(room.roomID, room);
     LIVE_ROOMS.set(room.pin, room);
+
+    const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
+        async (event) => {
+            const {entity} = event;
+
+            if (isAttendeeUser(entity)) {
+                const {user, state} = entity;
+
+                if (state !== ATTENDEE_USER_STATES.connected) {
+                    return;
+                }
+
+                const {id: userID} = user;
+
+                await DATABASE.insert(ATTENDEES_TABLE)
+                    .values({
+                        userID: userID,
+                        roomID: internalRoomID,
+                    })
+                    .onConflictDoNothing();
+            }
+        },
+    );
 
     const pinUpdateSubscription = room.EVENT_PIN_UPDATE.subscribe((event) => {
         const {newPIN, oldPIN} = event;
@@ -123,6 +153,7 @@ export async function insertOneLive(
             const {newState} = event;
 
             if (newState === ROOM_STATES.disposed) {
+                entityAddedSubscription.dispose();
                 pinUpdateSubscription.dispose();
                 stateUpdateSubscription.dispose();
                 titleUpdateSubscription.dispose();
@@ -141,7 +172,7 @@ export async function insertOneLive(
 
             await DATABASE.update(ROOMS_TABLE)
                 .set({title: newTitle})
-                .where(eq(ROOMS_TABLE.id, id));
+                .where(eq(ROOMS_TABLE.id, internalRoomID));
         },
     );
 

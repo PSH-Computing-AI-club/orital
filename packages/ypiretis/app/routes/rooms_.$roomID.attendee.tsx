@@ -9,30 +9,28 @@ import {Outlet, data} from "react-router";
 import * as v from "valibot";
 
 import {
-    PRESENTER_USER_STATES,
-    requireAuthenticatedPresenterConnection,
+    ATTENDEE_USER_STATES,
+    requireAuthenticatedAttendeeConnection,
 } from "~/.server/services/rooms_service";
-
-import CloseIcon from "~/components/icons/close_icon";
-import DashboardIcon from "~/components/icons/dashboard_icon";
-import ChartIcon from "~/components/icons/chart_icon";
-import SlidersIcon from "~/components/icons/sliders_icon";
 
 import AppShell from "~/components/shell/app_shell";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
-import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
-import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
+import type {IAttendeeContext} from "~/state/attendee";
+import {AttendeeContextProvider, useAttendeeContext} from "~/state/attendee";
 
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
 
 import {buildFormData} from "~/utils/forms";
 
-import type {IActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room";
+import type {IActionFormData} from "./rooms_.$roomID_.attendee_.actions_.self";
 
-import {Route} from "./+types/rooms.$roomID.presenter";
+import {Route} from "./+types/rooms_.$roomID.attendee";
+import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
+import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
+import LogoutIcon from "~/components/icons/logout_icon";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),
@@ -57,51 +55,26 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         throw data("Bad Request", 400);
     }
 
-    const {room, user} = await requireAuthenticatedPresenterConnection(
+    const {room, user} = await requireAuthenticatedAttendeeConnection(
         request,
         output.roomID,
     );
 
-    const {attendees, displays, pin, roomID, state, title} = room;
+    const {roomID, state} = room;
     const {accountID, firstName, lastName} = user;
-
-    const initialAttendees = Array.from(attendees.values()).map((attendee) => {
-        const {id: entityID, isRaisingHand, state, user} = attendee;
-        const {accountID, firstName, lastName} = user;
-
-        return {
-            accountID,
-            entityID,
-            firstName,
-            isRaisingHand,
-            lastName,
-            state,
-        };
-    }) satisfies IAttendee[];
-
-    const initialDisplays = Array.from(displays.values()).map((display) => {
-        const {id: entityID, state} = display;
-
-        return {
-            entityID,
-            state,
-        };
-    }) satisfies IDisplay[];
 
     return {
         initialContextData: {
-            room: {
-                attendees: initialAttendees,
-                displays: initialDisplays,
+            isRaisingHand: false,
 
-                pin,
+            room: {
                 roomID,
                 state,
-                title,
+                title: "",
             },
 
-            state: PRESENTER_USER_STATES.disposed,
-        } satisfies IPresenterContext,
+            state: ATTENDEE_USER_STATES.disposed,
+        } satisfies IAttendeeContext,
 
         session: {
             accountID,
@@ -117,7 +90,7 @@ export function HydrateFallback() {
             <noscript>
                 <Text>
                     JavaScript is <Strong color="red.solid">required</Strong> to
-                    use the presenter portal.
+                    use the attendee portal.
                 </Text>
             </noscript>
 
@@ -127,23 +100,27 @@ export function HydrateFallback() {
 }
 
 function Sidebar() {
-    const {room} = usePresenterContext();
-    const {roomID, state} = room;
+    const {room, isRaisingHand, state: attendeeState} = useAttendeeContext();
+    const {state} = room;
 
     const [fetchingAction, setFetchingAction] = useState<boolean>(false);
 
     const isDisposed = state === "STATE_DISPOSED";
     const canFetchAction = !(isDisposed || fetchingAction);
 
-    async function onDisposeClick(
+    const canUseHand = attendeeState === "STATE_CONNECTED";
+
+    async function onHandClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     ): Promise<void> {
         setFetchingAction(true);
 
-        await fetch("./presenter/actions/room", {
+        await fetch("./attendee/actions/self", {
             method: "POST",
             body: buildFormData<IActionFormData>({
-                action: "state.dispose",
+                action: isRaisingHand
+                    ? "participation.dismissHand"
+                    : "participation.raiseHand",
             }),
         });
 
@@ -152,39 +129,29 @@ function Sidebar() {
 
     return (
         <AppShell.Sidebar>
-            <AppShell.Link to={`/rooms/${roomID}/presenter`}>
+            <AppShell.Button
+                disabled={!canFetchAction || !canUseHand}
+                colorPalette={isRaisingHand ? "cyan" : undefined}
+                onClick={onHandClick}
+            >
                 <AppShell.Icon>
-                    <DashboardIcon />
+                    {isRaisingHand ? (
+                        <HumanHandsupIcon />
+                    ) : (
+                        <HumanHandsdownIcon />
+                    )}
                 </AppShell.Icon>
-                Dashboard
-            </AppShell.Link>
-
-            <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
-                <AppShell.Icon>
-                    <ChartIcon />
-                </AppShell.Icon>
-                Polls
-            </AppShell.Link>
+                {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
+            </AppShell.Button>
 
             <AppShell.Divider />
 
-            <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
+            <AppShell.Link to="/rooms/left" colorPalette="red">
                 <AppShell.Icon>
-                    <SlidersIcon />
+                    <LogoutIcon />
                 </AppShell.Icon>
-                Settings
+                Leave Room
             </AppShell.Link>
-
-            <AppShell.Button
-                disabled={!canFetchAction}
-                colorPalette="red"
-                onClick={onDisposeClick}
-            >
-                <AppShell.Icon>
-                    <CloseIcon />
-                </AppShell.Icon>
-                Close Room
-            </AppShell.Button>
         </AppShell.Sidebar>
     );
 }
@@ -197,13 +164,13 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
         <AppShell.Root>
             <WebSocketCacheProvider>
                 <SessionContextProvider session={session}>
-                    <PresenterContextProvider
+                    <AttendeeContextProvider
                         initialContextData={initialContextData}
                     >
                         <Sidebar />
 
                         <Outlet />
-                    </PresenterContextProvider>
+                    </AttendeeContextProvider>
                 </SessionContextProvider>
             </WebSocketCacheProvider>
         </AppShell.Root>

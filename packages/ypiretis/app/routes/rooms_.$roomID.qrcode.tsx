@@ -26,7 +26,7 @@ import {DisplayContextProvider, useDisplayContext} from "~/state/display";
 import {APP_NAME} from "~/utils/constants";
 import {buildAppURL} from "~/utils/url";
 
-import {Route} from "./+types/rooms.$roomID.qrcode";
+import {Route} from "./+types/rooms_.$roomID.qrcode";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     roomID: v.pipe(v.string(), v.ulid()),

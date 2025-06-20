@@ -12,7 +12,7 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 import {EXPRESSION_PIN, pin} from "~/utils/valibot";
 
-import type {Route} from "./+types/rooms.join";
+import type {Route} from "./+types/rooms_.join";
 
 const pinWithMask = withMask("pinDigit", {
     mask: "",

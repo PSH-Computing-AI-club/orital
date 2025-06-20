@@ -65,7 +65,7 @@ import {title} from "~/utils/valibot";
 import type {IActionFormData as IAttendeeActionFormData} from "./rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 import type {IActionFormData as IRoomActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room";
 
-import {Route} from "./+types/rooms.$roomID.presenter._index";
+import {Route} from "./+types/rooms_.$roomID.presenter._index";
 
 const UX_TITLE_SCHEMA = v.pipe(
     v.string(),

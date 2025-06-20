@@ -4,7 +4,7 @@ import {requireGuestSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import type {Route} from "./+types/authentication";
+import type {Route} from "./+types/authentication_";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;

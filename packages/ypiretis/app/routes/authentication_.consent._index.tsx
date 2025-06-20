@@ -40,7 +40,7 @@ import {
 } from "~/utils/constants";
 import {alphanumerical, token} from "~/utils/valibot";
 
-import type {Route} from "./+types/authentication.consent._index";
+import type {Route} from "./+types/authentication_.consent._index";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["authorize", "revoke"])),

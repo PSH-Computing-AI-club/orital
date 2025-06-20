@@ -30,7 +30,7 @@ import {buildWebSocketURL} from "~/utils/url";
 
 import type {ILoginEvents} from "./authentication_.log-in_.events";
 
-import {Route} from "./+types/authentication.log-in.pending";
+import {Route} from "./+types/authentication_.log-in.pending";
 
 const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
     callbackTokenExpiresAt: v.pipe(

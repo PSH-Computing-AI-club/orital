@@ -1,11 +1,13 @@
-import {Temporal} from "@js-temporal/polyfill";
+import {eq} from "drizzle-orm";
 
 import type {ActionFunctionArgs} from "react-router";
 import {data} from "react-router";
 
-import {ulid} from "ulid";
-
 import * as v from "valibot";
+
+import DATABASE from "../../configuration/database";
+
+import ROOMS_TABLE from "../../database/tables/rooms_table";
 
 import {generatePIN} from "../../utils/crypto";
 
@@ -28,8 +30,6 @@ const ACTION_PARAMS_SCHEMA = v.object({
 });
 
 const LIVE_ROOMS = new Map<string, IRoom>();
-
-let idCounter = -1;
 
 export interface IAuthenticatedRoomSession {
     readonly room: IRoom;
@@ -80,19 +80,19 @@ export function generateUniquePIN(): string {
 export async function insertOneLive(
     options: IInsertOneOptions,
 ): Promise<IRoom> {
-    const {
-        presenter,
-        state = ROOM_STATES.locked,
-        title = "A Presentation Room",
-    } = options;
+    const {presenter, state = ROOM_STATES.locked, title} = options;
 
-    // **TODO:** Pull from options object when DB integration is ready
-    const createdAt = Temporal.Now.instant();
-    const id = ++idCounter;
+    const {id: userID} = presenter;
+
+    const [storedRoom] = await DATABASE.insert(ROOMS_TABLE)
+        .values({
+            title,
+            presenterUserID: userID,
+        })
+        .returning();
+
+    const {createdAt, id, roomID, title: storedTitle} = storedRoom;
     const pin = generateUniquePIN();
-    const roomID = ulid();
-
-    // **TODO:** add to db
 
     const room = makeRoom({
         createdAt,
@@ -101,7 +101,7 @@ export async function insertOneLive(
         presenter,
         roomID,
         state,
-        title,
+        title: storedTitle,
     });
 
     // **HACK:** We are actually doing a clever hack here. The room ID
@@ -130,14 +130,18 @@ export async function insertOneLive(
                 LIVE_ROOMS.delete(room.pin);
                 LIVE_ROOMS.delete(room.roomID);
             }
-
-            // **TODO:** update db state
         },
     );
 
     const titleUpdateSubscription = room.EVENT_TITLE_UPDATE.subscribe(
-        (event) => {
-            // **TODO:** update db title
+        async (event) => {
+            const {newTitle} = event;
+
+            console.log("woopwoop");
+
+            await DATABASE.update(ROOMS_TABLE)
+                .set({title: newTitle})
+                .where(eq(ROOMS_TABLE.id, id));
         },
     );
 

@@ -17,7 +17,7 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .unique()
         .$defaultFn(() => ulid()),
 
-    presenterUserID: text("presenter_user_id")
+    presenterUserID: integer("presenter_user_id")
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 

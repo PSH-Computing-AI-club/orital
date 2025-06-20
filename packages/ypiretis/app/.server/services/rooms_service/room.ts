@@ -29,10 +29,22 @@ import {
     SYMBOL_ENTITY_ON_STATE_UPDATE,
 } from "./symbols";
 
+export interface IAttendeeApproved {
+    readonly attendee: IAttendeeUser;
+}
+
+export interface IAttendeeBanned {
+    readonly attendee: IAttendeeUser;
+}
+
 export interface IAttendeeHandUpdate {
     readonly attendee: IAttendeeUser;
 
     readonly isRaisingHand: boolean;
+}
+
+export interface IAttendeeKicked {
+    readonly attendee: IAttendeeUser;
 }
 
 export interface IEntityAddedEvent {
@@ -105,7 +117,13 @@ export interface IRoom {
         newState: IEntityStates,
     ): void;
 
+    readonly EVENT_ATTENDEE_APPROVED: IEvent<IAttendeeApproved>;
+
+    readonly EVENT_ATTENDEE_BANNED: IEvent<IAttendeeBanned>;
+
     readonly EVENT_ATTENDEE_HAND_UPDATE: IEvent<IAttendeeHandUpdate>;
+
+    readonly EVENT_ATTENDEE_KICKED: IEvent<IAttendeeKicked>;
 
     readonly EVENT_ENTITY_ADDED: IEvent<IEntityAddedEvent>;
 
@@ -166,7 +184,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     const {createdAt, id, roomID, presenter} = options;
     let {pin, state, title} = options;
 
+    const EVENT_ATTENDEE_APPROVED = makeEvent<IAttendeeApproved>();
+    const EVENT_ATTENDEE_BANNED = makeEvent<IAttendeeBanned>();
     const EVENT_ATTENDEE_HAND_UPDATE = makeEvent<IAttendeeHandUpdate>();
+    const EVENT_ATTENDEE_KICKED = makeEvent<IAttendeeKicked>();
 
     const EVENT_ENTITY_ADDED = makeEvent<IEntityAddedEvent>();
     const EVENT_ENTITY_DISPOSED = makeEvent<IEntityDisposedEvent>();
@@ -202,8 +223,20 @@ export default function makeRoom(options: IRoomOptions): IRoom {
     }
 
     return {
+        get EVENT_ATTENDEE_APPROVED() {
+            return EVENT_ATTENDEE_APPROVED;
+        },
+
+        get EVENT_ATTENDEE_BANNED() {
+            return EVENT_ATTENDEE_BANNED;
+        },
+
         get EVENT_ATTENDEE_HAND_UPDATE() {
             return EVENT_ATTENDEE_HAND_UPDATE;
+        },
+
+        get EVENT_ATTENDEE_KICKED() {
+            return EVENT_ATTENDEE_KICKED;
         },
 
         get EVENT_ENTITY_ADDED() {
@@ -287,6 +320,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             const {accountID} = user;
 
             approvedAccountIDs.add(accountID);
+
+            EVENT_ATTENDEE_APPROVED.dispatch({
+                attendee,
+            });
         },
 
         [SYMBOL_ATTENDEE_USER_ON_BANNED](attendee) {
@@ -295,6 +332,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
             approvedAccountIDs.delete(accountID);
             bannedAccountIDs.add(accountID);
+
+            EVENT_ATTENDEE_BANNED.dispatch({
+                attendee,
+            });
         },
 
         [SYMBOL_ATTENDEE_USER_ON_HAND](attendee, isRaisingHand) {
@@ -309,6 +350,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             const {accountID} = user;
 
             approvedAccountIDs.delete(accountID);
+
+            EVENT_ATTENDEE_KICKED.dispatch({
+                attendee,
+            });
         },
 
         [SYMBOL_ENTITY_ON_DISPOSE](entity) {

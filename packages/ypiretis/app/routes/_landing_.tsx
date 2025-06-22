@@ -1,15 +1,62 @@
 import {Box, Container, HStack, Link} from "@chakra-ui/react";
 
+import type {RefObject} from "react";
+import {useEffect, useRef, useState} from "react";
+
 import {Link as RouterLink, Outlet} from "react-router";
 
+function useNavbarSentinel(sentinelRef: RefObject<HTMLElement | null>) {
+    const [isObscured, setIsObscured] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!sentinelRef.current) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const [firstEntry] = entries;
+                const {isIntersecting} = firstEntry;
+
+                setIsObscured(!isIntersecting);
+            },
+            {
+                root: null,
+                rootMargin: "0px",
+                threshold: 1,
+            },
+        );
+
+        observer.observe(sentinelRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [sentinelRef]);
+
+    return isObscured;
+}
+
 export default function LandingLayout() {
+    const sentinelRef = useRef<HTMLElement | null>(null);
+    const isObscured = useNavbarSentinel(sentinelRef);
+
     return (
         <>
             <Box
+                ref={sentinelRef}
+                position="absolute"
+                insetBlockStart="calc((var(--chakra-spacing-16) * -1) / 4)"
+                insetInlineStart="0"
+                blockSize="1px"
+                inlineSize="1px"
+            />
+
+            <Box
                 pos="sticky"
-                insetBlockStart="0"
-                blockSize="20"
-                paddingBlockStart="4"
+                insetBlockStart="4"
+                marginBlockStart="4"
+                blockSize="16"
                 paddingInline="8"
                 zIndex="2"
             >
@@ -22,6 +69,7 @@ export default function LandingLayout() {
                         borderStyle="solid"
                         borderWidth="thin"
                         zIndex="-1"
+                        visibility={isObscured ? undefined : "hidden"}
                     />
 
                     <HStack gap="4" alignItems="center" blockSize="full">
@@ -50,7 +98,7 @@ export default function LandingLayout() {
                 </Container>
             </Box>
 
-            <Box paddingBlockEnd="4" zIndex="1">
+            <Box marginBlockEnd="4" zIndex="1">
                 <Container>
                     <Outlet />
                 </Container>

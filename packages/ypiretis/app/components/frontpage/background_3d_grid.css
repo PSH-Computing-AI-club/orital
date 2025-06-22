@@ -1,0 +1,24 @@
+.backgrounds--3d-grid--root {
+    perspective: 600px;
+}
+
+.backgrounds--3d-grid--scene {
+    background-image:
+        linear-gradient(
+            to right,
+            var(--chakra-colors-cyan-fg) 4px,
+            transparent 4px
+        ),
+        linear-gradient(
+            to bottom,
+            var(--chakra-colors-cyan-fg) 4px,
+            transparent 4px
+        );
+    background-size: 64px 64px;
+    background-position: center;
+
+    mask-image: radial-gradient(ellipse at center, white 50%, transparent 80%);
+
+    transform: rotate3D(1, 0, 0, 75deg);
+    transform-origin: bottom center 64px;
+}

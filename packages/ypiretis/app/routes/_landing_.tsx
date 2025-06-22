@@ -46,7 +46,7 @@ export default function LandingLayout() {
             <Box
                 ref={sentinelRef}
                 position="absolute"
-                insetBlockStart="calc((var(--chakra-spacing-16) * -1) / 4)"
+                insetBlockStart="0"
                 insetInlineStart="0"
                 blockSize="1px"
                 inlineSize="1px"
@@ -55,12 +55,14 @@ export default function LandingLayout() {
             <Box
                 pos="sticky"
                 insetBlockStart="4"
-                marginBlockStart="4"
                 blockSize="16"
                 paddingInline="8"
                 zIndex="2"
             >
-                <Container blockSize="full">
+                <Container
+                    color={isObscured ? "fg" : "fg.inverted"}
+                    blockSize="full"
+                >
                     <Box
                         position="absolute"
                         inset="0"
@@ -74,20 +76,30 @@ export default function LandingLayout() {
 
                     <HStack gap="4" alignItems="center" blockSize="full">
                         <Link
+                            color="currentcolor"
                             marginInlineStart="auto"
                             _hover={{color: "cyan.solid"}}
                             asChild
                         >
                             <RouterLink to="/news">News</RouterLink>
                         </Link>
-                        <Link _hover={{color: "cyan.solid"}} asChild>
+                        <Link
+                            color="currentcolor"
+                            _hover={{color: "cyan.solid"}}
+                            asChild
+                        >
                             <RouterLink to="/events">Events</RouterLink>
                         </Link>
                         <strong>C&AI</strong>
-                        <Link _hover={{color: "cyan.solid"}} asChild>
+                        <Link
+                            color="currentcolor"
+                            _hover={{color: "cyan.solid"}}
+                            asChild
+                        >
                             <RouterLink to="/engage">Engage</RouterLink>
                         </Link>
                         <Link
+                            color="currentcolor"
                             marginInlineEnd="auto"
                             _hover={{color: "cyan.solid"}}
                             asChild

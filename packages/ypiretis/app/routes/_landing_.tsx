@@ -98,11 +98,7 @@ export default function LandingLayout() {
                 </Container>
             </Box>
 
-            <Box marginBlockEnd="4" zIndex="1">
-                <Container>
-                    <Outlet />
-                </Container>
-            </Box>
+            <Outlet />
         </>
     );
 }

@@ -18,11 +18,6 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                     <Background3DGrid.Root>
                         <Container flexGrow="1">
                             <Background3DGrid.Scene />
-
-                            <span>
-                                C& <br />
-                                AI
-                            </span>
                         </Container>
                     </Background3DGrid.Root>
                 </Box>

@@ -28,7 +28,7 @@ import {
 } from "~/utils/constants";
 import {alphanumerical} from "~/utils/valibot";
 
-import type {Route} from "./+types/authentication.log-in._index";
+import type {Route} from "./+types/authentication_.log-in._index";
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),

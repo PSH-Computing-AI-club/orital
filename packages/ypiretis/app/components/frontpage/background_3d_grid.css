@@ -17,7 +17,7 @@
     background-size: 64px 64px;
     background-position: center;
 
-    mask-image: radial-gradient(ellipse at center, white 50%, transparent 80%);
+    mask-image: radial-gradient(ellipse at 50% 50%, white 35%, transparent 65%);
 
     transform: rotate3D(1, 0, 0, 75deg);
     transform-origin: bottom center 64px;

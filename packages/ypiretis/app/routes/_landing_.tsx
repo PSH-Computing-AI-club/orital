@@ -90,7 +90,11 @@ export default function LandingLayout() {
                         >
                             <RouterLink to="/events">Events</RouterLink>
                         </Link>
-                        <strong>C&AI</strong>
+                        <strong>
+                            C&
+                            <br />
+                            AI
+                        </strong>
                         <Link
                             color="currentcolor"
                             _hover={{color: "cyan.solid"}}

@@ -83,6 +83,7 @@ export default function LandingLayout() {
                         >
                             <RouterLink to="/news">News</RouterLink>
                         </Link>
+
                         <Link
                             color="currentcolor"
                             _hover={{color: "cyan.solid"}}
@@ -90,11 +91,13 @@ export default function LandingLayout() {
                         >
                             <RouterLink to="/events">Events</RouterLink>
                         </Link>
+
                         <strong>
                             C&
                             <br />
                             AI
                         </strong>
+
                         <Link
                             color="currentcolor"
                             _hover={{color: "cyan.solid"}}
@@ -102,6 +105,7 @@ export default function LandingLayout() {
                         >
                             <RouterLink to="/engage">Engage</RouterLink>
                         </Link>
+
                         <Link
                             color="currentcolor"
                             marginInlineEnd="auto"

@@ -359,15 +359,29 @@ export default function LandingIndex(_props: Route.ComponentProps) {
 
                         <HStack gap="8" justifyContent="center">
                             <VStack gap="2" alignItems="baseline">
-                                <Heading>Socials</Heading>
+                                <Heading>Links</Heading>
+
+                                <Link
+                                    color="currentcolor"
+                                    _hover={{color: "cyan.solid"}}
+                                    asChild
+                                >
+                                    <RouterLink
+                                        to="https://github.com/PSH-Computing-AI-Club"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        GitHub
+                                    </RouterLink>
+                                </Link>
+
                                 <span>YouTube</span>
-                                <span>BlueSky</span>
                                 <span>???</span>
                                 <span>Profit!</span>
                             </VStack>
 
                             <VStack gap="2" alignItems="baseline">
-                                <Heading>Links</Heading>
+                                <Heading>Site</Heading>
 
                                 <Link
                                     color="currentcolor"

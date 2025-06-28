@@ -99,7 +99,7 @@ function PromptShellSidebar(_props: IPromptShellSidebarProps) {
         <VStack
             justify="center"
             bg="bg.inverted"
-            backgroundImage="url('/images/sidebar.border.png')"
+            backgroundImage="url('/images/sidebar.border.webp')"
             backgroundSize="96px"
             backgroundPosition="right"
             backgroundRepeat="repeat-y"

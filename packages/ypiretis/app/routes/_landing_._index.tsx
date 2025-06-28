@@ -337,7 +337,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
             <Flex
                 bg="bg.inverted"
                 color="fg.inverted"
-                backgroundImage="url('/images/footer.border.png')"
+                backgroundImage="url('/images/footer.border.webp')"
                 backgroundSize="512px"
                 backgroundRepeat="repeat-x"
                 paddingBlock="8"

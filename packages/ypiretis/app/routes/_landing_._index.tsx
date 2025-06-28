@@ -338,7 +338,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 bg="bg.inverted"
                 color="fg.inverted"
                 backgroundImage="url('/images/footer.border.png')"
-                backgroundSize="1024px"
+                backgroundSize="512px"
                 backgroundRepeat="repeat-x"
                 paddingBlock="8"
                 paddingInline={{base: "4", lgDown: "0"}}

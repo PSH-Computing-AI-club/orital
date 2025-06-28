@@ -80,10 +80,6 @@ function PromptShellContainer(props: IPromptShellContainerProps) {
             flexGrow="1"
             padding={{lgTo2xl: "10", mdOnly: "5"}}
             width="full"
-            background={{
-                //lgDown: "color-mix(in srgb, var(--chakra-colors-bg-inverted), transparent 95%)",
-                lgDown: "rgba(9, 9, 11, 0.15)",
-            }}
         >
             {children}
 
@@ -133,9 +129,9 @@ function PromptShellRoot(props: IPromptShellRootProps) {
                 src="/images/logo.monochrome.webp"
                 hideFrom="lg"
                 position="fixed"
-                left="0"
-                bottom="0"
-                transform="scale(1.5)"
+                left={{base: "24", smDown: "0"}}
+                bottom="24"
+                transform={{base: "scale(2)", smDown: "scale(1.5)"}}
                 opacity="0.1"
                 pointerEvents="none"
                 zIndex="-1"

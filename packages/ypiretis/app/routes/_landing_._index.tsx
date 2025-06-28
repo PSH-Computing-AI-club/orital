@@ -62,7 +62,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             objectFit="cover"
                             inlineSize="full"
                             maxInlineSize="lg"
-                            src="/images/landing.psh.png"
+                            src="/images/landing.psh.webp"
                         />
 
                         <Card.Body gap="8">
@@ -231,7 +231,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             objectFit="cover"
                             inlineSize="full"
                             maxInlineSize="lg"
-                            src="/images/landing.calendar.png"
+                            src="/images/landing.calendar.webp"
                         />
                     </Card.Root>
                 </Container>

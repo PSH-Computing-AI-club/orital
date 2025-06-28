@@ -59,7 +59,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         overflow="hidden"
                     >
                         <Image
-                            objectFit="cover"
+                            objectFit="contain"
                             inlineSize="full"
                             maxInlineSize="lg"
                             src="/images/landing.psh.webp"
@@ -228,7 +228,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         </Card.Body>
 
                         <Image
-                            objectFit="cover"
+                            objectFit="contain"
                             inlineSize="full"
                             maxInlineSize="lg"
                             src="/images/landing.calendar.webp"

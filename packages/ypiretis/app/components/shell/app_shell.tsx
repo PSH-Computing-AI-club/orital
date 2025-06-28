@@ -282,7 +282,7 @@ function AppShellSidebarContainer(props: IAppShellSidebarContainerProps) {
         <VStack gap="2" padding="2" blockSize="full">
             <Bleed blockStart="2" inline="2" paddingBlock="4">
                 <Image
-                    src="/images/logo.flat.dark.png"
+                    src="/images/logo.flat.dark.webp"
                     objectFit="contain"
                     marginInline="auto"
                     blockSize="16"

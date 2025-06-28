@@ -110,7 +110,7 @@ function PromptShellSidebar(_props: IPromptShellSidebarProps) {
             minInlineSize="96"
         >
             <Image
-                src="/images/logo.gradient.png"
+                src="/images/logo.gradient.webp"
                 blockSize="sm"
                 inlineSize="sm"
                 marginBlockStart="auto"
@@ -130,7 +130,7 @@ function PromptShellRoot(props: IPromptShellRootProps) {
     return (
         <>
             <Image
-                src="/images/logo.monochrome.png"
+                src="/images/logo.monochrome.webp"
                 hideFrom="lg"
                 position="fixed"
                 left="0"

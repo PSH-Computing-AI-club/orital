@@ -2,6 +2,7 @@
 import type {ColorsToken} from "../../../../../node_modules/@chakra-ui/react/dist/types/styled-system/generated/token.gen";
 
 import {
+    Box,
     Card,
     Flex,
     Heading,
@@ -109,7 +110,9 @@ function PromptShellSidebar(_props: IPromptShellSidebarProps) {
             minInlineSize="96"
         >
             <Image
-                src="/images/logo.prompt.webp"
+                src="/images/logo.gradient.png"
+                blockSize="sm"
+                inlineSize="sm"
                 marginBlockStart="auto"
                 pointerEvents="none"
             />
@@ -127,23 +130,18 @@ function PromptShellRoot(props: IPromptShellRootProps) {
     return (
         <>
             <Image
-                src="/images/logo.prompt.webp"
+                src="/images/logo.monochrome.png"
                 hideFrom="lg"
                 position="fixed"
                 left="0"
                 bottom="0"
-                transform={{
-                    base: "scale(2)",
-                    mdDown: "scale(1.5)",
-                    smDown: "scale(1.25)",
-                }}
+                transform="scale(1.5)"
+                opacity="0.1"
                 pointerEvents="none"
-                opacity="0.10"
-                mixBlendMode="plus-lighter"
-                blur="2px"
-                filter="auto"
                 zIndex="-1"
             />
+
+            <Box position="fixed" inset="0" zIndex="-1" />
 
             <Flex align="stretch" width="dvw" height="dvh">
                 {children}

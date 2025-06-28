@@ -280,20 +280,12 @@ function AppShellSidebarContainer(props: IAppShellSidebarContainerProps) {
 
     return (
         <VStack gap="2" padding="2" blockSize="full">
-            <Bleed
-                blockStart="2"
-                inline="2"
-                bg="bg.inverted"
-                borderBlockEndColor="border"
-                borderBlockEndStyle="solid"
-                borderBlockEndWidth="thin"
-                padding="4"
-                alignSelf="stretch"
-            >
+            <Bleed blockStart="2" inline="2" paddingBlock="4">
                 <Image
-                    src="/images/logo.prompt.webp"
+                    src="/images/logo.flat.dark.png"
+                    objectFit="contain"
                     marginInline="auto"
-                    width="10"
+                    blockSize="16"
                 />
             </Bleed>
 

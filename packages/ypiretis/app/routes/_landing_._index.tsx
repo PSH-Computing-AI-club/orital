@@ -24,12 +24,12 @@ import type {Route} from "./+types/_landing_._index";
 export default function LandingIndex(_props: Route.ComponentProps) {
     return (
         <>
-            <Bleed blockStart="16" asChild>
+            <Bleed blockStart="20" asChild>
                 <Box
                     display="flex"
                     bg="bg.inverted"
                     color="fg.inverted"
-                    paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-4))"
+                    paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8))"
                     minBlockSize="dvh"
                 >
                     <Background3DGrid.Root>
@@ -342,21 +342,22 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 backgroundRepeat="repeat-x"
                 paddingBlock="8"
                 paddingInline={{base: "4", lgDown: "0"}}
-                blockSize={{base: "sm", smDown: "lg"}}
+                blockSize={{base: "sm", smDown: "2xl"}}
             >
                 <Container marginBlockStart="auto">
-                    <HStack gap="8" flexDirection={{base: "row"}}>
-                        <Heading size="7xl">
-                            C& <br />
-                            AI
-                        </Heading>
+                    <Stack
+                        gap="8"
+                        flexDirection={{base: "row", smDown: "column"}}
+                    >
+                        <Image
+                            objectFit="contain"
+                            blockSize={{base: "3xs", mdDown: "48"}}
+                            src="/images/logo.monochrome.png"
+                        />
 
                         <Box flexGrow="1" />
 
-                        <Stack
-                            gap="8"
-                            flexDirection={{base: "row", smDown: "column"}}
-                        >
+                        <HStack gap="8" justifyContent="center">
                             <VStack gap="2" alignItems="baseline">
                                 <Heading>Socials</Heading>
                                 <span>YouTube</span>
@@ -402,8 +403,8 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                                     </RouterLink>
                                 </Link>
                             </VStack>
-                        </Stack>
-                    </HStack>
+                        </HStack>
+                    </Stack>
                 </Container>
             </Flex>
         </>

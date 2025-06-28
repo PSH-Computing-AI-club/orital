@@ -1,4 +1,4 @@
-import {Box, Container, HStack, Link} from "@chakra-ui/react";
+import {Box, Container, Image, HStack, Link} from "@chakra-ui/react";
 
 import type {RefObject} from "react";
 import {useEffect, useRef, useState} from "react";
@@ -54,20 +54,21 @@ export default function LandingLayout() {
 
             <Box
                 pos="sticky"
-                insetBlockStart="4"
-                blockSize="16"
+                insetBlockStart="8"
+                blockSize="20"
                 paddingInline="8"
                 zIndex="2"
             >
                 <Container
-                    color={isObscured ? "fg" : "fg.inverted"}
+                    bg={isObscured ? "transparent" : "bg.inverted"}
+                    color="fg.inverted"
                     blockSize="full"
                 >
                     <Box
                         position="absolute"
                         inset="0"
-                        bg="bg"
-                        borderColor="border"
+                        bg="bg.inverted"
+                        borderColor="border.inverted"
                         borderStyle="solid"
                         borderWidth="thin"
                         zIndex="-1"
@@ -92,11 +93,11 @@ export default function LandingLayout() {
                             <RouterLink to="/events">Events</RouterLink>
                         </Link>
 
-                        <strong>
-                            C&
-                            <br />
-                            AI
-                        </strong>
+                        <Image
+                            objectFit="contain"
+                            blockSize="16"
+                            src="/images/logo.monochrome.png"
+                        />
 
                         <Link
                             color="currentcolor"

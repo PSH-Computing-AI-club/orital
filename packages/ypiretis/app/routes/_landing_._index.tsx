@@ -381,7 +381,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             </VStack>
 
                             <VStack gap="2" alignItems="baseline">
-                                <Heading>Site</Heading>
+                                <Heading>Club</Heading>
 
                                 <Link
                                     color="currentcolor"

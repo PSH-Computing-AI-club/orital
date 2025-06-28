@@ -352,7 +352,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         <Image
                             objectFit="contain"
                             blockSize={{base: "3xs", mdDown: "48"}}
-                            src="/images/logo.monochrome.webp"
+                            src="/images/logo.monochrome.light.webp"
                         />
 
                         <Box flexGrow="1" />

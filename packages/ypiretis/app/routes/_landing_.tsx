@@ -96,7 +96,7 @@ export default function LandingLayout() {
                         <Image
                             objectFit="contain"
                             blockSize="16"
-                            src="/images/logo.monochrome.webp"
+                            src="/images/logo.monochrome.light.webp"
                         />
 
                         <Link

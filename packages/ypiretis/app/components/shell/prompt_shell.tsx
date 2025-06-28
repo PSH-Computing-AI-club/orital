@@ -130,7 +130,7 @@ function PromptShellRoot(props: IPromptShellRootProps) {
     return (
         <>
             <Image
-                src="/images/logo.monochrome.webp"
+                src="/images/logo.monochrome.light.webp"
                 hideFrom="lg"
                 position="fixed"
                 left={{base: "24", smDown: "0"}}

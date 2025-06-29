@@ -110,7 +110,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                                 <PeopleCard.Body>
                                     <PeopleCard.Avatar
                                         name="Dimitri Nearchos"
-                                        src="/images/landing.avatars.aop5448.webp"
+                                        src="/images/landing.avatars.don5092.webp"
                                     />
 
                                     <PeopleCard.Title>

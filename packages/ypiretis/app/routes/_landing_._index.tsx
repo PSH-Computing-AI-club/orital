@@ -1,30 +1,23 @@
-import {Bleed, Box, Container, Span, Text} from "@chakra-ui/react";
+import {Container, Span} from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeatureSection from "~/components/frontpage/feature_section";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
+import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 
 import type {Route} from "./+types/_landing_._index";
 
 export default function LandingIndex(_props: Route.ComponentProps) {
     return (
         <>
-            <Bleed blockStart="20" asChild>
-                <Box
-                    display="flex"
-                    bg="bg.inverted"
-                    color="fg.inverted"
-                    paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8))"
-                    minBlockSize="dvh"
-                >
-                    <Background3DGrid.Root>
-                        <Container flexGrow="1">
-                            <Background3DGrid.Scene />
-                        </Container>
-                    </Background3DGrid.Root>
-                </Box>
-            </Bleed>
+            <FullscreenHero.Root>
+                <Background3DGrid.Root>
+                    <Container flexGrow="1">
+                        <Background3DGrid.Scene />
+                    </Container>
+                </Background3DGrid.Root>
+            </FullscreenHero.Root>
 
             <FeatureSection.Root>
                 <FeatureSection.Container>

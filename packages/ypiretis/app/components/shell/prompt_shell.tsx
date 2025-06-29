@@ -2,12 +2,14 @@
 import type {ColorsToken} from "../../../../../node_modules/@chakra-ui/react/dist/types/styled-system/generated/token.gen";
 
 import {
+    Bleed,
     Box,
     Card,
     Flex,
     Heading,
     Highlight,
     Image,
+    Spacer,
     Text,
     VStack,
 } from "@chakra-ui/react";
@@ -81,13 +83,13 @@ function PromptShellContainer(props: IPromptShellContainerProps) {
             padding={{lgTo2xl: "10", mdOnly: "5"}}
             width="full"
         >
+            <Spacer />
+
             {children}
 
-            <Text
-                hideFrom="lg"
-                marginBlockStart="auto"
-                marginBlockEnd={{lgTo2xl: "-10", mdOnly: "-5"}}
-            >
+            <Spacer />
+
+            <Text hideFrom="lg" marginBlockEnd={{lgTo2xl: "-10", mdOnly: "-5"}}>
                 {PACKAGE_NAME} v{PACKAGE_VERSION}
             </Text>
         </VStack>
@@ -109,17 +111,22 @@ function PromptShellSidebar(_props: IPromptShellSidebarProps) {
             maxInlineSize="96"
             minInlineSize="96"
         >
+            <Spacer />
+
             <Image
                 src="/images/logo.gradient.webp"
                 blockSize="sm"
                 inlineSize="sm"
-                marginBlockStart="auto"
                 pointerEvents="none"
             />
 
-            <Text marginBlockStart="auto" marginBlockEnd="-10">
-                {PACKAGE_NAME} v{PACKAGE_VERSION}
-            </Text>
+            <Spacer />
+
+            <Bleed blockEnd="10" asChild>
+                <Text>
+                    {PACKAGE_NAME} v{PACKAGE_VERSION}
+                </Text>
+            </Bleed>
         </VStack>
     );
 }

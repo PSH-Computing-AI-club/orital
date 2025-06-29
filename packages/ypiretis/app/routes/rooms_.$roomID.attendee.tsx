@@ -1,4 +1,4 @@
-import {Strong, Text} from "@chakra-ui/react";
+import {Spacer, Strong, Text} from "@chakra-ui/react";
 
 import type {MouseEvent} from "react";
 import {useState} from "react";
@@ -144,6 +144,8 @@ function Sidebar() {
                 </AppShell.Icon>
                 {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
             </AppShell.Button>
+
+            <Spacer />
 
             <AppShell.Divider />
 

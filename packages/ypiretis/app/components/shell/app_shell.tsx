@@ -95,7 +95,6 @@ function AppShellDivider() {
             borderBlockStartColor="border"
             borderBlockStartStyle="solid"
             borderBlockStartWidth="thin"
-            marginBlockStart="auto"
             width="full"
         />
     );

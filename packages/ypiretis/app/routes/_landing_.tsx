@@ -1,4 +1,4 @@
-import {Box, Container, Image, HStack} from "@chakra-ui/react";
+import {Box, Container, Image, HStack, Spacer} from "@chakra-ui/react";
 
 import {Outlet} from "react-router";
 
@@ -37,6 +37,8 @@ export default function LandingLayout() {
                     />
 
                     <HStack gap="4" alignItems="center" blockSize="full">
+                        <Spacer />
+
                         <FrontpageShell.InternalLink to="/news">
                             News
                         </FrontpageShell.InternalLink>
@@ -58,6 +60,8 @@ export default function LandingLayout() {
                         <FrontpageShell.InternalLink to="/discord" isNewTab>
                             Discord
                         </FrontpageShell.InternalLink>
+
+                        <Spacer />
                     </HStack>
                 </Container>
             </Box>

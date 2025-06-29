@@ -1,4 +1,4 @@
-import {Strong, Text} from "@chakra-ui/react";
+import {Spacer, Strong, Text} from "@chakra-ui/react";
 
 import type {MouseEvent} from "react";
 import {useState} from "react";
@@ -165,6 +165,8 @@ function Sidebar() {
                 </AppShell.Icon>
                 Polls
             </AppShell.Link>
+
+            <Spacer />
 
             <AppShell.Divider />
 

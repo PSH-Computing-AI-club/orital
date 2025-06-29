@@ -15,10 +15,11 @@ import {
     Portal,
     SegmentGroup,
     SimpleGrid,
+    Spacer,
     Span,
     PinInput,
-    VStack,
     Tag,
+    VStack,
 } from "@chakra-ui/react";
 
 import type {MouseEvent, PropsWithChildren, ReactElement} from "react";
@@ -380,8 +381,10 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
     return (
         <Menu.Root>
+            <Spacer />
+
             <Menu.Trigger asChild>
-                <IconButton variant="ghost" size="xs" marginInlineStart="auto">
+                <IconButton variant="ghost" size="xs">
                     <MoreVerticalIcon />
                 </IconButton>
             </Menu.Trigger>
@@ -538,10 +541,10 @@ function AttendeesCard() {
             <Card.Body gap="4" maxBlockSize="full" overflow="hidden">
                 <Card.Title display="flex" gap="2" alignItems="center">
                     Attendees
+                    <Spacer />
                     <SegmentGroup.Root
                         value={modeValue}
                         size="sm"
-                        marginInlineStart="auto"
                         fontWeight="normal"
                         onValueChange={onModeValueChange}
                     >
@@ -643,12 +646,9 @@ function PINCard() {
     return (
         <>
             <Card.Body gap="4">
-                <Card.Title
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                >
+                <Card.Title display="flex" alignItems="center">
                     Room PIN
+                    <Spacer />
                     <PinIcon />
                 </Card.Title>
 
@@ -829,12 +829,9 @@ function StateCard() {
     return (
         <>
             <Card.Body gap="4">
-                <Card.Title
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                >
+                <Card.Title display="flex" alignItems="center">
                     Room State
+                    <Spacer />
                     <ShieldIcon />
                 </Card.Title>
 

@@ -7,15 +7,13 @@ import {
     Heading,
     HStack,
     Image,
-    Link,
     SimpleGrid,
+    Spacer,
     Span,
     Stack,
     Text,
     VStack,
 } from "@chakra-ui/react";
-
-import {Link as RouterLink} from "react-router";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
@@ -356,7 +354,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             src="/images/logo.monochrome.light.webp"
                         />
 
-                        <Box flexGrow="1" />
+                        <Spacer />
 
                         <HStack gap="8" justifyContent="center">
                             <VStack gap="2" alignItems="baseline">

@@ -680,7 +680,7 @@ function PINCard() {
                     hideBelow="lg"
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"
-                    onClick={(event) => onRegenerateClick(event)}
+                    onClick={onRegenerateClick}
                 >
                     New PIN
                     <ReloadIcon />
@@ -691,7 +691,7 @@ function PINCard() {
                     hideFrom="lg"
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"
-                    onClick={(event) => onRegenerateClick(event)}
+                    onClick={onRegenerateClick}
                 >
                     <ReloadIcon />
                 </IconButton>
@@ -805,26 +805,34 @@ function StateCard() {
     const isDisposed = state === "STATE_DISPOSED";
     const canFetchAction = !(isDisposed || fetchingAction);
 
-    async function onStateClick(
-        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    function makeStateActionEventHandler(
         newState: Exclude<IRoomStates, "STATE_DISPOSED">,
-    ): Promise<void> {
-        if (state === newState) {
-            return;
-        }
+    ): (
+        event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ) => Promise<void> {
+        return async (_event) => {
+            if (state === newState) {
+                return;
+            }
 
-        setFetchingAction(true);
+            setFetchingAction(true);
 
-        await fetch("./presenter/actions/room", {
-            method: "POST",
-            body: buildFormData<IRoomActionFormData>({
-                action: "state.update",
-                state: newState,
-            }),
-        });
+            await fetch("./presenter/actions/room", {
+                method: "POST",
+                body: buildFormData<IRoomActionFormData>({
+                    action: "state.update",
+                    state: newState,
+                }),
+            });
 
-        setFetchingAction(false);
+            setFetchingAction(false);
+        };
     }
+
+    const onLockedStateClick = makeStateActionEventHandler("STATE_LOCKED");
+    const onUnlockedStateClick = makeStateActionEventHandler("STATE_UNLOCKED");
+    const onPermissiveStateClick =
+        makeStateActionEventHandler("STATE_PERMISSIVE");
 
     return (
         <>
@@ -845,7 +853,7 @@ function StateCard() {
                         active={state === "STATE_LOCKED"}
                         disabled={!canFetchAction}
                         colorPalette="red"
-                        onClick={(event) => onStateClick(event, "STATE_LOCKED")}
+                        onClick={onLockedStateClick}
                     >
                         <StateCardIcon>
                             <LockIcon />
@@ -857,9 +865,7 @@ function StateCard() {
                         active={state === "STATE_UNLOCKED"}
                         disabled={!canFetchAction}
                         colorPalette="green"
-                        onClick={(event) =>
-                            onStateClick(event, "STATE_UNLOCKED")
-                        }
+                        onClick={onUnlockedStateClick}
                     >
                         <StateCardIcon>
                             <LockOpenIcon />
@@ -871,9 +877,7 @@ function StateCard() {
                         active={state === "STATE_PERMISSIVE"}
                         disabled={!canFetchAction}
                         colorPalette="yellow"
-                        onClick={(event) =>
-                            onStateClick(event, "STATE_PERMISSIVE")
-                        }
+                        onClick={onPermissiveStateClick}
                     >
                         <StateCardIcon>
                             <NotificationIcon />

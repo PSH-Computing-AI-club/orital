@@ -1,6 +1,8 @@
-import {Box, Container, Image, HStack, Link} from "@chakra-ui/react";
+import {Box, Container, Image, HStack} from "@chakra-ui/react";
 
-import {Link as RouterLink, Outlet} from "react-router";
+import {Outlet} from "react-router";
+
+import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import useObscuredSentinel from "~/hooks/obscured_sentinel";
 
@@ -35,22 +37,13 @@ export default function LandingLayout() {
                     />
 
                     <HStack gap="4" alignItems="center" blockSize="full">
-                        <Link
-                            color="currentcolor"
-                            marginInlineStart="auto"
-                            _hover={{color: "cyan.solid"}}
-                            asChild
-                        >
-                            <RouterLink to="/news">News</RouterLink>
-                        </Link>
+                        <FrontpageShell.InternalLink to="/news">
+                            News
+                        </FrontpageShell.InternalLink>
 
-                        <Link
-                            color="currentcolor"
-                            _hover={{color: "cyan.solid"}}
-                            asChild
-                        >
-                            <RouterLink to="/events">Events</RouterLink>
-                        </Link>
+                        <FrontpageShell.InternalLink to="/events">
+                            Events
+                        </FrontpageShell.InternalLink>
 
                         <Image
                             objectFit="contain"
@@ -58,26 +51,13 @@ export default function LandingLayout() {
                             src="/images/logo.monochrome.light.webp"
                         />
 
-                        <Link
-                            color="currentcolor"
-                            _hover={{color: "cyan.solid"}}
-                            asChild
-                        >
-                            <RouterLink to="/engage" target="_blank">
-                                Engage
-                            </RouterLink>
-                        </Link>
+                        <FrontpageShell.InternalLink to="/engage" isNewTab>
+                            Engage
+                        </FrontpageShell.InternalLink>
 
-                        <Link
-                            color="currentcolor"
-                            marginInlineEnd="auto"
-                            _hover={{color: "cyan.solid"}}
-                            asChild
-                        >
-                            <RouterLink to="/discord" target="_blank">
-                                Discord
-                            </RouterLink>
-                        </Link>
+                        <FrontpageShell.InternalLink to="/discord" isNewTab>
+                            Discord
+                        </FrontpageShell.InternalLink>
                     </HStack>
                 </Container>
             </Box>

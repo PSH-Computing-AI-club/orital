@@ -18,6 +18,7 @@ import {
 import {Link as RouterLink} from "react-router";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
+import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import type {Route} from "./+types/_landing_._index";
 
@@ -361,68 +362,45 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             <VStack gap="2" alignItems="baseline">
                                 <Heading>Club</Heading>
 
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    href="https://github.com/PSH-Computing-AI-Club"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <FrontpageShell.InternalLink
+                                    to="/engage"
+                                    isNewTab
+                                >
+                                    Engage
+                                </FrontpageShell.InternalLink>
+
+                                <FrontpageShell.InternalLink
+                                    to="/discord"
+                                    isNewTab
+                                >
+                                    Discord
+                                </FrontpageShell.InternalLink>
+
+                                <FrontpageShell.InternalLink
+                                    to="/github"
+                                    isNewTab
                                 >
                                     GitHub
-                                </Link>
-
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
-                                >
-                                    <RouterLink to="/engage" target="_blank">
-                                        Engage
-                                    </RouterLink>
-                                </Link>
-
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
-                                >
-                                    <RouterLink to="/discord" target="_blank">
-                                        Discord
-                                    </RouterLink>
-                                </Link>
+                                </FrontpageShell.InternalLink>
                             </VStack>
 
                             <VStack gap="2" alignItems="baseline">
                                 <Heading>Site</Heading>
 
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
-                                >
-                                    <RouterLink to="/news">News</RouterLink>
-                                </Link>
+                                <FrontpageShell.InternalLink to="/news">
+                                    News
+                                </FrontpageShell.InternalLink>
 
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
-                                >
-                                    <RouterLink to="/events">Events</RouterLink>
-                                </Link>
+                                <FrontpageShell.InternalLink to="/events">
+                                    Events
+                                </FrontpageShell.InternalLink>
 
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
+                                <FrontpageShell.InternalLink
+                                    to="/rooms/join"
+                                    isNewTab
                                 >
-                                    <RouterLink
-                                        to="/rooms/join"
-                                        target="_blank"
-                                    >
-                                        Join Room
-                                    </RouterLink>
-                                </Link>
+                                    Join Room
+                                </FrontpageShell.InternalLink>
                             </VStack>
                         </HStack>
                     </Stack>

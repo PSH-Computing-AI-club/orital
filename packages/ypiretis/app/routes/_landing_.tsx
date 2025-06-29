@@ -104,7 +104,9 @@ export default function LandingLayout() {
                             _hover={{color: "cyan.solid"}}
                             asChild
                         >
-                            <RouterLink to="/engage">Engage</RouterLink>
+                            <RouterLink to="/engage" target="_blank">
+                                Engage
+                            </RouterLink>
                         </Link>
 
                         <Link
@@ -113,7 +115,9 @@ export default function LandingLayout() {
                             _hover={{color: "cyan.solid"}}
                             asChild
                         >
-                            <RouterLink to="/discord">Discord</RouterLink>
+                            <RouterLink to="/discord" target="_blank">
+                                Discord
+                            </RouterLink>
                         </Link>
                     </HStack>
                 </Container>

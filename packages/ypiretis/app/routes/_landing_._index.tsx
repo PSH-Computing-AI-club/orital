@@ -359,7 +359,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
 
                         <HStack gap="8" justifyContent="center">
                             <VStack gap="2" alignItems="baseline">
-                                <Heading>Links</Heading>
+                                <Heading>Club</Heading>
 
                                 <Link
                                     color="currentcolor"
@@ -375,13 +375,29 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                                     </RouterLink>
                                 </Link>
 
-                                <span>YouTube</span>
-                                <span>???</span>
-                                <span>Profit!</span>
+                                <Link
+                                    color="currentcolor"
+                                    _hover={{color: "cyan.solid"}}
+                                    asChild
+                                >
+                                    <RouterLink to="/engage" target="_blank">
+                                        Engage
+                                    </RouterLink>
+                                </Link>
+
+                                <Link
+                                    color="currentcolor"
+                                    _hover={{color: "cyan.solid"}}
+                                    asChild
+                                >
+                                    <RouterLink to="/discord" target="_blank">
+                                        Discord
+                                    </RouterLink>
+                                </Link>
                             </VStack>
 
                             <VStack gap="2" alignItems="baseline">
-                                <Heading>Club</Heading>
+                                <Heading>Site</Heading>
 
                                 <Link
                                     color="currentcolor"
@@ -404,16 +420,11 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                                     _hover={{color: "cyan.solid"}}
                                     asChild
                                 >
-                                    <RouterLink to="/engage">Engage</RouterLink>
-                                </Link>
-
-                                <Link
-                                    color="currentcolor"
-                                    _hover={{color: "cyan.solid"}}
-                                    asChild
-                                >
-                                    <RouterLink to="/discord">
-                                        Discord
+                                    <RouterLink
+                                        to="/rooms/join"
+                                        target="_blank"
+                                    >
+                                        Join Room
                                     </RouterLink>
                                 </Link>
                             </VStack>

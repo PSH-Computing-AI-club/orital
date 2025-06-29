@@ -1,7 +1,8 @@
-import {Bleed, Box, Card, Container, Span, Text} from "@chakra-ui/react";
+import {Bleed, Box, Container, Span, Text} from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeatureSection from "~/components/frontpage/feature_section";
+import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
 
 import type {Route} from "./+types/_landing_._index";
@@ -57,58 +58,58 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>
                                         AI Injection Competition
-                                    </Card.Title>
+                                    </FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         November 20th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
 
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>Event 2</Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>Event 2</FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         November ??th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
 
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>Event 3</Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>Event 3</FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         November ??th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>
@@ -142,59 +143,59 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>
                                         Dots and Boxes AI Competition Winner
                                         Announced!
-                                    </Card.Title>
+                                    </FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         September 10th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
 
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>News 2</Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>News 2</FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         September ??th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
 
-                            <Card.Root>
-                                <Card.Body>
-                                    <Card.Title>News 3</Card.Title>
+                            <FeedCard.Root>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>News 3</FeedCard.Title>
 
-                                    <Card.Description>
+                                    <FeedCard.Description>
                                         September ??th, 2025
-                                    </Card.Description>
+                                    </FeedCard.Description>
 
-                                    <Text marginBlockStart="4">
+                                    <FeedCard.Text>
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magnam
                                         aliquam quaerat voluptatem.
-                                    </Text>
-                                </Card.Body>
-                            </Card.Root>
+                                    </FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>

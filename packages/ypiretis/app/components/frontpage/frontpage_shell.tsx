@@ -15,6 +15,10 @@ export interface IFrontpageShellInternalLinkProps extends PropsWithChildren {
     readonly to: To;
 }
 
+export interface IFrontpageShellMailToLinkProps extends PropsWithChildren {
+    readonly to: string;
+}
+
 function FrontpageShellExternalLink(props: IFrontpageShellExternalLinkProps) {
     const {children, to} = props;
 
@@ -25,6 +29,20 @@ function FrontpageShellExternalLink(props: IFrontpageShellExternalLinkProps) {
             href={to}
             target="_blank"
             rel="noopener noreferrer"
+        >
+            {children}
+        </Link>
+    );
+}
+
+function FrontpageShellMailToLink(props: IFrontpageShellMailToLinkProps) {
+    const {children, to} = props;
+
+    return (
+        <Link
+            color="currentcolor"
+            _hover={{color: "cyan.solid"}}
+            href={`mailto:${to}`}
         >
             {children}
         </Link>
@@ -46,6 +64,7 @@ function FrontpageShellInternalLink(props: IFrontpageShellInternalLinkProps) {
 const FrontpageShell = {
     ExternalLink: FrontpageShellExternalLink,
     InternalLink: FrontpageShellInternalLink,
+    MailToLink: FrontpageShellMailToLink,
 } as const;
 
 export default FrontpageShell;

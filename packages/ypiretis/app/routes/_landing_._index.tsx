@@ -5,6 +5,8 @@ import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
 import FeatureSection from "~/components/frontpage/feature_section";
 import FullscreenHero from "~/components/frontpage/fullscreen_hero";
+import PeopleCard from "~/components/frontpage/people_card";
+import PeopleSection from "~/components/frontpage/people_section";
 
 import type {Route} from "./+types/_landing_._index";
 
@@ -40,6 +42,90 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                     </FeatureSection.Body>
                 </FeatureSection.Container>
             </FeatureSection.Root>
+
+            <PeopleSection.Root>
+                <PeopleSection.Container>
+                    <PeopleSection.Body>
+                        <PeopleSection.Title>Club Officers</PeopleSection.Title>
+
+                        <PeopleSection.Description>
+                            We are also ourselves!
+                        </PeopleSection.Description>
+
+                        <PeopleSection.Grid>
+                            <PeopleCard.Root>
+                                <PeopleCard.Body>
+                                    <PeopleCard.Avatar
+                                        name="Alexander Petrov"
+                                        src="/images/landing.avatars.aop5448.webp"
+                                    />
+
+                                    <PeopleCard.Title>
+                                        Alexander O. Petrov
+                                    </PeopleCard.Title>
+
+                                    <PeopleCard.Email email="aop5448@psu.edu" />
+
+                                    <PeopleCard.Text>President</PeopleCard.Text>
+                                </PeopleCard.Body>
+                            </PeopleCard.Root>
+
+                            <PeopleCard.Root>
+                                <PeopleCard.Body>
+                                    <PeopleCard.Avatar
+                                        name="George Bassta"
+                                        src="/images/landing.avatars.aop5448.webp"
+                                    />
+
+                                    <PeopleCard.Title>
+                                        George K. Bassta
+                                    </PeopleCard.Title>
+
+                                    <PeopleCard.Email email="gkb5393@psu.edu" />
+
+                                    <PeopleCard.Text>
+                                        Vice President
+                                    </PeopleCard.Text>
+                                </PeopleCard.Body>
+                            </PeopleCard.Root>
+
+                            <PeopleCard.Root>
+                                <PeopleCard.Body>
+                                    <PeopleCard.Avatar
+                                        name="Ozge Ak"
+                                        src="/images/landing.avatars.aop5448.webp"
+                                    />
+
+                                    <PeopleCard.Title>
+                                        Ozge S. Ak
+                                    </PeopleCard.Title>
+
+                                    <PeopleCard.Email email="osa5177@psu.edu" />
+
+                                    <PeopleCard.Text>Treasurer</PeopleCard.Text>
+                                </PeopleCard.Body>
+                            </PeopleCard.Root>
+
+                            <PeopleCard.Root>
+                                <PeopleCard.Body>
+                                    <PeopleCard.Avatar
+                                        name="Dimitri Nearchos"
+                                        src="/images/landing.avatars.aop5448.webp"
+                                    />
+
+                                    <PeopleCard.Title>
+                                        Dimitri O. Nearchos
+                                    </PeopleCard.Title>
+
+                                    <PeopleCard.Email email="don5092@psu.edu" />
+
+                                    <PeopleCard.Text>Secretary</PeopleCard.Text>
+                                </PeopleCard.Body>
+                            </PeopleCard.Root>
+                        </PeopleSection.Grid>
+                    </PeopleSection.Body>
+                </PeopleSection.Container>
+            </PeopleSection.Root>
 
             <FeedSection.Root>
                 <FeedSection.Container>

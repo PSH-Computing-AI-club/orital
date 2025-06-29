@@ -17,7 +17,8 @@ import {
 import type {MouseEventHandler, PropsWithChildren} from "react";
 import {useState} from "react";
 
-import {useLocation} from "react-router";
+import type {To} from "react-router";
+import {Link, useLocation} from "react-router";
 
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
@@ -26,9 +27,6 @@ import MenuIcon from "~/components/icons/menu_icon";
 
 import {APP_NAME} from "~/utils/constants";
 import {buildAppURL} from "~/utils/url";
-
-import type {To} from "react-router";
-import {Link} from "react-router";
 
 interface IAppShellSidebarContainerProps extends PropsWithChildren {}
 

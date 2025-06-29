@@ -2,6 +2,7 @@ import {Box, Container, Image, HStack, Spacer} from "@chakra-ui/react";
 
 import {Outlet} from "react-router";
 
+import FrontpageFooter from "~/components/frontpage/frontpage_footer";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import useObscuredSentinel from "~/hooks/obscured_sentinel";
@@ -67,6 +68,8 @@ export default function LandingLayout() {
             </Box>
 
             <Outlet />
+
+            <FrontpageFooter />
         </>
     );
 }

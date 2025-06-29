@@ -4,19 +4,13 @@ import {
     Card,
     Container,
     Flex,
-    Heading,
-    HStack,
     Image,
     SimpleGrid,
-    Spacer,
     Span,
-    Stack,
     Text,
-    VStack,
 } from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
-import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import type {Route} from "./+types/_landing_._index";
 
@@ -330,78 +324,6 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             </SimpleGrid>
                         </Card.Body>
                     </Card.Root>
-                </Container>
-            </Flex>
-
-            <Flex
-                bg="bg.inverted"
-                color="fg.inverted"
-                backgroundImage="url('/images/footer.border.webp')"
-                backgroundSize="512px"
-                backgroundRepeat="repeat-x"
-                paddingBlock="8"
-                paddingInline={{base: "4", lgDown: "0"}}
-                blockSize={{base: "sm", smDown: "2xl"}}
-            >
-                <Container marginBlockStart="auto">
-                    <Stack
-                        gap="8"
-                        flexDirection={{base: "row", smDown: "column"}}
-                    >
-                        <Image
-                            objectFit="contain"
-                            blockSize={{base: "3xs", mdDown: "48"}}
-                            src="/images/logo.monochrome.light.webp"
-                        />
-
-                        <Spacer />
-
-                        <HStack gap="8" justifyContent="center">
-                            <VStack gap="2" alignItems="baseline">
-                                <Heading>Club</Heading>
-
-                                <FrontpageShell.InternalLink
-                                    to="/engage"
-                                    isNewTab
-                                >
-                                    Engage
-                                </FrontpageShell.InternalLink>
-
-                                <FrontpageShell.InternalLink
-                                    to="/discord"
-                                    isNewTab
-                                >
-                                    Discord
-                                </FrontpageShell.InternalLink>
-
-                                <FrontpageShell.InternalLink
-                                    to="/github"
-                                    isNewTab
-                                >
-                                    GitHub
-                                </FrontpageShell.InternalLink>
-                            </VStack>
-
-                            <VStack gap="2" alignItems="baseline">
-                                <Heading>Site</Heading>
-
-                                <FrontpageShell.InternalLink to="/news">
-                                    News
-                                </FrontpageShell.InternalLink>
-
-                                <FrontpageShell.InternalLink to="/events">
-                                    Events
-                                </FrontpageShell.InternalLink>
-
-                                <FrontpageShell.InternalLink
-                                    to="/rooms/join"
-                                    isNewTab
-                                >
-                                    Join Room
-                                </FrontpageShell.InternalLink>
-                            </VStack>
-                        </HStack>
-                    </Stack>
                 </Container>
             </Flex>
         </>

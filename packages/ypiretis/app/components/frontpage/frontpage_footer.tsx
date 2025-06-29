@@ -46,16 +46,16 @@ function FrontpageFooterSiteLinks() {
         <>
             <Heading>Site</Heading>
 
+            <FrontpageShell.InternalLink to="/">
+                Home
+            </FrontpageShell.InternalLink>
+
             <FrontpageShell.InternalLink to="/news">
                 News
             </FrontpageShell.InternalLink>
 
             <FrontpageShell.InternalLink to="/events">
                 Events
-            </FrontpageShell.InternalLink>
-
-            <FrontpageShell.InternalLink to="/rooms/join" isNewTab>
-                Join Room
             </FrontpageShell.InternalLink>
         </>
     );

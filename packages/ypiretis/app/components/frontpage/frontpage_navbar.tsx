@@ -121,11 +121,13 @@ export default function FrontpageNavbar() {
 
                         <FrontpageNavbarLeftLinks />
 
-                        <Image
-                            objectFit="contain"
-                            blockSize="16"
-                            src="/images/logo.monochrome.light.webp"
-                        />
+                        <FrontpageShell.InternalLink to="/">
+                            <Image
+                                objectFit="contain"
+                                blockSize="16"
+                                src="/images/logo.monochrome.light.webp"
+                            />
+                        </FrontpageShell.InternalLink>
 
                         <FrontpageNavbarRightLinks />
 

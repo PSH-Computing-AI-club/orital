@@ -7,9 +7,7 @@ export default function LandingLayout() {
     return (
         <>
             <FrontpageNavbar />
-
             <Outlet />
-
             <FrontpageFooter />
         </>
     );

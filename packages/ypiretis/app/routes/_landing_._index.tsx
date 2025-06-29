@@ -1,16 +1,8 @@
-import {
-    Bleed,
-    Box,
-    Card,
-    Container,
-    Flex,
-    SimpleGrid,
-    Span,
-    Text,
-} from "@chakra-ui/react";
+import {Bleed, Box, Card, Container, Span, Text} from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeatureSection from "~/components/frontpage/feature_section";
+import FeedSection from "~/components/frontpage/feed_section";
 
 import type {Route} from "./+types/_landing_._index";
 
@@ -55,101 +47,72 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 </FeatureSection.Container>
             </FeatureSection.Root>
 
-            <Flex
-                alignItems="center"
-                bg="bg.muted"
-                color="fg.inverted"
-                paddingBlock="8"
-                paddingInline={{base: "4", lgDown: "0"}}
-                minBlockSize="xl"
-            >
-                <Container>
-                    <Card.Root
-                        variant="subtle"
-                        gap="8"
-                        bg="transparent"
-                        overflow="hidden"
-                    >
-                        <Card.Body gap="4">
-                            <Card.Title
-                                fontSize={{base: "4xl", lgDown: "3xl"}}
-                                textAlign="center"
-                            >
-                                Events?
-                            </Card.Title>
+            <FeedSection.Root>
+                <FeedSection.Container>
+                    <FeedSection.Body>
+                        <FeedSection.Title>Events?</FeedSection.Title>
 
-                            <Card.Description
-                                fontSize={{base: "2xl", lgDown: "xl"}}
-                                textAlign="center"
-                            >
-                                We got some of those.
-                            </Card.Description>
+                        <FeedSection.Description>
+                            We got some of those.
+                        </FeedSection.Description>
 
-                            <SimpleGrid
-                                columns={{base: 3, lgDown: 2, mdDown: 1}}
-                                gap="8"
-                                marginBlockStart="4"
-                            >
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>
-                                            AI Injection Competition
-                                        </Card.Title>
+                        <FeedSection.Grid>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>
+                                        AI Injection Competition
+                                    </Card.Title>
 
-                                        <Card.Description>
-                                            November 20th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        November 20th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
 
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>Event 2</Card.Title>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>Event 2</Card.Title>
 
-                                        <Card.Description>
-                                            November ??th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        November ??th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
 
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>Event 3</Card.Title>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>Event 3</Card.Title>
 
-                                        <Card.Description>
-                                            November ??th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        November ??th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
-                            </SimpleGrid>
-                        </Card.Body>
-                    </Card.Root>
-                </Container>
-            </Flex>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
+                        </FeedSection.Grid>
+                    </FeedSection.Body>
+                </FeedSection.Container>
+            </FeedSection.Root>
 
             <FeatureSection.Root>
                 <FeatureSection.Container>
@@ -169,102 +132,73 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 </FeatureSection.Container>
             </FeatureSection.Root>
 
-            <Flex
-                alignItems="center"
-                bg="bg.muted"
-                color="fg.inverted"
-                paddingBlock="8"
-                paddingInline={{base: "4", lgDown: "0"}}
-                minBlockSize="xl"
-            >
-                <Container>
-                    <Card.Root
-                        variant="subtle"
-                        gap="8"
-                        bg="transparent"
-                        overflow="hidden"
-                    >
-                        <Card.Body gap="4">
-                            <Card.Title
-                                fontSize={{base: "4xl", lgDown: "3xl"}}
-                                textAlign="center"
-                            >
-                                News?
-                            </Card.Title>
+            <FeedSection.Root>
+                <FeedSection.Container>
+                    <FeedSection.Body>
+                        <FeedSection.Title>News?</FeedSection.Title>
 
-                            <Card.Description
-                                fontSize={{base: "2xl", lgDown: "xl"}}
-                                textAlign="center"
-                            >
-                                Sure, we have our ramblings available.
-                            </Card.Description>
+                        <FeedSection.Description>
+                            Sure, we have our ramblings available.
+                        </FeedSection.Description>
 
-                            <SimpleGrid
-                                columns={{base: 3, lgDown: 2, mdDown: 1}}
-                                gap="8"
-                                marginBlockStart="4"
-                            >
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>
-                                            Dots and Boxes AI Competition Winner
-                                            Announced!
-                                        </Card.Title>
+                        <FeedSection.Grid>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>
+                                        Dots and Boxes AI Competition Winner
+                                        Announced!
+                                    </Card.Title>
 
-                                        <Card.Description>
-                                            September 10th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        September 10th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
 
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>News 2</Card.Title>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>News 2</Card.Title>
 
-                                        <Card.Description>
-                                            September ??th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        September ??th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
 
-                                <Card.Root>
-                                    <Card.Body>
-                                        <Card.Title>News 3</Card.Title>
+                            <Card.Root>
+                                <Card.Body>
+                                    <Card.Title>News 3</Card.Title>
 
-                                        <Card.Description>
-                                            September ??th, 2025
-                                        </Card.Description>
+                                    <Card.Description>
+                                        September ??th, 2025
+                                    </Card.Description>
 
-                                        <Text marginBlockStart="4">
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </Text>
-                                    </Card.Body>
-                                </Card.Root>
-                            </SimpleGrid>
-                        </Card.Body>
-                    </Card.Root>
-                </Container>
-            </Flex>
+                                    <Text marginBlockStart="4">
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magnam
+                                        aliquam quaerat voluptatem.
+                                    </Text>
+                                </Card.Body>
+                            </Card.Root>
+                        </FeedSection.Grid>
+                    </FeedSection.Body>
+                </FeedSection.Container>
+            </FeedSection.Root>
         </>
     );
 }

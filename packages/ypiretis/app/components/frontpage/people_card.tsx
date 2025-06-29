@@ -1,4 +1,4 @@
-import {Avatar, Card, Text} from "@chakra-ui/react";
+import {Avatar, Card, Image, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -32,7 +32,7 @@ function PeopleCardEmail(props: IPeopleCardEmailProps) {
     const {email} = props;
 
     return (
-        <Card.Description color="fg.subtle">
+        <Card.Description color="fg.subtle" zIndex="2">
             <FrontpageShell.MailToLink to={email}>
                 {email}
             </FrontpageShell.MailToLink>
@@ -43,16 +43,29 @@ function PeopleCardEmail(props: IPeopleCardEmailProps) {
 function PeopleCardTitle(props: IPeopleCardTitleProps) {
     const {children} = props;
 
-    return <Card.Title>{children}</Card.Title>;
+    return <Card.Title zIndex="2">{children}</Card.Title>;
 }
 
 function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
     const {name, src} = props;
 
     return (
-        <Avatar.Root blockSize="24" inlineSize="24" marginBlockEnd="4">
-            <Avatar.Image src={src} />
-            <Avatar.Fallback name={name} />
+        <Avatar.Root
+            blockSize="24"
+            inlineSize="24"
+            marginBlockEnd="4"
+            zIndex="1"
+        >
+            <Image
+                src="/images/avatar.halo.webp"
+                position="absolute"
+                blockSize="48"
+                inlineSize="48"
+                maxWidth="unset"
+                zIndex="1"
+            />
+            <Avatar.Image src={src} zIndex="2" />
+            <Avatar.Fallback name={name} zIndex="2" />
         </Avatar.Root>
     );
 }

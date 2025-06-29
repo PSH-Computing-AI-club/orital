@@ -51,8 +51,8 @@ function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
 
     return (
         <Avatar.Root
-            blockSize="24"
-            inlineSize="24"
+            blockSize="32"
+            inlineSize="32"
             marginBlockEnd="4"
             zIndex="1"
         >

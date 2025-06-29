@@ -5,17 +5,17 @@ import type {PropsWithChildren} from "react";
 import type {To} from "react-router";
 import {Link as RouterLink} from "react-router";
 
-export interface IExternalLinkProps extends PropsWithChildren {
+export interface IFrontpageShellExternalLinkProps extends PropsWithChildren {
     readonly to: string;
 }
 
-export interface IInternalLinkProps extends PropsWithChildren {
+export interface IFrontpageShellInternalLinkProps extends PropsWithChildren {
     readonly isNewTab?: boolean;
 
     readonly to: To;
 }
 
-function ExternalLink(props: IExternalLinkProps) {
+function FrontpageShellExternalLink(props: IFrontpageShellExternalLinkProps) {
     const {children, to} = props;
 
     return (
@@ -31,7 +31,7 @@ function ExternalLink(props: IExternalLinkProps) {
     );
 }
 
-function InternalLink(props: IInternalLinkProps) {
+function FrontpageShellInternalLink(props: IFrontpageShellInternalLinkProps) {
     const {children, isNewTab = false, to} = props;
 
     return (
@@ -44,8 +44,8 @@ function InternalLink(props: IInternalLinkProps) {
 }
 
 const FrontpageShell = {
-    ExternalLink,
-    InternalLink,
+    ExternalLink: FrontpageShellExternalLink,
+    InternalLink: FrontpageShellInternalLink,
 } as const;
 
 export default FrontpageShell;

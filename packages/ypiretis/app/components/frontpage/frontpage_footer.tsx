@@ -87,7 +87,7 @@ function FrontpageFooterContainer(props: IFrontpageFooterContainerProps) {
     const {children} = props;
 
     return (
-        <Container marginBlockStart="auto">
+        <Container marginBlockStart="auto" asChild>
             <Stack gap="8" flexDirection={{base: "row", smDown: "column"}}>
                 {children}
             </Stack>

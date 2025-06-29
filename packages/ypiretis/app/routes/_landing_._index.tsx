@@ -4,13 +4,13 @@ import {
     Card,
     Container,
     Flex,
-    Image,
     SimpleGrid,
     Span,
     Text,
 } from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
+import FeatureSection from "~/components/frontpage/feature_section";
 
 import type {Route} from "./+types/_landing_._index";
 
@@ -33,58 +33,27 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 </Box>
             </Bleed>
 
-            <Flex
-                alignItems="center"
-                bg="bg.inverted"
-                color="fg.inverted"
-                paddingBlock="8"
-                paddingInline={{base: "4", lgDown: "0"}}
-                minBlockSize="xl"
-            >
-                <Container>
-                    <Card.Root
-                        variant="subtle"
-                        gap={{base: "8", lgDown: "0"}}
-                        flexDirection={{base: "row", lgDown: "column"}}
-                        alignItems="center"
-                        justifyContent="space-between"
-                        bg="transparent"
-                        overflow="hidden"
-                    >
-                        <Image
-                            objectFit="contain"
-                            inlineSize="full"
-                            maxInlineSize="lg"
-                            src="/images/landing.psh.webp"
-                        />
+            <FeatureSection.Root>
+                <FeatureSection.Container>
+                    <FeatureSection.Image src="/images/landing.psh.webp" />
 
-                        <Card.Body gap="8">
-                            <Card.Title
-                                color="fg.inverted"
-                                fontSize={{base: "4xl", lgDown: "3xl"}}
-                                lineHeight="normal"
-                                textAlign={{base: "inherit", lgDown: "center"}}
-                            >
-                                We Are{" "}
-                                <Span whiteSpace="pre">
-                                    <Span whiteSpace="pre">Penn State</Span>{" "}
-                                    Harrisburg!
-                                </Span>
-                            </Card.Title>
+                    <FeatureSection.Body>
+                        <FeatureSection.Title>
+                            We Are{" "}
+                            <Span whiteSpace="pre">
+                                <Span whiteSpace="pre">Penn State</Span>{" "}
+                                Harrisburg!
+                            </Span>
+                        </FeatureSection.Title>
 
-                            <Card.Description
-                                color="fg.subtle"
-                                fontSize={{base: "2xl", lgDown: "xl"}}
-                            >
-                                The Computing and AI Club provides a friendly
-                                atmosphere for all PSH students to network, hone
-                                their skills, and to have fun all things
-                                computing.
-                            </Card.Description>
-                        </Card.Body>
-                    </Card.Root>
-                </Container>
-            </Flex>
+                        <FeatureSection.Description>
+                            The Computing and AI Club provides a friendly
+                            atmosphere for all PSH students to network, hone
+                            their skills, and to have fun all things computing.
+                        </FeatureSection.Description>
+                    </FeatureSection.Body>
+                </FeatureSection.Container>
+            </FeatureSection.Root>
 
             <Flex
                 alignItems="center"
@@ -182,53 +151,23 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 </Container>
             </Flex>
 
-            <Flex
-                alignItems="center"
-                bg="bg.inverted"
-                color="fg.inverted"
-                paddingBlock="8"
-                paddingInline={{base: "4", lgDown: "0"}}
-                minBlockSize="xl"
-            >
-                <Container>
-                    <Card.Root
-                        variant="subtle"
-                        gap={{base: "8", lgDown: "0"}}
-                        flexDirection={{base: "row", lgDown: "column-reverse"}}
-                        alignItems="center"
-                        justifyContent="space-between"
-                        bg="transparent"
-                        overflow="hidden"
-                    >
-                        <Card.Body gap="8">
-                            <Card.Title
-                                color="fg.inverted"
-                                fontSize={{base: "4xl", lgDown: "3xl"}}
-                                lineHeight="normal"
-                                textAlign={{base: "inherit", lgDown: "center"}}
-                            >
-                                Bi-Weekly Meetings
-                            </Card.Title>
+            <FeatureSection.Root>
+                <FeatureSection.Container>
+                    <FeatureSection.Body>
+                        <FeatureSection.Title>
+                            Bi-Weekly Meetings
+                        </FeatureSection.Title>
 
-                            <Card.Description
-                                color="fg.subtle"
-                                fontSize={{base: "2xl", lgDown: "xl"}}
-                            >
-                                To promote club camaraderie, the Computing and
-                                AI Club hosts bi-weekly meetings every XYZday @
-                                common hour.
-                            </Card.Description>
-                        </Card.Body>
+                        <FeatureSection.Description>
+                            To promote club camaraderie, the Computing and AI
+                            Club hosts bi-weekly meetings every XYZday @ common
+                            hour.
+                        </FeatureSection.Description>
+                    </FeatureSection.Body>
 
-                        <Image
-                            objectFit="contain"
-                            inlineSize="full"
-                            maxInlineSize="lg"
-                            src="/images/landing.calendar.webp"
-                        />
-                    </Card.Root>
-                </Container>
-            </Flex>
+                    <FeatureSection.Image src="/images/landing.calendar.webp" />
+                </FeatureSection.Container>
+            </FeatureSection.Root>
 
             <Flex
                 alignItems="center"

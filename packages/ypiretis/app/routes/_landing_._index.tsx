@@ -1,9 +1,9 @@
 import {Container, Span} from "@chakra-ui/react";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
-import FeatureSection from "~/components/frontpage/feature_section";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
+import FeatureSection from "~/components/frontpage/feature_section";
 import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 
 import type {Route} from "./+types/_landing_._index";

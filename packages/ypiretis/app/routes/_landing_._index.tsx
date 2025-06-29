@@ -364,15 +364,11 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                                 <Link
                                     color="currentcolor"
                                     _hover={{color: "cyan.solid"}}
-                                    asChild
+                                    href="https://github.com/PSH-Computing-AI-Club"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                 >
-                                    <RouterLink
-                                        to="https://github.com/PSH-Computing-AI-Club"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        GitHub
-                                    </RouterLink>
+                                    GitHub
                                 </Link>
 
                                 <Link

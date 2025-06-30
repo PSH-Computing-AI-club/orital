@@ -2,6 +2,8 @@ import {Box} from "@chakra-ui/react";
 
 import {Canvas, useFrame} from "@react-three/fiber";
 
+import {Bloom, EffectComposer, N8AO} from "@react-three/postprocessing";
+
 import type {PropsWithChildren} from "react";
 import {useEffect, useRef} from "react";
 
@@ -106,23 +108,27 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
 
     return (
         <>
-            <ambientLight intensity={Math.PI / 2} />
-
             <spotLight
-                position={[10, 10, 10]}
-                angle={0.15}
+                position={[30, 30, 10]}
+                angle={0.9}
                 penumbra={1}
-                decay={0}
+                decay={0.25}
                 intensity={Math.PI}
             />
 
-            <pointLight
-                position={[-10, -10, -10]}
-                decay={0}
-                intensity={Math.PI}
-            />
+            <pointLight position={[-30, 20, -10]} decay={0.15} intensity={5} />
 
             {children}
+
+            <EffectComposer>
+                <Bloom
+                    luminanceThreshold={0}
+                    luminanceSmoothing={0.9}
+                    height={512}
+                />
+
+                <N8AO quality="performance" aoRadius={20} intensity={2} />
+            </EffectComposer>
         </>
     );
 }

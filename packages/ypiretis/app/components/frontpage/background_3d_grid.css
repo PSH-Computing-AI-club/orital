@@ -29,7 +29,7 @@
         opacity: 1;
     }
 
-    95% {
+    80% {
         --backgrounds--3d-grid--animation--shimmer-start: 55%;
         --backgrounds--3d-grid--animation--shimmer-visible: 60%;
         --backgrounds--3d-grid--animation--shimmer-end: 65%;

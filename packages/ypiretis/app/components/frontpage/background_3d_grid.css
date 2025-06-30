@@ -45,10 +45,22 @@
 }
 
 .backgrounds--3d-grid--root {
+    position: relative;
+
     perspective: 600px;
+
+    overflow: hidden;
 }
 
 .backgrounds--3d-grid--scene {
+    position: absolute;
+
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+
+    block-size: max(100vw, var(--chakra-sizes-8xl));
+    inline-size: max(100vw, var(--chakra-sizes-8xl));
+
     background-image:
         linear-gradient(
             to right,
@@ -70,7 +82,8 @@
         transparent var(--backgrounds--3d-grid--animation--shimmer-end)
     );
 
-    transform: rotate3D(1, 0, 0, 90deg);
+    translate: -50% -75%;
+    transform: rotate3D(1, 0, 0, 80deg);
     transform-origin: bottom center 64px;
 
     animation: backgrounds--3d-grid--animation 2s infinite

@@ -11,25 +11,22 @@ export interface IBackground3DGridRootProps
     extends PropsWithChildren<BoxProps> {}
 
 function Background3DGridScene(props: IBackground3DGridSceneProps) {
-    const {className, inset = "0", position = "absolute"} = props;
+    const {className, ...rest} = props;
 
     return (
         <Box
             className={`backgrounds--3d-grid--scene ${className ?? ""}`}
-            position={position}
-            inset={inset}
+            {...rest}
         />
     );
 }
 
 function Background3DGridRoot(props: IBackground3DGridRootProps) {
-    const {className, children, position = "relative", ...rest} = props;
+    const {className, children, ...rest} = props;
 
     return (
         <Box
             className={`backgrounds--3d-grid--root ${className ?? ""}`}
-            position={position}
-            overflow="hidden"
             asChild
             {...rest}
         >

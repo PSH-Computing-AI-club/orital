@@ -1,5 +1,8 @@
 import {Container, Span} from "@chakra-ui/react";
 
+import {ClientOnly} from "remix-utils/client-only";
+
+import AnimatedLogo from "~/components/frontpage/animated_logo";
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
@@ -17,6 +20,16 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                 <Background3DGrid.Root>
                     <Container flexGrow="1">
                         <Background3DGrid.Scene />
+
+                        <ClientOnly>
+                            {() => (
+                                <AnimatedLogo.Root>
+                                    <AnimatedLogo.Scene>
+                                        <AnimatedLogo.Model />
+                                    </AnimatedLogo.Scene>
+                                </AnimatedLogo.Root>
+                            )}
+                        </ClientOnly>
                     </Container>
                 </Background3DGrid.Root>
             </FullscreenHero.Root>

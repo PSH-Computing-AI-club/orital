@@ -58,7 +58,7 @@
     inset-block-start: 50%;
     inset-inline-start: 50%;
 
-    block-size: max(100vw, var(--chakra-sizes-8xl));
+    aspect-ratio: 1/1;
     inline-size: max(100vw, var(--chakra-sizes-8xl));
 
     background-image:

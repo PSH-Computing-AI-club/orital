@@ -86,7 +86,7 @@
     transform: rotate3D(1, 0, 0, 80deg);
     transform-origin: bottom center 64px;
 
-    animation: backgrounds--3d-grid--animation 2s infinite
+    animation: backgrounds--3d-grid--animation 1.5s infinite
         /* **SOURCE:** https://easings.net/#easeOutCirc */
         cubic-bezier(0, 0.55, 0.45, 1);
 }

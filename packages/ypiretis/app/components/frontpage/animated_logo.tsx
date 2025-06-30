@@ -15,10 +15,10 @@ const ANIMATION_BOUNCE_START = -1;
 
 const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
 
-function easeOutCirc(x: number): number {
-    // **SOURCE:** https://easings.net/#easeOutCirc
+function easeOutQuad(x: number): number {
+    // **SOURCE:** https://easings.net/#easeOutQuad
 
-    return Math.sqrt(1 - Math.pow(x - 1, 2));
+    return 1 - (1 - x) * (1 - x);
 }
 
 function AnimatedLogoModel() {
@@ -66,7 +66,7 @@ function AnimatedLogoModel() {
         const animationProgress =
             animationEffect.getComputedTiming().progress ?? 0;
 
-        const bounceMultiplier = easeOutCirc(
+        const bounceMultiplier = easeOutQuad(
             1 - 2 * Math.abs(animationProgress - 0.5),
         );
 

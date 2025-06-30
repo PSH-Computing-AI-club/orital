@@ -1,24 +1,36 @@
-import {Canvas, useFrame} from "@react-three/fiber";
+import {Box} from "@chakra-ui/react";
 
-import type {Mesh} from "three";
+import {Canvas, useFrame} from "@react-three/fiber";
 
 import type {PropsWithChildren} from "react";
 import {useEffect, useRef} from "react";
+
+import type {Mesh} from "three";
+
+import Logo3DModel from "~/components/models/Logo3DModel";
 
 export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
-const ANIMATION_BOUNCE_HEIGHT = 0.5;
+const ANIMATION_BOUNCE_HEIGHT = 5;
 
-const ANIMATION_BOUNCE_START = -1;
+const ANIMATION_BOUNCE_START = -5;
 
 const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
+
+const BREAKPOINT_WIDTH_SM = 480;
+
+const BREAKPOINT_WIDTH_MD = 768;
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad
 
     return 1 - (1 - x) * (1 - x);
+}
+
+function isBreakpoint(breakpoint: number): boolean {
+    return window.innerWidth <= breakpoint;
 }
 
 function AnimatedLogoModel() {
@@ -59,7 +71,19 @@ function AnimatedLogoModel() {
         const {current: animationEffect} = animationEffectRef;
         const {current: mesh} = meshRef;
 
-        if (!animationEffect || !mesh) {
+        if (!mesh) {
+            return;
+        }
+
+        if (isBreakpoint(BREAKPOINT_WIDTH_SM)) {
+            mesh.scale.setScalar(1.25);
+        } else if (isBreakpoint(BREAKPOINT_WIDTH_MD)) {
+            mesh.scale.setScalar(1.5);
+        } else {
+            mesh.scale.setScalar(1.75);
+        }
+
+        if (!animationEffect) {
             return;
         }
 
@@ -74,12 +98,7 @@ function AnimatedLogoModel() {
             ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_HEIGHT * bounceMultiplier;
     });
 
-    return (
-        <mesh ref={meshRef} position={[0, 0, -1]} scale={0.5}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="orange" />
-        </mesh>
-    );
+    return <Logo3DModel ref={meshRef} position={[0, 0, -30]} />;
 }
 
 function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
@@ -111,7 +130,18 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
 function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
     const {children} = props;
 
-    return <Canvas>{children}</Canvas>;
+    return (
+        <Box
+            position="absolute"
+            insetBlockStart="50%"
+            insetInlineStart="50%"
+            blockSize="lg"
+            inlineSize="lg"
+            translate="-50% -50%"
+        >
+            <Canvas>{children}</Canvas>
+        </Box>
+    );
 }
 
 const AnimatedLogo = {

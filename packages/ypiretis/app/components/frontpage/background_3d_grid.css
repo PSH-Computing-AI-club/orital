@@ -83,8 +83,8 @@
     );
 
     translate: -50% -75%;
-    transform: rotate3D(1, 0, 0, 80deg);
-    transform-origin: bottom center 64px;
+    transform: rotate3D(1, 0, 0, 90deg);
+    transform-origin: bottom center 128px;
 
     animation: backgrounds--3d-grid--animation 1.5s infinite
         /* **SOURCE:** https://easings.net/#easeOutCirc */

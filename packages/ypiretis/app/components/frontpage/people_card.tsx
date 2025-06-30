@@ -59,8 +59,8 @@ function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
             <Image
                 src="/images/avatar.halo.webp"
                 position="absolute"
-                blockSize="48"
-                inlineSize="48"
+                blockSize="52"
+                inlineSize="52"
                 maxWidth="unset"
                 zIndex="1"
             />

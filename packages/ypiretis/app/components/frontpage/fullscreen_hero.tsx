@@ -14,7 +14,7 @@ function FullscreenHeroRoot(props: IFullscreenHeroRootProps) {
                 bg="bg.inverted"
                 color="fg.inverted"
                 paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8))"
-                minBlockSize="dvh"
+                blockSize="dvh"
             >
                 {children}
             </Box>

@@ -24,6 +24,7 @@
         "@react-router/fs-routes": "^7.6.1",
         "@react-three/drei": "^10.3.0",
         "@react-three/fiber": "^9.1.4",
+        "@react-three/postprocessing": "^3.0.4",
         "croner": "^9.0.0",
         "drizzle-orm": "^0.43.1",
         "fastq": "^1.19.1",

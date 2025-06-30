@@ -22,6 +22,7 @@
         "@emotion/server": "^11.11.0",
         "@js-temporal/polyfill": "^0.5.1",
         "@react-router/fs-routes": "^7.6.1",
+        "@react-three/drei": "^10.3.0",
         "@react-three/fiber": "^9.1.4",
         "croner": "^9.0.0",
         "drizzle-orm": "^0.43.1",
@@ -36,6 +37,7 @@
         "react-router-hono-server": "^2.13.0",
         "remix-utils": "^8.7.0",
         "three": "^0.178.0",
+        "three-stdlib": "^2.36.0",
         "ulid": "^3.0.0",
         "use-mask-input": "^3.4.2",
         "valibot": "^1.1.0"

@@ -1,3 +1,49 @@
+@property --backgrounds--3d-grid--animation--shimmer-start {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: -5%;
+}
+
+@property --backgrounds--3d-grid--animation--shimmer-visible {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+
+@property --backgrounds--3d-grid--animation--shimmer-end {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 5%;
+}
+
+@keyframes backgrounds--3d-grid--animation {
+    0% {
+        --backgrounds--3d-grid--animation--shimmer-start: -5%;
+        --backgrounds--3d-grid--animation--shimmer-visible: 0%;
+        --backgrounds--3d-grid--animation--shimmer-end: 5%;
+
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    95% {
+        --backgrounds--3d-grid--animation--shimmer-start: 55%;
+        --backgrounds--3d-grid--animation--shimmer-visible: 60%;
+        --backgrounds--3d-grid--animation--shimmer-end: 65%;
+    }
+
+    100% {
+        --backgrounds--3d-grid--animation--shimmer-start: 65%;
+        --backgrounds--3d-grid--animation--shimmer-visible: 65%;
+        --backgrounds--3d-grid--animation--shimmer-end: 60%;
+
+        opacity: 0;
+    }
+}
+
 .backgrounds--3d-grid--root {
     perspective: 600px;
 }
@@ -17,8 +63,31 @@
     background-size: 64px 64px;
     background-position: center;
 
-    mask-image: radial-gradient(ellipse at 50% 50%, white 35%, transparent 65%);
+    mask-image: radial-gradient(
+        ellipse at 50% 50%,
+        transparent var(--backgrounds--3d-grid--animation--shimmer-start),
+        white var(--backgrounds--3d-grid--animation--shimmer-visible),
+        transparent var(--backgrounds--3d-grid--animation--shimmer-end)
+    );
 
-    transform: rotate3D(1, 0, 0, 75deg);
+    transform: rotate3D(1, 0, 0, 90deg);
     transform-origin: bottom center 64px;
+
+    animation: backgrounds--3d-grid--animation 2s infinite
+        /* **SOURCE:** https://easings.net/#easeOutCirc */
+        cubic-bezier(0, 0.55, 0.45, 1);
+}
+
+@media only screen and (max-width: 768px) {
+    .backgrounds--3d-grid--scene {
+        background-size: 48px 48px;
+        transform-origin: bottom center 48px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .backgrounds--3d-grid--scene {
+        background-size: 32px 32px;
+        transform-origin: bottom center 32px;
+    }
 }

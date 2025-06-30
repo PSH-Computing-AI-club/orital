@@ -56,7 +56,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             <PeopleCard.Root>
                                 <PeopleCard.Body>
                                     <PeopleCard.Avatar
-                                        name="Alexander Petrov"
+                                        name="Alexander O. Petrov"
                                         src="/images/landing.avatars.aop5448.webp"
                                     />
 
@@ -73,7 +73,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             <PeopleCard.Root>
                                 <PeopleCard.Body>
                                     <PeopleCard.Avatar
-                                        name="George Bassta"
+                                        name="George K. Bassta"
                                         src="/images/landing.avatars.aop5448.webp"
                                     />
 
@@ -92,7 +92,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             <PeopleCard.Root>
                                 <PeopleCard.Body>
                                     <PeopleCard.Avatar
-                                        name="Ozge Ak"
+                                        name="Ozge S. Ak"
                                         src="/images/landing.avatars.aop5448.webp"
                                     />
 
@@ -109,7 +109,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                             <PeopleCard.Root>
                                 <PeopleCard.Body>
                                     <PeopleCard.Avatar
-                                        name="Dimitri Nearchos"
+                                        name="Dimitri O. Nearchos"
                                         src="/images/landing.avatars.don5092.webp"
                                     />
 

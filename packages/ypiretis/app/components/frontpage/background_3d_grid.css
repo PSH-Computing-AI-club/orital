@@ -73,7 +73,7 @@
             transparent 4px
         );
     background-size: 64px 64px;
-    background-position: center;
+    background-position: center bottom;
 
     mask-image: radial-gradient(
         ellipse at 50% 50%,

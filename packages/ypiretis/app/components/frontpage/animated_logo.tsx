@@ -13,6 +13,8 @@ const ANIMATION_BOUNCE_HEIGHT = 0.5;
 
 const ANIMATION_BOUNCE_START = -1;
 
+const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
+
 function easeOutCirc(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutCirc
 
@@ -25,7 +27,7 @@ function AnimatedLogoModel() {
 
     useEffect(() => {
         const backgroundElement = document.querySelector(
-            ".backgrounds--3d-grid--scene",
+            ANIMATION_BACKGROUND_SCENE_SELECTOR,
         );
 
         if (!backgroundElement) {
@@ -64,10 +66,12 @@ function AnimatedLogoModel() {
         const animationProgress =
             animationEffect.getComputedTiming().progress ?? 0;
 
-        const animationDelta = Math.sin(animationProgress * Math.PI);
+        const bounceMultiplier = easeOutCirc(
+            1 - 2 * Math.abs(animationProgress - 0.5),
+        );
 
         mesh.position.y =
-            ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_HEIGHT * animationDelta;
+            ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_HEIGHT * bounceMultiplier;
     });
 
     return (

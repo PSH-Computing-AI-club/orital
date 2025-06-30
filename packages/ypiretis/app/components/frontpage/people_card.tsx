@@ -1,4 +1,4 @@
-import {Avatar, Card, Image, Text} from "@chakra-ui/react";
+import {Avatar, Box, Card, Image, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -32,7 +32,7 @@ function PeopleCardEmail(props: IPeopleCardEmailProps) {
     const {email} = props;
 
     return (
-        <Card.Description color="fg.subtle" zIndex="2">
+        <Card.Description color="fg.subtle">
             <FrontpageShell.MailToLink to={email}>
                 {email}
             </FrontpageShell.MailToLink>
@@ -43,7 +43,7 @@ function PeopleCardEmail(props: IPeopleCardEmailProps) {
 function PeopleCardTitle(props: IPeopleCardTitleProps) {
     const {children} = props;
 
-    return <Card.Title zIndex="2">{children}</Card.Title>;
+    return <Card.Title>{children}</Card.Title>;
 }
 
 function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
@@ -51,21 +51,30 @@ function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
 
     return (
         <Avatar.Root
+            bg="transparent"
             blockSize="32"
             inlineSize="32"
             marginBlockEnd="4"
-            zIndex="1"
+            _before={{
+                content: '""',
+
+                position: "absolute",
+                insetBlockStart: "-40px",
+                insetInlineStart: "-40px",
+
+                blockSize: "208px",
+                inlineSize: "208px",
+
+                bgImage: "url('/images/avatar.halo.webp')",
+                bgSize: "208px",
+                bgPos: "center",
+                bgRepeat: "no-repeat",
+
+                zIndex: -1,
+            }}
         >
-            <Image
-                src="/images/avatar.halo.webp"
-                position="absolute"
-                blockSize="52"
-                inlineSize="52"
-                maxWidth="unset"
-                zIndex="1"
-            />
-            <Avatar.Image src={src} zIndex="2" />
-            <Avatar.Fallback name={name} zIndex="2" />
+            <Avatar.Image src={src} />
+            <Avatar.Fallback name={name} />
         </Avatar.Root>
     );
 }
@@ -85,6 +94,7 @@ function PeopleCardRoot(props: IPeopleCardRootProps) {
             bg="transparent"
             color="fg.inverted"
             textAlign="center"
+            isolation="isolate"
         >
             {children}
         </Card.Root>

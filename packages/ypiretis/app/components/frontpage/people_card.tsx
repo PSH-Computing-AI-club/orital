@@ -72,9 +72,19 @@ function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
 
                 zIndex: -1,
             }}
+            _after={{
+                content: '""',
+
+                position: "absolute",
+                inset: "0",
+
+                bg: "bg.muted",
+
+                zIndex: -1,
+            }}
         >
-            <Avatar.Image src={src} />
             <Avatar.Fallback name={name} />
+            <Avatar.Image src={src} />
         </Avatar.Root>
     );
 }

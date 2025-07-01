@@ -21,7 +21,7 @@ function PeopleSectionGrid(props: IPeopleSectionGridProps) {
         <SimpleGrid
             columns={{base: 4, xlDown: 2, mdDown: 1}}
             gap="8"
-            marginBlockStart="4"
+            marginBlockStart="8"
         >
             {children}
         </SimpleGrid>

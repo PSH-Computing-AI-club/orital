@@ -4,6 +4,8 @@ import {Canvas, useFrame} from "@react-three/fiber";
 
 import {Bloom, EffectComposer, N8AO} from "@react-three/postprocessing";
 
+import {KernelSize} from "postprocessing";
+
 import type {PropsWithChildren} from "react";
 import {useEffect, useRef} from "react";
 
@@ -138,25 +140,44 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
     return (
         <>
             <spotLight
-                position={[30, 30, 10]}
+                position={[12, -20, 34]}
                 angle={0.9}
                 penumbra={1}
-                decay={0.25}
-                intensity={Math.PI}
+                decay={0}
+                intensity={2}
+                castShadow={false}
             />
 
-            <pointLight position={[-30, 20, -10]} decay={0.15} intensity={5} />
+            <pointLight
+                position={[-0, -30, 12]}
+                decay={0.3}
+                intensity={6}
+                distance={-2}
+                castShadow={false}
+            />
 
             {children}
 
-            <EffectComposer>
+            <EffectComposer
+                depthBuffer={true}
+                enableNormalPass={true}
+                multisampling={8}
+                stencilBuffer={false}
+            >
                 <Bloom
-                    luminanceThreshold={0}
+                    luminanceThreshold={0.2}
                     luminanceSmoothing={0.9}
                     height={512}
+                    kernelSize={KernelSize.SMALL}
+                    mipmapBlur
                 />
 
-                <N8AO quality="performance" aoRadius={20} intensity={2} />
+                <N8AO
+                    quality="performance"
+                    aoRadius={10}
+                    intensity={2}
+                    screenSpaceRadius
+                />
             </EffectComposer>
         </>
     );

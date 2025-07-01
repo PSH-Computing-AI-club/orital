@@ -16,7 +16,7 @@ import {useEffect, useRef} from "react";
 
 import type {Mesh} from "three";
 
-import Logo3DModel from "~/components/models/Logo3DModel";
+import Logo3DModel from "~/components/models/logo_3d_model";
 
 export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 

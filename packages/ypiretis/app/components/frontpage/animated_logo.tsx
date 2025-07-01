@@ -2,9 +2,14 @@ import {Box} from "@chakra-ui/react";
 
 import {Canvas, useFrame} from "@react-three/fiber";
 
-import {Bloom, EffectComposer, N8AO} from "@react-three/postprocessing";
+import {
+    Bloom,
+    EffectComposer,
+    N8AO,
+    ToneMapping,
+} from "@react-three/postprocessing";
 
-import {KernelSize} from "postprocessing";
+import {KernelSize, ToneMappingMode} from "postprocessing";
 
 import type {PropsWithChildren} from "react";
 import {useEffect, useRef} from "react";
@@ -167,7 +172,7 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
                 <Bloom
                     luminanceThreshold={0.2}
                     luminanceSmoothing={0.9}
-                    height={512}
+                    height={256}
                     kernelSize={KernelSize.SMALL}
                     mipmapBlur
                 />
@@ -177,6 +182,11 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
                     aoRadius={10}
                     intensity={2}
                     screenSpaceRadius
+                />
+
+                <ToneMapping
+                    mode={ToneMappingMode.OPTIMIZED_CINEON}
+                    resolution={256}
                 />
             </EffectComposer>
         </>

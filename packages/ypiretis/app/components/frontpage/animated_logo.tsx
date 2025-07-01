@@ -36,6 +36,8 @@ const BREAKPOINT_WIDTH_MD = 768;
 
 const BREAKPOINT_WIDTH_SM = 480;
 
+const GRID_COLOR = "#0c5c72";
+
 const MESH_SCALE_DEFAULT = 1.75;
 
 const MESH_SCALE_MD = 1.5;
@@ -173,6 +175,7 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
                     quality="performance"
                     aoRadius={10}
                     intensity={2}
+                    color={GRID_COLOR}
                     screenSpaceRadius
                 />
 

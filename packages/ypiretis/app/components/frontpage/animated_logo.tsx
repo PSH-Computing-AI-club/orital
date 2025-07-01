@@ -15,11 +15,15 @@ export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
-const ANIMATION_BOUNCE_HEIGHT = 5;
-
 const ANIMATION_BOUNCE_START = -5;
 
+const ANIMATION_BOUNCE_STRENGTH = 5;
+
 const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
+
+const ANIMATION_PIVOT_START = 0;
+
+const ANIMATION_PIVOT_STRENGTH = 0.015;
 
 const BREAKPOINT_WIDTH_SM = 480;
 
@@ -89,15 +93,34 @@ function AnimatedLogoModel() {
             return;
         }
 
-        const animationProgress =
-            animationEffect.getComputedTiming().progress ?? 0;
+        const timing = animationEffect.getComputedTiming();
 
-        const bounceMultiplier = easeOutQuad(
-            1 - 2 * Math.abs(animationProgress - 0.5),
-        );
+        const currentIteration = timing.currentIteration ?? 0;
+        const progress = timing.progress ?? 0;
+
+        const isFirstPassPivot = currentIteration % 2;
+        const firstPassPivotMultiplier = isFirstPassPivot ? -1 : 1;
+
+        const bounceMultiplier = 1 - 2 * Math.abs(progress - 0.5);
+        const bounceEasing = easeOutQuad(bounceMultiplier);
 
         mesh.position.y =
-            ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_HEIGHT * bounceMultiplier;
+            ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_STRENGTH * bounceEasing;
+
+        mesh.rotation.x =
+            ANIMATION_PIVOT_START +
+            ANIMATION_PIVOT_STRENGTH * bounceEasing * -2;
+
+        mesh.rotation.y =
+            ANIMATION_PIVOT_START +
+            ANIMATION_PIVOT_STRENGTH *
+                bounceEasing *
+                -2 *
+                firstPassPivotMultiplier;
+
+        mesh.rotation.z =
+            ANIMATION_PIVOT_START +
+            ANIMATION_PIVOT_STRENGTH * bounceEasing * firstPassPivotMultiplier;
     });
 
     return <Logo3DModel ref={meshRef} position={[0, 0, -30]} />;

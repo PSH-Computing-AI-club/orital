@@ -22,9 +22,13 @@ export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
-const ANIMATION_BOUNCE_START = -5;
+const ANIMATION_BOUNCE_START_X = 0;
 
-const ANIMATION_BOUNCE_STRENGTH = 10;
+const ANIMATION_BOUNCE_START_Y = -5;
+
+const ANIMATION_BOUNCE_STRENGTH_X = 2;
+
+const ANIMATION_BOUNCE_STRENGTH_Y = 10;
 
 const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
 
@@ -119,8 +123,15 @@ function AnimatedLogoModel() {
         const bounceMultiplier = 1 - 2 * Math.abs(progress - 0.5);
         const bounceEasing = easeOutQuad(bounceMultiplier);
 
+        mesh.position.x =
+            ANIMATION_BOUNCE_START_X -
+            ANIMATION_BOUNCE_STRENGTH_X *
+                bounceEasing *
+                firstPassPivotMultiplier;
+
         mesh.position.y =
-            ANIMATION_BOUNCE_START + ANIMATION_BOUNCE_STRENGTH * bounceEasing;
+            ANIMATION_BOUNCE_START_Y +
+            ANIMATION_BOUNCE_STRENGTH_Y * bounceEasing;
 
         mesh.rotation.x =
             ANIMATION_PIVOT_START +

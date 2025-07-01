@@ -17,13 +17,13 @@ export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
 const ANIMATION_BOUNCE_START = -5;
 
-const ANIMATION_BOUNCE_STRENGTH = 5;
+const ANIMATION_BOUNCE_STRENGTH = 10;
 
 const ANIMATION_BACKGROUND_SCENE_SELECTOR = ".backgrounds--3d-grid--scene";
 
 const ANIMATION_PIVOT_START = 0;
 
-const ANIMATION_PIVOT_STRENGTH = 0.015;
+const ANIMATION_PIVOT_STRENGTH = 0.025;
 
 const BREAKPOINT_WIDTH_SM = 480;
 

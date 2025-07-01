@@ -169,19 +169,19 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
                 multisampling={8}
                 stencilBuffer={false}
             >
+                <N8AO
+                    quality="performance"
+                    aoRadius={10}
+                    intensity={2}
+                    screenSpaceRadius
+                />
+
                 <Bloom
                     luminanceThreshold={0.2}
                     luminanceSmoothing={0.9}
                     height={256}
                     kernelSize={KernelSize.SMALL}
                     mipmapBlur
-                />
-
-                <N8AO
-                    quality="performance"
-                    aoRadius={10}
-                    intensity={2}
-                    screenSpaceRadius
                 />
 
                 <ToneMapping

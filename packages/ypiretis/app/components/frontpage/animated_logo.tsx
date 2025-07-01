@@ -15,7 +15,7 @@ export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
-const ANIMATION_BOUNCE_START = -6;
+const ANIMATION_BOUNCE_START = -5;
 
 const ANIMATION_BOUNCE_STRENGTH = 10;
 
@@ -29,11 +29,11 @@ const BREAKPOINT_WIDTH_MD = 768;
 
 const BREAKPOINT_WIDTH_SM = 480;
 
-const MESH_SCALE_DEFAULT = 1.7;
+const MESH_SCALE_DEFAULT = 1.75;
 
-const MESH_SCALE_MD = 1.3;
+const MESH_SCALE_MD = 1.5;
 
-const MESH_SCALE_SM = 1.2;
+const MESH_SCALE_SM = 1.25;
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad
@@ -129,7 +129,7 @@ function AnimatedLogoModel() {
             ANIMATION_PIVOT_STRENGTH * bounceEasing * firstPassPivotMultiplier;
     });
 
-    return <Logo3DModel ref={meshRef} position={[0, 0, -30]} />;
+    return <Logo3DModel ref={meshRef} position={[0, 0, 0]} />;
 }
 
 function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
@@ -170,11 +170,13 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             position="absolute"
             insetBlockStart="50%"
             insetInlineStart="50%"
-            blockSize="lg"
-            inlineSize="lg"
+            blockSize="xl"
+            inlineSize="xl"
             translate="-50% -50%"
         >
-            <Canvas>{children}</Canvas>
+            <Canvas camera={{aspect: 1, position: [0, 0, 40]}}>
+                {children}
+            </Canvas>
         </Box>
     );
 }

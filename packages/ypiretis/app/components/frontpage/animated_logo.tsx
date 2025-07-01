@@ -1,5 +1,8 @@
 import {Box} from "@chakra-ui/react";
 
+import type {PerformanceMonitorApi} from "@react-three/drei";
+import {PerformanceMonitor} from "@react-three/drei";
+
 import {Canvas, useFrame} from "@react-three/fiber";
 
 import {
@@ -12,13 +15,11 @@ import {
 import {KernelSize, ToneMappingMode} from "postprocessing";
 
 import type {PropsWithChildren} from "react";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import type {Mesh} from "three";
 
 import Logo3DModel from "~/components/models/logo_3d_model";
-
-export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
@@ -152,9 +153,7 @@ function AnimatedLogoModel() {
     return <Logo3DModel ref={meshRef} position={[0, 0, 0]} />;
 }
 
-function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
-    const {children} = props;
-
+function AnimatedLogoLights() {
     return (
         <>
             <spotLight
@@ -173,36 +172,73 @@ function AnimatedLogoScene(props: IAnimatedLogoSceneProps) {
                 distance={-2}
                 castShadow={false}
             />
+        </>
+    );
+}
 
-            {children}
+function AnimatedLogoEffects() {
+    const [hasDegradedPerformance, setHasDegradedPerformance] =
+        useState<boolean>(false);
+
+    function onPerformanceDecline(_api: PerformanceMonitorApi): void {
+        setHasDegradedPerformance(true);
+    }
+
+    function onPerformanceIncline(_api: PerformanceMonitorApi): void {
+        setHasDegradedPerformance(false);
+    }
+
+    return (
+        <>
+            <PerformanceMonitor
+                onDecline={onPerformanceDecline}
+                onIncline={onPerformanceIncline}
+            />
 
             <EffectComposer
                 depthBuffer={true}
                 enableNormalPass={true}
-                multisampling={8}
+                multisampling={hasDegradedPerformance ? 0 : 8}
                 stencilBuffer={false}
+                enabled
             >
-                <N8AO
-                    quality="performance"
-                    aoRadius={10}
-                    intensity={2}
-                    color={GRID_COLOR}
-                    screenSpaceRadius
-                />
-
-                <Bloom
-                    luminanceThreshold={0.2}
-                    luminanceSmoothing={0.9}
-                    height={256}
-                    kernelSize={KernelSize.SMALL}
-                    mipmapBlur
-                />
-
                 <ToneMapping
                     mode={ToneMappingMode.OPTIMIZED_CINEON}
-                    resolution={256}
+                    resolution={512}
                 />
+
+                {!hasDegradedPerformance ? (
+                    <>
+                        <N8AO
+                            quality="performance"
+                            aoRadius={10}
+                            intensity={2}
+                            color={GRID_COLOR}
+                            screenSpaceRadius
+                        />
+
+                        <Bloom
+                            luminanceThreshold={0.3}
+                            luminanceSmoothing={0.9}
+                            height={512}
+                            kernelSize={KernelSize.LARGE}
+                            mipmapBlur
+                        />
+                    </>
+                ) : (
+                    <></>
+                )}
             </EffectComposer>
+        </>
+    );
+}
+
+function AnimatedLogoScene() {
+    return (
+        <>
+            <AnimatedLogoLights />
+            <AnimatedLogoModel />
+            <AnimatedLogoEffects />
         </>
     );
 }
@@ -220,6 +256,7 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             translate="-50% -50%"
         >
             <Canvas
+                frameloop="always"
                 camera={{
                     aspect: 1,
                     far: 50,
@@ -237,7 +274,6 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
 }
 
 const AnimatedLogo = {
-    Model: AnimatedLogoModel,
     Scene: AnimatedLogoScene,
     Root: AnimatedLogoRoot,
 } as const;

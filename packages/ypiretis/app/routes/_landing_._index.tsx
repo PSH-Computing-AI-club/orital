@@ -24,9 +24,7 @@ export default function LandingIndex(_props: Route.ComponentProps) {
                         <ClientOnly>
                             {() => (
                                 <AnimatedLogo.Root>
-                                    <AnimatedLogo.Scene>
-                                        <AnimatedLogo.Model />
-                                    </AnimatedLogo.Scene>
+                                    <AnimatedLogo.Scene />
                                 </AnimatedLogo.Root>
                             )}
                         </ClientOnly>

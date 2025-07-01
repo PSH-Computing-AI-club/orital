@@ -1,8 +1,9 @@
 import {Container, Span} from "@chakra-ui/react";
 
+import {Suspense, lazy} from "react";
+
 import {ClientOnly} from "remix-utils/client-only";
 
-import AnimatedLogo from "~/components/frontpage/animated_logo";
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
@@ -13,19 +14,20 @@ import PeopleSection from "~/components/frontpage/people_section";
 
 import type {Route} from "./+types/_landing_._index";
 
+const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
+
 export default function LandingIndex(_props: Route.ComponentProps) {
     return (
         <>
             <FullscreenHero.Root>
                 <Background3DGrid.Root>
                     <Container flexGrow="1">
-                        <Background3DGrid.Scene />
-
                         <ClientOnly>
                             {() => (
-                                <AnimatedLogo.Root>
-                                    <AnimatedLogo.Scene />
-                                </AnimatedLogo.Root>
+                                <Suspense>
+                                    <Background3DGrid.Scene />
+                                    <AnimatedLogo />
+                                </Suspense>
                             )}
                         </ClientOnly>
                     </Container>

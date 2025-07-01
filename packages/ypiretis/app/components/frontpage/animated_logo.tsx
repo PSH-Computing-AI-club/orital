@@ -287,9 +287,10 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
     );
 }
 
-const AnimatedLogo = {
-    Scene: AnimatedLogoScene,
-    Root: AnimatedLogoRoot,
-} as const;
-
-export default AnimatedLogo;
+export default function AnimatedLogo() {
+    return (
+        <AnimatedLogoRoot>
+            <AnimatedLogoScene />
+        </AnimatedLogoRoot>
+    );
+}

@@ -15,7 +15,7 @@ export interface IAnimatedLogoSceneProps extends PropsWithChildren {}
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
-const ANIMATION_BOUNCE_START = -5;
+const ANIMATION_BOUNCE_START = -6;
 
 const ANIMATION_BOUNCE_STRENGTH = 10;
 

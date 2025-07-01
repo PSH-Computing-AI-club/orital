@@ -1,7 +1,7 @@
 import {Box} from "@chakra-ui/react";
 
 import type {PerformanceMonitorApi} from "@react-three/drei";
-import {PerformanceMonitor} from "@react-three/drei";
+import {Html, PerformanceMonitor, useProgress} from "@react-three/drei";
 
 import {Canvas, useFrame} from "@react-three/fiber";
 
@@ -15,7 +15,7 @@ import {
 import {KernelSize, ToneMappingMode} from "postprocessing";
 
 import type {PropsWithChildren} from "react";
-import {useEffect, useRef, useState} from "react";
+import {Suspense, useEffect, useRef, useState} from "react";
 
 import type {Mesh} from "three";
 
@@ -57,6 +57,16 @@ function easeOutQuad(x: number): number {
 
 function isBreakpoint(breakpoint: number): boolean {
     return window.innerWidth <= breakpoint;
+}
+
+function AnimatedLogoLoader() {
+    const {progress} = useProgress();
+
+    return (
+        <Html center>
+            <span>{progress.toFixed(0)}% loaded</span>
+        </Html>
+    );
 }
 
 function AnimatedLogoModel() {
@@ -237,7 +247,11 @@ function AnimatedLogoScene() {
     return (
         <>
             <AnimatedLogoLights />
-            <AnimatedLogoModel />
+
+            <Suspense fallback={<AnimatedLogoLoader />}>
+                <AnimatedLogoModel />
+            </Suspense>
+
             <AnimatedLogoEffects />
         </>
     );

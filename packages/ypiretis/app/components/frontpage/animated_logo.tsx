@@ -25,9 +25,15 @@ const ANIMATION_PIVOT_START = 0;
 
 const ANIMATION_PIVOT_STRENGTH = 0.025;
 
+const BREAKPOINT_WIDTH_MD = 768;
+
 const BREAKPOINT_WIDTH_SM = 480;
 
-const BREAKPOINT_WIDTH_MD = 768;
+const MESH_SCALE_DEFAULT = 1.75;
+
+const MESH_SCALE_MD = 1.5;
+
+const MESH_SCALE_SM = 1.25;
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad
@@ -82,11 +88,11 @@ function AnimatedLogoModel() {
         }
 
         if (isBreakpoint(BREAKPOINT_WIDTH_SM)) {
-            mesh.scale.setScalar(1.25);
+            mesh.scale.setScalar(MESH_SCALE_SM);
         } else if (isBreakpoint(BREAKPOINT_WIDTH_MD)) {
-            mesh.scale.setScalar(1.5);
+            mesh.scale.setScalar(MESH_SCALE_MD);
         } else {
-            mesh.scale.setScalar(1.75);
+            mesh.scale.setScalar(MESH_SCALE_DEFAULT);
         }
 
         if (!animationEffect) {

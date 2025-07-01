@@ -31,9 +31,9 @@ const BREAKPOINT_WIDTH_SM = 480;
 
 const MESH_SCALE_DEFAULT = 1.7;
 
-const MESH_SCALE_MD = 1.5;
+const MESH_SCALE_MD = 1.3;
 
-const MESH_SCALE_SM = 1.25;
+const MESH_SCALE_SM = 1.2;
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad

@@ -174,7 +174,17 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             inlineSize="xl"
             translate="-50% -50%"
         >
-            <Canvas camera={{aspect: 1, position: [0, 0, 40]}}>
+            <Canvas
+                camera={{
+                    aspect: 1,
+                    far: 50,
+                    fov: 75,
+                    rotation: [0, 0, 0],
+                    near: 0.1,
+                    position: [0, 0, 40],
+                    zoom: 1,
+                }}
+            >
                 {children}
             </Canvas>
         </Box>

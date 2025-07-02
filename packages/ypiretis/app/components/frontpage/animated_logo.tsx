@@ -15,11 +15,24 @@ import {
 import {KernelSize, ToneMappingMode} from "postprocessing";
 
 import type {PropsWithChildren} from "react";
-import {Suspense, useEffect, useRef, useState} from "react";
+import {
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 
 import type {Mesh} from "three";
 
 import Logo3DModel from "~/components/models/logo_3d_model";
+
+import type {
+    IUseIntersectionObserverCallback,
+    IUseIntersectionObserverOptions,
+} from "~/hooks/intersection_observer";
+import useIntersectionObserver from "~/hooks/intersection_observer";
 
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
@@ -260,8 +273,35 @@ function AnimatedLogoScene() {
 function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
     const {children} = props;
 
+    const boxElementRef = useRef<HTMLDivElement>(null);
+    const [isInView, setIsInView] = useState<boolean>(false);
+
+    const onIntersectionObserverEntry = useCallback(
+        ((entries) => {
+            const [firstEntry] = entries;
+
+            setIsInView(firstEntry.isIntersecting);
+        }) satisfies IUseIntersectionObserverCallback,
+        [],
+    );
+
+    const intersectionObserverOptions = useMemo(
+        () =>
+            ({
+                threshold: 0,
+            }) satisfies IUseIntersectionObserverOptions,
+        [],
+    );
+
+    useIntersectionObserver(
+        boxElementRef,
+        onIntersectionObserverEntry,
+        intersectionObserverOptions,
+    );
+
     return (
         <Box
+            ref={boxElementRef}
             position="absolute"
             insetBlockStart="50%"
             insetInlineStart="50%"
@@ -270,7 +310,7 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             translate="-50% -50%"
         >
             <Canvas
-                frameloop="always"
+                frameloop={isInView ? "always" : "demand"}
                 camera={{
                     aspect: 1,
                     far: 50,

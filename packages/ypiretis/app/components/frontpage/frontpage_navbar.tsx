@@ -80,19 +80,18 @@ function FrontpageNavbarActionsTrigger() {
     const {open} = useCollapsibleContext();
 
     return (
-        <IconButton
-            position="absolute"
-            variant="ghost"
-            colorPalette="cyan"
-            color="currentcolor"
-            hideFrom="lg"
-            _hover={{color: "cyan.fg"}}
-            asChild
-        >
-            <Collapsible.Trigger>
+        <Collapsible.Trigger asChild>
+            <IconButton
+                position="absolute"
+                variant="ghost"
+                colorPalette="cyan"
+                color={!open ? "currentcolor" : undefined}
+                hideFrom="lg"
+                _hover={{color: !open ? "cyan.fg" : undefined}}
+            >
                 {open ? <CloseIcon /> : <MenuIcon />}
-            </Collapsible.Trigger>
-        </IconButton>
+            </IconButton>
+        </Collapsible.Trigger>
     );
 }
 
@@ -181,10 +180,11 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
     return (
         <Box
             display="flex"
-            pos="sticky"
+            pos="fixed"
             insetBlockStart="8"
             blockSize={{lgTo2xl: "20"}}
             minBlockSize={{lgDown: "20"}}
+            inlineSize="full"
             paddingInline="8"
             zIndex="2"
         >

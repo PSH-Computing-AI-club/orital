@@ -1,4 +1,4 @@
-import {Bleed, Box} from "@chakra-ui/react";
+import {Box} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -8,17 +8,15 @@ function FullscreenHeroRoot(props: IFullscreenHeroRootProps) {
     const {children} = props;
 
     return (
-        <Bleed blockStart="20" asChild>
-            <Box
-                display="flex"
-                bg="bg.inverted"
-                color="fg.inverted"
-                paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8) + (var(--chakra-spacing-2) * 2))"
-                blockSize="dvh"
-            >
-                {children}
-            </Box>
-        </Bleed>
+        <Box
+            display="flex"
+            bg="bg.inverted"
+            color="fg.inverted"
+            paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8) + (var(--chakra-spacing-2) * 2))"
+            blockSize="dvh"
+        >
+            {children}
+        </Box>
     );
 }
 

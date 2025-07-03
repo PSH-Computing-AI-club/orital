@@ -116,7 +116,7 @@ function FrontpageNavbarActionsDropdown(
         <Collapsible.Content
             hideFrom="lg"
             marginBlockStart="4"
-            marginBlockEnd="2"
+            marginBlockEnd="1"
             asChild
         >
             <VStack gap="4">{children}</VStack>

@@ -12,11 +12,11 @@ import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 import PeopleCard from "~/components/frontpage/people_card";
 import PeopleSection from "~/components/frontpage/people_section";
 
-import type {Route} from "./+types/_landing_._index";
+import type {Route} from "./+types/_frontpage_._index";
 
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
-export default function LandingIndex(_props: Route.ComponentProps) {
+export default function FrontpageIndex(_props: Route.ComponentProps) {
     return (
         <>
             <FullscreenHero.Root>

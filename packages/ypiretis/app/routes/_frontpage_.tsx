@@ -8,7 +8,7 @@ import FrontpageNavbar from "~/components/frontpage/frontpage_navbar";
 import type {ISession} from "~/state/session";
 import {SessionContextProvider} from "~/state/session";
 
-import {Route} from "./+types/_landing_";
+import {Route} from "./+types/_frontpage_";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
@@ -30,7 +30,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-export default function LandingLayout(props: Route.ComponentProps) {
+export default function FrontpageLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
     const session = loaderData?.session;
 

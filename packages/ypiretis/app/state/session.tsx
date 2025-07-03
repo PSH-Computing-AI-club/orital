@@ -41,6 +41,6 @@ export function useAuthenticatedSessionContext(): ISession {
     return context;
 }
 
-export function useSessionContext(): ISession | null {
+export function useOptionalSessionContext(): ISession | null {
     return useContext(CONTEXT_SESSION);
 }

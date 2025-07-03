@@ -19,6 +19,11 @@ export interface ISessionGuards<
 > {
     readonly getGrantHeaders: IGuardHeadersFunc<D, F, N>;
 
+    readonly getOptionalSession: IGuardRequisiteFunc<{
+        identifiable: I;
+        session: N;
+    } | null>;
+
     readonly getRevokeHeaders: IGuardHeadersFunc<D, F, N>;
 
     readonly requireAuthenticatedSession: IGuardRequisiteFunc<{
@@ -40,12 +45,55 @@ export default function makeSessionGuard<
 >(table: T, sessionStorage: S, idKey: K): ISessionGuards<T, I, D, N> {
     const {commitSession, destroySession, getSession} = sessionStorage;
 
-    return {
+    let guards: ISessionGuards<T, I, D, N>;
+
+    guards = {
         async getGrantHeaders(_request, session) {
             const setCookieHeader = await commitSession(session);
 
             return {
                 "Set-Cookie": setCookieHeader,
+            };
+        },
+
+        async getOptionalSession(request) {
+            const {headers} = request;
+            const cookie = headers.get("Cookie");
+
+            if (!cookie) {
+                return null;
+            }
+
+            const session = await getSession(cookie);
+
+            // **HACK:** The typing for `Session.has` is very generous and allows
+            // for untyped string keys. But, we want to strict type to keys we
+            // can statically type.
+            if (!session.has(idKey as string)) {
+                return null;
+            }
+
+            // **HACK:** See above comment.
+            const id = session.get(idKey as string);
+
+            if (!id) {
+                return null;
+            }
+
+            const [firstIdentifiable] = await DATABASE.select()
+                .from(table)
+                .where(eq(table.id, id))
+                .limit(1);
+
+            if (!firstIdentifiable) {
+                return null;
+            }
+
+            return {
+                // **HACK:** Drizzle's typing is too complex for TypeScript to
+                // properly infer here. So, we got to forcibly cast it.
+                identifiable: firstIdentifiable as I,
+                session: session,
             };
         },
 
@@ -58,52 +106,15 @@ export default function makeSessionGuard<
         },
 
         async requireAuthenticatedSession(request) {
-            const {headers} = request;
-            const cookie = headers.get("Cookie");
+            const session = await guards.getOptionalSession(request);
 
-            if (!cookie) {
+            if (!session) {
                 throw data("Unauthorized", {
                     status: 401,
                 });
             }
 
-            const session = await getSession(cookie);
-
-            // **HACK:** The typing for `Session.has` is very generous and allows
-            // for untyped string keys. But, we want to strict type to keys we
-            // can statically type.
-            if (!session.has(idKey as string)) {
-                throw data("Unauthorized", {
-                    status: 401,
-                });
-            }
-
-            // **HACK:** See above comment.
-            const id = session.get(idKey as string);
-
-            if (!id) {
-                throw data("Unauthorized", {
-                    status: 401,
-                });
-            }
-
-            const [firstIdentifiable] = await DATABASE.select()
-                .from(table)
-                .where(eq(table.id, id))
-                .limit(1);
-
-            if (!firstIdentifiable) {
-                throw data("Unauthorized", {
-                    status: 401,
-                });
-            }
-
-            return {
-                // **HACK:** Drizzle's typing is too complex for TypeScript to
-                // properly infer here. So, we got to forcibly cast it.
-                identifiable: firstIdentifiable as I,
-                session: session,
-            };
+            return session;
         },
 
         async requireGuestSession(request) {
@@ -127,4 +138,6 @@ export default function makeSessionGuard<
             };
         },
     };
+
+    return guards;
 }

@@ -2,7 +2,13 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import * as v from "valibot";
 
-import {domain, duration, hostname} from "../../utils/valibot";
+import {
+    alphanumerical,
+    domain,
+    duration,
+    hostname,
+    identifier,
+} from "../../utils/valibot";
 
 import makeSecret from "../utils/secret";
 import {cron_expression} from "../utils/valibot";
@@ -125,6 +131,12 @@ export const ENVIRONMENT_SCHEMA = v.object({
         v.transform((value) => parseInt(value, 10)),
         v.number(),
     ),
+
+    DISCORD_INVITE_CODE: v.pipe(v.string(), alphanumerical),
+
+    ENGAGE_ORGANIZATION_IDENTIFIER: v.pipe(v.string(), identifier),
+
+    GITHUB_ORGANIZATION_IDENTIFIER: v.pipe(v.string(), identifier),
 });
 
 export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;

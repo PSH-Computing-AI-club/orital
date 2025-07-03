@@ -17,6 +17,8 @@ export const EXPRESSION_DOMAIN =
 export const EXPRESSION_DURATION =
     /^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/;
 
+export const EXPRESSION_IDENTIFIER = /^[0-9A-Za-z\-]*$/u;
+
 export const EXPRESSION_NUMERIC = /^[0-9]*$/;
 
 export const EXPRESSION_PIN = /^[0-9A-NP-Z!@#$%&?=+]*$/u;
@@ -31,6 +33,11 @@ export const alphabetic = v.regex(
 export const alphanumerical = v.regex(
     EXPRESSION_ALPHANUMERICAL,
     "Invalid alphanumerical format.",
+);
+
+export const identifier = v.regex(
+    EXPRESSION_IDENTIFIER,
+    "Invalid identifier format.",
 );
 
 export const domain = v.regex(EXPRESSION_DOMAIN, "Invalid domain format.");

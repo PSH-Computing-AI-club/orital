@@ -1,12 +1,30 @@
-import {Box, Container, Image, HStack, Spacer} from "@chakra-ui/react";
+import {
+    Box,
+    Collapsible,
+    Container,
+    IconButton,
+    Image,
+    HStack,
+    Spacer,
+    VStack,
+    useCollapsibleContext,
+} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
+import CloseIcon from "~/components/icons/close_icon";
+import MenuIcon from "~/components/icons/menu_icon";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import useObscuredSentinel from "~/hooks/obscured_sentinel";
 
-interface IFrontpageNavbarLinksRootProps extends PropsWithChildren {}
+interface IFrontpageNavbarActionsDesktopProps extends PropsWithChildren {}
+
+interface IFrontpageNavbarActionsDropdownProps extends PropsWithChildren {}
+
+interface IFrontpageNavbarActionsBarProps extends PropsWithChildren {}
+
+interface IFrontpageNavbarActionsRootProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarContainerBorderProps {
     readonly isObscured: boolean;
@@ -46,14 +64,81 @@ function FrontpageNavbarRightLinks() {
     );
 }
 
-function FrontpageNavbarLinksRoot(props: IFrontpageNavbarLinksRootProps) {
+function FrontpageNavbarLogo() {
+    return (
+        <FrontpageShell.InternalLink to="/">
+            <Image
+                objectFit="contain"
+                blockSize="16"
+                src="/images/logo.monochrome.light.webp"
+            />
+        </FrontpageShell.InternalLink>
+    );
+}
+
+function FrontpageNavbarActionsTrigger() {
+    const {open} = useCollapsibleContext();
+
+    return (
+        <IconButton
+            position="absolute"
+            variant="ghost"
+            colorPalette="cyan"
+            color="currentcolor"
+            hideFrom="lg"
+            _hover={{color: "cyan.fg"}}
+            asChild
+        >
+            <Collapsible.Trigger>
+                {open ? <CloseIcon /> : <MenuIcon />}
+            </Collapsible.Trigger>
+        </IconButton>
+    );
+}
+
+function FrontpageNavbarActionsDesktop(
+    props: IFrontpageNavbarActionsDesktopProps,
+) {
     const {children} = props;
 
     return (
-        <HStack gap="4" alignItems="center" blockSize="full">
+        <Box display="contents" hideBelow="lg">
+            {children}
+        </Box>
+    );
+}
+
+function FrontpageNavbarActionsDropdown(
+    props: IFrontpageNavbarActionsDropdownProps,
+) {
+    const {children} = props;
+
+    return (
+        <Collapsible.Content
+            hideFrom="lg"
+            marginBlockStart="4"
+            marginBlockEnd="2"
+            asChild
+        >
+            <VStack gap="4">{children}</VStack>
+        </Collapsible.Content>
+    );
+}
+
+function FrontpageNavbarActionsBar(props: IFrontpageNavbarActionsBarProps) {
+    const {children} = props;
+
+    return (
+        <HStack gap="4" alignItems="center">
             {children}
         </HStack>
     );
+}
+
+function FrontpageNavbarActionsRoot(props: IFrontpageNavbarActionsRootProps) {
+    const {children} = props;
+
+    return <Collapsible.Root flexGrow="1">{children}</Collapsible.Root>;
 }
 
 function FrontpageNavbarContainerBorder(
@@ -80,9 +165,10 @@ function FrontpageNavbarContainer(props: IFrontpageNavbarContainerProps) {
 
     return (
         <Container
+            display="flex"
+            paddingBlock="2"
             bg={isObscured ? "transparent" : "bg.inverted"}
             color="fg.inverted"
-            blockSize="full"
         >
             {children}
         </Container>
@@ -94,9 +180,11 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
 
     return (
         <Box
+            display="flex"
             pos="sticky"
             insetBlockStart="8"
-            blockSize="20"
+            blockSize={{lgTo2xl: "20"}}
+            minBlockSize={{lgDown: "20"}}
             paddingInline="8"
             zIndex="2"
         >
@@ -116,23 +204,30 @@ export default function FrontpageNavbar() {
                 <FrontpageNavbarContainer isObscured={isObscured}>
                     <FrontpageNavbarContainerBorder isObscured={isObscured} />
 
-                    <FrontpageNavbarLinksRoot>
-                        <Spacer />
+                    <FrontpageNavbarActionsRoot>
+                        <FrontpageNavbarActionsBar>
+                            <FrontpageNavbarActionsTrigger />
 
-                        <FrontpageNavbarLeftLinks />
+                            <Spacer />
 
-                        <FrontpageShell.InternalLink to="/">
-                            <Image
-                                objectFit="contain"
-                                blockSize="16"
-                                src="/images/logo.monochrome.light.webp"
-                            />
-                        </FrontpageShell.InternalLink>
+                            <FrontpageNavbarActionsDesktop>
+                                <FrontpageNavbarLeftLinks />
+                            </FrontpageNavbarActionsDesktop>
 
-                        <FrontpageNavbarRightLinks />
+                            <FrontpageNavbarLogo />
 
-                        <Spacer />
-                    </FrontpageNavbarLinksRoot>
+                            <FrontpageNavbarActionsDesktop>
+                                <FrontpageNavbarRightLinks />
+                            </FrontpageNavbarActionsDesktop>
+
+                            <Spacer />
+                        </FrontpageNavbarActionsBar>
+
+                        <FrontpageNavbarActionsDropdown>
+                            <FrontpageNavbarLeftLinks />
+                            <FrontpageNavbarRightLinks />
+                        </FrontpageNavbarActionsDropdown>
+                    </FrontpageNavbarActionsRoot>
                 </FrontpageNavbarContainer>
             </FrontpageNavbarRoot>
         </>

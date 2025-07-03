@@ -65,7 +65,7 @@ function FrontpageNavbarContainerBorder(
         <Box
             position="absolute"
             inset="0"
-            bg="bg.inverted"
+            bg="gray.solid"
             borderColor="border.inverted"
             borderStyle="solid"
             borderWidth="thin"

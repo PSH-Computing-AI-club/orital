@@ -50,6 +50,10 @@ const ANIMATION_PIVOT_START = -0.01;
 
 const ANIMATION_PIVOT_STRENGTH = 0.025;
 
+const ANIMATION_SMEAR_STRENGTH_Y = 0.2;
+
+const ANIMATION_SMEAR_STRENGTH_Z = 0.8;
+
 const BREAKPOINT_WIDTH_MD = 768;
 
 const BREAKPOINT_WIDTH_SM = 480;
@@ -61,6 +65,16 @@ const MESH_SCALE_DEFAULT = 1.75;
 const MESH_SCALE_MD = 1.5;
 
 const MESH_SCALE_SM = 1.25;
+
+function determineMeshScale(): number {
+    if (isBreakpoint(BREAKPOINT_WIDTH_SM)) {
+        return MESH_SCALE_SM;
+    } else if (isBreakpoint(BREAKPOINT_WIDTH_MD)) {
+        return MESH_SCALE_MD;
+    }
+
+    return MESH_SCALE_DEFAULT;
+}
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad
@@ -120,19 +134,7 @@ function AnimatedLogoModel() {
         const {current: animationEffect} = animationEffectRef;
         const {current: mesh} = meshRef;
 
-        if (!mesh) {
-            return;
-        }
-
-        if (isBreakpoint(BREAKPOINT_WIDTH_SM)) {
-            mesh.scale.setScalar(MESH_SCALE_SM);
-        } else if (isBreakpoint(BREAKPOINT_WIDTH_MD)) {
-            mesh.scale.setScalar(MESH_SCALE_MD);
-        } else {
-            mesh.scale.setScalar(MESH_SCALE_DEFAULT);
-        }
-
-        if (!animationEffect) {
+        if (!animationEffect || !mesh) {
             return;
         }
 
@@ -146,6 +148,8 @@ function AnimatedLogoModel() {
 
         const bounceMultiplier = 1 - 2 * Math.abs(progress - 0.5);
         const bounceEasing = easeOutQuad(bounceMultiplier);
+
+        const meshScale = determineMeshScale();
 
         mesh.position.x =
             ANIMATION_BOUNCE_START_X -
@@ -171,6 +175,10 @@ function AnimatedLogoModel() {
         mesh.rotation.z =
             ANIMATION_PIVOT_START +
             ANIMATION_PIVOT_STRENGTH * bounceEasing * firstPassPivotMultiplier;
+
+        mesh.scale.x = meshScale;
+        mesh.scale.y = meshScale + ANIMATION_SMEAR_STRENGTH_Y * bounceEasing;
+        mesh.scale.z = meshScale + ANIMATION_SMEAR_STRENGTH_Z;
     });
 
     return <Logo3DModel ref={meshRef} position={[0, 0, 0]} />;
@@ -180,16 +188,16 @@ function AnimatedLogoLights() {
     return (
         <>
             <spotLight
-                position={[12, -20, 34]}
+                position={[12, -5, 34]}
                 angle={0.9}
                 penumbra={1}
                 decay={0}
-                intensity={2}
+                intensity={2.5}
                 castShadow={false}
             />
 
             <pointLight
-                position={[-0, -30, 12]}
+                position={[0, -30, 12]}
                 decay={0.3}
                 intensity={6}
                 distance={-2}

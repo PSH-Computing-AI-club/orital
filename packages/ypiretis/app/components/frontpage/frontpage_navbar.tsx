@@ -91,7 +91,11 @@ function FrontpageNavbarActionsTrigger() {
                 }}
                 _hover={{bg: "fg.muted"}}
             >
-                {open ? <CloseIcon /> : <MenuIcon />}
+                <CloseIcon visibility={open ? undefined : "collapse"} />
+                <MenuIcon
+                    position="absolute"
+                    visibility={open ? "collapse" : undefined}
+                />
             </IconButton>
         </Collapsible.Trigger>
     );

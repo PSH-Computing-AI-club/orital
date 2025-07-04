@@ -8,6 +8,7 @@ import {
     Image,
     Popover,
     Portal,
+    Separator,
     Spacer,
     VStack,
     useCollapsibleContext,
@@ -77,9 +78,23 @@ function FrontpageNavbarLogo() {
     );
 }
 
-function FrontpageNavbarAuthenticatedSessionActions() {
+function FrontpageNavbarAuthenticatedSessionLinks() {
     return (
         <>
+            <FrontpageShell.InternalLink to="/rooms/join">
+                Join Room
+            </FrontpageShell.InternalLink>
+
+            <FrontpageShell.InternalLink to="/rooms/create">
+                Create Room
+            </FrontpageShell.InternalLink>
+
+            <FrontpageNavbarDivider />
+
+            <FrontpageShell.InternalLink to="/user/settings">
+                Settings
+            </FrontpageShell.InternalLink>
+
             <FrontpageShell.InternalLink to="/authentication/log-out">
                 Log Out
             </FrontpageShell.InternalLink>
@@ -87,7 +102,7 @@ function FrontpageNavbarAuthenticatedSessionActions() {
     );
 }
 
-function FrontpageNavbarGuestSessionActions() {
+function FrontpageNavbarGuestSessionLinks() {
     return (
         <FrontpageShell.InternalLink to="/authentication/log-in">
             Log In
@@ -118,7 +133,7 @@ function FrontpageNavbarSessionGreeter() {
             <Portal>
                 <Popover.Positioner visibility={{lgDown: "collapse"}}>
                     <Popover.Content
-                        bg="gray.800"
+                        bg="gray.fg"
                         width="unset"
                         borderColor="border.inverted"
                         borderStyle="solid"
@@ -128,13 +143,19 @@ function FrontpageNavbarSessionGreeter() {
                     >
                         <Popover.Body paddingBlock="4" paddingInline="8">
                             <VStack gap="4">
-                                <FrontpageNavbarAuthenticatedSessionActions />
+                                <FrontpageNavbarAuthenticatedSessionLinks />
                             </VStack>
                         </Popover.Body>
                     </Popover.Content>
                 </Popover.Positioner>
             </Portal>
         </Popover.Root>
+    );
+}
+
+function FrontpageNavbarDivider() {
+    return (
+        <Separator borderColor="currentcolor" inlineSize="full" opacity="0.2" />
     );
 }
 
@@ -275,7 +296,7 @@ export default function FrontpageNavbar() {
                                     {session ? (
                                         <FrontpageNavbarSessionGreeter />
                                     ) : (
-                                        <FrontpageNavbarGuestSessionActions />
+                                        <FrontpageNavbarGuestSessionLinks />
                                     )}
                                 </Box>
                             </FrontpageNavbarDesktopActions>
@@ -285,10 +306,12 @@ export default function FrontpageNavbar() {
                             <FrontpageNavbarLeftActions />
                             <FrontpageNavbarRightActions />
 
+                            <FrontpageNavbarDivider />
+
                             {session ? (
-                                <FrontpageNavbarAuthenticatedSessionActions />
+                                <FrontpageNavbarAuthenticatedSessionLinks />
                             ) : (
-                                <FrontpageNavbarGuestSessionActions />
+                                <FrontpageNavbarGuestSessionLinks />
                             )}
                         </FrontpageNavbarActionsDropdown>
                     </FrontpageNavbarActionsRoot>

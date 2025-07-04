@@ -14,7 +14,13 @@ import type {PropsWithChildren} from "react";
 
 import CloseIcon from "~/components/icons/close_icon";
 import MenuIcon from "~/components/icons/menu_icon";
+
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
+
+import {
+    useAuthenticatedSessionContext,
+    useOptionalSessionContext,
+} from "~/state/session";
 
 interface IFrontpageNavbarActionsDesktopProps extends PropsWithChildren {}
 
@@ -28,7 +34,7 @@ interface IFrontpageNavbarContainerProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarRootProps extends PropsWithChildren {}
 
-function FrontpageNavbarLeftLinks() {
+function FrontpageNavbarLeftActions() {
     return (
         <>
             <FrontpageShell.InternalLink to="/news">
@@ -42,7 +48,7 @@ function FrontpageNavbarLeftLinks() {
     );
 }
 
-function FrontpageNavbarRightLinks() {
+function FrontpageNavbarRightActions() {
     return (
         <>
             <FrontpageShell.InternalLink to="/engage" isNewTab>
@@ -68,7 +74,39 @@ function FrontpageNavbarLogo() {
     );
 }
 
-function FrontpageNavbarActionsTrigger() {
+function FrontpageAuthenticatedSessionActions() {
+    const {firstName, lastName} = useAuthenticatedSessionContext();
+
+    return (
+        <>
+            <FrontpageShell.InternalLink to="/authentication/log-out">
+                Log Out
+            </FrontpageShell.InternalLink>
+        </>
+    );
+}
+
+function FrontpageGuestSessionActions() {
+    return (
+        <FrontpageShell.InternalLink to="/authentication/log-in">
+            Log In
+        </FrontpageShell.InternalLink>
+    );
+}
+
+function FrontpageNavbarDesktopActions(
+    props: IFrontpageNavbarActionsDesktopProps,
+) {
+    const {children} = props;
+
+    return (
+        <Box display="contents" hideBelow="lg">
+            {children}
+        </Box>
+    );
+}
+
+function FrontpageNavbarActionsDropdownTrigger() {
     const {open} = useCollapsibleContext();
 
     return (
@@ -90,18 +128,6 @@ function FrontpageNavbarActionsTrigger() {
                 />
             </IconButton>
         </Collapsible.Trigger>
-    );
-}
-
-function FrontpageNavbarActionsDesktop(
-    props: IFrontpageNavbarActionsDesktopProps,
-) {
-    const {children} = props;
-
-    return (
-        <Box display="contents" hideBelow="lg">
-            {children}
-        </Box>
     );
 }
 
@@ -176,32 +202,50 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
 }
 
 export default function FrontpageNavbar() {
+    const session = useOptionalSessionContext();
+
     return (
         <>
             <FrontpageNavbarRoot>
                 <FrontpageNavbarContainer>
                     <FrontpageNavbarActionsRoot>
                         <FrontpageNavbarActionsBar>
-                            <FrontpageNavbarActionsTrigger />
+                            <FrontpageNavbarActionsDropdownTrigger />
 
                             <Spacer />
 
-                            <FrontpageNavbarActionsDesktop>
-                                <FrontpageNavbarLeftLinks />
-                            </FrontpageNavbarActionsDesktop>
+                            <FrontpageNavbarDesktopActions>
+                                <FrontpageNavbarLeftActions />
+                            </FrontpageNavbarDesktopActions>
 
                             <FrontpageNavbarLogo />
 
-                            <FrontpageNavbarActionsDesktop>
-                                <FrontpageNavbarRightLinks />
-                            </FrontpageNavbarActionsDesktop>
+                            <FrontpageNavbarDesktopActions>
+                                <FrontpageNavbarRightActions />
+                            </FrontpageNavbarDesktopActions>
 
                             <Spacer />
+
+                            <FrontpageNavbarDesktopActions>
+                                <Box position="absolute" right="8">
+                                    {session ? (
+                                        <FrontpageAuthenticatedSessionActions />
+                                    ) : (
+                                        <FrontpageGuestSessionActions />
+                                    )}
+                                </Box>
+                            </FrontpageNavbarDesktopActions>
                         </FrontpageNavbarActionsBar>
 
                         <FrontpageNavbarActionsDropdown>
-                            <FrontpageNavbarLeftLinks />
-                            <FrontpageNavbarRightLinks />
+                            <FrontpageNavbarLeftActions />
+                            <FrontpageNavbarRightActions />
+
+                            {session ? (
+                                <FrontpageAuthenticatedSessionActions />
+                            ) : (
+                                <FrontpageGuestSessionActions />
+                            )}
                         </FrontpageNavbarActionsDropdown>
                     </FrontpageNavbarActionsRoot>
                 </FrontpageNavbarContainer>

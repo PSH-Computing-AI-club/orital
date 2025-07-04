@@ -16,8 +16,6 @@ import CloseIcon from "~/components/icons/close_icon";
 import MenuIcon from "~/components/icons/menu_icon";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
-import useObscuredSentinel from "~/hooks/obscured_sentinel";
-
 interface IFrontpageNavbarActionsDesktopProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarActionsDropdownProps extends PropsWithChildren {}
@@ -26,13 +24,9 @@ interface IFrontpageNavbarActionsBarProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarActionsRootProps extends PropsWithChildren {}
 
-interface IFrontpageNavbarContainerBorderProps {
-    readonly isObscured: boolean;
-}
+interface IFrontpageNavbarContainerBorderProps {}
 
-interface IFrontpageNavbarContainerProps extends PropsWithChildren {
-    readonly isObscured: boolean;
-}
+interface IFrontpageNavbarContainerProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarRootProps extends PropsWithChildren {}
 
@@ -146,33 +140,17 @@ function FrontpageNavbarActionsRoot(props: IFrontpageNavbarActionsRootProps) {
     return <Collapsible.Root flexGrow="1">{children}</Collapsible.Root>;
 }
 
-function FrontpageNavbarContainerBorder(
-    props: IFrontpageNavbarContainerBorderProps,
-) {
-    const {isObscured} = props;
-
-    return (
-        <Box
-            position="absolute"
-            inset="0"
-            bg="gray.solid"
-            borderColor="border.inverted"
-            borderStyle="solid"
-            borderWidth="thin"
-            zIndex="-1"
-            visibility={isObscured ? undefined : "hidden"}
-        />
-    );
-}
-
 function FrontpageNavbarContainer(props: IFrontpageNavbarContainerProps) {
-    const {children, isObscured} = props;
+    const {children} = props;
 
     return (
         <Container
             display="flex"
             paddingBlock="2"
-            bg={isObscured ? "transparent" : "bg.inverted"}
+            bg="gray.solid"
+            borderColor="border.inverted"
+            borderStyle="solid"
+            borderWidth="thin"
             color="fg.inverted"
         >
             {children}
@@ -200,16 +178,10 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
 }
 
 export default function FrontpageNavbar() {
-    const {isObscured, ObscuredSentinel} = useObscuredSentinel();
-
     return (
         <>
-            {ObscuredSentinel}
-
             <FrontpageNavbarRoot>
-                <FrontpageNavbarContainer isObscured={isObscured}>
-                    <FrontpageNavbarContainerBorder isObscured={isObscured} />
-
+                <FrontpageNavbarContainer>
                     <FrontpageNavbarActionsRoot>
                         <FrontpageNavbarActionsBar>
                             <FrontpageNavbarActionsTrigger />

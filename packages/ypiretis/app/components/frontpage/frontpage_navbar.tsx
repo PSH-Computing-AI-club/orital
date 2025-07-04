@@ -24,8 +24,6 @@ interface IFrontpageNavbarActionsBarProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarActionsRootProps extends PropsWithChildren {}
 
-interface IFrontpageNavbarContainerBorderProps {}
-
 interface IFrontpageNavbarContainerProps extends PropsWithChildren {}
 
 interface IFrontpageNavbarRootProps extends PropsWithChildren {}

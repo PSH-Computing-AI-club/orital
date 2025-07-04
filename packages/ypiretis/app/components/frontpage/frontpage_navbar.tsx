@@ -84,10 +84,12 @@ function FrontpageNavbarActionsTrigger() {
             <IconButton
                 position="absolute"
                 variant="ghost"
-                colorPalette="cyan"
-                color={!open ? "currentcolor" : undefined}
+                color="currentcolor"
                 hideFrom="lg"
-                _hover={{color: !open ? "cyan.fg" : undefined}}
+                css={{
+                    "&[data-state=open]": {bg: "fg.muted"},
+                }}
+                _hover={{bg: "fg.muted"}}
             >
                 {open ? <CloseIcon /> : <MenuIcon />}
             </IconButton>

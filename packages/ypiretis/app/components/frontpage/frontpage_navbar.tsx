@@ -1,10 +1,13 @@
 import {
     Box,
+    Button,
     Collapsible,
     Container,
+    HStack,
     IconButton,
     Image,
-    HStack,
+    Popover,
+    Portal,
     Spacer,
     VStack,
     useCollapsibleContext,
@@ -74,9 +77,7 @@ function FrontpageNavbarLogo() {
     );
 }
 
-function FrontpageAuthenticatedSessionActions() {
-    const {firstName, lastName} = useAuthenticatedSessionContext();
-
+function FrontpageNavbarAuthenticatedSessionActions() {
     return (
         <>
             <FrontpageShell.InternalLink to="/authentication/log-out">
@@ -86,11 +87,54 @@ function FrontpageAuthenticatedSessionActions() {
     );
 }
 
-function FrontpageGuestSessionActions() {
+function FrontpageNavbarGuestSessionActions() {
     return (
         <FrontpageShell.InternalLink to="/authentication/log-in">
             Log In
         </FrontpageShell.InternalLink>
+    );
+}
+
+function FrontpageNavbarSessionGreeter() {
+    const {firstName, lastName} = useAuthenticatedSessionContext();
+
+    const abbreviatedLastName = `${lastName.slice(0, 1)}.`;
+
+    return (
+        <Popover.Root positioning={{placement: "bottom-end"}}>
+            <Popover.Trigger asChild>
+                <Button
+                    variant="ghost"
+                    color="currentcolor"
+                    css={{
+                        "&[data-state=open]": {bg: "fg.muted"},
+                    }}
+                    _hover={{bg: "fg.muted"}}
+                >
+                    Welcome, {firstName} {abbreviatedLastName}!
+                </Button>
+            </Popover.Trigger>
+
+            <Portal>
+                <Popover.Positioner visibility={{lgDown: "collapse"}}>
+                    <Popover.Content
+                        bg="gray.800"
+                        width="unset"
+                        borderColor="border.inverted"
+                        borderStyle="solid"
+                        borderWidth="thin"
+                        color="fg.inverted"
+                        boxShadow="none"
+                    >
+                        <Popover.Body paddingBlock="4" paddingInline="8">
+                            <VStack gap="4">
+                                <FrontpageNavbarAuthenticatedSessionActions />
+                            </VStack>
+                        </Popover.Body>
+                    </Popover.Content>
+                </Popover.Positioner>
+            </Portal>
+        </Popover.Root>
     );
 }
 
@@ -229,9 +273,9 @@ export default function FrontpageNavbar() {
                             <FrontpageNavbarDesktopActions>
                                 <Box position="absolute" right="8">
                                     {session ? (
-                                        <FrontpageAuthenticatedSessionActions />
+                                        <FrontpageNavbarSessionGreeter />
                                     ) : (
-                                        <FrontpageGuestSessionActions />
+                                        <FrontpageNavbarGuestSessionActions />
                                     )}
                                 </Box>
                             </FrontpageNavbarDesktopActions>
@@ -242,9 +286,9 @@ export default function FrontpageNavbar() {
                             <FrontpageNavbarRightActions />
 
                             {session ? (
-                                <FrontpageAuthenticatedSessionActions />
+                                <FrontpageNavbarAuthenticatedSessionActions />
                             ) : (
-                                <FrontpageGuestSessionActions />
+                                <FrontpageNavbarGuestSessionActions />
                             )}
                         </FrontpageNavbarActionsDropdown>
                     </FrontpageNavbarActionsRoot>

@@ -2,7 +2,7 @@ import {Strong, Text} from "@chakra-ui/react";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-export default function Kicked() {
+export default function RoomsKicked() {
     return (
         <PromptShell.Root>
             <PromptShell.Sidebar />

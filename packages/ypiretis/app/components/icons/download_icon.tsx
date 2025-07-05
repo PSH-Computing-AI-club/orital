@@ -1,7 +1,7 @@
 import type {IIconProps} from "./icon";
 import IconRoot from "./icon";
 
-export default function DashboardIcon(props: IIconProps) {
+export default function DownloadIcon(props: IIconProps) {
     return (
         <IconRoot {...props}>
             <path d="M13 17V3h-2v10H9v-2H7v2h2v2h2v2h2zm8 2v-4h-2v4H5v-4H3v6h18v-2zm-8-6v2h2v-2h2v-2h-2v2h-2z" />

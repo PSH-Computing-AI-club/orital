@@ -31,15 +31,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const room = findOneLiveByPIN(pin);
 
     if (room === null) {
-        throw data("Not Found", {
-            status: 404,
-        });
+        return redirect("/rooms/not-found");
     }
 
     const {roomID, state} = room;
 
     if (state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
+        return redirect("/rooms/disposed");
     }
 
     return redirect(`/rooms/${roomID}/attendee`);

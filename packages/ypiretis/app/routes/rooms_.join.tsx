@@ -1,6 +1,6 @@
 import {Button, Field, PinInput, VStack} from "@chakra-ui/react";
 
-import {Form, data, redirect, useNavigation} from "react-router";
+import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import {withMask} from "use-mask-input";
 
@@ -14,6 +14,21 @@ import {EXPRESSION_PIN, pin} from "~/utils/valibot";
 
 import type {Route} from "./+types/rooms_.join";
 
+const ACTION_ERROR_TYPES = {
+    validation: "TYPE_VALIDATION",
+} as const;
+
+const ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.picklist(["join"])),
+
+    pinDigit0: v.pipe(v.string(), v.length(1), pin),
+    pinDigit1: v.pipe(v.string(), v.length(1), pin),
+    pinDigit2: v.pipe(v.string(), v.length(1), pin),
+    pinDigit3: v.pipe(v.string(), v.length(1), pin),
+    pinDigit4: v.pipe(v.string(), v.length(1), pin),
+    pinDigit5: v.pipe(v.string(), v.length(1), pin),
+});
+
 const pinWithMask = withMask("pinDigit", {
     mask: "",
     regex: EXPRESSION_PIN.toString().slice(1, -2),
@@ -21,16 +36,9 @@ const pinWithMask = withMask("pinDigit", {
     casing: "upper",
 });
 
-const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.picklist(["join"])),
-
-    pin0: v.pipe(v.string(), v.length(1), pin),
-    pin1: v.pipe(v.string(), v.length(1), pin),
-    pin2: v.pipe(v.string(), v.length(1), pin),
-    pin3: v.pipe(v.string(), v.length(1), pin),
-    pin4: v.pipe(v.string(), v.length(1), pin),
-    pin5: v.pipe(v.string(), v.length(1), pin),
-});
+interface IActionError {
+    readonly error: (typeof ACTION_ERROR_TYPES)[keyof typeof ACTION_ERROR_TYPES];
+}
 
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
@@ -41,7 +49,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {
         output: actionData,
-        issues,
+
         success,
     } = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
@@ -49,12 +57,10 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!success) {
-        const {nested: errors} = v.flatten(issues);
-
         return data(
             {
-                errors,
-            },
+                error: ACTION_ERROR_TYPES.validation,
+            } satisfies IActionError,
 
             {
                 status: 400,
@@ -62,8 +68,9 @@ export async function action(actionArgs: Route.ActionArgs) {
         );
     }
 
-    const {pin0, pin1, pin2, pin3, pin4, pin5} = actionData;
-    const pin = `${pin0}${pin1}${pin2}${pin3}${pin4}${pin5}`;
+    const {pinDigit0, pinDigit1, pinDigit2, pinDigit3, pinDigit4, pinDigit5} =
+        actionData;
+    const pin = `${pinDigit0}${pinDigit1}${pinDigit2}${pinDigit3}${pinDigit4}${pinDigit5}`;
 
     return redirect(`/r/${pin}`);
 }
@@ -74,9 +81,18 @@ export function loader(loaderArgs: Route.LoaderArgs) {
     return requireAuthenticatedSession(request);
 }
 
+function ErrorText() {
+    const {error} = useActionData<IActionError>() ?? {};
+
+    switch (error) {
+        case ACTION_ERROR_TYPES.validation:
+            return <Field.ErrorText>Invalid room pin format.</Field.ErrorText>;
+    }
+}
+
 export default function RoomsJoin(props: Route.ComponentProps) {
     const {actionData} = props;
-    const {errors} = actionData ?? {};
+    const {error} = actionData ?? {};
 
     const navigation = useNavigation();
 
@@ -93,7 +109,7 @@ export default function RoomsJoin(props: Route.ComponentProps) {
                 <PromptShell.Body>
                     <Form method="POST">
                         <VStack gap="4">
-                            <Field.Root invalid={!!errors} required>
+                            <Field.Root invalid={!!error} required>
                                 <Field.Label>
                                     Room PIN
                                     <Field.RequiredIndicator />
@@ -111,82 +127,43 @@ export default function RoomsJoin(props: Route.ComponentProps) {
                                     >
                                         <PinInput.Input
                                             index={0}
-                                            name="pin0"
+                                            name="pinDigit0"
                                             ref={pinWithMask}
                                         />
 
                                         <PinInput.Input
                                             index={1}
-                                            name="pin1"
+                                            name="pinDigit1"
                                             ref={pinWithMask}
                                         />
 
                                         <PinInput.Input
                                             index={2}
-                                            name="pin2"
+                                            name="pinDigit2"
                                             ref={pinWithMask}
                                         />
 
                                         <PinInput.Input
                                             index={3}
-                                            name="pin3"
+                                            name="pinDigit3"
                                             ref={pinWithMask}
                                         />
 
                                         <PinInput.Input
                                             index={4}
-                                            name="pin4"
+                                            name="pinDigit4"
                                             ref={pinWithMask}
                                         />
 
                                         <PinInput.Input
                                             index={5}
-                                            name="pin5"
+                                            name="pinDigit5"
                                             ref={pinWithMask}
                                         />
                                     </PinInput.Control>
                                 </PinInput.Root>
 
-                                {
-                                    // **NOTE:** This is not that great... but meh...
-                                    // it is the more straight-forward way.
-                                }
-
-                                {errors?.pin0 ? (
-                                    <Field.ErrorText>
-                                        [digit 1] {errors.pin0[0]}
-                                    </Field.ErrorText>
-                                ) : null}
-
-                                {errors?.pin1 ? (
-                                    <Field.ErrorText>
-                                        [digit 2] {errors.pin1[0]}
-                                    </Field.ErrorText>
-                                ) : null}
-
-                                {errors?.pin2 ? (
-                                    <Field.ErrorText>
-                                        [digit 3] {errors.pin2[0]}
-                                    </Field.ErrorText>
-                                ) : null}
-
-                                {errors?.pin3 ? (
-                                    <Field.ErrorText>
-                                        [digit 4] {errors.pin3[0]}
-                                    </Field.ErrorText>
-                                ) : null}
-
-                                {errors?.pin4 ? (
-                                    <Field.ErrorText>
-                                        [digit 5] {errors.pin4[0]}
-                                    </Field.ErrorText>
-                                ) : null}
-
-                                {errors?.pin5 ? (
-                                    <Field.ErrorText>
-                                        [digit 6] {errors.pin5[0]}
-                                    </Field.ErrorText>
-                                ) : null}
+                                <ErrorText />
                             </Field.Root>
 
                             <Button

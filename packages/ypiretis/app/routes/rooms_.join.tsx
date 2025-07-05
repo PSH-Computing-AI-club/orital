@@ -7,6 +7,8 @@ import {useIMask} from "react-imask";
 
 import * as v from "valibot";
 
+import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/rooms_service";
+
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
@@ -16,6 +18,9 @@ import {EXPRESSION_PIN, pin} from "~/utils/valibot";
 import type {Route} from "./+types/rooms_.join";
 
 const ACTION_ERROR_TYPES = {
+    roomDisposed: "TYPE_ROOM_DISPOSED",
+
+    roomNotFound: "TYPE_ROOM_NOT_FOUND",
     validation: "TYPE_VALIDATION",
 } as const;
 
@@ -71,7 +76,35 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionData;
     const pin = `${pinDigit0}${pinDigit1}${pinDigit2}${pinDigit3}${pinDigit4}${pinDigit5}`;
 
-    return redirect(`/r/${pin}`);
+    const room = findOneLiveByPIN(pin);
+
+    if (room === null) {
+        return data(
+            {
+                error: ACTION_ERROR_TYPES.roomNotFound,
+            } satisfies IActionError,
+
+            {
+                status: 404,
+            },
+        );
+    }
+
+    const {roomID, state} = room;
+
+    if (state === ROOM_STATES.disposed) {
+        return data(
+            {
+                error: ACTION_ERROR_TYPES.roomDisposed,
+            } satisfies IActionError,
+
+            {
+                status: 409,
+            },
+        );
+    }
+
+    return redirect(`/rooms/${roomID}/attendee`);
 }
 
 export function loader(loaderArgs: Route.LoaderArgs) {
@@ -84,6 +117,18 @@ function ErrorText() {
     const {error} = useActionData<IActionError>() ?? {};
 
     switch (error) {
+        case ACTION_ERROR_TYPES.roomDisposed:
+            return (
+                <Field.ErrorText>Room was previously closed.</Field.ErrorText>
+            );
+
+        case ACTION_ERROR_TYPES.roomNotFound:
+            return (
+                <Field.ErrorText>
+                    No room found with the provided PIN.
+                </Field.ErrorText>
+            );
+
         case ACTION_ERROR_TYPES.validation:
             return <Field.ErrorText>Invalid room pin format.</Field.ErrorText>;
     }

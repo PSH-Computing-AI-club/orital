@@ -131,7 +131,7 @@ function ErrorText() {
             );
 
         case ACTION_ERROR_TYPES.validation:
-            return <Field.ErrorText>Invalid room pin format.</Field.ErrorText>;
+            return <Field.ErrorText>Invalid room PIN format.</Field.ErrorText>;
     }
 }
 

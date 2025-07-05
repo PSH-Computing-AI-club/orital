@@ -35,13 +35,13 @@
         "postprocessing": "^6.37.4",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
+        "react-imask": "^7.6.1",
         "react-router": "^7.5.3",
         "react-router-hono-server": "^2.13.0",
         "remix-utils": "^8.7.0",
         "three": "^0.178.0",
         "three-stdlib": "^2.36.0",
         "ulid": "^3.0.0",
-        "use-mask-input": "^3.4.2",
         "valibot": "^1.1.0"
     },
     "devDependencies": {

@@ -2,7 +2,8 @@ import {Button, Field, PinInput, VStack} from "@chakra-ui/react";
 
 import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
-import {withMask} from "use-mask-input";
+import type {ReactMaskOpts} from "react-imask";
+import {useIMask} from "react-imask";
 
 import * as v from "valibot";
 
@@ -29,12 +30,10 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
     pinDigit5: v.pipe(v.string(), v.length(1), pin),
 });
 
-const pinWithMask = withMask("pinDigit", {
-    mask: "",
-    regex: EXPRESSION_PIN.toString().slice(1, -2),
-    placeholder: "_",
-    casing: "upper",
-});
+const MASK_OPTIONS = {
+    mask: new RegExp(EXPRESSION_PIN.toString().slice(1, -2)),
+    maxLength: 1,
+} satisfies ReactMaskOpts;
 
 interface IActionError {
     readonly error: (typeof ACTION_ERROR_TYPES)[keyof typeof ACTION_ERROR_TYPES];
@@ -96,6 +95,13 @@ export default function RoomsJoin(props: Route.ComponentProps) {
 
     const navigation = useNavigation();
 
+    const {ref: maskRefDigit0} = useIMask(MASK_OPTIONS);
+    const {ref: maskRefDigit1} = useIMask(MASK_OPTIONS);
+    const {ref: maskRefDigit2} = useIMask(MASK_OPTIONS);
+    const {ref: maskRefDigit3} = useIMask(MASK_OPTIONS);
+    const {ref: maskRefDigit4} = useIMask(MASK_OPTIONS);
+    const {ref: maskRefDigit5} = useIMask(MASK_OPTIONS);
+
     return (
         <PromptShell.Root>
             <PromptShell.Sidebar />
@@ -128,37 +134,44 @@ export default function RoomsJoin(props: Route.ComponentProps) {
                                         <PinInput.Input
                                             index={0}
                                             name="pinDigit0"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** I am supplying the proper type but
+                                            // the masking library does not like Chakra's typing.
+                                            ref={maskRefDigit0}
                                         />
 
                                         <PinInput.Input
                                             index={1}
                                             name="pinDigit1"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** See above.
+                                            ref={maskRefDigit1}
                                         />
 
                                         <PinInput.Input
                                             index={2}
                                             name="pinDigit2"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** See above.
+                                            ref={maskRefDigit2}
                                         />
 
                                         <PinInput.Input
                                             index={3}
                                             name="pinDigit3"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** See above.
+                                            ref={maskRefDigit3}
                                         />
 
                                         <PinInput.Input
                                             index={4}
                                             name="pinDigit4"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** See above.
+                                            ref={maskRefDigit4}
                                         />
 
                                         <PinInput.Input
                                             index={5}
                                             name="pinDigit5"
-                                            ref={pinWithMask}
+                                            // @ts-expect-error - **HACK:** See above.
+                                            ref={maskRefDigit5}
                                         />
                                     </PinInput.Control>
                                 </PinInput.Root>

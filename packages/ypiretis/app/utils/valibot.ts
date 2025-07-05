@@ -21,7 +21,7 @@ export const EXPRESSION_IDENTIFIER = /^[0-9A-Za-z\-]*$/u;
 
 export const EXPRESSION_NUMERIC = /^[0-9]*$/;
 
-export const EXPRESSION_PIN = /^[0-9A-NP-Z!@#$%&?=+]*$/u;
+export const EXPRESSION_PIN = /^[0-9A-NP-Z]*$/u;
 
 export const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
 

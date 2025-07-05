@@ -41,7 +41,7 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                     <FeatureSection.Body>
                         <FeatureSection.Title>
                             We Are{" "}
-                            <Span whiteSpace="pre">
+                            <Span>
                                 <Span whiteSpace="pre">Penn State</Span>{" "}
                                 Harrisburg!
                             </Span>

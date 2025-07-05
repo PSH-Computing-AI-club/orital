@@ -33,6 +33,8 @@ const ACTION_PARAMS_SCHEMA = v.object({
 
 const LIVE_ROOMS_BY_PIN = new Map<string, IRoom>();
 
+const LIVE_ROOMS_BY_PRESENTER_ID = new Map<number, IRoom>();
+
 const LIVE_ROOMS_BY_ROOM_ID = new Map<string, IRoom>();
 
 export interface IAuthenticatedRoomSession {
@@ -63,12 +65,16 @@ export function findAllLive(): IRoom[] {
     return Array.from(LIVE_ROOMS_BY_ROOM_ID.values());
 }
 
-export function findOneLiveByRoomID(roomID: string): IRoom | null {
-    return LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
-}
-
 export function findOneLiveByPIN(pin: string): IRoom | null {
     return LIVE_ROOMS_BY_PIN.get(pin) ?? null;
+}
+
+export function findOneLiveByPresenterID(userID: number): IRoom | null {
+    return LIVE_ROOMS_BY_PRESENTER_ID.get(userID) ?? null;
+}
+
+export function findOneLiveByRoomID(roomID: string): IRoom | null {
+    return LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 }
 
 export function generateUniquePIN(): string {
@@ -115,6 +121,7 @@ export async function insertOneLive(
     });
 
     LIVE_ROOMS_BY_PIN.set(pin, room);
+    LIVE_ROOMS_BY_PRESENTER_ID.set(userID, room);
     LIVE_ROOMS_BY_ROOM_ID.set(roomID, room);
 
     const attendeeApprovedSubscription = room.EVENT_ATTENDEE_APPROVED.subscribe(
@@ -205,6 +212,7 @@ export async function insertOneLive(
                 titleUpdateSubscription.dispose();
 
                 LIVE_ROOMS_BY_PIN.delete(pin);
+                LIVE_ROOMS_BY_PRESENTER_ID.delete(userID);
                 LIVE_ROOMS_BY_ROOM_ID.delete(roomID);
             }
         },

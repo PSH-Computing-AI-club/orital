@@ -8,7 +8,10 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import {Form, data, redirect, useNavigation} from "react-router";
+import type {ReactMaskOpts} from "react-imask";
+import {useIMask} from "react-imask";
+
+import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
@@ -26,15 +29,27 @@ import {
     ACCOUNT_PROVIDER_DOMAIN,
     ACCOUNT_PROVIDER_NAME,
 } from "~/utils/constants";
-import {alphanumerical} from "~/utils/valibot";
+import {EXPRESSION_ALPHANUMERICAL, alphanumerical} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.log-in._index";
+
+const ACTION_ERROR_TYPES = {
+    validation: "TYPE_VALIDATION",
+} as const;
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
 
     action: v.pipe(v.string(), v.picklist(["log-in"])),
 });
+
+const MASK_OPTIONS = {
+    mask: new RegExp(EXPRESSION_ALPHANUMERICAL.toString().slice(1, -2)),
+} satisfies ReactMaskOpts;
+
+interface IActionError {
+    readonly error: (typeof ACTION_ERROR_TYPES)[keyof typeof ACTION_ERROR_TYPES];
+}
 
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
@@ -45,7 +60,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {
         output: actionData,
-        issues,
+
         success,
     } = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
@@ -53,12 +68,10 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!success) {
-        const {nested: errors} = v.flatten(issues);
-
         return data(
             {
-                errors,
-            },
+                error: ACTION_ERROR_TYPES.validation,
+            } satisfies IActionError,
 
             {
                 status: 400,
@@ -108,11 +121,24 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 }
 
+function ErrorText() {
+    const {error} = useActionData<IActionError>() ?? {};
+
+    switch (error) {
+        case ACTION_ERROR_TYPES.validation:
+            return (
+                <Field.ErrorText>Invalid account ID format.</Field.ErrorText>
+            );
+    }
+}
+
 export default function AuthenticationLogIn(props: Route.ComponentProps) {
     const {actionData} = props;
-    const {errors} = actionData ?? {};
+    const {error} = actionData ?? {};
 
     const navigation = useNavigation();
+
+    const {ref: maskRef} = useIMask(MASK_OPTIONS);
 
     return (
         <>
@@ -133,7 +159,7 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
 
                 <Form method="POST">
                     <VStack gap="4">
-                        <Field.Root invalid={!!errors} required>
+                        <Field.Root invalid={!!error} required>
                             <Field.Label>
                                 {ACCOUNT_PROVIDER_NAME} ID{" "}
                                 <Field.RequiredIndicator />
@@ -148,17 +174,16 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
                                 }
                             >
                                 <Input
+                                    // @ts-expect-error - **HACK:** I am supplying the proper type but
+                                    // the masking library does not like Chakra's typing.
+                                    ref={maskRef}
                                     name="accountID"
                                     placeholder="ex. don5092"
                                     textAlign="right"
                                 />
                             </InputGroup>
 
-                            {errors?.accountID ? (
-                                <Field.ErrorText>
-                                    {errors.accountID[0]}
-                                </Field.ErrorText>
-                            ) : null}
+                            <ErrorText />
                         </Field.Root>
 
                         <Button

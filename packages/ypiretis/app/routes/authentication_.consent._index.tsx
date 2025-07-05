@@ -1,6 +1,7 @@
 import {
     Button,
     Code,
+    Field,
     Flex,
     Group,
     List,
@@ -11,7 +12,14 @@ import {
 
 import {useCallback, useMemo} from "react";
 
-import {Form, data, redirect, useNavigate, useNavigation} from "react-router";
+import {
+    Form,
+    data,
+    redirect,
+    useActionData,
+    useNavigate,
+    useNavigation,
+} from "react-router";
 
 import * as v from "valibot";
 
@@ -42,6 +50,12 @@ import {alphanumerical, token} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.consent._index";
 
+const ACTION_ERROR_TYPES = {
+    unauthorized: "TYPE_UNAUTHORIZED",
+
+    validation: "TYPE_VALIDATION",
+} as const;
+
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["authorize", "revoke"])),
 
@@ -69,6 +83,10 @@ const useHashLoader = withHashLoader((hash) => {
     );
 });
 
+interface IActionError {
+    readonly error: (typeof ACTION_ERROR_TYPES)[keyof typeof ACTION_ERROR_TYPES];
+}
+
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
@@ -78,7 +96,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {
         output: actionData,
-        issues,
+
         success,
     } = v.safeParse(
         ACTION_FORM_DATA_SCHEMA,
@@ -86,12 +104,10 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!success) {
-        const {nested: errors} = v.flatten(issues);
-
         return data(
             {
-                errors,
-            },
+                error: ACTION_ERROR_TYPES.validation,
+            } satisfies IActionError,
 
             {
                 status: 400,
@@ -104,7 +120,15 @@ export async function action(actionArgs: Route.ActionArgs) {
     const consentTokenData = await findOneConsentTokenByToken(consentToken);
 
     if (consentTokenData === null) {
-        throw data("Unauthorized", 401);
+        return data(
+            {
+                error: ACTION_ERROR_TYPES.unauthorized,
+            } satisfies IActionError,
+
+            {
+                status: 401,
+            },
+        );
     }
 
     const {accountID, callbackTokenID} = consentTokenData;
@@ -132,6 +156,26 @@ export async function action(actionArgs: Route.ActionArgs) {
             });
 
             return redirect("/authentication/consent/revoked");
+    }
+}
+
+function ErrorText() {
+    const {error} = useActionData<IActionError>() ?? {};
+
+    switch (error) {
+        case ACTION_ERROR_TYPES.unauthorized:
+            return (
+                <Text color="fg.error">
+                    You are unauthorized to authorize this log-in.
+                </Text>
+            );
+
+        case ACTION_ERROR_TYPES.validation:
+            return (
+                <Text color="fg.error">
+                    This should never happen. Contact the web master.
+                </Text>
+            );
     }
 }
 
@@ -181,6 +225,8 @@ export default function AuthenticationConsent() {
                         {accountID}@{ACCOUNT_PROVIDER_DOMAIN}
                     </Code>
                 </Text>
+
+                <ErrorText />
 
                 <Text>
                     This will <Strong color="green.solid">authorize</Strong>{" "}

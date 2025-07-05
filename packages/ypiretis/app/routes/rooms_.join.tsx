@@ -21,6 +21,7 @@ const ACTION_ERROR_TYPES = {
     roomDisposed: "TYPE_ROOM_DISPOSED",
 
     roomNotFound: "TYPE_ROOM_NOT_FOUND",
+
     validation: "TYPE_VALIDATION",
 } as const;
 

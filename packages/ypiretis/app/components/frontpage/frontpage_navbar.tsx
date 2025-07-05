@@ -12,10 +12,13 @@ import {
     Spacer,
     VStack,
     useCollapsibleContext,
+    usePopoverContext,
 } from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
+import ChevronDownIcon from "../icons/chevron_down_icon";
+import ChevronUpIcon from "../icons/chevron_up_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import MenuIcon from "~/components/icons/menu_icon";
 
@@ -110,26 +113,39 @@ function FrontpageNavbarGuestSessionLinks() {
     );
 }
 
-function FrontpageNavbarSessionGreeter() {
+function FrontpageNavbarSessionGreeterButton() {
     const {firstName, lastName} = useAuthenticatedSessionContext();
+    const {open} = usePopoverContext();
 
     const abbreviatedLastName = `${lastName.slice(0, 1)}.`;
 
     return (
+        <Popover.Trigger asChild>
+            <Button
+                variant="ghost"
+                color="currentcolor"
+                fontSize="inherit"
+                css={{
+                    "&[data-state=open]": {bg: "fg.muted"},
+                }}
+                _hover={{bg: "fg.muted"}}
+            >
+                Welcome, {firstName} {abbreviatedLastName}!
+                <ChevronDownIcon visibility={open ? "hidden" : undefined} />
+                <ChevronUpIcon
+                    position="absolute"
+                    insetInlineEnd="4"
+                    visibility={open ? undefined : "hidden"}
+                />
+            </Button>
+        </Popover.Trigger>
+    );
+}
+
+function FrontpageNavbarSessionGreeter() {
+    return (
         <Popover.Root positioning={{placement: "bottom-end"}}>
-            <Popover.Trigger asChild>
-                <Button
-                    variant="ghost"
-                    color="currentcolor"
-                    fontSize="inherit"
-                    css={{
-                        "&[data-state=open]": {bg: "fg.muted"},
-                    }}
-                    _hover={{bg: "fg.muted"}}
-                >
-                    Welcome, {firstName} {abbreviatedLastName}!
-                </Button>
-            </Popover.Trigger>
+            <FrontpageNavbarSessionGreeterButton />
 
             <Portal>
                 <Popover.Positioner visibility={{lgDown: "collapse"}}>

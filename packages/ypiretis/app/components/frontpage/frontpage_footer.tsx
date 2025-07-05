@@ -102,7 +102,7 @@ function FrontpageFooterRoot(props: IFrontpageFooterRootProps) {
         <Flex
             bg="bg.inverted"
             color="fg.inverted"
-            backgroundImage="url('/images/footer.border.webp')"
+            backgroundImage="url('/images/border.horizontal.webp')"
             backgroundSize="512px"
             backgroundRepeat="repeat-x"
             paddingBlock="8"

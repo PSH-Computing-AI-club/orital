@@ -8,6 +8,7 @@ import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
 import FeatureSection from "~/components/frontpage/feature_section";
+import FrontpageShell from "~/components/frontpage/frontpage_shell";
 import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 import PeopleCard from "~/components/frontpage/people_card";
 import PeopleSection from "~/components/frontpage/people_section";
@@ -19,6 +20,8 @@ const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 export default function FrontpageIndex(_props: Route.ComponentProps) {
     return (
         <>
+            <FrontpageShell.Title />
+
             <FullscreenHero.Root>
                 <Background3DGrid.Root>
                     <Container flexGrow="1">

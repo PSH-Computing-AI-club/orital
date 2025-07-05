@@ -5,6 +5,12 @@ import type {PropsWithChildren} from "react";
 import type {To} from "react-router";
 import {Link as RouterLink} from "react-router";
 
+import {APP_NAME} from "~/utils/constants";
+
+export interface IFrontpageShellTitleProps {
+    readonly title?: string;
+}
+
 export interface IFrontpageShellExternalLinkProps extends PropsWithChildren {
     readonly to: string;
 }
@@ -17,6 +23,16 @@ export interface IFrontpageShellInternalLinkProps extends PropsWithChildren {
 
 export interface IFrontpageShellMailToLinkProps extends PropsWithChildren {
     readonly to: string;
+}
+
+function FrontpageShellTitle(props: IFrontpageShellTitleProps) {
+    const {title} = props;
+
+    return title ? (
+        <title>{`${title} :: ${APP_NAME}`}</title>
+    ) : (
+        <title>{APP_NAME}</title>
+    );
 }
 
 function FrontpageShellExternalLink(props: IFrontpageShellExternalLinkProps) {
@@ -65,6 +81,7 @@ const FrontpageShell = {
     ExternalLink: FrontpageShellExternalLink,
     InternalLink: FrontpageShellInternalLink,
     MailToLink: FrontpageShellMailToLink,
+    Title: FrontpageShellTitle,
 } as const;
 
 export default FrontpageShell;

@@ -121,6 +121,7 @@ function FrontpageNavbarSessionGreeter() {
                 <Button
                     variant="ghost"
                     color="currentcolor"
+                    fontSize="inherit"
                     css={{
                         "&[data-state=open]": {bg: "fg.muted"},
                     }}

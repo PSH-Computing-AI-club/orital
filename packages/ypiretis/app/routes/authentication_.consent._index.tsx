@@ -1,7 +1,6 @@
 import {
     Button,
     Code,
-    Field,
     Flex,
     Group,
     List,
@@ -157,6 +156,12 @@ export async function action(actionArgs: Route.ActionArgs) {
 
             return redirect("/authentication/consent/revoked");
     }
+}
+
+export async function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    await requireGuestSession(request);
 }
 
 function ErrorText() {

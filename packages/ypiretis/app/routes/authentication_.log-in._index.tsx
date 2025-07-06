@@ -121,6 +121,12 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 }
 
+export async function loader(loaderArgs: Route.LoaderArgs) {
+    const {request} = loaderArgs;
+
+    await requireGuestSession(request);
+}
+
 function ErrorText() {
     const {error} = useActionData<IActionError>() ?? {};
 

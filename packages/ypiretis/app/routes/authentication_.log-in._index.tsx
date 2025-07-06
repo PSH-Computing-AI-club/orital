@@ -194,7 +194,7 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
                             value="log-in"
                             width="full"
                         >
-                            Log In
+                            Log-In
                         </Button>
                     </VStack>
                 </Form>

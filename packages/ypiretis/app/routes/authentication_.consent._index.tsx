@@ -205,7 +205,7 @@ export default function AuthenticationConsent() {
 
     return (
         <>
-            <PromptShell.Title title="Authorized Login?" query="Login" />
+            <PromptShell.Title title="Authorize Login?" query="Login" />
 
             <PromptShell.Body>
                 <noscript>

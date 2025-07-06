@@ -26,6 +26,13 @@ export default function AuthenticationMail(
             ? consentTokenExpiresAt.epochMilliseconds
             : consentTokenExpiresAt;
 
+    const expiresAtInstant = Temporal.Instant.fromEpochMilliseconds(expiresAt);
+    const nowInstant = Temporal.Now.instant();
+
+    const relativeExpiry = nowInstant.until(expiresAtInstant, {
+        largestUnit: "minutes",
+    });
+
     const consentURL = buildAppURL(
         `/authentication/consent/#?${new URLSearchParams({
             accountID,
@@ -48,7 +55,17 @@ export default function AuthenticationMail(
                 <strong>{APP_NAME}</strong>:
             </p>
 
-            <a href={consentURL.toString()}>Log In Now</a>
+            <p>
+                <a href={consentURL.toString()}>Log In Now</a>
+            </p>
+
+            <p>
+                <small style={{color: "tomato"}}>
+                    The above link will expire in approximately{" "}
+                    {relativeExpiry.minutes} minutes from when this E-Mail was
+                    sent.
+                </small>
+            </p>
         </>
     );
 }

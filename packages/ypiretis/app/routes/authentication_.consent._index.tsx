@@ -31,6 +31,7 @@ import {
 import {insertOne as insertOneGrantToken} from "~/.server/services/grant_tokens_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
+import TimeDeltaText from "~/components/common/time_delta_text";
 import SearchIcon from "~/components/icons/search_icon";
 import UserPlusIcon from "~/components/icons/user_plus_icon";
 
@@ -219,6 +220,20 @@ export default function AuthenticationConsent() {
                         <Strong color="red.solid">required</Strong> to log-in.
                     </Text>
                 </noscript>
+
+                <Text color="red.fg">
+                    {typeof consentTokenExpiresAt !== "undefined" ? (
+                        <>
+                            This login will expire in{" "}
+                            <TimeDeltaText
+                                endMilliseconds={consentTokenExpiresAt}
+                            />
+                            .
+                        </>
+                    ) : (
+                        <br />
+                    )}
+                </Text>
 
                 <Text>
                     You are about to log-in with the account:

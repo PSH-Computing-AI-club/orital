@@ -19,6 +19,7 @@ import {
     getGrantHeaders,
 } from "~/.server/services/users_service";
 
+import TimeDeltaText from "~/components/common/time_delta_text";
 import PromptShell from "~/components/shell/prompt_shell";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
@@ -227,7 +228,25 @@ function AuthenticationLogInPendingView(props: {
 
     useWebSocket(connectionURL, useWebSocketOptions);
 
-    return <HydrateFallback />;
+    return (
+        <>
+            <PromptShell.Title title="Log-In Pending." query="Pending" />
+
+            <PromptShell.Body>
+                <Text color="red.fg">
+                    This login will expire in{" "}
+                    <TimeDeltaText endMilliseconds={callbackTokenExpiresAt} />.
+                </Text>
+
+                <Text>
+                    Check your email for the{" "}
+                    <Strong color="cyan.solid">log-in link</Strong>.
+                </Text>
+
+                <Text>Awaiting pending authorization...</Text>
+            </PromptShell.Body>
+        </>
+    );
 }
 
 export default function AuthenticationLogInPending(

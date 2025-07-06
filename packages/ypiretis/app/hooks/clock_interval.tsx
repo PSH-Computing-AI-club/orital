@@ -1,9 +1,9 @@
 import {useEffect} from "react";
 
-export type IClockIntervalCallback = () => void;
+export type IUseClockIntervalCallback = () => void;
 
 export interface IUseClockIntervalOptions {
-    readonly callback: IClockIntervalCallback;
+    readonly callback: IUseClockIntervalCallback;
 
     readonly interval: number;
 }

@@ -20,7 +20,7 @@ function calculateTimeDelta(endMilliseconds: number): number {
     return Math.max(endMilliseconds - nowMilliseconds, 0);
 }
 
-export function TimeDeltaText(props: ITimeDeltaTextProps) {
+export default function TimeDeltaText(props: ITimeDeltaTextProps) {
     const {endMilliseconds} = props;
 
     const [deltaMilliseconds, setDeltaMilliseconds] = useState<number>(

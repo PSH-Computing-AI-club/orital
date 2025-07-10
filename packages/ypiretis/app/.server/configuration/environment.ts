@@ -8,6 +8,7 @@ import {
     duration,
     hostname,
     identifier,
+    list,
 } from "../../utils/valibot";
 
 import makeSecret from "../utils/secret";
@@ -79,6 +80,11 @@ export const ENVIRONMENT_SCHEMA = v.object({
 
     ACCOUNT_PROVIDER_DOMAIN: v.pipe(v.string(), domain),
     ACCOUNT_PROVIDER_NAME: v.pipe(v.string(), v.maxLength(64)),
+
+    ACCOUNT_ADMIN_IDENTIFIERS: v.pipe(
+        list,
+        v.array(v.pipe(v.string(), identifier)),
+    ),
 
     SESSION_EPHEMERAL_TTL: v.pipe(
         v.string(),

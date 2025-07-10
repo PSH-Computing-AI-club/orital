@@ -1,12 +1,14 @@
 import {Outlet} from "react-router";
 
-import {getOptionalSession} from "~/.server/services/users_service";
+import {
+    getOptionalSession,
+    mapPublicUser,
+} from "~/.server/services/users_service";
 
 import FrontpageFooter from "~/components/frontpage/frontpage_footer";
 import FrontpageNavbar from "~/components/frontpage/frontpage_navbar";
 
-import type {ISession} from "~/state/session";
-import {SessionContextProvider} from "~/state/session";
+import {PublicUserContextProvider} from "~/state/public_user";
 
 import {Route} from "./+types/_frontpage_";
 
@@ -19,27 +21,23 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         return;
     }
 
-    const {accountID, firstName, lastName} = session.identifiable;
+    const publicUser = mapPublicUser(session.identifiable);
 
     return {
-        session: {
-            accountID,
-            firstName,
-            lastName,
-        } satisfies ISession,
+        publicUser,
     };
 }
 
 export default function FrontpageLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const session = loaderData?.session;
+    const publicUser = loaderData?.publicUser;
 
-    return session ? (
-        <SessionContextProvider session={session}>
+    return publicUser ? (
+        <PublicUserContextProvider publicUser={publicUser}>
             <FrontpageNavbar />
             <Outlet />
             <FrontpageFooter />
-        </SessionContextProvider>
+        </PublicUserContextProvider>
     ) : (
         <>
             <FrontpageNavbar />

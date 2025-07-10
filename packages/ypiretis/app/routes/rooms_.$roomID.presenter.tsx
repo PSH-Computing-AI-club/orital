@@ -13,6 +13,8 @@ import {
     requireAuthenticatedPresenterConnection,
 } from "~/.server/services/rooms_service";
 
+import {mapPublicUser} from "~/.server/services/users_service";
+
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
 import ChartIcon from "~/components/icons/chart_icon";
@@ -25,8 +27,7 @@ import {WebSocketCacheProvider} from "~/hooks/web_socket";
 import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
 import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
 
-import type {ISession} from "~/state/session";
-import {SessionContextProvider} from "~/state/session";
+import {PublicUserContextProvider} from "~/state/public_user";
 
 import {buildFormData} from "~/utils/forms";
 
@@ -63,7 +64,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     );
 
     const {attendees, displays, pin, roomID, state, title} = room;
-    const {accountID, firstName, lastName} = user;
+    const publicUser = mapPublicUser(user);
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
         const {id: entityID, isRaisingHand, state, user} = attendee;
@@ -103,11 +104,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             state: PRESENTER_USER_STATES.disposed,
         } satisfies IPresenterContext,
 
-        session: {
-            accountID,
-            firstName,
-            lastName,
-        } satisfies ISession,
+        publicUser,
     };
 }
 
@@ -193,12 +190,12 @@ function Sidebar() {
 
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialContextData, session} = loaderData;
+    const {initialContextData, publicUser} = loaderData;
 
     return (
         <AppShell.Root>
             <WebSocketCacheProvider>
-                <SessionContextProvider session={session}>
+                <PublicUserContextProvider publicUser={publicUser}>
                     <PresenterContextProvider
                         initialContextData={initialContextData}
                     >
@@ -206,7 +203,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
                         <Outlet />
                     </PresenterContextProvider>
-                </SessionContextProvider>
+                </PublicUserContextProvider>
             </WebSocketCacheProvider>
         </AppShell.Root>
     );

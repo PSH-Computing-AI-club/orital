@@ -3,27 +3,50 @@ import {eq} from "drizzle-orm";
 import type {SessionData} from "react-router";
 
 import DATABASE from "../configuration/database";
+import ENVIRONMENT from "../configuration/environment";
 import * as persistentSession from "../configuration/persistent_session";
 
 import USERS_TABLE from "../database/tables/users_table";
 
 import makeSessionGuard from "../guards/session_guard";
 
-export type IUser = typeof USERS_TABLE.$inferSelect;
+const ACCOUNT_ADMIN_IDENTIFIERS = new Set(
+    ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
+);
+
+export type IUser = Readonly<typeof USERS_TABLE.$inferSelect> & {
+    readonly isAdmin: boolean;
+};
+
+export type IPublicUser = Omit<IUser, "createdAt" | "id">;
 
 export type IUserInsert = Omit<
-    typeof USERS_TABLE.$inferInsert,
+    Readonly<typeof USERS_TABLE.$inferInsert>,
     "createdAt" | "id"
 >;
+
+export interface IUserIdentifiable extends IUser {}
 
 export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-const sessionGuard = makeSessionGuard<typeof USERS_TABLE, IUser>(
+function mapUser(user: typeof USERS_TABLE.$inferSelect): IUser {
+    const {accountID} = user;
+
+    const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);
+
+    return {
+        ...user,
+        isAdmin,
+    };
+}
+
+const sessionGuard = makeSessionGuard(
     USERS_TABLE,
     persistentSession,
     "userID",
+    mapUser,
 );
 
 export const getGrantHeaders = sessionGuard.getGrantHeaders;
@@ -42,7 +65,7 @@ export async function findOne(userID: number): Promise<IUser | null> {
         where: eq(USERS_TABLE.id, userID),
     });
 
-    return user ?? null;
+    return user ? mapUser(user) : null;
 }
 
 export async function findOneByAccountID(
@@ -52,7 +75,7 @@ export async function findOneByAccountID(
         where: eq(USERS_TABLE.accountID, accountID),
     });
 
-    return user ?? null;
+    return user ? mapUser(user) : null;
 }
 
 export async function insertOne(userData: IUserInsert): Promise<IUser> {
@@ -60,5 +83,16 @@ export async function insertOne(userData: IUserInsert): Promise<IUser> {
         .values(userData)
         .returning();
 
-    return user;
+    return mapUser(user);
+}
+
+export function mapPublicUser(user: IUser): IPublicUser {
+    const {accountID, firstName, lastName, isAdmin} = user;
+
+    return {
+        accountID,
+        firstName,
+        lastName,
+        isAdmin,
+    };
 }

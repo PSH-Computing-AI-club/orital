@@ -25,9 +25,9 @@ import MenuIcon from "~/components/icons/menu_icon";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import {
-    useAuthenticatedSessionContext,
-    useOptionalSessionContext,
-} from "~/state/session";
+    useAuthenticatedPublicUserContext,
+    useOptionalPublicUserContext,
+} from "~/state/public_user";
 
 interface IFrontpageNavbarActionsDesktopProps extends PropsWithChildren {}
 
@@ -82,6 +82,8 @@ function FrontpageNavbarLogo() {
 }
 
 function FrontpageNavbarAuthenticatedSessionLinks() {
+    const {isAdmin} = useAuthenticatedPublicUserContext();
+
     return (
         <>
             <FrontpageShell.InternalLink to="/rooms/join">
@@ -93,6 +95,12 @@ function FrontpageNavbarAuthenticatedSessionLinks() {
             </FrontpageShell.InternalLink>
 
             <FrontpageNavbarDivider />
+
+            {isAdmin ? (
+                <FrontpageShell.InternalLink to="/admin">
+                    Admin
+                </FrontpageShell.InternalLink>
+            ) : undefined}
 
             <FrontpageShell.InternalLink to="/user/settings">
                 Settings
@@ -114,7 +122,7 @@ function FrontpageNavbarGuestSessionLinks() {
 }
 
 function FrontpageNavbarSessionGreeterButton() {
-    const {firstName, lastName} = useAuthenticatedSessionContext();
+    const {firstName, lastName} = useAuthenticatedPublicUserContext();
     const {open} = usePopoverContext();
 
     const abbreviatedLastName = `${lastName.slice(0, 1)}.`;
@@ -284,7 +292,7 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
 }
 
 export default function FrontpageNavbar() {
-    const session = useOptionalSessionContext();
+    const session = useOptionalPublicUserContext();
 
     return (
         <>

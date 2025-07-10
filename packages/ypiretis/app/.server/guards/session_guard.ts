@@ -40,104 +40,117 @@ export default function makeSessionGuard<
     D extends SessionData = SessionData,
     F extends SessionData = D,
     S extends SessionStorage<D, F> = SessionStorage<D, F>,
-    N extends Session<D, F> = Session<D, F>,
     K extends keyof D | keyof F = keyof D | keyof F,
->(table: T, sessionStorage: S, idKey: K): ISessionGuards<T, I, D, N> {
+    R extends I = I,
+>(
+    table: T,
+    sessionStorage: S,
+    idKey: K,
+    identifiableMapper?: (identifiable: InferSelectModel<T>) => R,
+): ISessionGuards<T, R, D, F> {
     const {commitSession, destroySession, getSession} = sessionStorage;
 
-    let guards: ISessionGuards<T, I, D, N>;
+    async function getGrantHeaders(_request: Request, session: Session<D, F>) {
+        const setCookieHeader = await commitSession(session);
 
-    guards = {
-        async getGrantHeaders(_request, session) {
-            const setCookieHeader = await commitSession(session);
+        return {
+            "Set-Cookie": setCookieHeader,
+        };
+    }
 
-            return {
-                "Set-Cookie": setCookieHeader,
-            };
-        },
+    async function getOptionalSession(request: Request) {
+        const {headers} = request;
+        const cookie = headers.get("Cookie");
 
-        async getOptionalSession(request) {
-            const {headers} = request;
-            const cookie = headers.get("Cookie");
+        if (!cookie) {
+            return null;
+        }
 
-            if (!cookie) {
-                return null;
-            }
+        const session = await getSession(cookie);
 
-            const session = await getSession(cookie);
+        // **HACK:** The typing for `Session.has` is very generous and allows
+        // for untyped string keys. But, we want to strict type to keys we
+        // can statically type.
+        if (!session.has(idKey as string)) {
+            return null;
+        }
 
-            // **HACK:** The typing for `Session.has` is very generous and allows
-            // for untyped string keys. But, we want to strict type to keys we
-            // can statically type.
-            if (!session.has(idKey as string)) {
-                return null;
-            }
+        // **HACK:** See above comment.
+        const id = session.get(idKey as string);
 
-            // **HACK:** See above comment.
-            const id = session.get(idKey as string);
+        if (!id) {
+            return null;
+        }
 
-            if (!id) {
-                return null;
-            }
+        const [firstIdentifiable] = await DATABASE.select()
+            .from(table)
+            .where(eq(table.id, id))
+            .limit(1);
 
-            const [firstIdentifiable] = await DATABASE.select()
-                .from(table)
-                .where(eq(table.id, id))
-                .limit(1);
+        if (!firstIdentifiable) {
+            return null;
+        }
 
-            if (!firstIdentifiable) {
-                return null;
-            }
+        const mappedIdentifiable = identifiableMapper
+            ? identifiableMapper(
+                  // **HACK:** Drizzle's typing is too complex for TypeScript to
+                  // properly infer here. So, we got to forcibly cast it.
+                  firstIdentifiable as I,
+              )
+            : (firstIdentifiable as I);
 
-            return {
-                // **HACK:** Drizzle's typing is too complex for TypeScript to
-                // properly infer here. So, we got to forcibly cast it.
-                identifiable: firstIdentifiable as I,
-                session: session,
-            };
-        },
+        return {
+            identifiable: mappedIdentifiable as unknown as R,
+            session: session,
+        };
+    }
 
-        async getRevokeHeaders(_request, session) {
-            const setCookieHeader = await destroySession(session);
+    async function getRevokeHeaders(_request: Request, session: Session<D, F>) {
+        const setCookieHeader = await destroySession(session);
 
-            return {
-                "Set-Cookie": setCookieHeader,
-            };
-        },
+        return {
+            "Set-Cookie": setCookieHeader,
+        };
+    }
 
-        async requireAuthenticatedSession(request) {
-            const session = await guards.getOptionalSession(request);
+    async function requireAuthenticatedSession(request: Request) {
+        const session = await getOptionalSession(request);
 
-            if (!session) {
-                throw data("Unauthorized", {
-                    status: 401,
-                });
-            }
+        if (!session) {
+            throw data("Unauthorized", {
+                status: 401,
+            });
+        }
 
-            return session;
-        },
+        return session;
+    }
 
-        async requireGuestSession(request) {
-            const {headers} = request;
+    async function requireGuestSession(request: Request) {
+        const {headers} = request;
 
-            const cookie = headers.get("Cookie");
-            const session = await getSession(cookie);
+        const cookie = headers.get("Cookie");
+        const session = await getSession(cookie);
 
-            if (
-                cookie &&
-                // **HACK:** See comment in `requireAuthenticatedSession`.
-                session.has(idKey as string)
-            ) {
-                throw data("Forbidden", {
-                    status: 403,
-                });
-            }
+        if (
+            cookie &&
+            // **HACK:** See comment in `requireAuthenticatedSession`.
+            session.has(idKey as string)
+        ) {
+            throw data("Forbidden", {
+                status: 403,
+            });
+        }
 
-            return {
-                session,
-            };
-        },
+        return {
+            session,
+        };
+    }
+
+    return {
+        getGrantHeaders,
+        getOptionalSession,
+        getRevokeHeaders,
+        requireAuthenticatedSession,
+        requireGuestSession,
     };
-
-    return guards;
 }

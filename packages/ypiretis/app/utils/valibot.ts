@@ -56,6 +56,13 @@ export const hostname = v.union(
     "Invalid hostname format.",
 );
 
+export const list = v.pipe(
+    v.string(),
+    v.transform((value) =>
+        value.split(",").map((substring) => substring.trim()),
+    ),
+);
+
 export const numeric = v.regex(EXPRESSION_NUMERIC, "Invalid numeric format.");
 
 export const pin = v.regex(EXPRESSION_PIN, "Invalid PIN format.");

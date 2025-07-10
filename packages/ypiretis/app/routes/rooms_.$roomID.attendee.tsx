@@ -13,6 +13,8 @@ import {
     requireAuthenticatedAttendeeConnection,
 } from "~/.server/services/rooms_service";
 
+import {mapPublicUser} from "~/.server/services/users_service";
+
 import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
 import LogoutIcon from "~/components/icons/logout_icon";
@@ -23,9 +25,7 @@ import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendeeContext} from "~/state/attendee";
 import {AttendeeContextProvider, useAttendeeContext} from "~/state/attendee";
-
-import type {ISession} from "~/state/session";
-import {SessionContextProvider} from "~/state/session";
+import {PublicUserContextProvider} from "~/state/public_user";
 
 import {buildFormData} from "~/utils/forms";
 
@@ -62,7 +62,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     );
 
     const {roomID, state} = room;
-    const {accountID, firstName, lastName} = user;
+    const publicUser = mapPublicUser(user);
 
     return {
         initialContextData: {
@@ -77,11 +77,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             state: ATTENDEE_USER_STATES.disposed,
         } satisfies IAttendeeContext,
 
-        session: {
-            accountID,
-            firstName,
-            lastName,
-        } satisfies ISession,
+        publicUser,
     };
 }
 
@@ -161,12 +157,12 @@ function Sidebar() {
 
 export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {initialContextData, session} = loaderData;
+    const {initialContextData, publicUser} = loaderData;
 
     return (
         <AppShell.Root>
             <WebSocketCacheProvider>
-                <SessionContextProvider session={session}>
+                <PublicUserContextProvider publicUser={publicUser}>
                     <AttendeeContextProvider
                         initialContextData={initialContextData}
                     >
@@ -174,7 +170,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
 
                         <Outlet />
                     </AttendeeContextProvider>
-                </SessionContextProvider>
+                </PublicUserContextProvider>
             </WebSocketCacheProvider>
         </AppShell.Root>
     );

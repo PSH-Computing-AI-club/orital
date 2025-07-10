@@ -28,6 +28,7 @@ import {useState} from "react";
 import * as v from "valibot";
 
 import type {IRoomStates} from "~/.server/services/rooms_service";
+import type {IPublicUser} from "~/.server/services/users_service";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
@@ -56,8 +57,7 @@ import AppShell from "~/components/shell/app_shell";
 
 import type {IAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
-import type {ISession} from "~/state/session";
-import {useAuthenticatedSessionContext} from "~/state/session";
+import {useAuthenticatedPublicUserContext} from "~/state/public_user";
 
 import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
 import {buildFormData} from "~/utils/forms";
@@ -76,26 +76,26 @@ const UX_TITLE_SCHEMA = v.pipe(
 );
 
 interface IAttendeeListItemActionsProps {
-    readonly user: IAttendee | ISession;
+    readonly user: IAttendee | IPublicUser;
 }
 
 interface IAttendeeListItemProps {
-    readonly user: IAttendee | ISession;
+    readonly user: IAttendee | IPublicUser;
 }
 
 interface IAttendeeListProps {
-    readonly users: (IAttendee | ISession)[];
+    readonly users: (IAttendee | IPublicUser)[];
 }
 
 function getModeUsers(
     modeValue: "active" | "disconnected" | "pending" | null,
-): (IAttendee | ISession)[] {
+): (IAttendee | IPublicUser)[] {
     const {room} = usePresenterContext();
     const {attendees} = room;
 
     switch (modeValue) {
         case "active": {
-            const session = useAuthenticatedSessionContext();
+            const session = useAuthenticatedPublicUserContext();
 
             const loweredHandAttendees: IAttendee[] = [];
             const raisedHandAttendees: IAttendee[] = [];
@@ -147,7 +147,7 @@ function isAttendee(value: unknown): value is IAttendee {
     return value !== null && typeof value === "object" && "state" in value;
 }
 
-function matchUserIcon(user: IAttendee | ISession) {
+function matchUserIcon(user: IAttendee | IPublicUser) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -164,7 +164,7 @@ function matchUserIcon(user: IAttendee | ISession) {
     return TeachIcon;
 }
 
-function matchUserTagPalette(user: IAttendee | ISession) {
+function matchUserTagPalette(user: IAttendee | IPublicUser) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -181,7 +181,7 @@ function matchUserTagPalette(user: IAttendee | ISession) {
     return "orange";
 }
 
-function matchUserTagText(user: IAttendee | ISession): string {
+function matchUserTagText(user: IAttendee | IPublicUser): string {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -199,8 +199,8 @@ function matchUserTagText(user: IAttendee | ISession): string {
 }
 
 function sortUsers(
-    attendeeA: IAttendee | ISession,
-    attendeeB: IAttendee | ISession,
+    attendeeA: IAttendee | IPublicUser,
+    attendeeB: IAttendee | IPublicUser,
 ): number {
     const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
     const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;

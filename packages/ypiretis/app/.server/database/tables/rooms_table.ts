@@ -12,7 +12,7 @@ import USERS_TABLE from "./users_table";
 const ROOMS_TABLE = sqliteTable("rooms", {
     id: integer("id").primaryKey({autoIncrement: true}),
 
-    roomID: text("room_id")
+    roomID: text("room_id", {length: 26})
         .notNull()
         .unique()
         .$defaultFn(() => ulid()),

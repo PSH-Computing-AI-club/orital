@@ -1,0 +1,55 @@
+import {Temporal} from "@js-temporal/polyfill";
+
+import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
+
+import {ulid} from "ulid";
+
+import temporalInstant, {
+    DEFAULT_TEMPORAL_INSTANT,
+} from "../types/temporal_instant";
+
+import USERS_TABLE from "./users_table";
+
+export const ARTICLE_STATES = {
+    draft: "STATE_DRAFT",
+
+    published: "STATE_PUBLISHED",
+} as const;
+
+const ARTICLES_TABLE = sqliteTable("articles", {
+    id: integer("id").primaryKey({autoIncrement: true}),
+
+    articleID: text("article_id", {length: 26})
+        .notNull()
+        .unique()
+        .$defaultFn(() => ulid()),
+
+    posterUserID: integer("poster_user_id")
+        .notNull()
+        .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
+
+    state: text("state", {
+        enum: [ARTICLE_STATES.draft, ARTICLE_STATES.published],
+    }).notNull(),
+
+    title: text("title", {length: 64}).notNull(),
+
+    content: text("content").notNull(),
+
+    createdAt: temporalInstant("created_at")
+        .notNull()
+        .default(DEFAULT_TEMPORAL_INSTANT),
+
+    updatedAt: temporalInstant("updated_at").$onUpdate(() =>
+        Temporal.Now.instant(),
+    ),
+
+    publishedAt: temporalInstant("published_at"),
+});
+
+export type IArticleStates =
+    (typeof ARTICLE_STATES)[keyof typeof ARTICLE_STATES];
+
+export type IArticlesTable = typeof ARTICLES_TABLE;
+
+export default ARTICLES_TABLE;

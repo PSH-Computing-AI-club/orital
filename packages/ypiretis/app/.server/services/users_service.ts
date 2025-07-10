@@ -31,7 +31,7 @@ export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-function mapUser(user: typeof USERS_TABLE.$inferSelect): IUser {
+function mapUser(user: Readonly<typeof USERS_TABLE.$inferSelect>): IUser {
     const {accountID} = user;
 
     const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);

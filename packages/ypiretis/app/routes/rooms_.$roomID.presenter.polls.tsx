@@ -1,6 +1,6 @@
 import AppShell from "~/components/shell/app_shell";
 
-import {Route} from "./+types/rooms.$roomID.presenter.polls";
+import {Route} from "./+types/rooms_.$roomID.presenter.polls";
 
 export default function RoomsPresenterIndex(props: Route.ComponentProps) {
     return (

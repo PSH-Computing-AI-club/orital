@@ -25,8 +25,6 @@ export type IUserInsert = Omit<
     "createdAt" | "id"
 >;
 
-export interface IUserIdentifiable extends IUser {}
-
 export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }

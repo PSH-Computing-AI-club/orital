@@ -1,13 +1,17 @@
-
 import {data} from "react-router";
 
 import * as v from "valibot";
 
 import {findAllPublished} from "~/.server/services/articles_service";
+import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
+
+import {transformTextToSnippet} from "~/.server/utils/string";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
 
 const ARTICLES_PER_PAGE = 25;
+
+const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 48;
 
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
@@ -51,8 +55,36 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
+    const mappedArticles = await Promise.all(
+        articles.map(async (article) => {
+            const {articleID, content, slug, publishedAt, title, updatedAt} =
+                article;
+
+            const {epochMilliseconds: publishedAtMilliseconds} = publishedAt;
+            const updatedAtMilliseconds = updatedAt?.epochMilliseconds ?? -1;
+
+            const plaintextContent = await renderMarkdownForPlaintext(content);
+            const description = transformTextToSnippet(plaintextContent, {
+                limit: ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
+            });
+
+            return {
+                articleID,
+                description,
+                publishedAtMilliseconds,
+                slug,
+                title,
+
+                updatedAtMilliseconds:
+                    updatedAtMilliseconds > publishedAtMilliseconds
+                        ? updatedAtMilliseconds
+                        : null,
+            };
+        }),
+    );
+
     return {
-        articles,
+        articles: mappedArticles,
         pagination,
     };
 }

@@ -70,7 +70,7 @@ import {Route} from "./+types/rooms_.$roomID.presenter._index";
 
 const UX_TITLE_SCHEMA = v.pipe(
     v.string(),
-    v.minLength(1),
+    v.nonEmpty(),
     v.maxLength(32),
     title,
 );

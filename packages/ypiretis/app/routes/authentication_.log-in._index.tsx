@@ -38,7 +38,7 @@ const ACTION_ERROR_TYPES = {
 } as const;
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
+    accountID: v.pipe(v.string(), v.nonEmpty(), alphanumerical),
 
     action: v.pipe(v.string(), v.picklist(["log-in"])),
 });

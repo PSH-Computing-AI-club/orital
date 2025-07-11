@@ -63,7 +63,7 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 const HASH_LOADER_HASH_SCHEMA = v.object({
-    accountID: v.pipe(v.string(), v.minLength(1), alphanumerical),
+    accountID: v.pipe(v.string(), v.nonEmpty(), alphanumerical),
 
     consentToken: v.pipe(v.string(), token("TCSN")),
 

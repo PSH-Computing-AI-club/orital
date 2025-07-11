@@ -29,7 +29,7 @@ const ACTION_ERROR_TYPES = {
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["create"])),
 
-    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(32), title),
 });
 
 const DEFAULT_ROOM_TITLE = "A Presentation Room";

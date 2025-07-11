@@ -36,7 +36,7 @@ const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("title.update")),
 
-    title: v.pipe(v.string(), v.minLength(1), v.maxLength(32), title),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(32), title),
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [

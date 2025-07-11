@@ -98,6 +98,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     ) {
         return redirect(
             `/news/articles/${articleID}/${publishedYear}/${publishedMonth}/${publishedDay}/${articleSlug}`,
+            {
+                status: 301,
+            },
         );
     }
 

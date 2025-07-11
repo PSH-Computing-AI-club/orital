@@ -49,5 +49,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     return redirect(
         `/news/articles/${articleID}/${year}/${month}/${day}/${slug}`,
+        {
+            status: 301,
+        },
     );
 }

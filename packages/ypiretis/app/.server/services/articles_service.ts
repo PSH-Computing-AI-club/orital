@@ -8,7 +8,7 @@ import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
 
-import {IPaginationOptions, IPaginationResults} from "./types";
+import type {IPaginationOptions, IPaginationResults} from "./types";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 

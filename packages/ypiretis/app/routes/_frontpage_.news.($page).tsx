@@ -1,4 +1,4 @@
-import {findAllPublishedArticles} from "~/.server/services/articles_service";
+import {findAllPublished} from "~/.server/services/articles_service";
 
 import {data} from "react-router";
 
@@ -34,7 +34,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const {page = 1} = params;
 
-    const {articles, pagination} = await findAllPublishedArticles({
+    const {articles, pagination} = await findAllPublished({
         pagination: {
             page,
 

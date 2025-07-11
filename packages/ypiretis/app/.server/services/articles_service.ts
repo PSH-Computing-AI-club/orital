@@ -36,7 +36,7 @@ export interface IFindAllPublishedArticlesResults {
     readonly pagination: IPaginationResults;
 }
 
-export async function findAllPublishedArticles(
+export async function findAllPublished(
     options: IFindAllPublishedArticlesOptions,
 ): Promise<IFindAllPublishedArticlesResults> {
     const {pagination} = options;

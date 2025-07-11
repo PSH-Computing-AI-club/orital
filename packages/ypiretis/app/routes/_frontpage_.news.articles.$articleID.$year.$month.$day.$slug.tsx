@@ -1,6 +1,6 @@
 import {Temporal} from "@js-temporal/polyfill";
 
-import {data} from "react-router";
+import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
@@ -17,6 +17,26 @@ import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.
 
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
+
+    day: v.pipe(
+        v.string(),
+        v.transform((value) => parseInt(value, 10)),
+        v.number(),
+    ),
+
+    month: v.pipe(
+        v.string(),
+        v.transform((value) => parseInt(value, 10)),
+        v.number(),
+    ),
+
+    slug: v.pipe(v.string(), v.nonEmpty(), v.slug()),
+
+    year: v.pipe(
+        v.string(),
+        v.transform((value) => parseInt(value, 10)),
+        v.number(),
+    ),
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
@@ -33,7 +53,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {articleID} = params;
+    const {
+        articleID,
+        day: userDay,
+        month: userMonth,
+        slug: userSlug,
+        year: userYear,
+    } = params;
     const article = await findOneByArticleID(articleID);
 
     if (article === null) {
@@ -42,7 +68,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {publishedAt, state} = article;
+    const {
+        content,
+        publishedAt,
+        slug: articleSlug,
+        state,
+        title,
+        updatedAt,
+    } = article;
 
     if (state !== ARTICLE_STATES.published || publishedAt === null) {
         throw data("Not Found", {
@@ -50,15 +83,29 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {content, slug, title, updatedAt} = article;
+    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+    const {
+        day: publishedDay,
+        month: publishedMonth,
+        year: publishedYear,
+    } = zonedPublishedAt;
+
+    if (
+        articleSlug !== userSlug ||
+        publishedDay !== userDay ||
+        publishedMonth !== userMonth ||
+        publishedYear !== userYear
+    ) {
+        return redirect(
+            `/news/articles/${articleID}/${publishedYear}/${publishedMonth}/${publishedDay}/${articleSlug}`,
+        );
+    }
+
+    const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt);
 
     const hasBeenEdited = updatedAt
         ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
         : false;
-
-    const publishedAtTimestamp = formatZonedDateTime(
-        publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
-    );
 
     const updatedAtTimestamp = hasBeenEdited
         ? formatZonedDateTime(updatedAt!.toZonedDateTimeISO(SYSTEM_TIMEZONE))
@@ -71,7 +118,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             articleID,
             publishedAtTimestamp,
             renderedContent,
-            slug,
+            slug: articleSlug,
             title,
             updatedAtTimestamp,
         },

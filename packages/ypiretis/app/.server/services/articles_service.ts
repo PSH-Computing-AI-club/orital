@@ -1,0 +1,94 @@
+import {Temporal} from "@js-temporal/polyfill";
+
+import {and, desc, eq, getTableColumns, lte, sql} from "drizzle-orm";
+
+import DATABASE from "../configuration/database";
+
+import ARTICLES_TABLE, {
+    ARTICLE_STATES as _ARTICLE_STATES,
+} from "../database/tables/articles_table";
+
+import {IPaginationOptions, IPaginationResults} from "./types";
+
+export const ARTICLE_STATES = _ARTICLE_STATES;
+
+export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;
+
+export type IArticleInsert = Omit<
+    Readonly<typeof ARTICLES_TABLE.$inferInsert>,
+    "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
+>;
+
+export type IArticleUpdate = Partial<
+    Omit<
+        Readonly<typeof ARTICLES_TABLE.$inferInsert>,
+        "articleID" | "createdAt" | "id" | "posterUserID" | "updatedAt"
+    >
+>;
+
+export interface IFindAllPublishedArticlesOptions {
+    readonly pagination: IPaginationOptions;
+}
+
+export interface IFindAllPublishedArticlesResults {
+    readonly articles: IArticle[];
+
+    readonly pagination: IPaginationResults;
+}
+
+export async function findAllPublishedArticles(
+    options: IFindAllPublishedArticlesOptions,
+): Promise<IFindAllPublishedArticlesResults> {
+    const {pagination} = options;
+    const {limit, page} = pagination;
+
+    const offset = (page - 1) * limit;
+    const nowInstant = Temporal.Now.instant();
+
+    const results = await DATABASE.select({
+        ...getTableColumns(ARTICLES_TABLE),
+
+        articleCount: sql<number>`COUNT(${ARTICLES_TABLE.id}) OVER()`.as(
+            "article_count",
+        ),
+    })
+        .from(ARTICLES_TABLE)
+        .where(
+            and(
+                eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
+                lte(ARTICLES_TABLE.publishedAt, nowInstant),
+            ),
+        )
+        .orderBy(desc(ARTICLES_TABLE.publishedAt))
+        .limit(limit)
+        .offset(offset);
+
+    if (results.length === 0) {
+        return {
+            articles: [],
+
+            pagination: {
+                page,
+                pages: 0,
+            },
+        };
+    }
+
+    const {articleCount} = results[0];
+    const pages = Math.ceil(articleCount / limit);
+
+    const articles = results.map((result) => {
+        const {articleCount: _articleCount, ...article} = result;
+
+        return article;
+    });
+
+    return {
+        articles,
+
+        pagination: {
+            page,
+            pages,
+        },
+    };
+}

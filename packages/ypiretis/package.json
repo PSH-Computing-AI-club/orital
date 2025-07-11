@@ -29,6 +29,7 @@
         "dompurify": "^3.2.6",
         "drizzle-orm": "^0.43.1",
         "fastq": "^1.19.1",
+        "github-slugger": "^2.0.0",
         "html-to-text": "^9.0.5",
         "isbot": "^5.1.27",
         "jsdom": "^26.1.0",

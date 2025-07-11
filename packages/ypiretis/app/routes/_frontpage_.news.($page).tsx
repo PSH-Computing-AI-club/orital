@@ -7,7 +7,7 @@ import {findAllPublished} from "~/.server/services/articles_service";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
 
-const ARTICLE_PAGE_LIMIT = 25;
+const ARTICLES_PER_PAGE = 25;
 
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
@@ -39,7 +39,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         pagination: {
             page,
 
-            limit: ARTICLE_PAGE_LIMIT,
+            limit: ARTICLES_PER_PAGE,
         },
     });
 

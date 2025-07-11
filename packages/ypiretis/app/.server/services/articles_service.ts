@@ -69,7 +69,7 @@ export async function findAllPublishedArticles(
 
             pagination: {
                 page,
-                pages: 0,
+                pages: 1,
             },
         };
     }

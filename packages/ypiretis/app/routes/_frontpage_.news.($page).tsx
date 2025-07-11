@@ -56,6 +56,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-export default function FrontpageLayout(props: Route.ComponentProps) {
+export default function FrontpageNews(props: Route.ComponentProps) {
     return "hello world";
 }

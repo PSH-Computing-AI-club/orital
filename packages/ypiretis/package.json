@@ -36,6 +36,7 @@
         "marked": "^16.0.0",
         "marked-emoji": "^2.0.1",
         "marked-gfm-heading-id": "^4.1.2",
+        "marked-plaintify": "^1.1.1",
         "nodemailer": "^7.0.3",
         "pixelarticons": "^1.8.1",
         "postprocessing": "^6.37.4",

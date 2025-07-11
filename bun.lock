@@ -36,6 +36,7 @@
         "marked": "^16.0.0",
         "marked-emoji": "^2.0.1",
         "marked-gfm-heading-id": "^4.1.2",
+        "marked-plaintify": "^1.1.1",
         "nodemailer": "^7.0.3",
         "pixelarticons": "^1.8.1",
         "postprocessing": "^6.37.4",
@@ -759,6 +760,8 @@
     "marked-emoji": ["marked-emoji@2.0.1", "", { "peerDependencies": { "marked": ">=4 <17" } }, "sha512-P+nRr02dD+yPOFhtGdaVBzp0qzwlksI2f5GumIdHW/3UadzJ5sVi78CZikiSLr9PmdtUOZodZUBNIO6k38pDMQ=="],
 
     "marked-gfm-heading-id": ["marked-gfm-heading-id@4.1.2", "", { "dependencies": { "github-slugger": "^2.0.0" }, "peerDependencies": { "marked": ">=13 <17" } }, "sha512-EQ1WiEGHJh0C8viU+hbXbhHyWTDgEia2i96fiSemm2wdYER6YBw/9QI5TB6YFTqFfmMOxBFXPcPJtlgD0fVV2w=="],
+
+    "marked-plaintify": ["marked-plaintify@1.1.1", "", { "peerDependencies": { "marked": ">=13.0.0" } }, "sha512-r3kMKArhfo2H3lD4ctFq/OJTzM0uNvXHh7FBTI1hMDpf4Ac1djjtq4g8NfTBWMxWLmaEz3KL1jCkLygik3gExA=="],
 
     "meshline": ["meshline@3.3.1", "", { "peerDependencies": { "three": ">=0.137" } }, "sha512-/TQj+JdZkeSUOl5Mk2J7eLcYTLiQm2IDzmlSvYm7ov15anEcDJ92GHqqazxTSreeNgfnYu24kiEvvv0WlbCdFQ=="],
 

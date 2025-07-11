@@ -18,6 +18,12 @@ export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect> & {
     readonly slug: string;
 };
 
+export interface IPublishedArticle extends IArticle {
+    readonly publishedAt: Temporal.Instant;
+
+    readonly state: (typeof ARTICLE_STATES)["published"];
+}
+
 export type IArticleInsert = Omit<
     Readonly<typeof ARTICLES_TABLE.$inferInsert>,
     "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
@@ -35,7 +41,7 @@ export interface IFindAllPublishedArticlesOptions {
 }
 
 export interface IFindAllPublishedArticlesResults {
-    readonly articles: IArticle[];
+    readonly articles: IPublishedArticle[];
 
     readonly pagination: IPaginationResults;
 }
@@ -106,7 +112,7 @@ export async function findAllPublished(
     const articles = results.map((result) => {
         const {articleCount: _articleCount, ...article} = result;
 
-        return mapArticle(article);
+        return mapArticle(article) as IPublishedArticle;
     });
 
     return {

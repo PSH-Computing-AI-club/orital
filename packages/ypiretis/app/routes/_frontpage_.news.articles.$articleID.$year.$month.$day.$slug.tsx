@@ -6,6 +6,7 @@ import {
     ARTICLE_STATES,
     findOneByArticleID,
 } from "~/.server/services/articles_service";
+import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
@@ -44,8 +45,26 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
+    const {content, slug, title, updatedAt} = article;
+
+    const {epochMilliseconds: publishedAtMilliseconds} = publishedAt;
+    const updatedAtMilliseconds = updatedAt?.epochMilliseconds ?? -1;
+
+    const renderedContent = await renderMarkdownForWeb(content);
+
     return {
-        article,
+        article: {
+            articleID,
+            publishedAtMilliseconds,
+            renderedContent,
+            slug,
+            title,
+
+            updatedAtMilliseconds:
+                updatedAtMilliseconds > publishedAtMilliseconds
+                    ? updatedAtMilliseconds
+                    : null,
+        },
     };
 }
 

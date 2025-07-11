@@ -37,7 +37,9 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!success) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const {action} = output;

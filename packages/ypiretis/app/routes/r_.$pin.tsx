@@ -22,7 +22,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     );
 
     if (!isValidParams) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     await requireAuthenticatedSession(request);

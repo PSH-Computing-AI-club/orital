@@ -239,7 +239,9 @@ export async function requireAuthenticatedAttendeeAction(
     const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
 
     if (!success) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const session = await requireAuthenticatedAttendeeSession(
@@ -276,15 +278,21 @@ export async function requireAuthenticatedAttendeeConnection(
     const {accountID} = user;
 
     if (bannedAccountIDs.has(accountID)) {
-        throw data("Forbidden", 403);
+        throw data("Forbidden", {
+            status: 403,
+        });
     }
 
     switch (room.state) {
         case ROOM_STATES.disposed:
-            throw data("Conflict", 409);
+            throw data("Conflict", {
+                status: 409,
+            });
 
         case ROOM_STATES.locked:
-            throw data("Locked", 423);
+            throw data("Locked", {
+                status: 423,
+            });
     }
 
     for (const attendee of room.attendees.values()) {
@@ -333,7 +341,9 @@ export async function requireAuthenticatedAttendeeSession(
     }
 
     if (room.state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
+        throw data("Conflict", {
+            status: 409,
+        });
     }
 
     return {
@@ -359,7 +369,9 @@ export async function requireAuthenticatedDisplayConnection(
     }
 
     if (room.state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
+        throw data("Conflict", {
+            status: 409,
+        });
     }
 
     return {
@@ -376,7 +388,9 @@ export async function requireAuthenticatedPresenterAction(
     const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
 
     if (!success) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const session = await requireAuthenticatedPresenterSession(
@@ -416,7 +430,9 @@ export async function requireAuthenticatedPresenterConnection(
     }
 
     if (room.state === ROOM_STATES.disposed || room.presenterEntity) {
-        throw data("Conflict", 409);
+        throw data("Conflict", {
+            status: 409,
+        });
     }
 
     return {
@@ -446,13 +462,17 @@ export async function requireAuthenticatedPresenterSession(
     }
 
     if (room.state === ROOM_STATES.disposed) {
-        throw data("Conflict", 409);
+        throw data("Conflict", {
+            status: 409,
+        });
     }
 
     const {presenterEntity: presenter} = room;
 
     if (presenter === null) {
-        throw data("Conflict", 409);
+        throw data("Conflict", {
+            status: 409,
+        });
     }
 
     return {

@@ -22,7 +22,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
 
     if (!success) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const {room, user} = await requireAuthenticatedAttendeeConnection(

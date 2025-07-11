@@ -74,7 +74,9 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!isValidParams) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const requestFormData = await request.formData();
@@ -85,7 +87,9 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     if (!isValidFormData) {
-        throw data("Bad Request", 400);
+        throw data("Bad Request", {
+            status: 400,
+        });
     }
 
     const {entityID} = params;

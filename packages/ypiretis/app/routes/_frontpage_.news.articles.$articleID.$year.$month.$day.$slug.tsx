@@ -1,3 +1,5 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -7,6 +9,9 @@ import {
     findOneByArticleID,
 } from "~/.server/services/articles_service";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
+
+import {formatZonedDateTime} from "~/.server/utils/locale";
+import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
@@ -47,23 +52,28 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const {content, slug, title, updatedAt} = article;
 
-    const {epochMilliseconds: publishedAtMilliseconds} = publishedAt;
-    const updatedAtMilliseconds = updatedAt?.epochMilliseconds ?? -1;
+    const hasBeenEdited = updatedAt
+        ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
+        : false;
+
+    const publishedAtTimestamp = formatZonedDateTime(
+        publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
+    );
+
+    const updatedAtTimestamp = hasBeenEdited
+        ? formatZonedDateTime(updatedAt!.toZonedDateTimeISO(SYSTEM_TIMEZONE))
+        : null;
 
     const renderedContent = await renderMarkdownForWeb(content);
 
     return {
         article: {
             articleID,
-            publishedAtMilliseconds,
+            publishedAtTimestamp,
             renderedContent,
             slug,
             title,
-
-            updatedAtMilliseconds:
-                updatedAtMilliseconds > publishedAtMilliseconds
-                    ? updatedAtMilliseconds
-                    : null,
+            updatedAtTimestamp,
         },
     };
 }

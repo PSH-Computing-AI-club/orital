@@ -1,3 +1,5 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -5,6 +7,8 @@ import * as v from "valibot";
 import {findAllPublished} from "~/.server/services/articles_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
+import {formatZonedDateTime} from "~/.server/utils/locale";
+import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
@@ -60,8 +64,19 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {articleID, content, slug, publishedAt, title, updatedAt} =
                 article;
 
-            const {epochMilliseconds: publishedAtMilliseconds} = publishedAt;
-            const updatedAtMilliseconds = updatedAt?.epochMilliseconds ?? -1;
+            const hasBeenEdited = updatedAt
+                ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
+                : false;
+
+            const publishedAtTimestamp = formatZonedDateTime(
+                publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
+            );
+
+            const updatedAtTimestamp = hasBeenEdited
+                ? formatZonedDateTime(
+                      updatedAt!.toZonedDateTimeISO(SYSTEM_TIMEZONE),
+                  )
+                : null;
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = transformTextToSnippet(plaintextContent, {
@@ -71,14 +86,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             return {
                 articleID,
                 description,
-                publishedAtMilliseconds,
+                publishedAtTimestamp,
                 slug,
                 title,
-
-                updatedAtMilliseconds:
-                    updatedAtMilliseconds > publishedAtMilliseconds
-                        ? updatedAtMilliseconds
-                        : null,
+                updatedAtTimestamp,
             };
         }),
     );

@@ -2,6 +2,8 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {and, desc, eq, getTableColumns, lte, sql} from "drizzle-orm";
 
+import {slug as slugify} from "github-slugger";
+
 import DATABASE from "../configuration/database";
 
 import ARTICLES_TABLE, {
@@ -12,7 +14,9 @@ import type {IPaginationOptions, IPaginationResults} from "./types";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
-export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;
+export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect> & {
+    readonly slug: string;
+};
 
 export type IArticleInsert = Omit<
     Readonly<typeof ARTICLES_TABLE.$inferInsert>,
@@ -36,6 +40,18 @@ export interface IFindAllPublishedArticlesResults {
     readonly pagination: IPaginationResults;
 }
 
+function mapArticle(article: typeof ARTICLES_TABLE.$inferSelect): IArticle {
+    const {title} = article;
+
+    const slug = slugify(title, false);
+
+    return {
+        ...article,
+
+        slug,
+    };
+}
+
 export async function findOneByArticleID(
     articleID: string,
 ): Promise<IArticle | null> {
@@ -43,7 +59,7 @@ export async function findOneByArticleID(
         where: eq(ARTICLES_TABLE.articleID, articleID),
     });
 
-    return article ?? null;
+    return article ? mapArticle(article) : null;
 }
 
 export async function findAllPublished(
@@ -90,7 +106,7 @@ export async function findAllPublished(
     const articles = results.map((result) => {
         const {articleCount: _articleCount, ...article} = result;
 
-        return article;
+        return mapArticle(article);
     });
 
     return {

@@ -1,3 +1,5 @@
+const EXPRESSION_CONSECUTIVE_SPACES = /\s\s+/g;
+
 const EXPRESSION_NEWLINE = /\n/g;
 
 export interface ITransformToSnippetOptions {
@@ -10,7 +12,10 @@ export function transformTextToSnippet(
 ) {
     const {limit} = options;
 
-    const trimmedText = text.trim().replace(EXPRESSION_NEWLINE, " ");
+    const trimmedText = text
+        .trim()
+        .replace(EXPRESSION_NEWLINE, " ")
+        .replace(EXPRESSION_CONSECUTIVE_SPACES, " ");
 
     if (trimmedText.length <= limit) {
         return trimmedText;

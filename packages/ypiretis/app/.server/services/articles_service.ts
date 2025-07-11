@@ -36,6 +36,16 @@ export interface IFindAllPublishedArticlesResults {
     readonly pagination: IPaginationResults;
 }
 
+export async function findOneByArticleID(
+    articleID: string,
+): Promise<IArticle | null> {
+    const article = await DATABASE.query.articles.findFirst({
+        where: eq(ARTICLES_TABLE.articleID, articleID),
+    });
+
+    return article ?? null;
+}
+
 export async function findAllPublished(
     options: IFindAllPublishedArticlesOptions,
 ): Promise<IFindAllPublishedArticlesResults> {

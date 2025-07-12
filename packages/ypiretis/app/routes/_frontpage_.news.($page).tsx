@@ -11,6 +11,8 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
+import FrontpageShell from "~/components/frontpage/frontpage_shell";
+
 import {Route} from "./+types/_frontpage_.news.($page)";
 
 const ARTICLES_PER_PAGE = 25;
@@ -100,5 +102,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 }
 
 export default function FrontpageNews(props: Route.ComponentProps) {
-    return "hello world";
+    return (
+        <>
+            <FrontpageShell.Title title="News" />
+        </>
+    );
 }

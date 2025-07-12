@@ -13,6 +13,8 @@ import {renderMarkdownForWeb} from "~/.server/services/markdown";
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
+import FrontpageShell from "~/components/frontpage/frontpage_shell";
+
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
 const LOADER_PARAMS_SCHEMA = v.object({
@@ -126,5 +128,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 }
 
 export default function FrontpageNewsArticle(props: Route.ComponentProps) {
-    return "goodbye planet";
+    const {loaderData} = props;
+    const {article} = loaderData;
+
+    const {title} = article;
+
+    return (
+        <>
+            <FrontpageShell.Title title={title} />
+        </>
+    );
 }

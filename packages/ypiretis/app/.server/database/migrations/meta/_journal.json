@@ -36,6 +36,13 @@
       "when": 1752205824953,
       "tag": "0004_free_tiger_shark",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1752278455782,
+      "tag": "0005_legal_sabretooth",
+      "breakpoints": true
     }
   ]
 }

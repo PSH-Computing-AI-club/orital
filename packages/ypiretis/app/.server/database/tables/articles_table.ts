@@ -40,9 +40,10 @@ const ARTICLES_TABLE = sqliteTable("articles", {
         .notNull()
         .default(DEFAULT_TEMPORAL_INSTANT),
 
-    updatedAt: temporalInstant("updated_at").$onUpdate(() =>
-        Temporal.Now.instant(),
-    ),
+    updatedAt: temporalInstant("updated_at")
+        .notNull()
+        .default(DEFAULT_TEMPORAL_INSTANT)
+        .$onUpdate(() => Temporal.Now.instant()),
 
     publishedAt: temporalInstant("published_at"),
 });

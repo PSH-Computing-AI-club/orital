@@ -64,9 +64,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {articleID, content, slug, publishedAt, title, updatedAt} =
                 article;
 
-            const hasBeenEdited = updatedAt
-                ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
-                : false;
+            const hasBeenEdited =
+                Temporal.Instant.compare(updatedAt, publishedAt) > 0;
 
             const publishedAtTimestamp = formatZonedDateTime(
                 publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
@@ -74,7 +73,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
             const updatedAtTimestamp = hasBeenEdited
                 ? formatZonedDateTime(
-                      updatedAt!.toZonedDateTimeISO(SYSTEM_TIMEZONE),
+                      updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
                   )
                 : null;
 

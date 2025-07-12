@@ -106,12 +106,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt);
 
-    const hasBeenEdited = updatedAt
-        ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
-        : false;
-
+    const hasBeenEdited = Temporal.Instant.compare(updatedAt, publishedAt) > 0;
     const updatedAtTimestamp = hasBeenEdited
-        ? formatZonedDateTime(updatedAt!.toZonedDateTimeISO(SYSTEM_TIMEZONE))
+        ? formatZonedDateTime(updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE))
         : null;
 
     const renderedContent = await renderMarkdownForWeb(content);

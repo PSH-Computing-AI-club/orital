@@ -9,7 +9,11 @@ export interface IContentRootProps extends PropsWithChildren {}
 function ContentContainer(props: IContentContainerProps) {
     const {children} = props;
 
-    return <Container>{children}</Container>;
+    return (
+        <Container display="flex" flexDirection="column">
+            {children}
+        </Container>
+    );
 }
 
 function ContentRoot(props: IContentRootProps) {

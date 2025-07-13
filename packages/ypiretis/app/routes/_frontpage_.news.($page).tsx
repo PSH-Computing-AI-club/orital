@@ -92,7 +92,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 publishedAtTimestamp,
                 slug,
                 title,
-                updatedAtTimestamp,
             };
         }),
     );
@@ -112,7 +111,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
             <FrontpageShell.Title title="/news" />
 
             <PageHero.Root>
-                <PageHero.Text>/news</PageHero.Text>
+                <PageHero.Container>
+                    <PageHero.Text>/news</PageHero.Text>
+                </PageHero.Container>
             </PageHero.Root>
 
             {articles.map((article) => {

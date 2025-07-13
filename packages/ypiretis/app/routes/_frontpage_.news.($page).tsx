@@ -9,6 +9,7 @@ import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
+import Content from "~/components/frontpage/content";
 import FeedCard from "~/components/frontpage/feed_card";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 import PageHero from "~/components/frontpage/page_hero";
@@ -107,24 +108,32 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                 </PageHero.Container>
             </PageHero.Root>
 
-            {articles.map((article) => {
-                const {articleID, description, publishedAtTimestamp, title} =
-                    article;
+            <Content.Root>
+                <Content.Container>
+                    {articles.map((article) => {
+                        const {
+                            articleID,
+                            description,
+                            publishedAtTimestamp,
+                            title,
+                        } = article;
 
-                return (
-                    <FeedCard.Root key={articleID}>
-                        <FeedCard.Body>
-                            <FeedCard.Title>{title}</FeedCard.Title>
+                        return (
+                            <FeedCard.Root key={articleID}>
+                                <FeedCard.Body>
+                                    <FeedCard.Title>{title}</FeedCard.Title>
 
-                            <FeedCard.Description>
-                                {publishedAtTimestamp}
-                            </FeedCard.Description>
+                                    <FeedCard.Description>
+                                        {publishedAtTimestamp}
+                                    </FeedCard.Description>
 
-                            <FeedCard.Text>{description}</FeedCard.Text>
-                        </FeedCard.Body>
-                    </FeedCard.Root>
-                );
-            })}
+                                    <FeedCard.Text>{description}</FeedCard.Text>
+                                </FeedCard.Body>
+                            </FeedCard.Root>
+                        );
+                    })}
+                </Content.Container>
+            </Content.Root>
         </>
     );
 }

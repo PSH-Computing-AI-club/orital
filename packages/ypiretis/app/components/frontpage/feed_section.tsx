@@ -81,7 +81,7 @@ function FeedSectionRoot(props: IFeedSectionRootProps) {
         <Flex
             alignItems="center"
             bg="bg.muted"
-            color="fg.inverted"
+            color="fg"
             paddingBlock="8"
             paddingInline={{base: "4", lgDown: "0"}}
             minBlockSize="xl"

@@ -25,7 +25,6 @@ function PageHeroRoot(props: IPageHeroRootProps) {
 
     return (
         <Box
-            display="flex"
             bg="bg.inverted"
             color="fg.inverted"
             paddingBlockStart="calc(var(--chakra-sizes-16) + var(--chakra-spacing-8) + (var(--chakra-spacing-2) * 2) + 2px + var(--chakra-sizes-8))"

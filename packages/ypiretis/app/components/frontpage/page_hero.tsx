@@ -11,7 +11,11 @@ export interface IPageHeroRootProps extends PropsWithChildren {}
 function PageHeroText(props: IPageHeroTextProps) {
     const {children} = props;
 
-    return <Heading size={{base: "6xl", lgDown: "5xl"}}>{children}</Heading>;
+    return (
+        <Heading as="h1" size={{base: "6xl", lgDown: "5xl"}}>
+            {children}
+        </Heading>
+    );
 }
 
 function PageHeroContainer(props: IPageHeroContainerProps) {

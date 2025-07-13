@@ -13,7 +13,7 @@ import {renderMarkdownForWeb} from "~/.server/services/markdown";
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
-import FrontpageShell from "~/components/frontpage/frontpage_shell";
+import Title from "~/components/common/title";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
@@ -136,7 +136,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
 
     return (
         <>
-            <FrontpageShell.Title title={`${title} :: /news`} />
+            <Title title={`${title} :: /news`} />
         </>
     );
 }

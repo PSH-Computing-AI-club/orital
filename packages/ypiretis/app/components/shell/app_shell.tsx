@@ -20,6 +20,8 @@ import {useState} from "react";
 import type {To} from "react-router";
 import {Link, useLocation} from "react-router";
 
+import Title from "~/components/common/title";
+
 import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import EditBoxIcon from "~/components/icons/edit_box_icon";
@@ -144,12 +146,7 @@ function AppShellTitle(props: IAppShellTitleProps) {
 
     return (
         <>
-            {
-                // **HACK:** React's special handling of the `<title>` element
-                // requires that it has no child elements. That is, it is only
-                // a singular primitive value.
-            }
-            <title>{`${title} :: ${APP_NAME}`}</title>
+            <Title title={title} />
         </>
     );
 }

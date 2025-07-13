@@ -14,6 +14,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
+import Title from "~/components/common/title";
 import {APP_NAME, PACKAGE_NAME, PACKAGE_VERSION} from "~/utils/constants";
 
 import type {PropsWithChildren} from "react";
@@ -39,7 +40,7 @@ function PromptShellTitle(props: IPromptShellTitle) {
 
     return (
         <>
-            <title>{`${title} :: ${APP_NAME}`}</title>
+            <Title title={title} />
 
             <Heading
                 size="4xl"

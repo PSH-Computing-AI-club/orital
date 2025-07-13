@@ -9,10 +9,11 @@ import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
+import Title from "~/components/common/title";
+
 import ContentSection from "~/components/frontpage/content_section";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedStack from "~/components/frontpage/feed_stack";
-import FrontpageShell from "~/components/frontpage/frontpage_shell";
 import PageHero from "~/components/frontpage/page_hero";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
@@ -103,7 +104,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
     return (
         <>
-            <FrontpageShell.Title title="/news" />
+            <Title title="/news" />
 
             <PageHero.Root>
                 <PageHero.Container>

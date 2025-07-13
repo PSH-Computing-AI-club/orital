@@ -2,13 +2,13 @@ import {Box, Container, Heading} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
-export interface IContentTitleProps extends PropsWithChildren {}
+export interface IContentSectionTitleProps extends PropsWithChildren {}
 
-export interface IContentContainerProps extends PropsWithChildren {}
+export interface IContentSectionContainerProps extends PropsWithChildren {}
 
-export interface IContentRootProps extends PropsWithChildren {}
+export interface IContentSectionRootProps extends PropsWithChildren {}
 
-function ContentTitle(props: IContentTitleProps) {
+function ContentSectionTitle(props: IContentSectionTitleProps) {
     const {children} = props;
 
     return (
@@ -18,7 +18,7 @@ function ContentTitle(props: IContentTitleProps) {
     );
 }
 
-function ContentContainer(props: IContentContainerProps) {
+function ContentSectionContainer(props: IContentSectionContainerProps) {
     const {children} = props;
 
     return (
@@ -28,7 +28,7 @@ function ContentContainer(props: IContentContainerProps) {
     );
 }
 
-function ContentRoot(props: IContentRootProps) {
+function ContentSectionRoot(props: IContentSectionRootProps) {
     const {children} = props;
 
     return (
@@ -44,10 +44,10 @@ function ContentRoot(props: IContentRootProps) {
     );
 }
 
-const Content = {
-    Container: ContentContainer,
-    Root: ContentRoot,
-    Title: ContentTitle,
+const ContentSection = {
+    Container: ContentSectionContainer,
+    Root: ContentSectionRoot,
+    Title: ContentSectionTitle,
 } as const;
 
-export default Content;
+export default ContentSection;

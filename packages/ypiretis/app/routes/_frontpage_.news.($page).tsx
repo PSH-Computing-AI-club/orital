@@ -9,7 +9,7 @@ import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
-import Content from "~/components/frontpage/content";
+import ContentSection from "~/components/frontpage/content_section";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedStack from "~/components/frontpage/feed_stack";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
@@ -111,9 +111,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                 </PageHero.Container>
             </PageHero.Root>
 
-            <Content.Root>
-                <Content.Container>
-                    <Content.Title>Page {page}</Content.Title>
+            <ContentSection.Root>
+                <ContentSection.Container>
+                    <ContentSection.Title>Page {page}</ContentSection.Title>
 
                     <FeedStack.Root>
                         {articles.map((article) => {
@@ -145,8 +145,8 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                             );
                         })}
                     </FeedStack.Root>
-                </Content.Container>
-            </Content.Root>
+                </ContentSection.Container>
+            </ContentSection.Root>
         </>
     );
 }

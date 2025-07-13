@@ -135,7 +135,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
 
     return (
         <>
-            <FrontpageShell.Title title={title} />
+            <FrontpageShell.Title title={`${title} :: /news`} />
         </>
     );
 }

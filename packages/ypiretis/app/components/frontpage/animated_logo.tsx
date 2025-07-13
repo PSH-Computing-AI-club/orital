@@ -318,6 +318,7 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             translate="-50% -50%"
         >
             <Canvas
+                fallback="Hero animated 3D voxel logo and shimmer effect."
                 frameloop={isInView ? "always" : "demand"}
                 camera={{
                     aspect: 1,

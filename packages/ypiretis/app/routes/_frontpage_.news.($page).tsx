@@ -1,5 +1,3 @@
-import {Heading} from "@chakra-ui/react";
-
 import {data} from "react-router";
 
 import * as v from "valibot";

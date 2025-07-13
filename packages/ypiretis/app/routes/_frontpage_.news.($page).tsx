@@ -45,8 +45,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    console.log({params, loaderParams});
-
     const {page = 1} = params;
 
     const {articles, pagination} = await findAllPublished({

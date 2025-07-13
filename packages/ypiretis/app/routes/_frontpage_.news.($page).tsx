@@ -20,7 +20,7 @@ import {Route} from "./+types/_frontpage_.news.($page)";
 
 const ARTICLES_PER_PAGE = 25;
 
-const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 48;
+const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
 
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(

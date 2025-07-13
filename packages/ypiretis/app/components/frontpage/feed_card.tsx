@@ -39,7 +39,7 @@ function FeedCardBody(props: IFeedCardBodyProps) {
 function FeedCardRoot(props: IFeedCardRootProps) {
     const {children} = props;
 
-    return <Card.Root>{children}</Card.Root>;
+    return <Card.Root as="article">{children}</Card.Root>;
 }
 
 const FeedCard = {

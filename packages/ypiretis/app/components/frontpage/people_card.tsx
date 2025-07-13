@@ -1,4 +1,4 @@
-import {Avatar, Box, Card, Image, Text} from "@chakra-ui/react";
+import {Avatar, Card, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 

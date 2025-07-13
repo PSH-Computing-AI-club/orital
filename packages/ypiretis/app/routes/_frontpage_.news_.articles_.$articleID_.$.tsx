@@ -8,7 +8,7 @@ import {
 } from "~/.server/services/articles_service";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
-import {Route} from "./+types/_frontpage_.news.articles.$articleID.$";
+import {Route} from "./+types/_frontpage_.news_.articles_.$articleID_.$";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),

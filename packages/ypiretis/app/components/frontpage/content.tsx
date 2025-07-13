@@ -12,7 +12,7 @@ function ContentTitle(props: IContentTitleProps) {
     const {children} = props;
 
     return (
-        <Heading marginBlockEnd="4" fontSize={{base: "4xl", lgDown: "3xl"}}>
+        <Heading marginBlockEnd="8" fontSize={{base: "4xl", lgDown: "3xl"}}>
             {children}
         </Heading>
     );
@@ -37,7 +37,7 @@ function ContentRoot(props: IContentRootProps) {
             flexGrow="1"
             bg="bg.muted"
             color="fg"
-            paddingBlock="8"
+            paddingBlock="16"
         >
             {children}
         </Box>

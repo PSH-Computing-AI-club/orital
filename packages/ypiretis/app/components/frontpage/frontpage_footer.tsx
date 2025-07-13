@@ -12,6 +12,7 @@ import {
 import type {PropsWithChildren} from "react";
 
 import Links from "~/components/common/links";
+import VersionText from "~/components/common/version_text";
 
 interface IFrontpageFooterLinksContainerProps extends PropsWithChildren {}
 
@@ -69,12 +70,16 @@ function FrontpageFooterSiteLinks() {
 
 function FrontpageFooterLogo() {
     return (
-        <Image
-            src="/images/logo.monochrome.light.webp"
-            alt="Footer 3D voxel art logo."
-            objectFit="contain"
-            blockSize={{base: "3xs", mdDown: "48"}}
-        />
+        <VStack gap="2">
+            <Image
+                src="/images/logo.monochrome.light.webp"
+                alt="Footer 3D voxel art logo."
+                objectFit="contain"
+                blockSize={{base: "3xs", mdDown: "48"}}
+            />
+
+            <VersionText />
+        </VStack>
     );
 }
 

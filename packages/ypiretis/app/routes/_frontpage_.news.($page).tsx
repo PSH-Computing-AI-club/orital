@@ -65,21 +65,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedArticles = await Promise.all(
         articles.map(async (article) => {
-            const {articleID, content, slug, publishedAt, title, updatedAt} =
-                article;
-
-            const hasBeenEdited =
-                Temporal.Instant.compare(updatedAt, publishedAt) > 0;
+            const {articleID, content, slug, publishedAt, title} = article;
 
             const publishedAtTimestamp = formatZonedDateTime(
                 publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
             );
-
-            const updatedAtTimestamp = hasBeenEdited
-                ? formatZonedDateTime(
-                      updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
-                  )
-                : null;
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = transformTextToSnippet(plaintextContent, {

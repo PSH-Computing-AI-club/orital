@@ -1,4 +1,4 @@
-import {Container, Span} from "@chakra-ui/react";
+import {Container, Span, VisuallyHidden} from "@chakra-ui/react";
 
 import {Suspense, lazy} from "react";
 
@@ -13,6 +13,8 @@ import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 import PeopleCard from "~/components/frontpage/people_card";
 import PeopleSection from "~/components/frontpage/people_section";
 
+import {APP_NAME} from "~/utils/constants";
+
 import type {Route} from "./+types/_frontpage_._index";
 
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
@@ -21,6 +23,10 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
     return (
         <>
             <FrontpageShell.Title />
+
+            <VisuallyHidden as="div">
+                <h1>{APP_NAME}</h1>
+            </VisuallyHidden>
 
             <FullscreenHero.Root>
                 <Background3DGrid.Root>
@@ -69,75 +75,89 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                         </PeopleSection.Description>
 
                         <PeopleSection.Grid>
-                            <PeopleCard.Root>
-                                <PeopleCard.Body>
-                                    <PeopleCard.Avatar
-                                        name="Alexander O. Petrov"
-                                        src="/images/landing.avatars.aop5448.webp"
-                                    />
+                            <PeopleSection.GridItem>
+                                <PeopleCard.Root>
+                                    <PeopleCard.Body>
+                                        <PeopleCard.Avatar
+                                            name="Alexander O. Petrov"
+                                            src="/images/landing.avatars.aop5448.webp"
+                                        />
 
-                                    <PeopleCard.Title>
-                                        Alexander O. Petrov
-                                    </PeopleCard.Title>
+                                        <PeopleCard.Title>
+                                            Alexander O. Petrov
+                                        </PeopleCard.Title>
 
-                                    <PeopleCard.Email email="aop5448@psu.edu" />
+                                        <PeopleCard.Email email="aop5448@psu.edu" />
 
-                                    <PeopleCard.Text>President</PeopleCard.Text>
-                                </PeopleCard.Body>
-                            </PeopleCard.Root>
+                                        <PeopleCard.Text>
+                                            President
+                                        </PeopleCard.Text>
+                                    </PeopleCard.Body>
+                                </PeopleCard.Root>
+                            </PeopleSection.GridItem>
 
-                            <PeopleCard.Root>
-                                <PeopleCard.Body>
-                                    <PeopleCard.Avatar
-                                        name="George K. Bassta"
-                                        src="/images/landing.avatars.aop5448.webp"
-                                    />
+                            <PeopleSection.GridItem>
+                                <PeopleCard.Root>
+                                    <PeopleCard.Body>
+                                        <PeopleCard.Avatar
+                                            name="George K. Bassta"
+                                            src="/images/landing.avatars.aop5448.webp"
+                                        />
 
-                                    <PeopleCard.Title>
-                                        George K. Bassta
-                                    </PeopleCard.Title>
+                                        <PeopleCard.Title>
+                                            George K. Bassta
+                                        </PeopleCard.Title>
 
-                                    <PeopleCard.Email email="gkb5393@psu.edu" />
+                                        <PeopleCard.Email email="gkb5393@psu.edu" />
 
-                                    <PeopleCard.Text>
-                                        Vice President
-                                    </PeopleCard.Text>
-                                </PeopleCard.Body>
-                            </PeopleCard.Root>
+                                        <PeopleCard.Text>
+                                            Vice President
+                                        </PeopleCard.Text>
+                                    </PeopleCard.Body>
+                                </PeopleCard.Root>
+                            </PeopleSection.GridItem>
 
-                            <PeopleCard.Root>
-                                <PeopleCard.Body>
-                                    <PeopleCard.Avatar
-                                        name="Ozge S. Ak"
-                                        src="/images/landing.avatars.aop5448.webp"
-                                    />
+                            <PeopleSection.GridItem>
+                                <PeopleCard.Root>
+                                    <PeopleCard.Body>
+                                        <PeopleCard.Avatar
+                                            name="Ozge S. Ak"
+                                            src="/images/landing.avatars.aop5448.webp"
+                                        />
 
-                                    <PeopleCard.Title>
-                                        Ozge S. Ak
-                                    </PeopleCard.Title>
+                                        <PeopleCard.Title>
+                                            Ozge S. Ak
+                                        </PeopleCard.Title>
 
-                                    <PeopleCard.Email email="osa5177@psu.edu" />
+                                        <PeopleCard.Email email="osa5177@psu.edu" />
 
-                                    <PeopleCard.Text>Treasurer</PeopleCard.Text>
-                                </PeopleCard.Body>
-                            </PeopleCard.Root>
+                                        <PeopleCard.Text>
+                                            Treasurer
+                                        </PeopleCard.Text>
+                                    </PeopleCard.Body>
+                                </PeopleCard.Root>
+                            </PeopleSection.GridItem>
 
-                            <PeopleCard.Root>
-                                <PeopleCard.Body>
-                                    <PeopleCard.Avatar
-                                        name="Dimitri O. Nearchos"
-                                        src="/images/landing.avatars.don5092.webp"
-                                    />
+                            <PeopleSection.GridItem>
+                                <PeopleCard.Root>
+                                    <PeopleCard.Body>
+                                        <PeopleCard.Avatar
+                                            name="Dimitri O. Nearchos"
+                                            src="/images/landing.avatars.don5092.webp"
+                                        />
 
-                                    <PeopleCard.Title>
-                                        Dimitri O. Nearchos
-                                    </PeopleCard.Title>
+                                        <PeopleCard.Title>
+                                            Dimitri O. Nearchos
+                                        </PeopleCard.Title>
 
-                                    <PeopleCard.Email email="don5092@psu.edu" />
+                                        <PeopleCard.Email email="don5092@psu.edu" />
 
-                                    <PeopleCard.Text>Secretary</PeopleCard.Text>
-                                </PeopleCard.Body>
-                            </PeopleCard.Root>
+                                        <PeopleCard.Text>
+                                            Secretary
+                                        </PeopleCard.Text>
+                                    </PeopleCard.Body>
+                                </PeopleCard.Root>
+                            </PeopleSection.GridItem>
                         </PeopleSection.Grid>
                     </PeopleSection.Body>
                 </PeopleSection.Container>
@@ -153,58 +173,67 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>
-                                        AI Injection Competition
-                                    </FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>
+                                            AI Injection Competition
+                                        </FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        November 20th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            November 20th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
 
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>Event 2</FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>Event 2</FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        November ??th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            November ??th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
 
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>Event 3</FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>Event 3</FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        November ??th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            November ??th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>
@@ -238,59 +267,68 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>
-                                        Dots and Boxes AI Competition Winner
-                                        Announced!
-                                    </FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>
+                                            Dots and Boxes AI Competition Winner
+                                            Announced!
+                                        </FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        September 10th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            September 10th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
 
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>News 2</FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>News 2</FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        September ??th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            September ??th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
 
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>News 3</FeedCard.Title>
+                            <FeedSection.GridItem>
+                                <FeedCard.Root>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>News 3</FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        September ??th, 2025
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            September ??th, 2025
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magnam
-                                        aliquam quaerat voluptatem.
-                                    </FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
+                                        <FeedCard.Text>
+                                            Lorem ipsum dolor sit amet,
+                                            consectetur adipiscing elit, sed do
+                                            eiusmod tempor incididunt ut labore
+                                            et dolore magnam aliquam quaerat
+                                            voluptatem.
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            </FeedSection.GridItem>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>

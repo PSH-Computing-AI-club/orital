@@ -1,3 +1,5 @@
+import {Flex} from "@chakra-ui/react";
+
 import {Outlet} from "react-router";
 
 import {
@@ -35,13 +37,21 @@ export default function FrontpageLayout(props: Route.ComponentProps) {
     return publicUser ? (
         <PublicUserContextProvider publicUser={publicUser}>
             <FrontpageNavbar />
-            <Outlet />
+
+            <Flex as="main" flexDirection="column" flexGrow="1">
+                <Outlet />
+            </Flex>
+
             <FrontpageFooter />
         </PublicUserContextProvider>
     ) : (
         <>
             <FrontpageNavbar />
-            <Outlet />
+
+            <Flex as="main" flexDirection="column" flexGrow="1">
+                <Outlet />
+            </Flex>
+
             <FrontpageFooter />
         </>
     );

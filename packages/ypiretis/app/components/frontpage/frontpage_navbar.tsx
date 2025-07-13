@@ -233,7 +233,9 @@ function FrontpageNavbarActionsDropdown(
             marginBlockEnd="1"
             asChild
         >
-            <VStack gap="4">{children}</VStack>
+            <VStack as="nav" gap="4">
+                {children}
+            </VStack>
         </Collapsible.Content>
     );
 }
@@ -242,7 +244,7 @@ function FrontpageNavbarActionsBar(props: IFrontpageNavbarActionsBarProps) {
     const {children} = props;
 
     return (
-        <HStack gap="4" alignItems="center">
+        <HStack as="nav" gap="4" alignItems="center">
             {children}
         </HStack>
     );
@@ -277,6 +279,7 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
 
     return (
         <Box
+            as="header"
             display="flex"
             pos="fixed"
             insetBlockStart="8"

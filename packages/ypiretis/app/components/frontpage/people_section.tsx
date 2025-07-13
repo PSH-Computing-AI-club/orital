@@ -1,6 +1,8 @@
-import {Card, Container, Flex, SimpleGrid} from "@chakra-ui/react";
+import {Box, Card, Container, Flex, SimpleGrid} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
+
+export interface IPeopleSectionGridItemProps extends PropsWithChildren {}
 
 export interface IPeopleSectionGridProps extends PropsWithChildren {}
 
@@ -14,11 +16,18 @@ export interface IPeopleSectionContainerProps extends PropsWithChildren {}
 
 export interface IPeopleSectionRootProps extends PropsWithChildren {}
 
+function PeopleSectionGridItem(props: IPeopleSectionGridItemProps) {
+    const {children} = props;
+
+    return <Box as="li">{children}</Box>;
+}
+
 function PeopleSectionGrid(props: IPeopleSectionGridProps) {
     const {children} = props;
 
     return (
         <SimpleGrid
+            as="ol"
             columns={{base: 4, xlDown: 2, mdDown: 1}}
             gap="8"
             marginBlockStart="8"
@@ -47,6 +56,7 @@ function PeopleSectionTitle(props: IPeopleSectionTitleProps) {
 
     return (
         <Card.Title
+            as="h2"
             color="fg.inverted"
             fontSize={{base: "4xl", lgDown: "3xl"}}
             textAlign="center"
@@ -84,6 +94,7 @@ function PeopleSectionRoot(props: IPeopleSectionRootProps) {
 
     return (
         <Flex
+            as="section"
             alignItems="center"
             bg="bg.inverted"
             color="fg.inverted"
@@ -101,6 +112,7 @@ const PeopleSection = {
     Container: PeopleSectionContainer,
     Description: PeopleSectionDescription,
     Grid: PeopleSectionGrid,
+    GridItem: PeopleSectionGridItem,
     Root: PeopleSectionRoot,
     Title: PeopleSectionTitle,
 } as const;

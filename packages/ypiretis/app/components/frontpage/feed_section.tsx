@@ -1,6 +1,8 @@
-import {Card, Container, Flex, SimpleGrid} from "@chakra-ui/react";
+import {Box, Card, Container, Flex, SimpleGrid} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
+
+export interface IFeedSectionGridItemProps extends PropsWithChildren {}
 
 export interface IFeedSectionGridProps extends PropsWithChildren {}
 
@@ -14,11 +16,22 @@ export interface IFeedSectionContainerProps extends PropsWithChildren {}
 
 export interface IFeedSectionRootProps extends PropsWithChildren {}
 
+function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
+    const {children} = props;
+
+    return (
+        <Box as="li" display="inline-flex">
+            {children}
+        </Box>
+    );
+}
+
 function FeedSectionGrid(props: IFeedSectionGridProps) {
     const {children} = props;
 
     return (
         <SimpleGrid
+            as="ol"
             columns={{base: 3, lgDown: 2, mdDown: 1}}
             gap="8"
             marginBlockStart="4"
@@ -45,7 +58,11 @@ function FeedSectionTitle(props: IFeedSectionTitleProps) {
     const {children} = props;
 
     return (
-        <Card.Title fontSize={{base: "4xl", lgDown: "3xl"}} textAlign="center">
+        <Card.Title
+            as="h2"
+            fontSize={{base: "4xl", lgDown: "3xl"}}
+            textAlign="center"
+        >
             {children}
         </Card.Title>
     );
@@ -79,6 +96,7 @@ function FeedSectionRoot(props: IFeedSectionRootProps) {
 
     return (
         <Flex
+            as="section"
             alignItems="center"
             bg="bg.muted"
             color="fg"
@@ -96,6 +114,7 @@ const FeedSection = {
     Container: FeedSectionContainer,
     Description: FeedSectionDescription,
     Grid: FeedSectionGrid,
+    GridItem: FeedSectionGridItem,
     Root: FeedSectionRoot,
     Title: FeedSectionTitle,
 } as const;

@@ -9,6 +9,7 @@ function FullscreenHeroRoot(props: IFullscreenHeroRootProps) {
 
     return (
         <Box
+            as="section"
             display="flex"
             bg="bg.inverted"
             color="fg.inverted"

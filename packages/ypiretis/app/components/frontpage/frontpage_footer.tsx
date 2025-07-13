@@ -15,6 +15,10 @@ import FrontpageShell from "./frontpage_shell";
 
 interface IFrontpageFooterLinksContainerProps extends PropsWithChildren {}
 
+interface IFrontpageFooterLinksTitleProps extends PropsWithChildren {}
+
+interface IFrontpageFooterLinksBodyProps extends PropsWithChildren {}
+
 interface IFrontpageFooterLinksRootProps extends PropsWithChildren {}
 
 interface IFrontpageFooterContainerProps extends PropsWithChildren {}
@@ -24,19 +28,23 @@ interface IFrontpageFooterRootProps extends PropsWithChildren {}
 function FrontpageFooterClubLinks() {
     return (
         <>
-            <Heading>Club</Heading>
+            <li>
+                <FrontpageShell.InternalLink to="/engage" isNewTab>
+                    Engage
+                </FrontpageShell.InternalLink>
+            </li>
 
-            <FrontpageShell.InternalLink to="/engage" isNewTab>
-                Engage
-            </FrontpageShell.InternalLink>
+            <li>
+                <FrontpageShell.InternalLink to="/discord" isNewTab>
+                    Discord
+                </FrontpageShell.InternalLink>
+            </li>
 
-            <FrontpageShell.InternalLink to="/discord" isNewTab>
-                Discord
-            </FrontpageShell.InternalLink>
-
-            <FrontpageShell.InternalLink to="/github" isNewTab>
-                GitHub
-            </FrontpageShell.InternalLink>
+            <li>
+                <FrontpageShell.InternalLink to="/github" isNewTab>
+                    GitHub
+                </FrontpageShell.InternalLink>
+            </li>
         </>
     );
 }
@@ -44,19 +52,23 @@ function FrontpageFooterClubLinks() {
 function FrontpageFooterSiteLinks() {
     return (
         <>
-            <Heading>Site</Heading>
+            <li>
+                <FrontpageShell.InternalLink to="/">
+                    Home
+                </FrontpageShell.InternalLink>
+            </li>
 
-            <FrontpageShell.InternalLink to="/">
-                Home
-            </FrontpageShell.InternalLink>
+            <li>
+                <FrontpageShell.InternalLink to="/news">
+                    News
+                </FrontpageShell.InternalLink>
+            </li>
 
-            <FrontpageShell.InternalLink to="/news">
-                News
-            </FrontpageShell.InternalLink>
-
-            <FrontpageShell.InternalLink to="/events">
-                Events
-            </FrontpageShell.InternalLink>
+            <li>
+                <FrontpageShell.InternalLink to="/events">
+                    Events
+                </FrontpageShell.InternalLink>
+            </li>
         </>
     );
 }
@@ -64,6 +76,22 @@ function FrontpageFooterSiteLinks() {
 function FrontpageFooterLinksContainer(
     props: IFrontpageFooterLinksContainerProps,
 ) {
+    const {children} = props;
+
+    return (
+        <VStack as="ul" gap="2" alignItems="baseline">
+            {children}
+        </VStack>
+    );
+}
+
+function FrontpageFooterLinksTitle(props: IFrontpageFooterLinksTitleProps) {
+    const {children} = props;
+
+    return <Heading>{children}</Heading>;
+}
+
+function FrontpageFooterLinksBody(props: IFrontpageFooterLinksBodyProps) {
     const {children} = props;
 
     return (
@@ -100,6 +128,7 @@ function FrontpageFooterRoot(props: IFrontpageFooterRootProps) {
 
     return (
         <Flex
+            as="footer"
             bg="bg.inverted"
             color="fg.inverted"
             backgroundImage="url('/images/border.horizontal.webp')"
@@ -128,13 +157,25 @@ export default function FrontpageFooter() {
                 <Spacer />
 
                 <FrontpageFooterLinksRoot>
-                    <FrontpageFooterLinksContainer>
-                        <FrontpageFooterClubLinks />
-                    </FrontpageFooterLinksContainer>
+                    <FrontpageFooterLinksBody>
+                        <FrontpageFooterLinksTitle>
+                            Club
+                        </FrontpageFooterLinksTitle>
 
-                    <FrontpageFooterLinksContainer>
-                        <FrontpageFooterSiteLinks />
-                    </FrontpageFooterLinksContainer>
+                        <FrontpageFooterLinksContainer>
+                            <FrontpageFooterClubLinks />
+                        </FrontpageFooterLinksContainer>
+                    </FrontpageFooterLinksBody>
+
+                    <FrontpageFooterLinksBody>
+                        <FrontpageFooterLinksTitle>
+                            Site
+                        </FrontpageFooterLinksTitle>
+
+                        <FrontpageFooterLinksContainer>
+                            <FrontpageFooterSiteLinks />
+                        </FrontpageFooterLinksContainer>
+                    </FrontpageFooterLinksBody>
                 </FrontpageFooterLinksRoot>
             </FrontpageFooterContainer>
         </FrontpageFooterRoot>

@@ -34,6 +34,7 @@ function FeatureSectionTitle(props: IFeatureSectionTitleProps) {
 
     return (
         <Card.Title
+            as="h2"
             color="fg.inverted"
             fontSize={{base: "4xl", lgDown: "3xl"}}
             lineHeight="normal"
@@ -88,6 +89,7 @@ function FeatureSectionRoot(props: IFeatureSectionRootProps) {
 
     return (
         <Flex
+            as="section"
             alignItems="center"
             bg="bg.inverted"
             color="fg.inverted"

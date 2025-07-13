@@ -1,5 +1,3 @@
-import {Temporal} from "@js-temporal/polyfill";
-
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -7,7 +5,7 @@ import * as v from "valibot";
 import {findAllPublished} from "~/.server/services/articles_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
-import {formatZonedDateTime} from "~/.server/utils/locale";
+import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
@@ -69,6 +67,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
             const publishedAtTimestamp = formatZonedDateTime(
                 publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
+                {
+                    detail: FORMAT_DETAIL.short,
+                },
             );
 
             const plaintextContent = await renderMarkdownForPlaintext(content);

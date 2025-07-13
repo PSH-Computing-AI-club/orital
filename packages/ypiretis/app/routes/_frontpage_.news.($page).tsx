@@ -1,3 +1,5 @@
+import {Heading} from "@chakra-ui/react";
+
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -99,6 +101,8 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {articles, pagination} = loaderData;
 
+    const {page, pages} = pagination;
+
     return (
         <>
             <FrontpageShell.Title title="/news" />
@@ -111,6 +115,8 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
             <Content.Root>
                 <Content.Container>
+                    <Content.Title>Page {page}</Content.Title>
+
                     <FeedStack.Root>
                         {articles.map((article) => {
                             const {

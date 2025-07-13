@@ -1,4 +1,4 @@
-import {Box, Container, Heading} from "@chakra-ui/react";
+import {Box, Container, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -12,9 +12,9 @@ function PageHeroText(props: IPageHeroTextProps) {
     const {children} = props;
 
     return (
-        <Heading as="h1" size={{base: "6xl", lgDown: "5xl"}}>
+        <Text fontSize={{base: "6xl", lgDown: "5xl"}} fontWeight="bold">
             {children}
-        </Heading>
+        </Text>
     );
 }
 

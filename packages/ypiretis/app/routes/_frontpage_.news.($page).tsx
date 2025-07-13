@@ -11,6 +11,7 @@ import {transformTextToSnippet} from "~/.server/utils/string";
 
 import Content from "~/components/frontpage/content";
 import FeedCard from "~/components/frontpage/feed_card";
+import FeedStack from "~/components/frontpage/feed_stack";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 import PageHero from "~/components/frontpage/page_hero";
 
@@ -110,28 +111,32 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
             <Content.Root>
                 <Content.Container>
-                    {articles.map((article) => {
-                        const {
-                            articleID,
-                            description,
-                            publishedAtTimestamp,
-                            title,
-                        } = article;
+                    <FeedStack.Root>
+                        {articles.map((article) => {
+                            const {
+                                articleID,
+                                description,
+                                publishedAtTimestamp,
+                                title,
+                            } = article;
 
-                        return (
-                            <FeedCard.Root key={articleID}>
-                                <FeedCard.Body>
-                                    <FeedCard.Title>{title}</FeedCard.Title>
+                            return (
+                                <FeedCard.Root key={articleID}>
+                                    <FeedCard.Body>
+                                        <FeedCard.Title>{title}</FeedCard.Title>
 
-                                    <FeedCard.Description>
-                                        {publishedAtTimestamp}
-                                    </FeedCard.Description>
+                                        <FeedCard.Description>
+                                            {publishedAtTimestamp}
+                                        </FeedCard.Description>
 
-                                    <FeedCard.Text>{description}</FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
-                        );
-                    })}
+                                        <FeedCard.Text>
+                                            {description}
+                                        </FeedCard.Text>
+                                    </FeedCard.Body>
+                                </FeedCard.Root>
+                            );
+                        })}
+                    </FeedStack.Root>
                 </Content.Container>
             </Content.Root>
         </>

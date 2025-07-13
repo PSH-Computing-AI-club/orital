@@ -36,7 +36,7 @@ import {Route} from "./+types/authentication_.log-in.pending";
 const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
     callbackTokenExpiresAt: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 });

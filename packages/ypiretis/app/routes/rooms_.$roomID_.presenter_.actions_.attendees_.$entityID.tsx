@@ -12,7 +12,7 @@ import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$en
 const ACTION_PARAMS_SCHEMA = v.object({
     entityID: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 });

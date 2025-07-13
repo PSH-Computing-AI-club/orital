@@ -69,7 +69,7 @@ const HASH_LOADER_HASH_SCHEMA = v.object({
 
     consentTokenExpiresAt: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 });

@@ -44,7 +44,7 @@ export const ENVIRONMENT_SCHEMA = v.object({
     SERVER_HOST: hostname,
     SERVER_PORT: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
     ),
 
     SECRET_KEY: v.pipe(
@@ -65,7 +65,7 @@ export const ENVIRONMENT_SCHEMA = v.object({
     SMTP_HOST: hostname,
     SMTP_PORT: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
     ),
 
     SMTP_EMAIL: v.pipe(v.string(), v.rfcEmail()),
@@ -134,7 +134,7 @@ export const ENVIRONMENT_SCHEMA = v.object({
 
     QUEUE_EMAILS_MAX: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 

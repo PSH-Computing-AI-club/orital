@@ -22,13 +22,13 @@ const LOADER_PARAMS_SCHEMA = v.object({
 
     day: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 
     month: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 
@@ -36,7 +36,7 @@ const LOADER_PARAMS_SCHEMA = v.object({
 
     year: v.pipe(
         v.string(),
-        v.transform((value) => parseInt(value, 10)),
+        v.transform((value) => Number(value)),
         v.number(),
     ),
 });

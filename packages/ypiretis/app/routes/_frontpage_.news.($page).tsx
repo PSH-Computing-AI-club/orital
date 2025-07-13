@@ -25,7 +25,7 @@ const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
         v.pipe(
             v.string(),
-            v.transform((value) => parseInt(value, 10)),
+            v.transform((value) => Number(value)),
             v.number(),
         ),
     ),
@@ -44,6 +44,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             status: 400,
         });
     }
+
+    console.log({params, loaderParams});
 
     const {page = 1} = params;
 

@@ -2,7 +2,7 @@ import {Avatar, Card, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
-import FrontpageShell from "./frontpage_shell";
+import Links from "~/components/common/links";
 
 export interface IPeopleCardTextProps extends PropsWithChildren {}
 
@@ -33,9 +33,7 @@ function PeopleCardEmail(props: IPeopleCardEmailProps) {
 
     return (
         <Card.Description color="fg.subtle">
-            <FrontpageShell.MailToLink to={email}>
-                {email}
-            </FrontpageShell.MailToLink>
+            <Links.MailToLink to={email}>{email}</Links.MailToLink>
         </Card.Description>
     );
 }

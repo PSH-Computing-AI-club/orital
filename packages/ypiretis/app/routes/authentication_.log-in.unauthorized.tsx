@@ -1,6 +1,6 @@
-import {Link, Strong, Text} from "@chakra-ui/react";
+import {Strong, Text} from "@chakra-ui/react";
 
-import {Link as RouterLink} from "react-router";
+import Links from "~/components/common/links";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
@@ -22,11 +22,12 @@ export default function AuthenticationLogInUnauthorized() {
 
                 <Text>
                     Return to the{" "}
-                    <Link variant="underline" color="blue.solid" asChild>
-                        <RouterLink to="/authentication/log-in">
-                            log-in
-                        </RouterLink>
-                    </Link>{" "}
+                    <Links.InternalLink
+                        variant="inline"
+                        to="/authentication/log-in"
+                    >
+                        log-in
+                    </Links.InternalLink>{" "}
                     page to log-in again.
                 </Text>
             </PromptShell.Body>

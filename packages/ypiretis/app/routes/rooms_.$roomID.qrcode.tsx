@@ -1,12 +1,4 @@
-import {
-    Flex,
-    Heading,
-    Highlight,
-    Link,
-    QrCode,
-    Strong,
-    Text,
-} from "@chakra-ui/react";
+import {Flex, Heading, Highlight, QrCode, Strong, Text} from "@chakra-ui/react";
 
 import type {ShouldRevalidateFunction} from "react-router";
 import {data} from "react-router";
@@ -17,6 +9,8 @@ import {
     DISPLAY_ENTITY_STATES,
     requireAuthenticatedDisplayConnection,
 } from "~/.server/services/rooms_service";
+
+import Links from "~/components/common/links";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
@@ -130,14 +124,9 @@ function QRCodeView() {
                 </Flex>
 
                 <Text fontFamily="mono" fontSize="2xl" fontWeight="bold">
-                    <Link
-                        variant="underline"
-                        href={joinURL}
-                        target="_blank"
-                        colorPalette="blue"
-                    >
+                    <Links.InternalLink variant="inline" to={joinURL} isNewTab>
                         {joinURL}
-                    </Link>
+                    </Links.InternalLink>
                 </Text>
             </Flex>
         </>

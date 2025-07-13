@@ -17,12 +17,12 @@ import {
 
 import type {PropsWithChildren} from "react";
 
-import ChevronDownIcon from "../icons/chevron_down_icon";
-import ChevronUpIcon from "../icons/chevron_up_icon";
+import Links from "~/components/common/links";
+
+import ChevronDownIcon from "~/components/icons/chevron_down_icon";
+import ChevronUpIcon from "~/components/icons/chevron_up_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import MenuIcon from "~/components/icons/menu_icon";
-
-import FrontpageShell from "~/components/frontpage/frontpage_shell";
 
 import {
     useAuthenticatedPublicUserContext,
@@ -44,13 +44,9 @@ interface IFrontpageNavbarRootProps extends PropsWithChildren {}
 function FrontpageNavbarLeftActions() {
     return (
         <>
-            <FrontpageShell.InternalLink to="/news">
-                News
-            </FrontpageShell.InternalLink>
+            <Links.InternalLink to="/news">News</Links.InternalLink>
 
-            <FrontpageShell.InternalLink to="/events">
-                Events
-            </FrontpageShell.InternalLink>
+            <Links.InternalLink to="/events">Events</Links.InternalLink>
         </>
     );
 }
@@ -58,27 +54,27 @@ function FrontpageNavbarLeftActions() {
 function FrontpageNavbarRightActions() {
     return (
         <>
-            <FrontpageShell.InternalLink to="/engage" isNewTab>
+            <Links.InternalLink to="/engage" isNewTab>
                 Engage
-            </FrontpageShell.InternalLink>
+            </Links.InternalLink>
 
-            <FrontpageShell.InternalLink to="/discord" isNewTab>
+            <Links.InternalLink to="/discord" isNewTab>
                 Discord
-            </FrontpageShell.InternalLink>
+            </Links.InternalLink>
         </>
     );
 }
 
 function FrontpageNavbarLogo() {
     return (
-        <FrontpageShell.InternalLink to="/">
+        <Links.InternalLink to="/">
             <Image
                 src="/images/logo.monochrome.light.webp"
                 alt="Navbar 3D voxel art logo."
                 objectFit="contain"
                 blockSize="16"
             />
-        </FrontpageShell.InternalLink>
+        </Links.InternalLink>
     );
 }
 
@@ -87,38 +83,34 @@ function FrontpageNavbarAuthenticatedSessionLinks() {
 
     return (
         <>
-            <FrontpageShell.InternalLink to="/rooms/join">
-                Join Room
-            </FrontpageShell.InternalLink>
+            <Links.InternalLink to="/rooms/join">Join Room</Links.InternalLink>
 
-            <FrontpageShell.InternalLink to="/rooms/create">
+            <Links.InternalLink to="/rooms/create">
                 Create Room
-            </FrontpageShell.InternalLink>
+            </Links.InternalLink>
 
             <FrontpageNavbarDivider />
 
             {isAdmin ? (
-                <FrontpageShell.InternalLink to="/admin">
-                    Admin
-                </FrontpageShell.InternalLink>
+                <Links.InternalLink to="/admin">Admin</Links.InternalLink>
             ) : undefined}
 
-            <FrontpageShell.InternalLink to="/user/settings">
+            <Links.InternalLink to="/user/settings">
                 Settings
-            </FrontpageShell.InternalLink>
+            </Links.InternalLink>
 
-            <FrontpageShell.InternalLink to="/authentication/log-out">
+            <Links.InternalLink to="/authentication/log-out">
                 Log Out
-            </FrontpageShell.InternalLink>
+            </Links.InternalLink>
         </>
     );
 }
 
 function FrontpageNavbarGuestSessionLinks() {
     return (
-        <FrontpageShell.InternalLink to="/authentication/log-in">
+        <Links.InternalLink to="/authentication/log-in">
             Log In
-        </FrontpageShell.InternalLink>
+        </Links.InternalLink>
     );
 }
 

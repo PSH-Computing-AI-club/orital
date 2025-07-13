@@ -11,7 +11,7 @@ import {
 
 import type {PropsWithChildren} from "react";
 
-import FrontpageShell from "./frontpage_shell";
+import Links from "~/components/common/links";
 
 interface IFrontpageFooterLinksContainerProps extends PropsWithChildren {}
 
@@ -29,21 +29,21 @@ function FrontpageFooterClubLinks() {
     return (
         <>
             <li>
-                <FrontpageShell.InternalLink to="/engage" isNewTab>
+                <Links.InternalLink to="/engage" isNewTab>
                     Engage
-                </FrontpageShell.InternalLink>
+                </Links.InternalLink>
             </li>
 
             <li>
-                <FrontpageShell.InternalLink to="/discord" isNewTab>
+                <Links.InternalLink to="/discord" isNewTab>
                     Discord
-                </FrontpageShell.InternalLink>
+                </Links.InternalLink>
             </li>
 
             <li>
-                <FrontpageShell.InternalLink to="/github" isNewTab>
+                <Links.InternalLink to="/github" isNewTab>
                     GitHub
-                </FrontpageShell.InternalLink>
+                </Links.InternalLink>
             </li>
         </>
     );
@@ -53,21 +53,15 @@ function FrontpageFooterSiteLinks() {
     return (
         <>
             <li>
-                <FrontpageShell.InternalLink to="/">
-                    Home
-                </FrontpageShell.InternalLink>
+                <Links.InternalLink to="/">Home</Links.InternalLink>
             </li>
 
             <li>
-                <FrontpageShell.InternalLink to="/news">
-                    News
-                </FrontpageShell.InternalLink>
+                <Links.InternalLink to="/news">News</Links.InternalLink>
             </li>
 
             <li>
-                <FrontpageShell.InternalLink to="/events">
-                    Events
-                </FrontpageShell.InternalLink>
+                <Links.InternalLink to="/events">Events</Links.InternalLink>
             </li>
         </>
     );

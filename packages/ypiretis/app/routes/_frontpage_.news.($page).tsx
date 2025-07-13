@@ -127,19 +127,23 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                             } = article;
 
                             return (
-                                <FeedCard.Root key={articleID}>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>{title}</FeedCard.Title>
+                                <FeedStack.Item key={articleID}>
+                                    <FeedCard.Root>
+                                        <FeedCard.Body>
+                                            <FeedCard.Title>
+                                                {title}
+                                            </FeedCard.Title>
 
-                                        <FeedCard.Description>
-                                            {publishedAtTimestamp}
-                                        </FeedCard.Description>
+                                            <FeedCard.Description>
+                                                {publishedAtTimestamp}
+                                            </FeedCard.Description>
 
-                                        <FeedCard.Text>
-                                            {description}
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
+                                            <FeedCard.Text>
+                                                {description}
+                                            </FeedCard.Text>
+                                        </FeedCard.Body>
+                                    </FeedCard.Root>
+                                </FeedStack.Item>
                             );
                         })}
                     </FeedStack.Root>

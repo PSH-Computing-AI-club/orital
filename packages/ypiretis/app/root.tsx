@@ -8,6 +8,7 @@ import {ThemedChakraProvider} from "~/state/themed_chakra";
 
 import type {Route} from "./+types/root";
 
+import "~/styles/document.css";
 import "~/styles/fonts.css";
 
 export function Layout(props: PropsWithChildren) {

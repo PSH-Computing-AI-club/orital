@@ -105,6 +105,7 @@ function FrontpageFooterRoot(props: IFrontpageFooterRootProps) {
             backgroundImage="url('/images/border.horizontal.webp')"
             backgroundSize="512px"
             backgroundRepeat="repeat-x"
+            marginBlockStart="auto"
             paddingBlock="8"
             paddingInline={{base: "4", lgDown: "0"}}
             blockSize={{base: "sm", smDown: "2xl"}}

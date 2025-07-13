@@ -11,6 +11,7 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
+import FeedCard from "~/components/frontpage/feed_card";
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
 import PageHero from "~/components/frontpage/page_hero";
 
@@ -103,6 +104,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 }
 
 export default function FrontpageNews(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {articles, pagination} = loaderData;
+
     return (
         <>
             <FrontpageShell.Title title="/news" />
@@ -110,6 +114,25 @@ export default function FrontpageNews(props: Route.ComponentProps) {
             <PageHero.Root>
                 <PageHero.Text>/news</PageHero.Text>
             </PageHero.Root>
+
+            {articles.map((article) => {
+                const {articleID, description, publishedAtTimestamp, title} =
+                    article;
+
+                return (
+                    <FeedCard.Root key={articleID}>
+                        <FeedCard.Body>
+                            <FeedCard.Title>{title}</FeedCard.Title>
+
+                            <FeedCard.Description>
+                                {publishedAtTimestamp}
+                            </FeedCard.Description>
+
+                            <FeedCard.Text>{description}</FeedCard.Text>
+                        </FeedCard.Body>
+                    </FeedCard.Root>
+                );
+            })}
         </>
     );
 }

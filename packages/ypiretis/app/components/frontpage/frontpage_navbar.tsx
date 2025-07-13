@@ -73,9 +73,10 @@ function FrontpageNavbarLogo() {
     return (
         <FrontpageShell.InternalLink to="/">
             <Image
+                src="/images/logo.monochrome.light.webp"
+                alt="Navbar 3D voxel art logo."
                 objectFit="contain"
                 blockSize="16"
-                src="/images/logo.monochrome.light.webp"
             />
         </FrontpageShell.InternalLink>
     );

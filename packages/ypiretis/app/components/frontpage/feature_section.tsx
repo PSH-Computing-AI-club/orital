@@ -3,6 +3,8 @@ import {Card, Container, Flex, Image} from "@chakra-ui/react";
 import type {PropsWithChildren} from "react";
 
 export interface IFeatureSectionImageProps {
+    readonly alt: string;
+
     readonly src: string;
 }
 
@@ -46,14 +48,15 @@ function FeatureSectionTitle(props: IFeatureSectionTitleProps) {
 }
 
 function FeatureSectionImage(props: IFeatureSectionImageProps) {
-    const {src} = props;
+    const {alt, src} = props;
 
     return (
         <Image
+            src={src}
+            alt={alt}
             objectFit="contain"
             inlineSize="full"
             maxInlineSize="lg"
-            src={src}
         />
     );
 }

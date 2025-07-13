@@ -84,7 +84,7 @@ function PeopleCardAvatar(props: IPeopleCardAvatarProps) {
             }}
         >
             <Avatar.Fallback name={name} />
-            <Avatar.Image src={src} />
+            <Avatar.Image src={src} alt={`Avatar that represents ${name}.`} />
         </Avatar.Root>
     );
 }

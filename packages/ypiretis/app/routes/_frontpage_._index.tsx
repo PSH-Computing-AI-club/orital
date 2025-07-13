@@ -45,7 +45,10 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
 
             <FeatureSection.Root>
                 <FeatureSection.Container>
-                    <FeatureSection.Image src="/images/landing.psh.webp" />
+                    <FeatureSection.Image
+                        src="/images/landing.psh.webp"
+                        alt="3D voxel art of the Penn State Harrisburg logo."
+                    />
 
                     <FeatureSection.Body>
                         <FeatureSection.Title>
@@ -253,7 +256,10 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                         </FeatureSection.Description>
                     </FeatureSection.Body>
 
-                    <FeatureSection.Image src="/images/landing.calendar.webp" />
+                    <FeatureSection.Image
+                        src="/images/landing.calendar.webp"
+                        alt="3D voxel art of a calendar."
+                    />
                 </FeatureSection.Container>
             </FeatureSection.Root>
 

@@ -73,6 +73,17 @@ function FrontpageFooterSiteLinks() {
     );
 }
 
+function FrontpageFooterLogo() {
+    return (
+        <Image
+            src="/images/logo.monochrome.light.webp"
+            alt="Footer 3D voxel art logo."
+            objectFit="contain"
+            blockSize={{base: "3xs", mdDown: "48"}}
+        />
+    );
+}
+
 function FrontpageFooterLinksContainer(
     props: IFrontpageFooterLinksContainerProps,
 ) {
@@ -148,11 +159,7 @@ export default function FrontpageFooter() {
     return (
         <FrontpageFooterRoot>
             <FrontpageFooterContainer>
-                <Image
-                    objectFit="contain"
-                    blockSize={{base: "3xs", mdDown: "48"}}
-                    src="/images/logo.monochrome.light.webp"
-                />
+                <FrontpageFooterLogo />
 
                 <Spacer />
 

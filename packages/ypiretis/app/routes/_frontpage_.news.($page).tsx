@@ -12,6 +12,7 @@ import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
 import FrontpageShell from "~/components/frontpage/frontpage_shell";
+import PageHero from "~/components/frontpage/page_hero";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
 
@@ -104,7 +105,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 export default function FrontpageNews(props: Route.ComponentProps) {
     return (
         <>
-            <FrontpageShell.Title title="News" />
+            <FrontpageShell.Title title="/news" />
+
+            <PageHero.Root>
+                <PageHero.Text>/news</PageHero.Text>
+            </PageHero.Root>
         </>
     );
 }

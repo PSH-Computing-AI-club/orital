@@ -32,7 +32,13 @@ function ContentRoot(props: IContentRootProps) {
     const {children} = props;
 
     return (
-        <Box flexGrow="1" bg="bg.muted" color="fg" paddingBlock="8">
+        <Box
+            as="section"
+            flexGrow="1"
+            bg="bg.muted"
+            color="fg"
+            paddingBlock="8"
+        >
             {children}
         </Box>
     );

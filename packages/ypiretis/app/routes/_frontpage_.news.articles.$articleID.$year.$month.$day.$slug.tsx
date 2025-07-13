@@ -62,6 +62,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         slug: userSlug,
         year: userYear,
     } = params;
+
     const article = await findOneByArticleID(articleID);
 
     if (article === null) {

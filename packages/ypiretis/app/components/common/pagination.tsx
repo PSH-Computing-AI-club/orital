@@ -1,8 +1,6 @@
 import type {BoxProps} from "@chakra-ui/react";
 import {Box, HStack, Span} from "@chakra-ui/react";
 
-import type {PropsWithChildren} from "react";
-
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
 import ChevronRightIcon from "~/components/icons/chevron_right_icon";
 
@@ -52,7 +50,7 @@ export interface IPaginationPreviousLinkProps {
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationItemProps extends PropsWithChildren {}
+export interface IPaginationItemProps extends BoxProps {}
 
 export interface IPaginationProps extends BoxProps {
     readonly currentPage: number;
@@ -105,7 +103,7 @@ function PaginationFirstLink(props: IPaginationFirstLinkProps) {
                 </Links.InternalLink>
             </PaginationItem>
 
-            <PaginationItem>...</PaginationItem>
+            <PaginationItem aria-hidden="true">...</PaginationItem>
         </>
     );
 }
@@ -121,7 +119,7 @@ function PaginationLastLink(props: IPaginationLastLinkProps) {
 
     return (
         <>
-            <PaginationItem>...</PaginationItem>
+            <PaginationItem aria-hidden="true">...</PaginationItem>
 
             <PaginationItem>
                 <Links.InternalLink aria-label={`Page ${pages}.`} to={to}>
@@ -171,10 +169,10 @@ function PaginationPreviousLink(props: IPaginationPreviousLinkProps) {
 }
 
 function PaginationItem(props: IPaginationItemProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
-        <Box as="li" display="inline-flex" alignItems="center">
+        <Box as="li" display="inline-flex" alignItems="center" {...rest}>
             {children}
         </Box>
     );

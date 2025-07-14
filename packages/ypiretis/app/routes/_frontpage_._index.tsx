@@ -298,8 +298,9 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
 
                         <FeatureSection.Description>
                             To promote club camaraderie, the Computing and AI
-                            Club hosts bi-weekly meetings every XYZday @ common
-                            hour in Olmsted XYZ W.
+                            Club hosts bi-weekly meetings every XYZday @{" "}
+                            <Span whiteSpace="pre">common hour</Span> in{" "}
+                            <Span whiteSpace="pre">Olmsted XYZ W</Span>.
                         </FeatureSection.Description>
                     </FeatureSection.Body>
 

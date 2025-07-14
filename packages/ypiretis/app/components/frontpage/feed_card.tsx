@@ -1,12 +1,18 @@
-import {Card, Text} from "@chakra-ui/react";
+import {Card, LinkOverlay, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
+
+import type {To} from "react-router";
+
+import Links from "~/components/common/links";
 
 export interface IFeedCardTextProps extends PropsWithChildren {}
 
 export interface IFeedCardDescriptionProps extends PropsWithChildren {}
 
-export interface IFeedCardTitleProps extends PropsWithChildren {}
+export interface IFeedCardTitleProps extends PropsWithChildren {
+    readonly to?: To;
+}
 
 export interface IFeedCardBodyProps extends PropsWithChildren {}
 
@@ -25,7 +31,17 @@ function FeedCardDescription(props: IFeedCardDescriptionProps) {
 }
 
 function FeedCardTitle(props: IFeedCardTitleProps) {
-    const {children} = props;
+    const {children, to} = props;
+
+    if (to) {
+        return (
+            <Card.Title>
+                <LinkOverlay asChild>
+                    <Links.InternalLink to={to}>{children}</Links.InternalLink>
+                </LinkOverlay>
+            </Card.Title>
+        );
+    }
 
     return <Card.Title>{children}</Card.Title>;
 }

@@ -19,7 +19,7 @@ import PageHero from "~/components/frontpage/page_hero";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
 
-const ARTICLES_PER_PAGE = 25;
+const ARTICLES_PER_PAGE = 10;
 
 const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
 

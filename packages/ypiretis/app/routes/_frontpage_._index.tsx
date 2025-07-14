@@ -13,6 +13,7 @@ import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Title from "~/components/common/title";
 
+import ActionCard from "~/components/frontpage/action_card";
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedSection from "~/components/frontpage/feed_section";
@@ -20,6 +21,8 @@ import FeatureSection from "~/components/frontpage/feature_section";
 import FullscreenHero from "~/components/frontpage/fullscreen_hero";
 import PeopleCard from "~/components/frontpage/people_card";
 import PeopleSection from "~/components/frontpage/people_section";
+
+import ArrowRightIcon from "~/components/icons/arrow_right_icon";
 
 import {APP_NAME} from "~/utils/constants";
 
@@ -269,6 +272,18 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                     </FeedCard.Body>
                                 </FeedCard.Root>
                             </FeedSection.GridItem>
+
+                            <FeedSection.GridItem variant="action">
+                                <ActionCard.Root>
+                                    <ActionCard.Icon>
+                                        <ArrowRightIcon />
+                                    </ActionCard.Icon>
+
+                                    <ActionCard.Link to="/events">
+                                        View More
+                                    </ActionCard.Link>
+                                </ActionCard.Root>
+                            </FeedSection.GridItem>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>
@@ -339,6 +354,18 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                     </FeedSection.GridItem>
                                 );
                             })}
+
+                            <FeedSection.GridItem variant="action">
+                                <ActionCard.Root>
+                                    <ActionCard.Icon>
+                                        <ArrowRightIcon />
+                                    </ActionCard.Icon>
+
+                                    <ActionCard.Link to="/news">
+                                        View More
+                                    </ActionCard.Link>
+                                </ActionCard.Root>
+                            </FeedSection.GridItem>
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>

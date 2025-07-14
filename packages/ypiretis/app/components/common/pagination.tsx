@@ -81,7 +81,7 @@ function PaginationPageNumber(props: IPaginationPageNumberProps) {
 
     return (
         <PaginationItem>
-            <Links.InternalLink aria-label={`Page ${page} link.`} to={to}>
+            <Links.InternalLink aria-label={`Page ${page}.`} to={to}>
                 {page}
             </Links.InternalLink>
         </PaginationItem>

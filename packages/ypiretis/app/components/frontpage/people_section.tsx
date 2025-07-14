@@ -69,7 +69,11 @@ function PeopleSectionTitle(props: IPeopleSectionTitleProps) {
 function PeopleSectionBody(props: IPeopleSectionBodyProps) {
     const {children} = props;
 
-    return <Card.Body gap="4">{children}</Card.Body>;
+    return (
+        <Card.Body gap="4" padding="unset">
+            {children}
+        </Card.Body>
+    );
 }
 
 function PeopleSectionContainer(props: IPeopleSectionContainerProps) {

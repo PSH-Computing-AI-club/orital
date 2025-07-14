@@ -125,7 +125,11 @@ function FeedSectionTitle(props: IFeedSectionTitleProps) {
 function FeedSectionBody(props: IFeedSectionBodyProps) {
     const {children} = props;
 
-    return <Card.Body gap="4">{children}</Card.Body>;
+    return (
+        <Card.Body gap="4" padding="unset">
+            {children}
+        </Card.Body>
+    );
 }
 
 function FeedSectionContainer(props: IFeedSectionContainerProps) {

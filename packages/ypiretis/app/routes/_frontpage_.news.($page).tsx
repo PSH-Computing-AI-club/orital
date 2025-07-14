@@ -71,24 +71,29 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         articles.map(async (article) => {
             const {articleID, content, slug, publishedAt, title} = article;
 
-            const publishedAtTimestamp = formatZonedDateTime(
-                publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE),
-                {
-                    detail: FORMAT_DETAIL.short,
-                },
-            );
+            const zonedPublishedAt =
+                publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+
+            const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt, {
+                detail: FORMAT_DETAIL.short,
+            });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = transformTextToSnippet(plaintextContent, {
                 limit: ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
             });
 
+            const {year, month, day} = zonedPublishedAt;
+
             return {
                 articleID,
+                day,
                 description,
+                month,
                 publishedAtTimestamp,
                 slug,
                 title,
+                year,
             };
         }),
     );
@@ -126,16 +131,22 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                         {articles.map((article) => {
                             const {
                                 articleID,
+                                day,
                                 description,
+                                month,
                                 publishedAtTimestamp,
                                 title,
+                                slug,
+                                year,
                             } = article;
 
                             return (
                                 <FeedStack.Item key={articleID}>
                                     <FeedCard.Root>
                                         <FeedCard.Body>
-                                            <FeedCard.Title>
+                                            <FeedCard.Title
+                                                to={`/news/articles/${articleID}/${year}/${month}/${day}/${slug}`}
+                                            >
                                                 {title}
                                             </FeedCard.Title>
 

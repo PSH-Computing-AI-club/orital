@@ -1,3 +1,4 @@
+import type {LinkProps} from "@chakra-ui/react";
 import {Link} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
@@ -13,21 +14,21 @@ export const LINK_VARIANTS = {
 
 export type ILinkVariants = (typeof LINK_VARIANTS)[keyof typeof LINK_VARIANTS];
 
-export interface ILinksLinkProp extends PropsWithChildren {
+export interface ILinksLinkProps extends Omit<LinkProps, "to" | "variant"> {
     readonly variant?: ILinkVariants;
 }
 
-export interface ILinksExternalLinkProps extends ILinksLinkProp {
+export interface ILinksExternalLinkProps extends ILinksLinkProps {
     readonly to: string;
 }
 
-export interface ILinksInternalLinkProps extends ILinksLinkProp {
+export interface ILinksInternalLinkProps extends ILinksLinkProps {
     readonly isNewTab?: boolean;
 
     readonly to: To;
 }
 
-export interface ILinksMailToLinkProps extends ILinksLinkProp {
+export interface ILinksMailToLinkProps extends ILinksLinkProps {
     readonly to: string;
 }
 
@@ -71,13 +72,13 @@ function InterfaceVariantLink(props: PropsWithChildren) {
 }
 
 function LinksExternalLink(props: ILinksExternalLinkProps) {
-    const {children, to, variant = LINK_VARIANTS.interface} = props;
+    const {children, to, variant = LINK_VARIANTS.interface, ...rest} = props;
 
     const Variant = getLinkVariantStyle(variant);
 
     return (
         <Variant>
-            <Link href={to} target="_blank" rel="noopener noreferrer">
+            <Link href={to} target="_blank" rel="noopener noreferrer" {...rest}>
                 {children}
             </Link>
         </Variant>
@@ -85,13 +86,15 @@ function LinksExternalLink(props: ILinksExternalLinkProps) {
 }
 
 function LinksMailToLink(props: ILinksMailToLinkProps) {
-    const {children, to, variant = LINK_VARIANTS.interface} = props;
+    const {children, to, variant = LINK_VARIANTS.interface, ...rest} = props;
 
     const Variant = getLinkVariantStyle(variant);
 
     return (
         <Variant>
-            <Link href={`mailto:${to}`}>{children}</Link>
+            <Link href={`mailto:${to}`} {...rest}>
+                {children}
+            </Link>
         </Variant>
     );
 }
@@ -102,13 +105,14 @@ function LinksInternalLink(props: ILinksInternalLinkProps) {
         isNewTab = false,
         to,
         variant = LINK_VARIANTS.interface,
+        ...rest
     } = props;
 
     const Variant = getLinkVariantStyle(variant);
 
     return (
         <Variant>
-            <Link asChild>
+            <Link asChild {...rest}>
                 <RouterLink to={to} target={isNewTab ? "_blank" : undefined}>
                     {children}
                 </RouterLink>

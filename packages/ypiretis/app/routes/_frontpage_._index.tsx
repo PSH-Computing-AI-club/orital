@@ -29,6 +29,32 @@ const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
 
 const ARTICLES_TO_DISPLAY = 3;
 
+const PEOPLE_TO_DISPLAY = [
+    {
+        accountID: "aop5448",
+        name: "Alexander O. Petrov",
+        role: "President",
+    },
+
+    {
+        accountID: "gkb5393",
+        name: "George K. Bassta",
+        role: "Vice President",
+    },
+
+    {
+        accountID: "osa5177",
+        name: "Ozge S. Ak",
+        role: "Treasurer",
+    },
+
+    {
+        accountID: "don5092",
+        name: "Dimitri O. Nearchos",
+        role: "Secretary",
+    },
+] as const;
+
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
 export async function loader(_loaderArgs: Route.LoaderArgs) {
@@ -73,12 +99,13 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
 
     return {
         articles: mappedArticles,
+        people: PEOPLE_TO_DISPLAY,
     };
 }
 
 export default function FrontpageIndex(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {articles} = loaderData;
+    const {articles, people} = loaderData;
 
     return (
         <>
@@ -138,89 +165,34 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                         </PeopleSection.Description>
 
                         <PeopleSection.Grid>
-                            <PeopleSection.GridItem>
-                                <PeopleCard.Root>
-                                    <PeopleCard.Body>
-                                        <PeopleCard.Avatar
-                                            name="Alexander O. Petrov"
-                                            src="/images/landing.avatars.aop5448.webp"
-                                        />
+                            {people.map((article) => {
+                                const {accountID, name, role} = article;
 
-                                        <PeopleCard.Title>
-                                            Alexander O. Petrov
-                                        </PeopleCard.Title>
+                                return (
+                                    <PeopleSection.GridItem key={accountID}>
+                                        <PeopleCard.Root>
+                                            <PeopleCard.Body>
+                                                <PeopleCard.Avatar
+                                                    name={name}
+                                                    src={`/images/landing.avatars.${accountID}.webp`}
+                                                />
 
-                                        <PeopleCard.Email email="aop5448@psu.edu" />
+                                                <PeopleCard.Title>
+                                                    {name}
+                                                </PeopleCard.Title>
 
-                                        <PeopleCard.Text>
-                                            President
-                                        </PeopleCard.Text>
-                                    </PeopleCard.Body>
-                                </PeopleCard.Root>
-                            </PeopleSection.GridItem>
+                                                <PeopleCard.Email
+                                                    email={`${accountID}@psu.edu`}
+                                                />
 
-                            <PeopleSection.GridItem>
-                                <PeopleCard.Root>
-                                    <PeopleCard.Body>
-                                        <PeopleCard.Avatar
-                                            name="George K. Bassta"
-                                            src="/images/landing.avatars.aop5448.webp"
-                                        />
-
-                                        <PeopleCard.Title>
-                                            George K. Bassta
-                                        </PeopleCard.Title>
-
-                                        <PeopleCard.Email email="gkb5393@psu.edu" />
-
-                                        <PeopleCard.Text>
-                                            Vice President
-                                        </PeopleCard.Text>
-                                    </PeopleCard.Body>
-                                </PeopleCard.Root>
-                            </PeopleSection.GridItem>
-
-                            <PeopleSection.GridItem>
-                                <PeopleCard.Root>
-                                    <PeopleCard.Body>
-                                        <PeopleCard.Avatar
-                                            name="Ozge S. Ak"
-                                            src="/images/landing.avatars.aop5448.webp"
-                                        />
-
-                                        <PeopleCard.Title>
-                                            Ozge S. Ak
-                                        </PeopleCard.Title>
-
-                                        <PeopleCard.Email email="osa5177@psu.edu" />
-
-                                        <PeopleCard.Text>
-                                            Treasurer
-                                        </PeopleCard.Text>
-                                    </PeopleCard.Body>
-                                </PeopleCard.Root>
-                            </PeopleSection.GridItem>
-
-                            <PeopleSection.GridItem>
-                                <PeopleCard.Root>
-                                    <PeopleCard.Body>
-                                        <PeopleCard.Avatar
-                                            name="Dimitri O. Nearchos"
-                                            src="/images/landing.avatars.don5092.webp"
-                                        />
-
-                                        <PeopleCard.Title>
-                                            Dimitri O. Nearchos
-                                        </PeopleCard.Title>
-
-                                        <PeopleCard.Email email="don5092@psu.edu" />
-
-                                        <PeopleCard.Text>
-                                            Secretary
-                                        </PeopleCard.Text>
-                                    </PeopleCard.Body>
-                                </PeopleCard.Root>
-                            </PeopleSection.GridItem>
+                                                <PeopleCard.Text>
+                                                    {role}
+                                                </PeopleCard.Text>
+                                            </PeopleCard.Body>
+                                        </PeopleCard.Root>
+                                    </PeopleSection.GridItem>
+                                );
+                            })}
                         </PeopleSection.Grid>
                     </PeopleSection.Body>
                 </PeopleSection.Container>

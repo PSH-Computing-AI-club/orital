@@ -124,7 +124,7 @@ function QRCodeView() {
                 </Flex>
 
                 <Text fontFamily="mono" fontSize="2xl" fontWeight="bold">
-                    <Links.InternalLink variant="inline" to={joinURL} isNewTab>
+                    <Links.InternalLink variant="prose" to={joinURL} isNewTab>
                         {joinURL}
                     </Links.InternalLink>
                 </Text>

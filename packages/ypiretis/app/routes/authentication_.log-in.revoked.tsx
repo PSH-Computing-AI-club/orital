@@ -22,7 +22,7 @@ export default function AuthenticationLogInExpired() {
                 <Text>
                     Return to the{" "}
                     <Links.InternalLink
-                        variant="inline"
+                        variant="prose"
                         to="/authentication/log-in"
                     >
                         log-in

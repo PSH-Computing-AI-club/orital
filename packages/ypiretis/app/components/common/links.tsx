@@ -7,7 +7,7 @@ import type {To} from "react-router";
 import {Link as RouterLink} from "react-router";
 
 export const LINK_VARIANTS = {
-    inline: "inline",
+    prose: "prose",
 
     interface: "interface",
 } as const;
@@ -34,7 +34,7 @@ export interface ILinksMailToLinkProps extends ILinksLinkProps {
 
 function getLinkVariantStyle(variant: ILinkVariants) {
     switch (variant) {
-        case LINK_VARIANTS.inline:
+        case LINK_VARIANTS.prose:
             return InlineVariantLink;
 
         case LINK_VARIANTS.interface:

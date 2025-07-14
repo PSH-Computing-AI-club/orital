@@ -1,8 +1,19 @@
-import {Box, Card, Container, Flex, SimpleGrid} from "@chakra-ui/react";
+import {Card, Container, Flex, Grid, GridItem} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
-export interface IFeedSectionGridItemProps extends PropsWithChildren {}
+export const FEED_SECTION_GRID_ITEM_VARIANTS = {
+    action: "action",
+
+    interface: "interface",
+} as const;
+
+export type IFeedSectionGridItemVariants =
+    (typeof FEED_SECTION_GRID_ITEM_VARIANTS)[keyof typeof FEED_SECTION_GRID_ITEM_VARIANTS];
+
+export interface IFeedSectionGridItemProps extends PropsWithChildren {
+    readonly variant?: IFeedSectionGridItemVariants;
+}
 
 export interface IFeedSectionGridProps extends PropsWithChildren {}
 
@@ -16,13 +27,52 @@ export interface IFeedSectionContainerProps extends PropsWithChildren {}
 
 export interface IFeedSectionRootProps extends PropsWithChildren {}
 
-function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
+function getFeedSectionGridItemVariantStyle(
+    variant?: IFeedSectionGridItemVariants,
+) {
+    switch (variant) {
+        case FEED_SECTION_GRID_ITEM_VARIANTS.action:
+            return ActionVariantFeedSectionGridItem;
+    }
+
+    return null;
+}
+
+function ActionVariantFeedSectionGridItem(props: PropsWithChildren) {
     const {children} = props;
 
     return (
-        <Box as="li" display="inline-flex">
+        <GridItem
+            alignSelf="center"
+            justifySelf={{xlDown: "center"}}
+            marginBlockStart={{mdDown: "4"}}
+            marginInlineStart={{"2xl": "4"}}
+            asChild
+        >
             {children}
-        </Box>
+        </GridItem>
+    );
+}
+
+function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
+    const {children, variant} = props;
+
+    const Variant = getFeedSectionGridItemVariantStyle(variant);
+
+    if (Variant) {
+        return (
+            <Variant>
+                <GridItem as="li" display="inline-flex">
+                    {children}
+                </GridItem>
+            </Variant>
+        );
+    }
+
+    return (
+        <GridItem as="li" display="inline-flex">
+            {children}
+        </GridItem>
     );
 }
 
@@ -30,14 +80,18 @@ function FeedSectionGrid(props: IFeedSectionGridProps) {
     const {children} = props;
 
     return (
-        <SimpleGrid
+        <Grid
             as="ol"
-            columns={{base: 3, lgDown: 2, mdDown: 1}}
+            templateColumns={{
+                base: "repeat(3, minmax(0, 1fr)) auto",
+                xlDown: "repeat(2, minmax(0, 1fr))",
+                mdDown: "repeat(1, minmax(0, 1fr))",
+            }}
             gap="8"
             marginBlockStart="4"
         >
             {children}
-        </SimpleGrid>
+        </Grid>
     );
 }
 

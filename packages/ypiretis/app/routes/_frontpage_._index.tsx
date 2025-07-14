@@ -4,6 +4,13 @@ import {Suspense, lazy} from "react";
 
 import {ClientOnly} from "remix-utils/client-only";
 
+import {findAllPublished} from "~/.server/services/articles_service";
+import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
+
+import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
+import {transformTextToSnippet} from "~/.server/utils/string";
+import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+
 import Title from "~/components/common/title";
 
 import Background3DGrid from "~/components/frontpage/background_3d_grid";
@@ -18,9 +25,61 @@ import {APP_NAME} from "~/utils/constants";
 
 import type {Route} from "./+types/_frontpage_._index";
 
+const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
+
+const ARTICLES_TO_DISPLAY = 3;
+
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
-export default function FrontpageIndex(_props: Route.ComponentProps) {
+export async function loader(_loaderArgs: Route.LoaderArgs) {
+    const {articles} = await findAllPublished({
+        pagination: {
+            page: 1,
+
+            limit: ARTICLES_TO_DISPLAY,
+        },
+    });
+
+    const mappedArticles = await Promise.all(
+        articles.map(async (article) => {
+            const {articleID, content, slug, publishedAt, title} = article;
+
+            const zonedPublishedAt =
+                publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+
+            const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt, {
+                detail: FORMAT_DETAIL.short,
+            });
+
+            const plaintextContent = await renderMarkdownForPlaintext(content);
+            const description = transformTextToSnippet(plaintextContent, {
+                limit: ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
+            });
+
+            const {year, month, day} = zonedPublishedAt;
+
+            return {
+                articleID,
+                day,
+                description,
+                month,
+                publishedAtTimestamp,
+                slug,
+                title,
+                year,
+            };
+        }),
+    );
+
+    return {
+        articles: mappedArticles,
+    };
+}
+
+export default function FrontpageIndex(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {articles} = loaderData;
+
     return (
         <>
             <Title />
@@ -274,68 +333,40 @@ export default function FrontpageIndex(_props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>
-                                            Dots and Boxes AI Competition Winner
-                                            Announced!
-                                        </FeedCard.Title>
+                            {articles.map((article) => {
+                                const {
+                                    articleID,
+                                    day,
+                                    description,
+                                    month,
+                                    publishedAtTimestamp,
+                                    title,
+                                    slug,
+                                    year,
+                                } = article;
 
-                                        <FeedCard.Description>
-                                            September 10th, 2025
-                                        </FeedCard.Description>
+                                return (
+                                    <FeedSection.GridItem key={articleID}>
+                                        <FeedCard.Root>
+                                            <FeedCard.Body>
+                                                <FeedCard.Title
+                                                    to={`/news/articles/${articleID}/${year}/${month}/${day}/${slug}`}
+                                                >
+                                                    {title}
+                                                </FeedCard.Title>
 
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
+                                                <FeedCard.Description>
+                                                    {publishedAtTimestamp}
+                                                </FeedCard.Description>
 
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>News 2</FeedCard.Title>
-
-                                        <FeedCard.Description>
-                                            September ??th, 2025
-                                        </FeedCard.Description>
-
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
-
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>News 3</FeedCard.Title>
-
-                                        <FeedCard.Description>
-                                            September ??th, 2025
-                                        </FeedCard.Description>
-
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
+                                                <FeedCard.Text>
+                                                    {description}
+                                                </FeedCard.Text>
+                                            </FeedCard.Body>
+                                        </FeedCard.Root>
+                                    </FeedSection.GridItem>
+                                );
+                            })}
                         </FeedSection.Grid>
                     </FeedSection.Body>
                 </FeedSection.Container>

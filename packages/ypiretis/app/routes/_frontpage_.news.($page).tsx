@@ -9,6 +9,7 @@ import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {transformTextToSnippet} from "~/.server/utils/string";
 
+import type {IPaginationTemplate} from "~/components/common/pagination";
 import Title from "~/components/common/title";
 
 import ContentSection from "~/components/frontpage/content_section";
@@ -21,6 +22,8 @@ import {Route} from "./+types/_frontpage_.news.($page)";
 const ARTICLES_PER_PAGE = 25;
 
 const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
+
+const PAGINATION_PAGE_RANGE = 3;
 
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
@@ -102,6 +105,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
     const {page, pages} = pagination;
 
+    const paginationTemplate = (({page}) =>
+        `/news/${page}`) satisfies IPaginationTemplate;
+
     return (
         <>
             <Title title="/news" />
@@ -146,6 +152,13 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                             );
                         })}
                     </FeedStack.Root>
+
+                    <ContentSection.Pagination
+                        currentPage={page}
+                        pageRange={PAGINATION_PAGE_RANGE}
+                        pages={pages}
+                        template={paginationTemplate}
+                    />
                 </ContentSection.Container>
             </ContentSection.Root>
         </>

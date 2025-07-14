@@ -52,8 +52,8 @@ function ActionVariantLink(props: PropsWithChildren) {
 
     return (
         <Link
-            color="cyan.solid"
-            _hover={{color: "cyan.emphasized", textDecoration: "underline"}}
+            color="cyan.fg"
+            _hover={{color: "cyan.solid", textDecoration: "underline"}}
             asChild
         >
             {children}
@@ -67,8 +67,8 @@ function InlineVariantLink(props: PropsWithChildren) {
     return (
         <Link
             variant="underline"
-            color="blue.solid"
-            _hover={{color: "blue.emphasized"}}
+            color="blue.fg"
+            _hover={{color: "blue.solid"}}
             asChild
         >
             {children}

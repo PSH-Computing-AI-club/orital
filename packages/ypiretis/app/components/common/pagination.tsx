@@ -79,7 +79,11 @@ function PaginationPageNumber(props: IPaginationPageNumberProps) {
 
     return (
         <PaginationItem>
-            <Links.InternalLink aria-label={`Page ${page}.`} to={to}>
+            <Links.InternalLink
+                aria-label={`Page ${page}.`}
+                variant="action"
+                to={to}
+            >
                 {page}
             </Links.InternalLink>
         </PaginationItem>
@@ -98,7 +102,11 @@ function PaginationFirstLink(props: IPaginationFirstLinkProps) {
     return (
         <>
             <PaginationItem>
-                <Links.InternalLink aria-label="Page 1." to={to}>
+                <Links.InternalLink
+                    aria-label="Page 1."
+                    variant="action"
+                    to={to}
+                >
                     1
                 </Links.InternalLink>
             </PaginationItem>
@@ -122,7 +130,11 @@ function PaginationLastLink(props: IPaginationLastLinkProps) {
             <PaginationItem aria-hidden="true">...</PaginationItem>
 
             <PaginationItem>
-                <Links.InternalLink aria-label={`Page ${pages}.`} to={to}>
+                <Links.InternalLink
+                    aria-label={`Page ${pages}.`}
+                    variant="action"
+                    to={to}
+                >
                     {pages}
                 </Links.InternalLink>
             </PaginationItem>
@@ -142,7 +154,11 @@ function PaginationNextLink(props: IPaginationNextLinkProps) {
 
     return (
         <PaginationItem>
-            <Links.InternalLink aria-label="Next page." to={to}>
+            <Links.InternalLink
+                aria-label="Next page."
+                variant="action"
+                to={to}
+            >
                 <ChevronRightIcon />
             </Links.InternalLink>
         </PaginationItem>
@@ -161,7 +177,11 @@ function PaginationPreviousLink(props: IPaginationPreviousLinkProps) {
 
     return (
         <PaginationItem>
-            <Links.InternalLink aria-label="Previous page." to={to}>
+            <Links.InternalLink
+                aria-label="Previous page."
+                variant="action"
+                to={to}
+            >
                 <ChevronLeftIcon />
             </Links.InternalLink>
         </PaginationItem>

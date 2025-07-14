@@ -7,9 +7,11 @@ import type {To} from "react-router";
 import {Link as RouterLink} from "react-router";
 
 export const LINK_VARIANTS = {
-    prose: "prose",
+    action: "action",
 
     interface: "interface",
+
+    prose: "prose",
 } as const;
 
 export type ILinkVariants = (typeof LINK_VARIANTS)[keyof typeof LINK_VARIANTS];
@@ -34,12 +36,29 @@ export interface ILinksMailToLinkProps extends ILinksLinkProps {
 
 function getLinkVariantStyle(variant: ILinkVariants) {
     switch (variant) {
+        case LINK_VARIANTS.action:
+            return ActionVariantLink;
+
         case LINK_VARIANTS.prose:
             return InlineVariantLink;
 
         case LINK_VARIANTS.interface:
             return InterfaceVariantLink;
     }
+}
+
+function ActionVariantLink(props: PropsWithChildren) {
+    const {children} = props;
+
+    return (
+        <Link
+            color="cyan.solid"
+            _hover={{color: "cyan.emphasized", textDecoration: "underline"}}
+            asChild
+        >
+            {children}
+        </Link>
+    );
 }
 
 function InlineVariantLink(props: PropsWithChildren) {

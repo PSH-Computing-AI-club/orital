@@ -45,8 +45,8 @@ function ActionVariantFeedSectionGridItem(props: PropsWithChildren) {
         <GridItem
             alignSelf="center"
             justifySelf={{xlDown: "center"}}
-            marginBlockStart={{mdDown: "4"}}
-            marginInlineStart={{"2xl": "4"}}
+            marginBlock={{mdDown: "4"}}
+            marginInlineStart={{xl: "4"}}
             asChild
         >
             {children}

@@ -115,7 +115,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
     return (
         <>
-            <Title title="/news" />
+            <Title title={`Page ${page} :: /news`} />
 
             <PageHero.Root>
                 <PageHero.Container>

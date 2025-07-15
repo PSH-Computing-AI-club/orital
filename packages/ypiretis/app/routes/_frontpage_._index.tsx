@@ -35,25 +35,25 @@ const ARTICLES_TO_DISPLAY = 3;
 const PEOPLE_TO_DISPLAY = [
     {
         accountID: "aop5448",
-        name: "Alexander O. Petrov",
+        fullName: "Alexander O. Petrov",
         role: "President",
     },
 
     {
         accountID: "gkb5393",
-        name: "George K. Bassta",
+        fullName: "George K. Bassta",
         role: "Vice President",
     },
 
     {
         accountID: "osa5177",
-        name: "Ozge S. Ak",
+        fullName: "Ozge S. Ak",
         role: "Treasurer",
     },
 
     {
         accountID: "don5092",
-        name: "Dimitri O. Nearchos",
+        fullName: "Dimitri O. Nearchos",
         role: "Secretary",
     },
 ] as const;
@@ -169,19 +169,19 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
 
                         <PeopleSection.Grid>
                             {people.map((article) => {
-                                const {accountID, name, role} = article;
+                                const {accountID, fullName, role} = article;
 
                                 return (
                                     <PeopleSection.GridItem key={accountID}>
                                         <PeopleCard.Root>
                                             <PeopleCard.Body>
                                                 <PeopleCard.Avatar
-                                                    name={name}
+                                                    name={fullName}
                                                     src={`/images/landing.avatars.${accountID}.webp`}
                                                 />
 
                                                 <PeopleCard.Title>
-                                                    {name}
+                                                    {fullName}
                                                 </PeopleCard.Title>
 
                                                 <PeopleCard.Email

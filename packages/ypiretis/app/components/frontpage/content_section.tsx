@@ -1,4 +1,4 @@
-import {Box, Container, Heading, Spacer} from "@chakra-ui/react";
+import {Bleed, Box, Container, Heading, Spacer, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -11,6 +11,8 @@ export interface IContentSectionPaginationProps extends IPaginationProps {}
 export interface IContentSectionProseProps {
     readonly dangerouslySetInnerHTML: {__html: string};
 }
+
+export interface IContentSectionDescriptionProps extends PropsWithChildren {}
 
 export interface IContentSectionTitleProps extends PropsWithChildren {}
 
@@ -34,9 +36,25 @@ function ContentSectionProse(props: IContentSectionProseProps) {
     return (
         <Prose
             marginInline="auto"
-            fontSize={{base: "md", lgDown: "sm"}}
+            fontSize={{base: "lg", lgDown: "md"}}
             dangerouslySetInnerHTML={{__html}}
         />
+    );
+}
+
+function ContentSectionDescription(props: IContentSectionDescriptionProps) {
+    const {children} = props;
+
+    return (
+        <Bleed blockStart="4" asChild>
+            <Text
+                marginBlockEnd="8"
+                color="fg.muted"
+                fontSize={{base: "lg", lgDown: "md"}}
+            >
+                {children}
+            </Text>
+        </Bleed>
     );
 }
 
@@ -44,7 +62,11 @@ function ContentSectionTitle(props: IContentSectionTitleProps) {
     const {children} = props;
 
     return (
-        <Heading marginBlockEnd="8" fontSize={{base: "4xl", lgDown: "3xl"}}>
+        <Heading
+            as="h1"
+            marginBlockEnd="8"
+            fontSize={{base: "4xl", lgDown: "3xl"}}
+        >
             {children}
         </Heading>
     );
@@ -80,6 +102,7 @@ function ContentSectionRoot(props: IContentSectionRootProps) {
 
 const ContentSection = {
     Container: ContentSectionContainer,
+    Description: ContentSectionDescription,
     Pagination: ContentSectionPagination,
     Prose: ContentSectionProse,
     Root: ContentSectionRoot,

@@ -1,4 +1,4 @@
-import {Bleed, Box, Container, Heading, Spacer, Text} from "@chakra-ui/react";
+import {Box, Container, Heading, Spacer, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -56,18 +56,17 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
     const {children} = props;
 
     return (
-        <Bleed blockStart="4" asChild>
-            <Text
-                display="flex"
-                alignItems="center"
-                flexWrap="wrap"
-                marginBlockEnd="8"
-                color="fg.muted"
-                fontSize={{base: "lg", lgDown: "md"}}
-            >
-                {children}
-            </Text>
-        </Bleed>
+        <Text
+            display="flex"
+            alignItems="center"
+            flexWrap="wrap"
+            marginBlockStart="-4"
+            marginBlockEnd="8"
+            color="fg.muted"
+            fontSize={{base: "lg", lgDown: "md"}}
+        >
+            {children}
+        </Text>
     );
 }
 

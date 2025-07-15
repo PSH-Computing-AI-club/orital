@@ -36,8 +36,18 @@ function ContentSectionProse(props: IContentSectionProseProps) {
     return (
         <Prose
             marginInline="auto"
+            padding="6"
+            bg="bg.panel"
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
             fontSize={{base: "lg", lgDown: "md"}}
             dangerouslySetInnerHTML={{__html}}
+            css={{
+                "& > :first-child": {
+                    marginBlockStart: 0,
+                },
+            }}
         />
     );
 }

@@ -10,6 +10,8 @@ import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
 
+import type {IUser} from "./users_service";
+import {mapUser} from "./users_service";
 import type {IPaginationOptions, IPaginationResults} from "./types";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
@@ -22,6 +24,10 @@ export interface IPublishedArticle extends IArticle {
     readonly publishedAt: Temporal.Instant;
 
     readonly state: (typeof ARTICLE_STATES)["published"];
+}
+
+export interface IPublishedArticleWithPoster extends IPublishedArticle {
+    readonly poster: IUser;
 }
 
 export type IArticleInsert = Omit<
@@ -60,18 +66,32 @@ function mapArticle(article: typeof ARTICLES_TABLE.$inferSelect): IArticle {
 
 export async function findOnePublishedByArticleID(
     articleID: string,
-): Promise<IPublishedArticle | null> {
+): Promise<IPublishedArticleWithPoster | null> {
     const nowInstant = Temporal.Now.instant();
 
-    const article = await DATABASE.query.articles.findFirst({
+    const results = await DATABASE.query.articles.findFirst({
         where: and(
             eq(ARTICLES_TABLE.articleID, articleID),
             eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
             lte(ARTICLES_TABLE.publishedAt, nowInstant),
         ),
+
+        with: {
+            poster: true,
+        },
     });
 
-    return article ? (mapArticle(article) as IPublishedArticle) : null;
+    if (!results) {
+        return null;
+    }
+
+    const {poster, ...article} = results;
+
+    return {
+        ...(mapArticle(article) as IPublishedArticle),
+
+        poster: mapUser(poster),
+    };
 }
 
 export async function findAllPublished(

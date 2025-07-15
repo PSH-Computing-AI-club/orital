@@ -2,7 +2,6 @@ import {chakra} from "@chakra-ui/react";
 
 const Prose = chakra("div", {
     base: {
-        maxInlineSize: "65ch",
         lineHeight: "1.7em",
 
         "& p": {

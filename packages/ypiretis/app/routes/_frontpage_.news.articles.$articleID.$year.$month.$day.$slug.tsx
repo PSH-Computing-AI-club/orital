@@ -1,3 +1,5 @@
+import {Span} from "@chakra-ui/react";
+
 import {Temporal} from "@js-temporal/polyfill";
 
 import {data, redirect} from "react-router";
@@ -135,7 +137,8 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {article} = loaderData;
 
-    const {renderedContent, title} = article;
+    const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
+        article;
 
     return (
         <>
@@ -150,6 +153,21 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
             <ContentSection.Root>
                 <ContentSection.Container>
                     <ContentSection.Title>{title}</ContentSection.Title>
+
+                    <ContentSection.Description>
+                        <Span whiteSpace="pre">
+                            • Published {publishedAtTimestamp}
+                        </Span>
+
+                        {updatedAtTimestamp ? (
+                            <>
+                                {" "}
+                                <Span whiteSpace="pre">
+                                    • Updated {updatedAtTimestamp}
+                                </Span>
+                            </>
+                        ) : undefined}
+                    </ContentSection.Description>
 
                     <ContentSection.Prose
                         dangerouslySetInnerHTML={{__html: renderedContent}}

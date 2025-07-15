@@ -177,7 +177,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                             <PeopleCard.Body>
                                                 <PeopleCard.Avatar
                                                     name={fullName}
-                                                    src={`/images/landing.avatars.${accountID}.webp`}
+                                                    src={`/images/avatars.${accountID}.webp`}
                                                 />
 
                                                 <PeopleCard.Title>

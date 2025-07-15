@@ -4,8 +4,13 @@ import type {PropsWithChildren} from "react";
 
 import type {IPaginationProps} from "~/components/common/pagination";
 import Pagination from "~/components/common/pagination";
+import Prose from "~/components/common/prose";
 
 export interface IContentSectionPaginationProps extends IPaginationProps {}
+
+export interface IContentSectionProseProps {
+    readonly dangerouslySetInnerHTML: {__html: string};
+}
 
 export interface IContentSectionTitleProps extends PropsWithChildren {}
 
@@ -19,6 +24,19 @@ function ContentSectionPagination(props: IPaginationProps) {
             <Spacer />
             <Pagination marginBlockStart="8" {...props} />
         </>
+    );
+}
+
+function ContentSectionProse(props: IContentSectionProseProps) {
+    const {dangerouslySetInnerHTML} = props;
+    const {__html} = dangerouslySetInnerHTML;
+
+    return (
+        <Prose
+            marginInline="auto"
+            fontSize={{base: "md", lgDown: "sm"}}
+            dangerouslySetInnerHTML={{__html}}
+        />
     );
 }
 
@@ -63,6 +81,7 @@ function ContentSectionRoot(props: IContentSectionRootProps) {
 const ContentSection = {
     Container: ContentSectionContainer,
     Pagination: ContentSectionPagination,
+    Prose: ContentSectionProse,
     Root: ContentSectionRoot,
     Title: ContentSectionTitle,
 } as const;

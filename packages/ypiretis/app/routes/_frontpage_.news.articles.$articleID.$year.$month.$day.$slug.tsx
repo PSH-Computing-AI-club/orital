@@ -15,6 +15,7 @@ import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Title from "~/components/common/title";
 
+import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
@@ -134,7 +135,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {article} = loaderData;
 
-    const {title} = article;
+    const {renderedContent, title} = article;
 
     return (
         <>
@@ -145,6 +146,16 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                     <PageHero.Text>/news</PageHero.Text>
                 </PageHero.Container>
             </PageHero.Root>
+
+            <ContentSection.Root>
+                <ContentSection.Container>
+                    <ContentSection.Title>{title}</ContentSection.Title>
+
+                    <ContentSection.Prose
+                        dangerouslySetInnerHTML={{__html: renderedContent}}
+                    />
+                </ContentSection.Container>
+            </ContentSection.Root>
         </>
     );
 }

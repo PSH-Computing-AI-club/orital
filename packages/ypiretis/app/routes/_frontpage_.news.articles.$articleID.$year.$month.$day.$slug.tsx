@@ -15,6 +15,8 @@ import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Title from "~/components/common/title";
 
+import PageHero from "~/components/frontpage/page_hero";
+
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
 const LOADER_PARAMS_SCHEMA = v.object({
@@ -137,6 +139,12 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     return (
         <>
             <Title title={`${title} :: /news`} />
+
+            <PageHero.Root>
+                <PageHero.Container>
+                    <PageHero.Text>/news</PageHero.Text>
+                </PageHero.Container>
+            </PageHero.Root>
         </>
     );
 }

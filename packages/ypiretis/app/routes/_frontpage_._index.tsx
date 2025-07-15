@@ -24,7 +24,7 @@ import PeopleSection from "~/components/frontpage/people_section";
 
 import ArrowRightIcon from "~/components/icons/arrow_right_icon";
 
-import {APP_NAME} from "~/utils/constants";
+import {ACCOUNT_PROVIDER_DOMAIN, APP_NAME} from "~/utils/constants";
 
 import type {Route} from "./+types/_frontpage_._index";
 
@@ -171,13 +171,16 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                             {people.map((article) => {
                                 const {accountID, fullName, role} = article;
 
+                                const avatarSrc = `/images/avatars.${accountID}.webp`;
+                                const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
+
                                 return (
                                     <PeopleSection.GridItem key={accountID}>
                                         <PeopleCard.Root>
                                             <PeopleCard.Body>
                                                 <PeopleCard.Avatar
                                                     name={fullName}
-                                                    src={`/images/avatars.${accountID}.webp`}
+                                                    src={avatarSrc}
                                                 />
 
                                                 <PeopleCard.Title>
@@ -185,7 +188,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                 </PeopleCard.Title>
 
                                                 <PeopleCard.Email
-                                                    email={`${accountID}@psu.edu`}
+                                                    email={email}
                                                 />
 
                                                 <PeopleCard.Text>

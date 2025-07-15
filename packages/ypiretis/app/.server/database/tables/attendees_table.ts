@@ -1,4 +1,3 @@
-import {relations} from "drizzle-orm";
 import {integer, sqliteTable, unique} from "drizzle-orm/sqlite-core";
 
 import temporalInstant, {
@@ -33,24 +32,6 @@ const ATTENDEES_TABLE = sqliteTable(
                 table.userID,
             ),
         ];
-    },
-);
-
-export const ATTENDEES_RELATIONS = relations(
-    ATTENDEES_TABLE,
-
-    ({one}) => {
-        return {
-            account: one(USERS_TABLE, {
-                fields: [ATTENDEES_TABLE.userID],
-                references: [USERS_TABLE.id],
-            }),
-
-            room: one(ROOMS_TABLE, {
-                fields: [ATTENDEES_TABLE.roomID],
-                references: [ROOMS_TABLE.id],
-            }),
-        };
     },
 );
 

@@ -1,4 +1,3 @@
-import {relations} from "drizzle-orm";
 import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
@@ -27,19 +26,6 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .notNull()
         .default(DEFAULT_TEMPORAL_INSTANT),
 });
-
-export const ROOMS_RELATIONS = relations(
-    ROOMS_TABLE,
-
-    ({one}) => {
-        return {
-            ownerAccount: one(USERS_TABLE, {
-                fields: [ROOMS_TABLE.presenterUserID],
-                references: [USERS_TABLE.id],
-            }),
-        };
-    },
-);
 
 export type IRoomsTable = typeof ROOMS_TABLE;
 

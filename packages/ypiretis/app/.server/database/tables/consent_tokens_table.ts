@@ -1,5 +1,3 @@
-import {relations} from "drizzle-orm";
-
 import {index, integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import secretText from "../types/secret_text";
@@ -31,19 +29,6 @@ const CONSENT_TOKENS_TABLE = sqliteTable(
             index("consent_tokens_idx_hash").on(table.hash),
             index("consent_tokens_idx_expires_at").on(table.expiresAt),
         ];
-    },
-);
-
-export const CONSENT_TOKENS_RELATIONS = relations(
-    CONSENT_TOKENS_TABLE,
-
-    ({one}) => {
-        return {
-            callbackToken: one(CALLBACK_TOKENS_TABLE, {
-                fields: [CONSENT_TOKENS_TABLE.callbackTokenID],
-                references: [CALLBACK_TOKENS_TABLE.id],
-            }),
-        };
     },
 );
 

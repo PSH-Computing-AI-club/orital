@@ -1,3 +1,4 @@
+import type {ContainerProps} from "@chakra-ui/react";
 import {Box, Container, Heading, Spacer} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
@@ -16,7 +17,7 @@ export interface IContentSectionDescriptionProps extends PropsWithChildren {}
 
 export interface IContentSectionTitleProps extends PropsWithChildren {}
 
-export interface IContentSectionContainerProps extends PropsWithChildren {}
+export interface IContentSectionContainerProps extends ContainerProps {}
 
 export interface IContentSectionRootProps extends PropsWithChildren {}
 
@@ -85,10 +86,10 @@ function ContentSectionTitle(props: IContentSectionTitleProps) {
 }
 
 function ContentSectionContainer(props: IContentSectionContainerProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
-        <Container display="flex" flexDirection="column" flexGrow="1">
+        <Container display="flex" flexDirection="column" flexGrow="1" {...rest}>
             {children}
         </Container>
     );

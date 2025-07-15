@@ -159,7 +159,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
             </PageHero.Root>
 
             <ContentSection.Root>
-                <ContentSection.Container>
+                <ContentSection.Container as="article">
                     <ContentSection.Title>{title}</ContentSection.Title>
 
                     <ContentSection.Description>

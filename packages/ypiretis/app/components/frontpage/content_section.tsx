@@ -48,6 +48,9 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
     return (
         <Bleed blockStart="4" asChild>
             <Text
+                display="flex"
+                alignItems="center"
+                flexWrap="wrap"
                 marginBlockEnd="8"
                 color="fg.muted"
                 fontSize={{base: "lg", lgDown: "md"}}

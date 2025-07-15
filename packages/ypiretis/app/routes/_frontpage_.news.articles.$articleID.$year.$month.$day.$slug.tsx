@@ -1,4 +1,4 @@
-import {Span} from "@chakra-ui/react";
+import {Avatar, Span} from "@chakra-ui/react";
 
 import {Temporal} from "@js-temporal/polyfill";
 
@@ -73,7 +73,16 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {content, publishedAt, slug: articleSlug, title, updatedAt} = article;
+    const {
+        content,
+        poster,
+        publishedAt,
+        slug: articleSlug,
+        title,
+        updatedAt,
+    } = article;
+    const {accountID, firstName, lastName} = poster;
+
     const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
     const {
@@ -114,15 +123,26 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             title,
             updatedAtTimestamp,
         },
+
+        poster: {
+            accountID,
+            firstName,
+            lastName,
+        },
     };
 }
 
 export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {article} = loaderData;
+    const {article, poster} = loaderData;
 
     const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
         article;
+
+    const {accountID, firstName, lastName} = poster;
+
+    const avatarSrc = `/images/avatars.${accountID}.webp`;
+    const fullName = `${firstName} ${lastName}`;
 
     return (
         <>
@@ -139,6 +159,17 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                     <ContentSection.Title>{title}</ContentSection.Title>
 
                     <ContentSection.Description>
+                        <Avatar.Root blockSize="6" inlineSize="6">
+                            <Avatar.Fallback name={fullName} />
+
+                            <Avatar.Image
+                                src={avatarSrc}
+                                alt={`Avatar that represents ${fullName}.`}
+                            />
+                        </Avatar.Root>
+
+                        <Span whiteSpace="pre"> {fullName} </Span>
+
                         <Span whiteSpace="pre">
                             • Published {publishedAtTimestamp}
                         </Span>

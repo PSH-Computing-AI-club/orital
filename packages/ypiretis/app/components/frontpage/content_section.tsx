@@ -1,4 +1,4 @@
-import {Box, Container, Heading, Spacer, Text} from "@chakra-ui/react";
+import {Box, Container, Heading, Spacer} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -56,7 +56,7 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
     const {children} = props;
 
     return (
-        <Text
+        <Box
             display="flex"
             alignItems="center"
             flexWrap="wrap"
@@ -66,7 +66,7 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
             fontSize={{base: "lg", lgDown: "md"}}
         >
             {children}
-        </Text>
+        </Box>
     );
 }
 

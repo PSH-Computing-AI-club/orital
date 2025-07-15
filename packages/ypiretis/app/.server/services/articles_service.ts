@@ -58,14 +58,20 @@ function mapArticle(article: typeof ARTICLES_TABLE.$inferSelect): IArticle {
     };
 }
 
-export async function findOneByArticleID(
+export async function findOnePublishedByArticleID(
     articleID: string,
-): Promise<IArticle | null> {
+): Promise<IPublishedArticle | null> {
+    const nowInstant = Temporal.Now.instant();
+
     const article = await DATABASE.query.articles.findFirst({
-        where: eq(ARTICLES_TABLE.articleID, articleID),
+        where: and(
+            eq(ARTICLES_TABLE.articleID, articleID),
+            eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
+            lte(ARTICLES_TABLE.publishedAt, nowInstant),
+        ),
     });
 
-    return article ? mapArticle(article) : null;
+    return article ? (mapArticle(article) as IPublishedArticle) : null;
 }
 
 export async function findAllPublished(

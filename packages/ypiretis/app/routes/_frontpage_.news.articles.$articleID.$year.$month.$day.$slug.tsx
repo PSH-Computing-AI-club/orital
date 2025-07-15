@@ -6,10 +6,7 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {
-    ARTICLE_STATES,
-    findOneByArticleID,
-} from "~/.server/services/articles_service";
+import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -68,7 +65,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         year: userYear,
     } = params;
 
-    const article = await findOneByArticleID(articleID);
+    const article = await findOnePublishedByArticleID(articleID);
 
     if (article === null) {
         throw data("Not Found", {
@@ -76,22 +73,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {
-        content,
-        publishedAt,
-        slug: articleSlug,
-        state,
-        title,
-        updatedAt,
-    } = article;
-
-    if (state !== ARTICLE_STATES.published || publishedAt === null) {
-        throw data("Not Found", {
-            status: 404,
-        });
-    }
-
+    const {content, publishedAt, slug: articleSlug, title, updatedAt} = article;
     const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+
     const {
         day: publishedDay,
         month: publishedMonth,

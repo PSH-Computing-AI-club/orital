@@ -2,10 +2,7 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {
-    ARTICLE_STATES,
-    findOneByArticleID,
-} from "~/.server/services/articles_service";
+import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import {Route} from "./+types/_frontpage_.news_.articles_.$articleID_.$";
@@ -29,7 +26,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     }
 
     const {articleID} = params;
-    const article = await findOneByArticleID(articleID);
+    const article = await findOnePublishedByArticleID(articleID);
 
     if (article === null) {
         throw data("Not Found", {
@@ -37,14 +34,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {publishedAt, slug, state} = article;
-
-    if (state !== ARTICLE_STATES.published || publishedAt === null) {
-        throw data("Not Found", {
-            status: 404,
-        });
-    }
-
+    const {publishedAt, slug} = article;
     const {day, month, year} = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
     return redirect(

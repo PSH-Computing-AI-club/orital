@@ -12,10 +12,13 @@ import {renderMarkdownForWeb} from "~/.server/services/markdown";
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
+import Links from "~/components/common/links";
 import Title from "~/components/common/title";
 
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
+
+import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
@@ -143,6 +146,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
 
     const avatarSrc = `/images/avatars.${accountID}.webp`;
     const fullName = `${firstName} ${lastName}`;
+    const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
 
     return (
         <>
@@ -167,13 +171,18 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                                 alt={`Avatar that represents ${fullName}.`}
                             />
                         </Avatar.Root>
-
                         <Span whiteSpace="pre"> {fullName} </Span>
-
+                        <Links.MailToLink
+                            variant="prose"
+                            to={email}
+                            fontSize="sm"
+                        >
+                            {email}
+                        </Links.MailToLink>
+                        &nbsp;
                         <Span whiteSpace="pre">
                             • Published {publishedAtTimestamp}
                         </Span>
-
                         {updatedAtTimestamp ? (
                             <>
                                 {" "}

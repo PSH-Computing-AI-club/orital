@@ -280,6 +280,7 @@ function FrontpageNavbarRoot(props: IFrontpageNavbarRootProps) {
             minBlockSize={{lgDown: "20"}}
             inlineSize="full"
             paddingInline="8"
+            userSelect="none"
             zIndex="2"
         >
             {children}

@@ -10,7 +10,7 @@ const {DATABASE_FILE_PATH} = ENVIRONMENT;
 export default defineConfig({
     dialect: "sqlite",
 
-    schema: "./app/.server/database/tables/index.ts",
+    schema: "./app/.server/database/tables/schema.ts",
     out: "./app/.server/database/migrations/",
 
     dbCredentials: {

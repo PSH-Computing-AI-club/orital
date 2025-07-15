@@ -6,8 +6,8 @@ import {dirname} from "node:path";
 
 import {drizzle} from "drizzle-orm/bun-sqlite";
 
-import * as DATABASE_SCHEMA from "../database/tables";
 import * as DATABASE_RELATIONS from "../database/tables/relations";
+import * as DATABASE_SCHEMA from "../database/tables/schema";
 
 import ENVIRONMENT from "./environment";
 

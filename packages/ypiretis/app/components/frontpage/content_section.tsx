@@ -48,6 +48,10 @@ function ContentSectionProse(props: IContentSectionProseProps) {
                 "& > :first-child": {
                     marginBlockStart: 0,
                 },
+
+                "& > :last-child": {
+                    marginBlockEnd: 0,
+                },
             }}
         />
     );

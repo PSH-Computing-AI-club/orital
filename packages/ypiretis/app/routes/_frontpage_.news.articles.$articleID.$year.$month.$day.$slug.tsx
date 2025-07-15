@@ -163,7 +163,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                     <ContentSection.Title>{title}</ContentSection.Title>
 
                     <ContentSection.Description>
-                        <Avatar.Root blockSize="6" inlineSize="6">
+                        <Avatar.Root blockSize="1.75em" inlineSize="1.75em">
                             <Avatar.Fallback name={fullName} />
 
                             <Avatar.Image

@@ -173,8 +173,8 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                         </PeopleSection.Description>
 
                         <PeopleSection.Grid>
-                            {people.map((article) => {
-                                const {accountID, fullName, role} = article;
+                            {people.map((person) => {
+                                const {accountID, fullName, role} = person;
 
                                 const avatarSrc = `/images/avatars.${accountID}.webp`;
                                 const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;

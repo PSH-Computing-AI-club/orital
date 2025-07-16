@@ -17,6 +17,8 @@ import {mapPublicUser} from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
 
+import Sidebar from "~/components/controlpanel/sidebar";
+
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
 import ChartIcon from "~/components/icons/chart_icon";
@@ -121,7 +123,7 @@ export function HydrateFallback() {
     );
 }
 
-function Sidebar() {
+function SidebarView() {
     const {room} = usePresenterContext();
     const {roomID, state} = room;
 
@@ -146,43 +148,45 @@ function Sidebar() {
     }
 
     return (
-        <AppShell.Sidebar>
-            <AppShell.Link to={`/rooms/${roomID}/presenter`}>
-                <AppShell.Icon>
-                    <DashboardIcon />
-                </AppShell.Icon>
-                Dashboard
-            </AppShell.Link>
+        <Sidebar.Root>
+            <Sidebar.Container>
+                <Sidebar.Link to={`/rooms/${roomID}/presenter`}>
+                    <Sidebar.Icon>
+                        <DashboardIcon />
+                    </Sidebar.Icon>
+                    Dashboard
+                </Sidebar.Link>
 
-            <AppShell.Link to={`/rooms/${roomID}/presenter/polls`}>
-                <AppShell.Icon>
-                    <ChartIcon />
-                </AppShell.Icon>
-                Polls
-            </AppShell.Link>
+                <Sidebar.Link to={`/rooms/${roomID}/presenter/polls`}>
+                    <Sidebar.Icon>
+                        <ChartIcon />
+                    </Sidebar.Icon>
+                    Polls
+                </Sidebar.Link>
 
-            <Spacer />
+                <Spacer />
 
-            <Separator.Horizontal />
+                <Separator.Horizontal />
 
-            <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
-                <AppShell.Icon>
-                    <SlidersIcon />
-                </AppShell.Icon>
-                Settings
-            </AppShell.Link>
+                <Sidebar.Link to={`/rooms/${roomID}/presenter/settings`}>
+                    <Sidebar.Icon>
+                        <SlidersIcon />
+                    </Sidebar.Icon>
+                    Settings
+                </Sidebar.Link>
 
-            <AppShell.Button
-                disabled={!canFetchAction}
-                colorPalette="red"
-                onClick={onDisposeClick}
-            >
-                <AppShell.Icon>
-                    <CloseIcon />
-                </AppShell.Icon>
-                Close Room
-            </AppShell.Button>
-        </AppShell.Sidebar>
+                <Sidebar.Button
+                    disabled={!canFetchAction}
+                    colorPalette="red"
+                    onClick={onDisposeClick}
+                >
+                    <Sidebar.Icon>
+                        <CloseIcon />
+                    </Sidebar.Icon>
+                    Close Room
+                </Sidebar.Button>
+            </Sidebar.Container>
+        </Sidebar.Root>
     );
 }
 
@@ -197,7 +201,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
                     <PresenterContextProvider
                         initialContextData={initialContextData}
                     >
-                        <Sidebar />
+                        <SidebarView />
 
                         <Outlet />
                     </PresenterContextProvider>

@@ -17,6 +17,8 @@ import {mapPublicUser} from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
 
+import Sidebar from "~/components/controlpanel/sidebar";
+
 import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
 import LogoutIcon from "~/components/icons/logout_icon";
@@ -94,7 +96,7 @@ export function HydrateFallback() {
     );
 }
 
-function Sidebar() {
+function SidebarView() {
     const {room, isRaisingHand, state: attendeeState} = useAttendeeContext();
     const {state} = room;
 
@@ -123,33 +125,35 @@ function Sidebar() {
     }
 
     return (
-        <AppShell.Sidebar>
-            <AppShell.Button
-                disabled={!canFetchAction || !canUseHand}
-                colorPalette={isRaisingHand ? "cyan" : undefined}
-                onClick={onHandClick}
-            >
-                <AppShell.Icon>
-                    {isRaisingHand ? (
-                        <HumanHandsupIcon />
-                    ) : (
-                        <HumanHandsdownIcon />
-                    )}
-                </AppShell.Icon>
-                {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
-            </AppShell.Button>
+        <Sidebar.Root>
+            <Sidebar.Container>
+                <Sidebar.Button
+                    disabled={!canFetchAction || !canUseHand}
+                    colorPalette={isRaisingHand ? "cyan" : undefined}
+                    onClick={onHandClick}
+                >
+                    <Sidebar.Icon>
+                        {isRaisingHand ? (
+                            <HumanHandsupIcon />
+                        ) : (
+                            <HumanHandsdownIcon />
+                        )}
+                    </Sidebar.Icon>
+                    {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
+                </Sidebar.Button>
 
-            <Spacer />
+                <Spacer />
 
-            <Separator.Horizontal />
+                <Separator.Horizontal />
 
-            <AppShell.Link to="/rooms/left" colorPalette="red">
-                <AppShell.Icon>
-                    <LogoutIcon />
-                </AppShell.Icon>
-                Leave Room
-            </AppShell.Link>
-        </AppShell.Sidebar>
+                <Sidebar.Link to="/rooms/left" colorPalette="red">
+                    <Sidebar.Icon>
+                        <LogoutIcon />
+                    </Sidebar.Icon>
+                    Leave Room
+                </Sidebar.Link>
+            </Sidebar.Container>
+        </Sidebar.Root>
     );
 }
 
@@ -164,7 +168,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
                     <AttendeeContextProvider
                         initialContextData={initialContextData}
                     >
-                        <Sidebar />
+                        <SidebarView />
 
                         <Outlet />
                     </AttendeeContextProvider>

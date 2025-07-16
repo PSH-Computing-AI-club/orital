@@ -16,11 +16,9 @@ const LOADER_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
     const {pin} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    await requireAuthenticatedSession(request);
+    await requireAuthenticatedSession(loaderArgs);
 
     const room = findOneLiveByPIN(pin);
 

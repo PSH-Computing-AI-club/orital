@@ -1,4 +1,9 @@
-import type {Session, SessionData} from "react-router";
+import type {
+    ActionFunctionArgs,
+    LoaderFunctionArgs,
+    Session,
+    SessionData,
+} from "react-router";
 
 import {
     commitSession as _commitSession,
@@ -28,8 +33,12 @@ export const destroySession = async (session: IFlashSession) => {
     };
 };
 
-export const getSession = (request: Request) => {
+export const getSession = (
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+) => {
+    const {request} = requestArgs;
     const {headers} = request;
+
     const cookieHeader = headers.get("Cookie");
 
     return _getSession(cookieHeader) as Promise<IFlashSession>;

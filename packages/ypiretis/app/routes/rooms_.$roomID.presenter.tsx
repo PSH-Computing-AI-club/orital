@@ -52,12 +52,10 @@ export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
 clientLoader.hydrate = true as const;
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
     const {roomID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
     const {room, user} = await requireAuthenticatedPresenterConnection(
-        request,
+        loaderArgs,
         roomID,
     );
 

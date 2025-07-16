@@ -20,13 +20,11 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {request} = actionArgs;
-
-    const {session} = await requireAuthenticatedSession(request);
+    const {session} = await requireAuthenticatedSession(actionArgs);
 
     await validateFormData(ACTION_FORM_DATA_SCHEMA, actionArgs);
 
-    const headers = await getRevokeHeaders(request, session);
+    const headers = await getRevokeHeaders(actionArgs, session);
 
     return redirect("/", {
         headers,
@@ -34,9 +32,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireAuthenticatedSession(request);
+    await requireAuthenticatedSession(loaderArgs);
 }
 
 export default function AuthenticationLogOut(_props: Route.ComponentProps) {

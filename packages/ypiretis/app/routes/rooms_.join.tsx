@@ -46,9 +46,7 @@ interface IActionError {
 }
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {request} = actionArgs;
-
-    await requireAuthenticatedSession(request);
+    await requireAuthenticatedSession(actionArgs);
 
     const {pinDigit0, pinDigit1, pinDigit2, pinDigit3, pinDigit4, pinDigit5} =
         await validateFormData(ACTION_FORM_DATA_SCHEMA, actionArgs);
@@ -86,10 +84,8 @@ export async function action(actionArgs: Route.ActionArgs) {
     return redirect(`/rooms/${roomID}/attendee`);
 }
 
-export function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    return requireAuthenticatedSession(request);
+export async function loader(loaderArgs: Route.LoaderArgs) {
+    await requireAuthenticatedSession(loaderArgs);
 }
 
 function ErrorText() {

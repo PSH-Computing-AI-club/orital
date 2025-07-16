@@ -1,7 +1,13 @@
 import type {InferSelectModel} from "drizzle-orm";
 import {eq} from "drizzle-orm";
 
-import type {Session, SessionData, SessionStorage} from "react-router";
+import type {
+    ActionFunctionArgs,
+    LoaderFunctionArgs,
+    Session,
+    SessionData,
+    SessionStorage,
+} from "react-router";
 import {data} from "react-router";
 
 import DATABASE from "../configuration/database";
@@ -50,7 +56,10 @@ export default function makeSessionGuard<
 ): ISessionGuards<T, R, D, F> {
     const {commitSession, destroySession, getSession} = sessionStorage;
 
-    async function getGrantHeaders(_request: Request, session: Session<D, F>) {
+    async function getGrantHeaders(
+        _requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+        session: Session<D, F>,
+    ) {
         const setCookieHeader = await commitSession(session);
 
         return {
@@ -58,8 +67,12 @@ export default function makeSessionGuard<
         };
     }
 
-    async function getOptionalSession(request: Request) {
+    async function getOptionalSession(
+        requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    ) {
+        const {request} = requestArgs;
         const {headers} = request;
+
         const cookie = headers.get("Cookie");
 
         if (!cookie) {
@@ -105,7 +118,10 @@ export default function makeSessionGuard<
         };
     }
 
-    async function getRevokeHeaders(_request: Request, session: Session<D, F>) {
+    async function getRevokeHeaders(
+        _requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+        session: Session<D, F>,
+    ) {
         const setCookieHeader = await destroySession(session);
 
         return {
@@ -113,8 +129,10 @@ export default function makeSessionGuard<
         };
     }
 
-    async function requireAuthenticatedSession(request: Request) {
-        const session = await getOptionalSession(request);
+    async function requireAuthenticatedSession(
+        requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    ) {
+        const session = await getOptionalSession(requestArgs);
 
         if (!session) {
             throw data("Unauthorized", {
@@ -125,7 +143,10 @@ export default function makeSessionGuard<
         return session;
     }
 
-    async function requireGuestSession(request: Request) {
+    async function requireGuestSession(
+        requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    ) {
+        const {request} = requestArgs;
         const {headers} = request;
 
         const cookie = headers.get("Cookie");

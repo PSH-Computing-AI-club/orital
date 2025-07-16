@@ -88,9 +88,7 @@ interface IActionError {
 }
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {request} = actionArgs;
-
-    await requireGuestSession(request);
+    await requireGuestSession(actionArgs);
 
     const {action, consentToken} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
@@ -140,9 +138,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireGuestSession(request);
+    await requireGuestSession(loaderArgs);
 }
 
 function ErrorText() {

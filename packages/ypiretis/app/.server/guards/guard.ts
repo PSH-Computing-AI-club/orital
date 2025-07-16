@@ -1,4 +1,9 @@
-import type {Session, SessionData} from "react-router";
+import type {
+    ActionFunctionArgs,
+    LoaderFunctionArgs,
+    Session,
+    SessionData,
+} from "react-router";
 
 export const BEARER_TYPES = {
     cookie: "BEARER_COOKIE",
@@ -12,11 +17,11 @@ export interface IGuardBearerRequisiteFuncOptions {
 }
 
 export type IGuardRequisiteFunc<T = void> = (
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
 ) => Promise<T> | T;
 
 export type IGuardBearerRequisiteFunc<T = void> = (
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     options?: IGuardBearerRequisiteFuncOptions,
 ) => Promise<T> | T;
 
@@ -24,4 +29,7 @@ export type IGuardHeadersFunc<
     D extends SessionData = SessionData,
     F extends SessionData = D,
     N extends Session<D, F> = Session<D, F>,
-> = (request: Request, session: N) => Promise<HeadersInit> | HeadersInit;
+> = (
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    session: N,
+) => Promise<HeadersInit> | HeadersInit;

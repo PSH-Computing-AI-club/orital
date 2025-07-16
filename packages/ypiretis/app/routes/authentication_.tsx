@@ -6,9 +6,11 @@ import type {Route} from "./+types/authentication_";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {request} = loaderArgs;
-    const url = new URL(request.url);
+    const {url} = request;
 
-    if (url.pathname === "/authentication") {
+    const {pathname} = new URL(url);
+
+    if (pathname === "/authentication") {
         throw data("Not Found", {
             status: 404,
         });

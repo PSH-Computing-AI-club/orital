@@ -46,9 +46,7 @@ const MASK_OPTIONS = {
 } satisfies ReactMaskOpts;
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {request} = actionArgs;
-
-    await requireGuestSession(request);
+    await requireGuestSession(actionArgs);
 
     const {accountID} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
@@ -77,7 +75,7 @@ export async function action(actionArgs: Route.ActionArgs) {
         Component: AuthenticationMail,
     });
 
-    const session = await getSession(request);
+    const session = await getSession(actionArgs);
 
     session.set("bearer", callbackToken.expose());
 
@@ -96,9 +94,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    await requireGuestSession(request);
+    await requireGuestSession(loaderArgs);
 }
 
 export default function AuthenticationLogIn(_props: Route.ComponentProps) {

@@ -28,11 +28,9 @@ export interface ILoginRevokedEvent {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
+    await requireGuestSession(loaderArgs);
 
-    await requireGuestSession(request);
-
-    const {id} = await requireTokenBearer(request, {
+    const {id} = await requireTokenBearer(loaderArgs, {
         bearerType: BEARER_TYPES.cookie,
     });
 

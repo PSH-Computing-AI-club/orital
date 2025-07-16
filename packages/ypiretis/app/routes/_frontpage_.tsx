@@ -15,9 +15,7 @@ import {PublicUserContextProvider} from "~/state/public_user";
 import {Route} from "./+types/_frontpage_";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {request} = loaderArgs;
-
-    const session = await getOptionalSession(request);
+    const session = await getOptionalSession(loaderArgs);
 
     if (!session) {
         return;

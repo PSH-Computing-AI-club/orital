@@ -1,6 +1,6 @@
 import {and, eq} from "drizzle-orm";
 
-import type {ActionFunctionArgs} from "react-router";
+import type {ActionFunctionArgs, LoaderFunctionArgs} from "react-router";
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -236,11 +236,12 @@ export async function insertOneLive(
 export async function requireAuthenticatedAttendeeAction(
     actionArgs: ActionFunctionArgs,
 ): Promise<IAuthenticatedAttendeeRoomSession> {
-    const {request} = actionArgs;
-
     const {roomID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
-    const session = await requireAuthenticatedAttendeeSession(request, roomID);
+    const session = await requireAuthenticatedAttendeeSession(
+        actionArgs,
+        roomID,
+    );
 
     const {attendee} = session;
 
@@ -254,9 +255,11 @@ export async function requireAuthenticatedAttendeeAction(
 }
 
 export async function requireAuthenticatedAttendeeConnection(
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
+    const {request} = requestArgs;
+
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
@@ -305,9 +308,11 @@ export async function requireAuthenticatedAttendeeConnection(
 }
 
 export async function requireAuthenticatedAttendeeSession(
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedAttendeeRoomSession> {
+    const {request} = requestArgs;
+
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
@@ -348,9 +353,11 @@ export async function requireAuthenticatedAttendeeSession(
 }
 
 export async function requireAuthenticatedDisplayConnection(
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
+    const {request} = requestArgs;
+
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
@@ -394,9 +401,11 @@ export async function requireAuthenticatedPresenterAction(
 }
 
 export async function requireAuthenticatedPresenterConnection(
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
+    const {request} = requestArgs;
+
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
@@ -426,9 +435,11 @@ export async function requireAuthenticatedPresenterConnection(
 }
 
 export async function requireAuthenticatedPresenterSession(
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedPresenterRoomSession> {
+    const {request} = requestArgs;
+
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;

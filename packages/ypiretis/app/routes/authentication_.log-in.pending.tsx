@@ -48,10 +48,8 @@ export const shouldRevalidate = ((_revalidateArgs) => {
 }) satisfies ShouldRevalidateFunction;
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {request} = actionArgs;
-
-    const {accountID, id: grantTokenID} = await requireTokenBearer(request);
-    const {session} = await requireGuestSession(request);
+    const {accountID, id: grantTokenID} = await requireTokenBearer(actionArgs);
+    const {session} = await requireGuestSession(actionArgs);
 
     let user = await findOneUserByAccountID(accountID);
 
@@ -67,7 +65,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     session.set("userID", user.id);
 
-    const headers = await getGrantHeaders(request, session);
+    const headers = await getGrantHeaders(actionArgs, session);
 
     await deleteOneGrantToken(grantTokenID);
 

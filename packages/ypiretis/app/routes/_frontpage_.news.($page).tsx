@@ -74,8 +74,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const zonedPublishedAt =
                 publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
-            const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt, {
+            const publishedAtText = formatZonedDateTime(zonedPublishedAt, {
                 detail: FORMAT_DETAIL.short,
+            });
+
+            const publishedAtTimestamp = zonedPublishedAt.toString({
+                timeZoneName: "never",
             });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
@@ -90,6 +94,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 day,
                 description,
                 month,
+                publishedAtText,
                 publishedAtTimestamp,
                 slug,
                 title,
@@ -125,7 +130,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
             <ContentSection.Root>
                 <ContentSection.Container>
-                    <ContentSection.Title>Page {page}</ContentSection.Title>
+                    <ContentSection.Header>
+                        <ContentSection.Title>Page {page}</ContentSection.Title>
+                    </ContentSection.Header>
 
                     <FeedStack.Root>
                         {articles.map((article) => {
@@ -134,6 +141,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                                 day,
                                 description,
                                 month,
+                                publishedAtText,
                                 publishedAtTimestamp,
                                 title,
                                 slug,
@@ -151,7 +159,13 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                                             </FeedCard.Title>
 
                                             <FeedCard.Description>
-                                                {publishedAtTimestamp}
+                                                <time
+                                                    dateTime={
+                                                        publishedAtTimestamp
+                                                    }
+                                                >
+                                                    {publishedAtText}
+                                                </time>
                                             </FeedCard.Description>
 
                                             <FeedCard.Text>

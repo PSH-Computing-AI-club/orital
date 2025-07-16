@@ -17,6 +17,8 @@ export interface IContentSectionDescriptionProps extends PropsWithChildren {}
 
 export interface IContentSectionTitleProps extends PropsWithChildren {}
 
+export interface IContentSectionHeaderProps extends PropsWithChildren {}
+
 export interface IContentSectionContainerProps extends ContainerProps {}
 
 export interface IContentSectionRootProps extends PropsWithChildren {}
@@ -65,8 +67,6 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
             display="flex"
             alignItems="center"
             flexWrap="wrap"
-            marginBlockStart="-4"
-            marginBlockEnd="8"
             color="fg.muted"
             fontSize={{base: "lg", lgDown: "md"}}
         >
@@ -79,13 +79,25 @@ function ContentSectionTitle(props: IContentSectionTitleProps) {
     const {children} = props;
 
     return (
-        <Heading
-            as="h1"
-            marginBlockEnd="8"
-            fontSize={{base: "4xl", lgDown: "3xl"}}
-        >
+        <Heading as="h1" fontSize={{base: "4xl", lgDown: "3xl"}}>
             {children}
         </Heading>
+    );
+}
+
+function ContentSectionHeader(props: IContentSectionHeaderProps) {
+    const {children} = props;
+
+    return (
+        <Box
+            as="header"
+            display="flex"
+            flexDirection="column"
+            gap="2"
+            marginBlockEnd="8"
+        >
+            {children}
+        </Box>
     );
 }
 
@@ -120,6 +132,7 @@ function ContentSectionRoot(props: IContentSectionRootProps) {
 const ContentSection = {
     Container: ContentSectionContainer,
     Description: ContentSectionDescription,
+    Header: ContentSectionHeader,
     Pagination: ContentSectionPagination,
     Prose: ContentSectionProse,
     Root: ContentSectionRoot,

@@ -76,8 +76,12 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
             const zonedPublishedAt =
                 publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
-            const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt, {
+            const publishedAtText = formatZonedDateTime(zonedPublishedAt, {
                 detail: FORMAT_DETAIL.short,
+            });
+
+            const publishedAtTimestamp = zonedPublishedAt.toString({
+                timeZoneName: "never",
             });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
@@ -92,6 +96,7 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
                 day,
                 description,
                 month,
+                publishedAtText,
                 publishedAtTimestamp,
                 slug,
                 title,
@@ -330,6 +335,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                     day,
                                     description,
                                     month,
+                                    publishedAtText,
                                     publishedAtTimestamp,
                                     title,
                                     slug,
@@ -347,7 +353,13 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                 </FeedCard.Title>
 
                                                 <FeedCard.Description>
-                                                    {publishedAtTimestamp}
+                                                    <time
+                                                        dateTime={
+                                                            publishedAtTimestamp
+                                                        }
+                                                    >
+                                                        {publishedAtText}
+                                                    </time>
                                                 </FeedCard.Description>
 
                                                 <FeedCard.Text>

@@ -108,11 +108,23 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         );
     }
 
-    const publishedAtTimestamp = formatZonedDateTime(zonedPublishedAt);
+    const hasBeenEdited =
+        true || Temporal.Instant.compare(updatedAt, publishedAt) > 0;
+    const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
-    const hasBeenEdited = Temporal.Instant.compare(updatedAt, publishedAt) > 0;
+    const publishedAtTimestamp = zonedPublishedAt.toString({
+        timeZoneName: "never",
+    });
+
     const updatedAtTimestamp = hasBeenEdited
-        ? formatZonedDateTime(updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE))
+        ? zonedUpdatedAt.toString({
+              timeZoneName: "never",
+          })
+        : null;
+
+    const publishedAtText = formatZonedDateTime(zonedPublishedAt);
+    const updatedAtText = hasBeenEdited
+        ? formatZonedDateTime(zonedUpdatedAt)
         : null;
 
     const renderedContent = await renderMarkdownForWeb(content);
@@ -120,10 +132,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         article: {
             articleID,
+            publishedAtText,
             publishedAtTimestamp,
             renderedContent,
             slug: articleSlug,
             title,
+            updatedAtText,
             updatedAtTimestamp,
         },
 
@@ -139,8 +153,14 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {article, poster} = loaderData;
 
-    const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
-        article;
+    const {
+        publishedAtText,
+        publishedAtTimestamp,
+        renderedContent,
+        title,
+        updatedAtText,
+        updatedAtTimestamp,
+    } = article;
 
     const {accountID, firstName, lastName} = poster;
 
@@ -160,38 +180,46 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
 
             <ContentSection.Root>
                 <ContentSection.Container as="article">
-                    <ContentSection.Title>{title}</ContentSection.Title>
+                    <ContentSection.Header>
+                        <ContentSection.Title>{title}</ContentSection.Title>
 
-                    <ContentSection.Description>
-                        <Avatar.Root blockSize="1.75em" inlineSize="1.75em">
-                            <Avatar.Fallback name={fullName} />
+                        <ContentSection.Description>
+                            <Avatar.Root blockSize="1.75em" inlineSize="1.75em">
+                                <Avatar.Fallback name={fullName} />
 
-                            <Avatar.Image
-                                src={avatarSrc}
-                                alt={`Avatar that represents ${fullName}.`}
-                            />
-                        </Avatar.Root>
-                        <Span whiteSpace="pre"> {fullName} </Span>
-                        <Links.MailToLink
-                            variant="prose"
-                            to={email}
-                            fontSize="sm"
-                        >
-                            {email}
-                        </Links.MailToLink>
-                        &nbsp;
-                        <Span whiteSpace="pre">
-                            • Published {publishedAtTimestamp}
-                        </Span>
-                        {updatedAtTimestamp ? (
-                            <>
-                                {" "}
-                                <Span whiteSpace="pre">
-                                    • Updated {updatedAtTimestamp}
-                                </Span>
-                            </>
-                        ) : undefined}
-                    </ContentSection.Description>
+                                <Avatar.Image
+                                    src={avatarSrc}
+                                    alt={`Avatar that represents ${fullName}.`}
+                                />
+                            </Avatar.Root>
+                            <address>
+                                <Span whiteSpace="pre"> {fullName} </Span>
+                                <Links.MailToLink
+                                    variant="prose"
+                                    to={email}
+                                    fontSize="sm"
+                                >
+                                    {email}
+                                </Links.MailToLink>
+                            </address>
+                            &nbsp;
+                            <Span whiteSpace="pre" asChild>
+                                <time dateTime={publishedAtTimestamp}>
+                                    • Published {publishedAtText}
+                                </time>
+                            </Span>
+                            {updatedAtText && updatedAtTimestamp ? (
+                                <>
+                                    &nbsp;
+                                    <Span whiteSpace="pre" asChild>
+                                        <time dateTime={updatedAtTimestamp}>
+                                            • Updated {updatedAtText}
+                                        </time>
+                                    </Span>
+                                </>
+                            ) : undefined}
+                        </ContentSection.Description>
+                    </ContentSection.Header>
 
                     <ContentSection.Prose
                         dangerouslySetInnerHTML={{__html: renderedContent}}

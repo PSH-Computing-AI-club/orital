@@ -1,6 +1,6 @@
-import {data} from "react-router";
-
 import * as v from "valibot";
+
+import {validateFormData} from "~/.server/guards/validation";
 
 import {
     ROOM_STATES,
@@ -63,21 +63,12 @@ export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 export async function action(actionArgs: Route.ActionArgs) {
     const {room} = await requireAuthenticatedPresenterAction(actionArgs);
 
-    const {request} = actionArgs;
-    const requestFormData = await request.formData();
-
-    const {output, success} = v.safeParse(
+    const formData = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(requestFormData.entries()),
+        actionArgs,
     );
 
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const {action} = output;
+    const {action} = formData;
 
     switch (action) {
         case "pin.regenerate": {
@@ -92,14 +83,14 @@ export async function action(actionArgs: Route.ActionArgs) {
             break;
 
         case "state.update": {
-            const {state} = output;
+            const {state} = formData;
 
             room.updateState(state);
             break;
         }
 
         case "title.update": {
-            const {title} = output;
+            const {title} = formData;
 
             room.updateTitle(title);
             break;

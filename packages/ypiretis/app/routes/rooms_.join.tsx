@@ -7,6 +7,8 @@ import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
+import {validateFormData} from "~/.server/guards/validation";
+
 import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/rooms_service";
 
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
@@ -21,8 +23,6 @@ const ACTION_ERROR_TYPES = {
     roomDisposed: "TYPE_ROOM_DISPOSED",
 
     roomNotFound: "TYPE_ROOM_NOT_FOUND",
-
-    validation: "TYPE_VALIDATION",
 } as const;
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
@@ -50,31 +50,9 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     await requireAuthenticatedSession(request);
 
-    const formData = await request.formData();
-
-    const {
-        output: actionData,
-
-        success,
-    } = v.safeParse(
-        ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(formData.entries()),
-    );
-
-    if (!success) {
-        return data(
-            {
-                error: ACTION_ERROR_TYPES.validation,
-            } satisfies IActionError,
-
-            {
-                status: 400,
-            },
-        );
-    }
-
     const {pinDigit0, pinDigit1, pinDigit2, pinDigit3, pinDigit4, pinDigit5} =
-        actionData;
+        await validateFormData(ACTION_FORM_DATA_SCHEMA, actionArgs);
+
     const pin = `${pinDigit0}${pinDigit1}${pinDigit2}${pinDigit3}${pinDigit4}${pinDigit5}`;
 
     const room = findOneLiveByPIN(pin);
@@ -129,9 +107,6 @@ function ErrorText() {
                     No room found with the provided PIN.
                 </Field.ErrorText>
             );
-
-        case ACTION_ERROR_TYPES.validation:
-            return <Field.ErrorText>Invalid room PIN format.</Field.ErrorText>;
     }
 }
 

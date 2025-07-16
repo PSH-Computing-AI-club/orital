@@ -22,6 +22,8 @@ import {
 
 import * as v from "valibot";
 
+import {validateFormData} from "~/.server/guards/validation";
+
 import {deleteOne as deleteOneCallbackToken} from "~/.server/services/callback_tokens_service";
 import {
     EVENT_CONSENT_AUTHORIZED,
@@ -52,8 +54,6 @@ import type {Route} from "./+types/authentication_.consent._index";
 
 const ACTION_ERROR_TYPES = {
     unauthorized: "TYPE_UNAUTHORIZED",
-
-    validation: "TYPE_VALIDATION",
 } as const;
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
@@ -92,30 +92,10 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     await requireGuestSession(request);
 
-    const formData = await request.formData();
-
-    const {
-        output: actionData,
-
-        success,
-    } = v.safeParse(
+    const {action, consentToken} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(formData.entries()),
+        actionArgs,
     );
-
-    if (!success) {
-        return data(
-            {
-                error: ACTION_ERROR_TYPES.validation,
-            } satisfies IActionError,
-
-            {
-                status: 400,
-            },
-        );
-    }
-
-    const {action, consentToken} = actionData;
 
     const consentTokenData = await findOneConsentTokenByToken(consentToken);
 
@@ -173,13 +153,6 @@ function ErrorText() {
             return (
                 <Text color="fg.error">
                     You are unauthorized to authorize this log-in.
-                </Text>
-            );
-
-        case ACTION_ERROR_TYPES.validation:
-            return (
-                <Text color="fg.error">
-                    This should never happen. Contact the web master.
                 </Text>
             );
     }

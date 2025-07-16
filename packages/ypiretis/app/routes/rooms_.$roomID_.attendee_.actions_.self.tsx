@@ -2,6 +2,8 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
+import {validateFormData} from "~/.server/guards/validation";
+
 import {requireAuthenticatedAttendeeAction} from "~/.server/services/rooms_service";
 
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
@@ -28,21 +30,10 @@ export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 export async function action(actionArgs: Route.ActionArgs) {
     const {attendee} = await requireAuthenticatedAttendeeAction(actionArgs);
 
-    const {request} = actionArgs;
-    const formData = await request.formData();
-
-    const {output, success} = v.safeParse(
+    const {action} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(formData.entries()),
+        actionArgs,
     );
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const {action} = output;
 
     switch (action) {
         case "participation.dismissHand":

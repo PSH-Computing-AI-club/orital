@@ -20,6 +20,29 @@ export type IObjectLikeSchema =
     | IObjectSchema
     | VariantSchema<string, IObjectSchema[], undefined>;
 
+export async function validateFormData<T extends IObjectLikeSchema>(
+    schema: T,
+    actionArgs: ActionFunctionArgs,
+    errorData: unknown = "Bad Request",
+): Promise<InferOutput<T>> {
+    const {request} = actionArgs;
+
+    const formData = await request.formData();
+
+    const {output, success} = v.safeParse(
+        schema,
+        Object.fromEntries(formData.entries()),
+    );
+
+    if (!success) {
+        throw data(errorData, {
+            status: 400,
+        });
+    }
+
+    return output;
+}
+
 export function validateParams<T extends IObjectLikeSchema>(
     schema: T,
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,

@@ -7,6 +7,8 @@ import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
+import {validateFormData} from "~/.server/guards/validation";
+
 import {
     findOneLiveByPresenterID,
     insertOneLive,
@@ -48,24 +50,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {identifiable: user} = await requireAuthenticatedSession(request);
 
-    const formData = await request.formData();
-
-    const {output: actionData, success} = v.safeParse(
-        ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(formData.entries()),
-    );
-
-    if (!success) {
-        return data(
-            {
-                error: ACTION_ERROR_TYPES.validation,
-            } satisfies IActionError,
-
-            {
-                status: 400,
-            },
-        );
-    }
+    const {title} = await validateFormData(ACTION_FORM_DATA_SCHEMA, actionArgs);
 
     const {id: userID} = user;
     const existingRoom = findOneLiveByPresenterID(userID);
@@ -82,7 +67,6 @@ export async function action(actionArgs: Route.ActionArgs) {
         );
     }
 
-    const {title} = actionData;
     const {roomID} = await insertOneLive({
         presenter: user,
         title,

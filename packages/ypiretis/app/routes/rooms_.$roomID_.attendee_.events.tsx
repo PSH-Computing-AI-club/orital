@@ -1,6 +1,6 @@
-import {data} from "react-router";
-
 import * as v from "valibot";
+
+import {validateParams} from "~/.server/guards/validation";
 
 import type {IAttendeeUser} from "~/.server/services/rooms_service";
 import {
@@ -17,19 +17,13 @@ const LOADER_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {params, request} = loaderArgs;
+    const {request} = loaderArgs;
 
-    const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
+    const {roomID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
     const {room, user} = await requireAuthenticatedAttendeeConnection(
         request,
-        output.roomID,
+        roomID,
     );
 
     let attendee: IAttendeeUser | null = null;

@@ -1,9 +1,10 @@
 import {Flex, Heading, Highlight, QrCode, Strong, Text} from "@chakra-ui/react";
 
 import type {ShouldRevalidateFunction} from "react-router";
-import {data} from "react-router";
 
 import * as v from "valibot";
+
+import {validateParams} from "~/.server/guards/validation";
 
 import {
     DISPLAY_ENTITY_STATES,
@@ -37,22 +38,13 @@ export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
 clientLoader.hydrate = true as const;
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {params, request} = loaderArgs;
+    const {request} = loaderArgs;
 
-    const {output, success} = v.safeParse(LOADER_PARAMS_SCHEMA, params);
+    const {roomID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
+    const {room} = await requireAuthenticatedDisplayConnection(request, roomID);
 
-    const {room} = await requireAuthenticatedDisplayConnection(
-        request,
-        output.roomID,
-    );
-
-    const {pin, roomID, state, title} = room;
+    const {pin, state, title} = room;
 
     return {
         initialContextData: {

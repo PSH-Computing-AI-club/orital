@@ -5,6 +5,8 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
+import {validateParams} from "~/.server/guards/validation";
+
 import DATABASE from "../../configuration/database";
 
 import ATTENDEES_TABLE from "../../database/tables/attendees_table";
@@ -234,20 +236,11 @@ export async function insertOneLive(
 export async function requireAuthenticatedAttendeeAction(
     actionArgs: ActionFunctionArgs,
 ): Promise<IAuthenticatedAttendeeRoomSession> {
-    const {params, request} = actionArgs;
+    const {request} = actionArgs;
 
-    const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
+    const {roomID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const session = await requireAuthenticatedAttendeeSession(
-        request,
-        output.roomID,
-    );
+    const session = await requireAuthenticatedAttendeeSession(request, roomID);
 
     const {attendee} = session;
 

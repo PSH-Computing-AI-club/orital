@@ -2,6 +2,8 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
+import {validateParams} from "~/.server/guards/validation";
+
 import {
     ATTENDEE_USER_STATES,
     requireAuthenticatedPresenterAction,
@@ -66,18 +68,9 @@ export type IActionFormData = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 export async function action(actionArgs: Route.ActionArgs) {
     const {room} = await requireAuthenticatedPresenterAction(actionArgs);
 
-    const {request, params: actionParams} = actionArgs;
+    const {request} = actionArgs;
 
-    const {output: params, success: isValidParams} = v.safeParse(
-        ACTION_PARAMS_SCHEMA,
-        actionParams,
-    );
-
-    if (!isValidParams) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
+    const {entityID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
     const requestFormData = await request.formData();
 
@@ -92,7 +85,6 @@ export async function action(actionArgs: Route.ActionArgs) {
         });
     }
 
-    const {entityID} = params;
     const attendee = room.attendees.get(entityID) ?? null;
 
     if (attendee === null) {

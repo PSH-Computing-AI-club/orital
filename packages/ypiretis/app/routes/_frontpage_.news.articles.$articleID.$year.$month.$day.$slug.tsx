@@ -6,6 +6,8 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
+import {validateParams} from "~/.server/guards/validation";
+
 import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
@@ -47,26 +49,13 @@ const LOADER_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {params: loaderParams} = loaderArgs;
-
-    const {output: params, success} = v.safeParse(
-        LOADER_PARAMS_SCHEMA,
-        loaderParams,
-    );
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
     const {
         articleID,
         day: userDay,
         month: userMonth,
         slug: userSlug,
         year: userYear,
-    } = params;
+    } = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
     const article = await findOnePublishedByArticleID(articleID);
 

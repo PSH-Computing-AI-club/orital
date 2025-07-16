@@ -2,6 +2,8 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
+import {validateParams} from "~/.server/guards/validation";
+
 import {findAllPublished} from "~/.server/services/articles_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
@@ -36,20 +38,7 @@ const LOADER_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {params: loaderParams} = loaderArgs;
-
-    const {output: params, success} = v.safeParse(
-        LOADER_PARAMS_SCHEMA,
-        loaderParams,
-    );
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const {page = 1} = params;
+    const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
     const {articles, pagination} = await findAllPublished({
         pagination: {

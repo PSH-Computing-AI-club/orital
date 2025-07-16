@@ -2,6 +2,8 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
+import {validateParams} from "~/.server/guards/validation";
+
 import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
@@ -12,20 +14,8 @@ const LOADER_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {params: loaderParams} = loaderArgs;
+    const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const {output: params, success} = v.safeParse(
-        LOADER_PARAMS_SCHEMA,
-        loaderParams,
-    );
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const {articleID} = params;
     const article = await findOnePublishedByArticleID(articleID);
 
     if (article === null) {

@@ -17,14 +17,13 @@ import {mapPublicUser} from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
 
+import Layout from "~/components/controlpanel/layout";
 import Sidebar from "~/components/controlpanel/sidebar";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
 import ChartIcon from "~/components/icons/chart_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
-
-import AppShell from "~/components/shell/app_shell";
 
 import {validateParams} from "~/guards/validation";
 
@@ -195,7 +194,7 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {initialContextData, publicUser} = loaderData;
 
     return (
-        <AppShell.Root>
+        <Layout.Root>
             <WebSocketCacheProvider>
                 <PublicUserContextProvider publicUser={publicUser}>
                     <PresenterContextProvider
@@ -207,6 +206,6 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
                     </PresenterContextProvider>
                 </PublicUserContextProvider>
             </WebSocketCacheProvider>
-        </AppShell.Root>
+        </Layout.Root>
     );
 }

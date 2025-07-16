@@ -4,13 +4,13 @@ import type {PropsWithChildren} from "react";
 
 import MenuIcon from "~/components/icons/menu_icon";
 
-export interface IAppShellContainerProps extends PropsWithChildren {
+export interface ILayoutContainerProps extends PropsWithChildren {
     readonly fluid?: boolean;
 }
 
-export interface IAppShellRootProps extends PropsWithChildren {}
+export interface ILayoutRootProps extends PropsWithChildren {}
 
-function AppShellContainer(props: IAppShellContainerProps) {
+function LayoutContainer(props: ILayoutContainerProps) {
     const {children, fluid = false} = props;
 
     return (
@@ -39,7 +39,7 @@ function AppShellContainer(props: IAppShellContainerProps) {
     );
 }
 
-function AppShellRoot(props: IAppShellRootProps) {
+function LayoutRoot(props: ILayoutRootProps) {
     const {children} = props;
 
     return (
@@ -63,9 +63,9 @@ function AppShellRoot(props: IAppShellRootProps) {
     );
 }
 
-const AppShell = {
-    Container: AppShellContainer,
-    Root: AppShellRoot,
+const Layout = {
+    Container: LayoutContainer,
+    Root: LayoutRoot,
 } as const;
 
-export default AppShell;
+export default Layout;

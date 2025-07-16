@@ -30,6 +30,7 @@ import * as v from "valibot";
 import type {IRoomStates} from "~/.server/services/rooms_service";
 import type {IPublicUser} from "~/.server/services/users_service";
 
+import Layout from "~/components/controlpanel/layout";
 import Title from "~/components/controlpanel/title";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
@@ -54,8 +55,6 @@ import ShieldIcon from "~/components/icons/shield_icon";
 import TeachIcon from "~/components/icons/teach_icon";
 import UserXIcon from "~/components/icons/user_x_icon";
 import UsersIcon from "~/components/icons/users_icon";
-
-import AppShell from "~/components/shell/app_shell";
 
 import type {IAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
@@ -931,7 +930,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     }
 
     return (
-        <AppShell.Container>
+        <Layout.Container>
             {isDisposed ? (
                 <Title.Text title={title} />
             ) : (
@@ -972,6 +971,6 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                     </Card.Root>
                 </GridItem>
             </Grid>
-        </AppShell.Container>
+        </Layout.Container>
     );
 }

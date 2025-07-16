@@ -108,8 +108,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         );
     }
 
-    const hasBeenEdited =
-        true || Temporal.Instant.compare(updatedAt, publishedAt) > 0;
+    const hasBeenEdited = Temporal.Instant.compare(updatedAt, publishedAt) > 0;
     const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
     const publishedAtTimestamp = zonedPublishedAt.toString({

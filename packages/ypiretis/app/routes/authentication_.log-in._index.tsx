@@ -11,9 +11,11 @@ import {
 import type {ReactMaskOpts} from "react-imask";
 import {useIMask} from "react-imask";
 
-import {Form, data, redirect, useActionData, useNavigation} from "react-router";
+import {Form, redirect, useNavigation} from "react-router";
 
 import * as v from "valibot";
+
+import {validateFormData} from "~/.server/guards/validation";
 
 import AuthenticationMail from "~/.server/mails/authentication_mail";
 import {queueEmail} from "~/.server/services/email_service";
@@ -33,10 +35,6 @@ import {EXPRESSION_ALPHANUMERICAL, alphanumerical} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.log-in._index";
 
-const ACTION_ERROR_TYPES = {
-    validation: "TYPE_VALIDATION",
-} as const;
-
 const ACTION_FORM_DATA_SCHEMA = v.object({
     accountID: v.pipe(v.string(), v.nonEmpty(), alphanumerical),
 
@@ -47,39 +45,15 @@ const MASK_OPTIONS = {
     mask: new RegExp(EXPRESSION_ALPHANUMERICAL.toString().slice(1, -2)),
 } satisfies ReactMaskOpts;
 
-interface IActionError {
-    readonly error: (typeof ACTION_ERROR_TYPES)[keyof typeof ACTION_ERROR_TYPES];
-}
-
 export async function action(actionArgs: Route.ActionArgs) {
     const {request} = actionArgs;
 
     await requireGuestSession(request);
 
-    const formData = await request.formData();
-
-    const {
-        output: actionData,
-
-        success,
-    } = v.safeParse(
+    const {accountID} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
-        Object.fromEntries(formData.entries()),
+        actionArgs,
     );
-
-    if (!success) {
-        return data(
-            {
-                error: ACTION_ERROR_TYPES.validation,
-            } satisfies IActionError,
-
-            {
-                status: 400,
-            },
-        );
-    }
-
-    const {accountID} = actionData;
 
     const {
         expiresAt: callbackTokenExpiresAt,
@@ -127,21 +101,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     await requireGuestSession(request);
 }
 
-function ErrorText() {
-    const {error} = useActionData<IActionError>() ?? {};
-
-    switch (error) {
-        case ACTION_ERROR_TYPES.validation:
-            return (
-                <Field.ErrorText>Invalid account ID format.</Field.ErrorText>
-            );
-    }
-}
-
-export default function AuthenticationLogIn(props: Route.ComponentProps) {
-    const {actionData} = props;
-    const {error} = actionData ?? {};
-
+export default function AuthenticationLogIn(_props: Route.ComponentProps) {
     const navigation = useNavigation();
 
     const {ref: maskRef} = useIMask(MASK_OPTIONS);
@@ -165,7 +125,7 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
 
                 <Form method="POST">
                     <VStack gap="4">
-                        <Field.Root invalid={!!error} required>
+                        <Field.Root required>
                             <Field.Label>
                                 {ACCOUNT_PROVIDER_NAME} ID{" "}
                                 <Field.RequiredIndicator />
@@ -188,8 +148,6 @@ export default function AuthenticationLogIn(props: Route.ComponentProps) {
                                     textAlign="right"
                                 />
                             </InputGroup>
-
-                            <ErrorText />
                         </Field.Root>
 
                         <Button

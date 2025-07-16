@@ -2,12 +2,12 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {validateFormData, validateParams} from "~/.server/guards/validation";
-
 import {
     ATTENDEE_USER_STATES,
     requireAuthenticatedPresenterAction,
 } from "~/.server/services/rooms_service";
+
+import {validateFormData, validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 

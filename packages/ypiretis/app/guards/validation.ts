@@ -1,3 +1,6 @@
+// **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
+// imported by server-only modules.
+
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "react-router";
 import {data} from "react-router";
 

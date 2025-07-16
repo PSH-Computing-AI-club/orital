@@ -1,7 +1,5 @@
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import type {IAttendeeUser} from "~/.server/services/rooms_service";
 import {
     ENTITY_STATES,
@@ -9,6 +7,8 @@ import {
 } from "~/.server/services/rooms_service";
 
 import {webSocket} from "~/.server/utils/web_socket";
+
+import {validateParams} from "~/guards/validation";
 
 import type {Route} from "./+types/rooms_.$roomID_.attendee_.events";
 

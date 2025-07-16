@@ -2,10 +2,10 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+
+import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/_frontpage_.news_.articles_.$articleID_.$";
 

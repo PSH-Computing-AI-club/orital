@@ -22,8 +22,6 @@ import {
 
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import {deleteOne as deleteOneCallbackToken} from "~/.server/services/callback_tokens_service";
 import {
     EVENT_CONSENT_AUTHORIZED,
@@ -38,6 +36,8 @@ import SearchIcon from "~/components/icons/search_icon";
 import UserPlusIcon from "~/components/icons/user_plus_icon";
 
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateFormData} from "~/guards/validation";
 
 import withHashLoader from "~/hooks/hash_loader";
 import type {IUseTimeoutOptions} from "~/hooks/timeout";

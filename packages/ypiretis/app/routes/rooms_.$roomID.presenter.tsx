@@ -8,8 +8,6 @@ import {Outlet} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {
     PRESENTER_USER_STATES,
     requireAuthenticatedPresenterConnection,
@@ -23,6 +21,8 @@ import ChartIcon from "~/components/icons/chart_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
 
 import AppShell from "~/components/shell/app_shell";
+
+import {validateParams} from "~/guards/validation";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 

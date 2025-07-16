@@ -2,8 +2,6 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {findAllPublished} from "~/.server/services/articles_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
@@ -18,6 +16,8 @@ import ContentSection from "~/components/frontpage/content_section";
 import FeedCard from "~/components/frontpage/feed_card";
 import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
+
+import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
 

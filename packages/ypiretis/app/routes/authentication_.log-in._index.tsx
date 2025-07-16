@@ -15,8 +15,6 @@ import {Form, redirect, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import AuthenticationMail from "~/.server/mails/authentication_mail";
 import {queueEmail} from "~/.server/services/email_service";
 
@@ -26,6 +24,8 @@ import {commitSession, getSession} from "~/.server/services/flash_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateFormData} from "~/guards/validation";
 
 import {
     ACCOUNT_PROVIDER_DOMAIN,

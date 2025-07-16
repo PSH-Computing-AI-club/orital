@@ -6,8 +6,6 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
@@ -19,6 +17,8 @@ import Title from "~/components/common/title";
 
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
+
+import {validateParams} from "~/guards/validation";
 
 import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
 

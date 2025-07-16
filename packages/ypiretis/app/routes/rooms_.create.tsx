@@ -7,8 +7,6 @@ import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import {
     findOneLiveByPresenterID,
     insertOneLive,
@@ -17,6 +15,8 @@ import {
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateFormData} from "~/guards/validation";
 
 import {EXPRESSION_TITLE, title} from "~/utils/valibot";
 

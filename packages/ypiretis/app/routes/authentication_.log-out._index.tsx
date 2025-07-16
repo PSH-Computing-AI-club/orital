@@ -4,14 +4,14 @@ import {Form, redirect, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import {
     getRevokeHeaders,
     requireAuthenticatedSession,
 } from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateFormData} from "~/guards/validation";
 
 import type {Route} from "./+types/authentication_.log-out._index";
 

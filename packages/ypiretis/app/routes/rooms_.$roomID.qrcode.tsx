@@ -4,14 +4,14 @@ import type {ShouldRevalidateFunction} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {
     DISPLAY_ENTITY_STATES,
     requireAuthenticatedDisplayConnection,
 } from "~/.server/services/rooms_service";
 
 import Links from "~/components/common/links";
+
+import {validateParams} from "~/guards/validation";
 
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 

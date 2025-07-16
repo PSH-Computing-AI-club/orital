@@ -5,7 +5,7 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
+import {validateParams} from "../../../guards/validation";
 
 import DATABASE from "../../configuration/database";
 

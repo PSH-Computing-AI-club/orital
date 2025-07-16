@@ -7,13 +7,13 @@ import {Form, data, redirect, useActionData, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/rooms_service";
 
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateFormData} from "~/guards/validation";
 
 import {EXPRESSION_PIN, pin} from "~/utils/valibot";
 

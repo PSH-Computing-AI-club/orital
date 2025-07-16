@@ -1,12 +1,12 @@
 import * as v from "valibot";
 
-import {validateFormData} from "~/.server/guards/validation";
-
 import {
     ROOM_STATES,
     generateUniquePIN,
     requireAuthenticatedPresenterAction,
 } from "~/.server/services/rooms_service";
+
+import {validateFormData} from "~/guards/validation";
 
 import {title} from "~/utils/valibot";
 

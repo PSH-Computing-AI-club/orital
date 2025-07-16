@@ -7,8 +7,6 @@ import {data, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
-import {validateSearchParams} from "~/.server/guards/validation";
-
 import {lookupAccountID} from "~/.server/services/directory_service";
 import {
     deleteOne as deleteOneGrantToken,
@@ -23,6 +21,8 @@ import {
 
 import TimeDeltaText from "~/components/common/time_delta_text";
 import PromptShell from "~/components/shell/prompt_shell";
+
+import {validateSearchParams} from "~/guards/validation";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
 import useWebSocket, {WebSocketCacheProvider} from "~/hooks/web_socket";

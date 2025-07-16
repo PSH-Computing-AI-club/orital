@@ -2,10 +2,10 @@ import {redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {validateParams} from "~/.server/guards/validation";
-
 import {ROOM_STATES, findOneLiveByPIN} from "~/.server/services/rooms_service";
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
+
+import {validateParams} from "~/guards/validation";
 
 import {pin as pinValidator} from "~/utils/valibot";
 

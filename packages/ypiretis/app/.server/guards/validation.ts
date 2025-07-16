@@ -60,3 +60,26 @@ export function validateParams<T extends IObjectLikeSchema>(
 
     return output;
 }
+
+export function validateSearchParams<T extends IObjectLikeSchema>(
+    schema: T,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    errorData: unknown = "Bad Request",
+): InferOutput<T> {
+    const {request} = requestArgs;
+
+    const {searchParams} = new URL(request.url);
+
+    const {output, success} = v.safeParse(
+        schema,
+        Object.fromEntries(searchParams.entries()),
+    );
+
+    if (!success) {
+        throw data(errorData, {
+            status: 400,
+        });
+    }
+
+    return output;
+}

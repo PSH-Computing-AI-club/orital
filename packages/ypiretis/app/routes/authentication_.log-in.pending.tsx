@@ -7,6 +7,8 @@ import {data, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
+import {validateSearchParams} from "~/.server/guards/validation";
+
 import {lookupAccountID} from "~/.server/services/directory_service";
 import {
     deleteOne as deleteOneGrantToken,
@@ -75,21 +77,10 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
-    const {request} = loaderArgs;
-    const {searchParams} = new URL(request.url);
-
-    const {output, success} = v.safeParse(
+    const {callbackTokenExpiresAt} = validateSearchParams(
         LOADER_SEARCH_PARAMS_SCHEMA,
-        Object.fromEntries(searchParams.entries()),
+        loaderArgs,
     );
-
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const {callbackTokenExpiresAt} = output;
 
     return {
         callbackTokenExpiresAt,

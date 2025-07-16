@@ -68,17 +68,6 @@ function AppShellButton(props: IAppShellButtonProps) {
     );
 }
 
-function AppShellDivider() {
-    return (
-        <Box
-            borderBlockStartColor="border"
-            borderBlockStartStyle="solid"
-            borderBlockStartWidth="thin"
-            width="full"
-        />
-    );
-}
-
 function AppShellIcon(props: IAppShellIconProps) {
     const {children} = props;
 
@@ -233,7 +222,6 @@ function AppShellRoot(props: IAppShellRootProps) {
 const AppShell = {
     Button: AppShellButton,
     Container: AppShellContainer,
-    Divider: AppShellDivider,
     Icon: AppShellIcon,
     Link: AppShellLink,
     Sidebar: AppShellSidebar,

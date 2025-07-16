@@ -15,6 +15,8 @@ import {
 
 import {mapPublicUser} from "~/.server/services/users_service";
 
+import Separator from "~/components/common/separator";
+
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
 import ChartIcon from "~/components/icons/chart_icon";
@@ -161,7 +163,7 @@ function Sidebar() {
 
             <Spacer />
 
-            <AppShell.Divider />
+            <Separator.Horizontal />
 
             <AppShell.Link to={`/rooms/${roomID}/presenter/settings`}>
                 <AppShell.Icon>

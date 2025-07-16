@@ -15,6 +15,8 @@ import {
 
 import {mapPublicUser} from "~/.server/services/users_service";
 
+import Separator from "~/components/common/separator";
+
 import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
 import LogoutIcon from "~/components/icons/logout_icon";
@@ -139,7 +141,7 @@ function Sidebar() {
 
             <Spacer />
 
-            <AppShell.Divider />
+            <Separator.Horizontal />
 
             <AppShell.Link to="/rooms/left" colorPalette="red">
                 <AppShell.Icon>

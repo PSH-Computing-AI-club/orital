@@ -8,7 +8,6 @@ import {
     Image,
     Popover,
     Portal,
-    Separator,
     Spacer,
     VStack,
     useCollapsibleContext,
@@ -18,6 +17,7 @@ import {
 import type {PropsWithChildren} from "react";
 
 import Links from "~/components/common/links";
+import Separator from "~/components/common/separator";
 
 import ChevronDownIcon from "~/components/icons/chevron_down_icon";
 import ChevronUpIcon from "~/components/icons/chevron_up_icon";
@@ -89,7 +89,7 @@ function NavbarAuthenticatedSessionLinks() {
                 Create Room
             </Links.InternalLink>
 
-            <NavbarDivider />
+            <Separator.Horizontal />
 
             {isAdmin ? (
                 <Links.InternalLink to="/admin">Admin</Links.InternalLink>
@@ -168,12 +168,6 @@ function NavbarSessionGreeter() {
                 </Popover.Positioner>
             </Portal>
         </Popover.Root>
-    );
-}
-
-function NavbarDivider() {
-    return (
-        <Separator borderColor="currentcolor" inlineSize="full" opacity="0.2" />
     );
 }
 
@@ -324,7 +318,7 @@ export default function Navbar() {
                             <NavbarLeftActions />
                             <NavbarRightActions />
 
-                            <NavbarDivider />
+                            <Separator.Horizontal />
 
                             {session ? (
                                 <NavbarAuthenticatedSessionLinks />

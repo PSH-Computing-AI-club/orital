@@ -376,20 +376,11 @@ export async function requireAuthenticatedDisplayConnection(
 export async function requireAuthenticatedPresenterAction(
     actionArgs: ActionFunctionArgs,
 ): Promise<IAuthenticatedPresenterRoomSession> {
-    const {params, request} = actionArgs;
+    const {request} = actionArgs;
 
-    const {output, success} = v.safeParse(ACTION_PARAMS_SCHEMA, params);
+    const {roomID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
-    if (!success) {
-        throw data("Bad Request", {
-            status: 400,
-        });
-    }
-
-    const session = await requireAuthenticatedPresenterSession(
-        request,
-        output.roomID,
-    );
+    const session = await requireAuthenticatedPresenterSession(request, roomID);
 
     const {presenter} = session;
 

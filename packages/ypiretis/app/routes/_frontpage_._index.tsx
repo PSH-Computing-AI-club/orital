@@ -188,17 +188,19 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                     src={avatarSrc}
                                                 />
 
-                                                <PeopleCard.Title>
-                                                    {fullName}
-                                                </PeopleCard.Title>
+                                                <address>
+                                                    <PeopleCard.Title>
+                                                        {fullName}
+                                                    </PeopleCard.Title>
 
-                                                <PeopleCard.Email
-                                                    email={email}
-                                                />
+                                                    <PeopleCard.Email
+                                                        email={email}
+                                                    />
 
-                                                <PeopleCard.Text>
-                                                    {role}
-                                                </PeopleCard.Text>
+                                                    <PeopleCard.Text>
+                                                        {role}
+                                                    </PeopleCard.Text>
+                                                </address>
                                             </PeopleCard.Body>
                                         </PeopleCard.Root>
                                     </PeopleSection.GridItem>

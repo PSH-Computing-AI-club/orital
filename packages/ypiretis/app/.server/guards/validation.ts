@@ -14,16 +14,20 @@ export function validateParams<
         ObjectEntries,
         ErrorMessage<ObjectIssue> | undefined
     >,
->(schema: T, loaderArgs: ActionFunctionArgs | LoaderFunctionArgs) {
-    const {params: unsafeParams} = loaderArgs;
+>(
+    schema: T,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    errorData: unknown = "Bad Request",
+) {
+    const {params: unsafeParams} = requestArgs;
 
-    const {output: safeParams, success} = v.safeParse(schema, unsafeParams);
+    const {output, success} = v.safeParse(schema, unsafeParams);
 
     if (!success) {
-        throw data("Bad Request", {
+        throw data(errorData, {
             status: 400,
         });
     }
 
-    return safeParams;
+    return output;
 }

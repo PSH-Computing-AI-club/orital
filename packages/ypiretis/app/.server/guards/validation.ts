@@ -18,7 +18,7 @@ export function validateParams<
     schema: T,
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     errorData: unknown = "Bad Request",
-) {
+): InferOutput<T> {
     const {params: unsafeParams} = requestArgs;
 
     const {output, success} = v.safeParse(schema, unsafeParams);

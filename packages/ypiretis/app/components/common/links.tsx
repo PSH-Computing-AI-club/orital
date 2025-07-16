@@ -1,5 +1,5 @@
 import type {LinkProps} from "@chakra-ui/react";
-import {Link} from "@chakra-ui/react";
+import {Link, Span} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -12,6 +12,8 @@ export const LINK_VARIANTS = {
     interface: "interface",
 
     prose: "prose",
+
+    plain: "plain",
 } as const;
 
 export type ILinkVariants = (typeof LINK_VARIANTS)[keyof typeof LINK_VARIANTS];
@@ -44,6 +46,9 @@ function getLinkVariantStyle(variant: ILinkVariants) {
 
         case LINK_VARIANTS.interface:
             return InterfaceVariantLink;
+
+        case LINK_VARIANTS.plain:
+            return PlainVariantLink;
     }
 }
 
@@ -51,13 +56,13 @@ function ActionVariantLink(props: PropsWithChildren) {
     const {children} = props;
 
     return (
-        <Link
+        <Span
             color="cyan.fg"
             _hover={{color: "cyan.solid", textDecoration: "underline"}}
             asChild
         >
             {children}
-        </Link>
+        </Span>
     );
 }
 
@@ -80,13 +85,23 @@ function InterfaceVariantLink(props: PropsWithChildren) {
     const {children} = props;
 
     return (
-        <Link
+        <Span
             color="currentcolor"
             _hover={{color: "cyan.solid", textDecoration: "underline"}}
             asChild
         >
             {children}
-        </Link>
+        </Span>
+    );
+}
+
+function PlainVariantLink(props: PropsWithChildren) {
+    const {children} = props;
+
+    return (
+        <Span _hover={{color: "cyan.solid", textDecoration: "none"}} asChild>
+            {children}
+        </Span>
     );
 }
 

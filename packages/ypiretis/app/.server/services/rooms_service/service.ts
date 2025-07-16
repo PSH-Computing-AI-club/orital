@@ -258,9 +258,7 @@ export async function requireAuthenticatedAttendeeConnection(
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
-    const {request} = requestArgs;
-
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {identifiable: user} = await requireAuthenticatedSession(requestArgs);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
@@ -311,9 +309,7 @@ export async function requireAuthenticatedAttendeeSession(
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedAttendeeRoomSession> {
-    const {request} = requestArgs;
-
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {identifiable: user} = await requireAuthenticatedSession(requestArgs);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
@@ -356,9 +352,7 @@ export async function requireAuthenticatedDisplayConnection(
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
-    const {request} = requestArgs;
-
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {identifiable: user} = await requireAuthenticatedSession(requestArgs);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
@@ -383,11 +377,12 @@ export async function requireAuthenticatedDisplayConnection(
 export async function requireAuthenticatedPresenterAction(
     actionArgs: ActionFunctionArgs,
 ): Promise<IAuthenticatedPresenterRoomSession> {
-    const {request} = actionArgs;
-
     const {roomID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
-    const session = await requireAuthenticatedPresenterSession(request, roomID);
+    const session = await requireAuthenticatedPresenterSession(
+        actionArgs,
+        roomID,
+    );
 
     const {presenter} = session;
 
@@ -404,9 +399,7 @@ export async function requireAuthenticatedPresenterConnection(
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedRoomSession> {
-    const {request} = requestArgs;
-
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {identifiable: user} = await requireAuthenticatedSession(requestArgs);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 
@@ -438,9 +431,7 @@ export async function requireAuthenticatedPresenterSession(
     requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     roomID: string,
 ): Promise<IAuthenticatedPresenterRoomSession> {
-    const {request} = requestArgs;
-
-    const {identifiable: user} = await requireAuthenticatedSession(request);
+    const {identifiable: user} = await requireAuthenticatedSession(requestArgs);
 
     const room = LIVE_ROOMS_BY_ROOM_ID.get(roomID) ?? null;
 

@@ -1,7 +1,12 @@
 // **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
 // imported by server-only modules.
 
-import type {ActionFunctionArgs, LoaderFunctionArgs} from "react-router";
+import type {
+    ActionFunctionArgs,
+    ClientActionFunctionArgs,
+    ClientLoaderFunctionArgs,
+    LoaderFunctionArgs,
+} from "react-router";
 import {data} from "react-router";
 
 import type {
@@ -25,7 +30,7 @@ export type IObjectLikeSchema =
 
 export async function validateFormData<T extends IObjectLikeSchema>(
     schema: T,
-    actionArgs: ActionFunctionArgs,
+    actionArgs: ActionFunctionArgs | ClientActionFunctionArgs,
     errorData: unknown = "Bad Request",
 ): Promise<InferOutput<T>> {
     const {request} = actionArgs;
@@ -48,7 +53,11 @@ export async function validateFormData<T extends IObjectLikeSchema>(
 
 export function validateParams<T extends IObjectLikeSchema>(
     schema: T,
-    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
+    requestArgs:
+        | ActionFunctionArgs
+        | ClientActionFunctionArgs
+        | ClientLoaderFunctionArgs
+        | LoaderFunctionArgs,
     errorData: unknown = "Bad Request",
 ): InferOutput<T> {
     const {params: unsafeParams} = requestArgs;

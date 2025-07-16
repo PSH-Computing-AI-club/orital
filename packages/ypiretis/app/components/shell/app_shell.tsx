@@ -1,13 +1,11 @@
-import type {ColorPalette, EditableValueChangeDetails} from "@chakra-ui/react";
+import type {ColorPalette} from "@chakra-ui/react";
 import {
     Box,
     Bleed,
     Button,
     Container,
     Drawer,
-    Editable,
     Flex,
-    Heading,
     IconButton,
     Image,
     Portal,
@@ -15,19 +13,12 @@ import {
 } from "@chakra-ui/react";
 
 import type {MouseEventHandler, PropsWithChildren} from "react";
-import {useState} from "react";
 
 import type {To} from "react-router";
 import {Link, useLocation} from "react-router";
 
-import Title from "~/components/common/title";
-
-import CheckIcon from "~/components/icons/check_icon";
-import CloseIcon from "~/components/icons/close_icon";
-import EditBoxIcon from "~/components/icons/edit_box_icon";
 import MenuIcon from "~/components/icons/menu_icon";
 
-import {APP_NAME} from "~/utils/constants";
 import {buildAppURL} from "~/utils/url";
 
 interface IAppShellSidebarContainerProps extends PropsWithChildren {}
@@ -46,20 +37,6 @@ export interface IAppShellLinkProps extends PropsWithChildren {
     readonly colorPalette?: ColorPalette;
 
     readonly to: To;
-}
-
-export interface IAppShellTitleProps {
-    readonly title: string;
-}
-
-export interface IAppShellEditableTitleProps extends IAppShellTitleProps {
-    readonly disabled?: boolean;
-
-    readonly maxLength?: number;
-
-    readonly onTitleCommit: (details: EditableValueChangeDetails) => void;
-
-    readonly onTitleIsValid?: (details: EditableValueChangeDetails) => boolean;
 }
 
 export interface IAppShellContainerProps extends PropsWithChildren {
@@ -138,105 +115,6 @@ function AppShellLink(props: IAppShellLinkProps) {
         >
             <Link to={to}>{children}</Link>
         </Button>
-    );
-}
-
-function AppShellTitle(props: IAppShellTitleProps) {
-    const {title} = props;
-
-    return (
-        <>
-            <Title title={title} />
-        </>
-    );
-}
-
-function AppShellEditableTitle(props: IAppShellEditableTitleProps) {
-    const {
-        disabled = false,
-        onTitleCommit,
-        onTitleIsValid,
-        maxLength,
-        title,
-    } = props;
-
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [isValid, setIsValid] = useState<boolean>(true);
-
-    // **HACK:** `Editable.RootProps.value` controls the display value AND
-    // the value passed to `onValueCommit`. Thereforce, we need to run a
-    // virtual value state based off the change event to fake our own
-    // `onTitleCommit` event.
-    //
-    // Yay~!
-    const [value, setValue] = useState<string>(title);
-
-    function onEditChange(details: {edit: boolean}): void {
-        setIsEditing(details.edit);
-    }
-
-    function onValueChange(details: EditableValueChangeDetails): void {
-        setIsValid(onTitleIsValid!(details));
-
-        setValue(details.value);
-    }
-
-    function onValueCommit(_details: EditableValueChangeDetails): void {
-        onTitleCommit({value});
-    }
-
-    return (
-        <>
-            {
-                // **HACK:** See similar comment for `AppShellTitle`.
-            }
-            <title>{`${title} :: ${APP_NAME}`}</title>
-
-            <Heading>
-                <Editable.Root
-                    disabled={disabled}
-                    value={title}
-                    activationMode="dblclick"
-                    submitMode={isValid ? "enter" : "none"}
-                    maxLength={maxLength}
-                    colorPalette={
-                        isEditing ? (isValid ? undefined : "red") : undefined
-                    }
-                    fontSize="inherit"
-                    lineHeight="inherit"
-                    onEditChange={onEditChange}
-                    onValueChange={onTitleIsValid ? onValueChange : undefined}
-                    onValueCommit={onValueCommit}
-                >
-                    <Editable.Preview />
-                    <Editable.Input />
-
-                    <Editable.Control>
-                        <Editable.EditTrigger asChild>
-                            <IconButton variant="ghost" colorPalette="cyan">
-                                <EditBoxIcon />
-                            </IconButton>
-                        </Editable.EditTrigger>
-
-                        <Editable.CancelTrigger asChild>
-                            <IconButton variant="outline" colorPalette="red">
-                                <CloseIcon />
-                            </IconButton>
-                        </Editable.CancelTrigger>
-
-                        <Editable.SubmitTrigger asChild>
-                            <IconButton
-                                disabled={!isValid || disabled}
-                                variant="outline"
-                                colorPalette="green"
-                            >
-                                <CheckIcon />
-                            </IconButton>
-                        </Editable.SubmitTrigger>
-                    </Editable.Control>
-                </Editable.Root>
-            </Heading>
-        </>
     );
 }
 
@@ -356,12 +234,10 @@ const AppShell = {
     Button: AppShellButton,
     Container: AppShellContainer,
     Divider: AppShellDivider,
-    EditableTitle: AppShellEditableTitle,
     Icon: AppShellIcon,
     Link: AppShellLink,
     Sidebar: AppShellSidebar,
     Root: AppShellRoot,
-    Title: AppShellTitle,
 } as const;
 
 export default AppShell;

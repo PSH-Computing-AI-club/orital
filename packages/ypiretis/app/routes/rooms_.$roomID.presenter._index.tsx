@@ -30,6 +30,8 @@ import * as v from "valibot";
 import type {IRoomStates} from "~/.server/services/rooms_service";
 import type {IPublicUser} from "~/.server/services/users_service";
 
+import Title from "~/components/controlpanel/title";
+
 import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
@@ -931,9 +933,9 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     return (
         <AppShell.Container>
             {isDisposed ? (
-                <AppShell.Title title={title} />
+                <Title.Text title={title} />
             ) : (
-                <AppShell.EditableTitle
+                <Title.Editable
                     disabled={!canFetchAction}
                     title={title}
                     maxLength={32}

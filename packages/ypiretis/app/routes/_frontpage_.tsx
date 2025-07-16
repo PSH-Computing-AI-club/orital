@@ -7,8 +7,8 @@ import {
     mapPublicUser,
 } from "~/.server/services/users_service";
 
-import FrontpageFooter from "~/components/frontpage/frontpage_footer";
-import FrontpageNavbar from "~/components/frontpage/frontpage_navbar";
+import Footer from "~/components/frontpage/footer";
+import Navbar from "~/components/frontpage/navbar";
 
 import {PublicUserContextProvider} from "~/state/public_user";
 
@@ -34,23 +34,23 @@ export default function FrontpageLayout(props: Route.ComponentProps) {
 
     return publicUser ? (
         <PublicUserContextProvider publicUser={publicUser}>
-            <FrontpageNavbar />
+            <Navbar />
 
             <Flex as="main" flexDirection="column" flexGrow="1">
                 <Outlet />
             </Flex>
 
-            <FrontpageFooter />
+            <Footer />
         </PublicUserContextProvider>
     ) : (
         <>
-            <FrontpageNavbar />
+            <Navbar />
 
             <Flex as="main" flexDirection="column" flexGrow="1">
                 <Outlet />
             </Flex>
 
-            <FrontpageFooter />
+            <Footer />
         </>
     );
 }

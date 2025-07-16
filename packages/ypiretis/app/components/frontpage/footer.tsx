@@ -14,19 +14,19 @@ import type {PropsWithChildren} from "react";
 import Links from "~/components/common/links";
 import VersionText from "~/components/common/version_text";
 
-interface IFrontpageFooterLinksContainerProps extends PropsWithChildren {}
+interface IFooterLinksContainerProps extends PropsWithChildren {}
 
-interface IFrontpageFooterLinksTitleProps extends PropsWithChildren {}
+interface IFooterLinksTitleProps extends PropsWithChildren {}
 
-interface IFrontpageFooterLinksBodyProps extends PropsWithChildren {}
+interface IFooterLinksBodyProps extends PropsWithChildren {}
 
-interface IFrontpageFooterLinksRootProps extends PropsWithChildren {}
+interface IFooterLinksRootProps extends PropsWithChildren {}
 
-interface IFrontpageFooterContainerProps extends PropsWithChildren {}
+interface IFooterContainerProps extends PropsWithChildren {}
 
-interface IFrontpageFooterRootProps extends PropsWithChildren {}
+interface IFooterRootProps extends PropsWithChildren {}
 
-function FrontpageFooterClubLinks() {
+function FooterClubLinks() {
     return (
         <>
             <li>
@@ -50,7 +50,7 @@ function FrontpageFooterClubLinks() {
     );
 }
 
-function FrontpageFooterSiteLinks() {
+function FooterSiteLinks() {
     return (
         <>
             <li>
@@ -68,7 +68,7 @@ function FrontpageFooterSiteLinks() {
     );
 }
 
-function FrontpageFooterLogo() {
+function FooterLogo() {
     return (
         <VStack gap="2">
             <Image
@@ -83,9 +83,7 @@ function FrontpageFooterLogo() {
     );
 }
 
-function FrontpageFooterLinksContainer(
-    props: IFrontpageFooterLinksContainerProps,
-) {
+function FooterLinksContainer(props: IFooterLinksContainerProps) {
     const {children} = props;
 
     return (
@@ -95,13 +93,13 @@ function FrontpageFooterLinksContainer(
     );
 }
 
-function FrontpageFooterLinksTitle(props: IFrontpageFooterLinksTitleProps) {
+function FooterLinksTitle(props: IFooterLinksTitleProps) {
     const {children} = props;
 
     return <Heading>{children}</Heading>;
 }
 
-function FrontpageFooterLinksBody(props: IFrontpageFooterLinksBodyProps) {
+function FooterLinksBody(props: IFooterLinksBodyProps) {
     const {children} = props;
 
     return (
@@ -111,7 +109,7 @@ function FrontpageFooterLinksBody(props: IFrontpageFooterLinksBodyProps) {
     );
 }
 
-function FrontpageFooterLinksRoot(props: IFrontpageFooterLinksRootProps) {
+function FooterLinksRoot(props: IFooterLinksRootProps) {
     const {children} = props;
 
     return (
@@ -121,7 +119,7 @@ function FrontpageFooterLinksRoot(props: IFrontpageFooterLinksRootProps) {
     );
 }
 
-function FrontpageFooterContainer(props: IFrontpageFooterContainerProps) {
+function FooterContainer(props: IFooterContainerProps) {
     const {children} = props;
 
     return (
@@ -133,7 +131,7 @@ function FrontpageFooterContainer(props: IFrontpageFooterContainerProps) {
     );
 }
 
-function FrontpageFooterRoot(props: IFrontpageFooterRootProps) {
+function FooterRoot(props: IFooterRootProps) {
     const {children} = props;
 
     return (
@@ -154,36 +152,32 @@ function FrontpageFooterRoot(props: IFrontpageFooterRootProps) {
     );
 }
 
-export default function FrontpageFooter() {
+export default function Footer() {
     return (
-        <FrontpageFooterRoot>
-            <FrontpageFooterContainer>
-                <FrontpageFooterLogo />
+        <FooterRoot>
+            <FooterContainer>
+                <FooterLogo />
 
                 <Spacer />
 
-                <FrontpageFooterLinksRoot>
-                    <FrontpageFooterLinksBody>
-                        <FrontpageFooterLinksTitle>
-                            Club
-                        </FrontpageFooterLinksTitle>
+                <FooterLinksRoot>
+                    <FooterLinksBody>
+                        <FooterLinksTitle>Club</FooterLinksTitle>
 
-                        <FrontpageFooterLinksContainer>
-                            <FrontpageFooterClubLinks />
-                        </FrontpageFooterLinksContainer>
-                    </FrontpageFooterLinksBody>
+                        <FooterLinksContainer>
+                            <FooterClubLinks />
+                        </FooterLinksContainer>
+                    </FooterLinksBody>
 
-                    <FrontpageFooterLinksBody>
-                        <FrontpageFooterLinksTitle>
-                            Site
-                        </FrontpageFooterLinksTitle>
+                    <FooterLinksBody>
+                        <FooterLinksTitle>Site</FooterLinksTitle>
 
-                        <FrontpageFooterLinksContainer>
-                            <FrontpageFooterSiteLinks />
-                        </FrontpageFooterLinksContainer>
-                    </FrontpageFooterLinksBody>
-                </FrontpageFooterLinksRoot>
-            </FrontpageFooterContainer>
-        </FrontpageFooterRoot>
+                        <FooterLinksContainer>
+                            <FooterSiteLinks />
+                        </FooterLinksContainer>
+                    </FooterLinksBody>
+                </FooterLinksRoot>
+            </FooterContainer>
+        </FooterRoot>
     );
 }

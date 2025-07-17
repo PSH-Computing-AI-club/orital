@@ -50,8 +50,8 @@ export interface IFindAllOptions {
     readonly pagination: IPaginationOptions;
 }
 
-export interface IFindAllArticlesResults {
-    readonly articles: IPublishedArticle[];
+export interface IFindAllArticlesResults<T extends IArticle = IArticle> {
+    readonly articles: T[];
 
     readonly pagination: IPaginationResults;
 }
@@ -101,6 +101,9 @@ export async function findOnePublishedByArticleID(
 export async function findAllPublished(
     options: IFindAllOptions,
 ): Promise<IFindAllArticlesResults> {
+export async function findAllPublished(
+    options: IFindAllOptions,
+): Promise<IFindAllArticlesResults<IPublishedArticle>> {
     const {pagination} = options;
     const {limit, page} = pagination;
 

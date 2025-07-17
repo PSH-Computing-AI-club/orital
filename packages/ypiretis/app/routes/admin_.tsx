@@ -12,10 +12,10 @@ import Separator from "~/components/common/separator";
 import Layout from "~/components/controlpanel/layout";
 import Sidebar from "~/components/controlpanel/sidebar";
 
+import ArticleMultipleIcon from "~/components/icons/article_multiple_icon";
+import CalendarMultipleIcon from "~/components/icons/calendar_multiple_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
-import CalendarTextIcon from "~/components/icons/calendar_text_icon";
 import HomeIcon from "~/components/icons/home_icon";
-import TextIcon from "~/components/icons/text_icon";
 
 import {PublicUserContextProvider} from "~/state/public_user";
 
@@ -59,14 +59,14 @@ function SidebarView() {
 
                 <Sidebar.Link to={`/admin/news`} comparator="startsWith">
                     <Sidebar.Icon>
-                        <TextIcon />
+                        <ArticleMultipleIcon />
                     </Sidebar.Icon>
                     News
                 </Sidebar.Link>
 
                 <Sidebar.Link to={`/admin/events`} comparator="startsWith">
                     <Sidebar.Icon>
-                        <CalendarTextIcon />
+                        <CalendarMultipleIcon />
                     </Sidebar.Icon>
                     Events
                 </Sidebar.Link>

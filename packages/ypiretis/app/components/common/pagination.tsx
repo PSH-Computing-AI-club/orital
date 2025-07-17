@@ -10,11 +10,11 @@ export type IPaginationTemplate = (
     context: IPaginationTemplateContext,
 ) => string | URL;
 
-export interface IPaginationTemplateContext {
+interface IPaginationTemplateContext {
     readonly page: number;
 }
 
-export interface IPaginationPageNumberProps {
+interface IPaginationPageNumberProps {
     readonly currentPage: number;
 
     readonly page: number;
@@ -22,13 +22,13 @@ export interface IPaginationPageNumberProps {
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationFirstLinkProps {
+interface IPaginationFirstLinkProps {
     readonly rangeMin: number;
 
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationLastLinkProps {
+interface IPaginationLastLinkProps {
     readonly pages: number;
 
     readonly rangeMax: number;
@@ -36,7 +36,7 @@ export interface IPaginationLastLinkProps {
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationNextLinkProps {
+interface IPaginationNextLinkProps {
     readonly currentPage: number;
 
     readonly pages: number;
@@ -44,13 +44,13 @@ export interface IPaginationNextLinkProps {
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationPreviousLinkProps {
+interface IPaginationPreviousLinkProps {
     readonly currentPage: number;
 
     readonly template: IPaginationTemplate;
 }
 
-export interface IPaginationItemProps extends BoxProps {}
+interface IPaginationItemProps extends BoxProps {}
 
 export interface IPaginationProps extends BoxProps {
     readonly currentPage: number;

@@ -10,6 +10,7 @@ import {
     Button,
     Drawer,
     Image,
+    Link,
     Portal,
     VStack,
 } from "@chakra-ui/react";
@@ -17,9 +18,7 @@ import {
 import type {MouseEventHandler} from "react";
 
 import type {To} from "react-router";
-import {useLocation} from "react-router";
-
-import Links from "~/components/common/links";
+import {Link as RouterLink, useLocation} from "react-router";
 
 import {buildAppURL} from "~/utils/url";
 
@@ -137,9 +136,9 @@ function SidebarLink(props: ISidebarLinkProps) {
             asChild
             {...rest}
         >
-            <Links.InternalLink variant="plain" to={to}>
-                {children}
-            </Links.InternalLink>
+            <Link _hover={{textDecoration: "none"}} asChild>
+                <RouterLink to={to}>{children}</RouterLink>
+            </Link>
         </Button>
     );
 }

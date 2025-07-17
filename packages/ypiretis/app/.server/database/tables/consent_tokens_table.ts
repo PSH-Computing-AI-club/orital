@@ -32,6 +32,14 @@ const CONSENT_TOKENS_TABLE = sqliteTable(
     },
 );
 
+export type IInsertConsentToken = Readonly<
+    typeof CONSENT_TOKENS_TABLE.$inferInsert
+>;
+
+export type ISelectConsentToken = Readonly<
+    typeof CONSENT_TOKENS_TABLE.$inferSelect
+>;
+
 export type IConsentTokensTable = typeof CONSENT_TOKENS_TABLE;
 
 export default CONSENT_TOKENS_TABLE;

@@ -35,6 +35,10 @@ const ATTENDEES_TABLE = sqliteTable(
     },
 );
 
-export type IAttendeeTable = typeof ATTENDEES_TABLE;
+export type IInsertAttendee = Readonly<typeof ATTENDEES_TABLE.$inferInsert>;
+
+export type ISelectAttendee = Readonly<typeof ATTENDEES_TABLE.$inferSelect>;
+
+export type IAttendeesTable = typeof ATTENDEES_TABLE;
 
 export default ATTENDEES_TABLE;

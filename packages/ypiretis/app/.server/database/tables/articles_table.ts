@@ -48,6 +48,10 @@ const ARTICLES_TABLE = sqliteTable("articles", {
     publishedAt: temporalInstant("published_at"),
 });
 
+export type IInsertArticle = Readonly<typeof ARTICLES_TABLE.$inferInsert>;
+
+export type ISelectArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;
+
 export type IArticleStates =
     (typeof ARTICLE_STATES)[keyof typeof ARTICLE_STATES];
 

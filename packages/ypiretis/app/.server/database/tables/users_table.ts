@@ -18,6 +18,10 @@ const USERS_TABLE = sqliteTable("users", {
         .default(DEFAULT_TEMPORAL_INSTANT),
 });
 
+export type IInsertUser = Readonly<typeof USERS_TABLE.$inferInsert>;
+
+export type ISelectUser = Readonly<typeof USERS_TABLE.$inferSelect>;
+
 export type IUsersTable = typeof USERS_TABLE;
 
 export default USERS_TABLE;

@@ -23,6 +23,14 @@ const CALLBACK_TOKENS_TABLE = sqliteTable(
     },
 );
 
+export type IInsertCallbackToken = Readonly<
+    typeof CALLBACK_TOKENS_TABLE.$inferInsert
+>;
+
+export type ISelectCallbackToken = Readonly<
+    typeof CALLBACK_TOKENS_TABLE.$inferSelect
+>;
+
 export type ICallbackTokensTable = typeof CALLBACK_TOKENS_TABLE;
 
 export default CALLBACK_TOKENS_TABLE;

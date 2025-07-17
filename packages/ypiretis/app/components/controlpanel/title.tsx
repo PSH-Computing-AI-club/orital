@@ -1,4 +1,4 @@
-import type {EditableValueChangeDetails} from "@chakra-ui/react";
+import type {EditableValueChangeDetails, HeadingProps} from "@chakra-ui/react";
 import {Editable, Heading, IconButton} from "@chakra-ui/react";
 
 import {useState} from "react";
@@ -9,7 +9,7 @@ import CheckIcon from "~/components/icons/check_icon";
 import CloseIcon from "~/components/icons/close_icon";
 import EditBoxIcon from "~/components/icons/edit_box_icon";
 
-export interface ITitleTextProps {
+export interface ITitleTextProps extends HeadingProps {
     readonly title: string;
 }
 
@@ -30,6 +30,7 @@ function TitleEditable(props: ITitleEditableProps) {
         onTitleIsValid,
         maxLength,
         title,
+        ...rest
     } = props;
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -61,7 +62,7 @@ function TitleEditable(props: ITitleEditableProps) {
         <>
             <SiteTitle title={title} />
 
-            <Heading as="h1">
+            <Heading as="h1" {...rest}>
                 <Editable.Root
                     disabled={disabled}
                     value={title}
@@ -110,13 +111,15 @@ function TitleEditable(props: ITitleEditableProps) {
 }
 
 function TitleText(props: ITitleTextProps) {
-    const {title} = props;
+    const {title, ...rest} = props;
 
     return (
         <>
             <SiteTitle title={title} />
 
-            <Heading as="h1">{title}</Heading>
+            <Heading as="h1" {...rest}>
+                {title}
+            </Heading>
         </>
     );
 }

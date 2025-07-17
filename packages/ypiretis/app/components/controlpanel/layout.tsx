@@ -1,17 +1,16 @@
+import type {BoxProps, DrawerRootProps} from "@chakra-ui/react";
 import {Box, Container, Drawer, Flex, IconButton} from "@chakra-ui/react";
-
-import type {PropsWithChildren} from "react";
 
 import MenuIcon from "~/components/icons/menu_icon";
 
-export interface ILayoutContainerProps extends PropsWithChildren {
+export interface ILayoutContainerProps extends BoxProps {
     readonly fluid?: boolean;
 }
 
-export interface ILayoutRootProps extends PropsWithChildren {}
+export interface ILayoutRootProps extends DrawerRootProps {}
 
 function LayoutContainer(props: ILayoutContainerProps) {
-    const {children, fluid = false} = props;
+    const {children, fluid = false, ...rest} = props;
 
     return (
         <Box
@@ -23,6 +22,7 @@ function LayoutContainer(props: ILayoutContainerProps) {
             minBlockSize={fluid ? undefined : "dvh"}
             overflowX="hidden"
             overflowY={fluid ? undefined : "hidden"}
+            {...rest}
         >
             <Container
                 display="flex"
@@ -40,10 +40,10 @@ function LayoutContainer(props: ILayoutContainerProps) {
 }
 
 function LayoutRoot(props: ILayoutRootProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
-        <Drawer.Root placement="start">
+        <Drawer.Root placement="start" {...rest}>
             <Flex align="stretch" inlineSize="dvw">
                 {children}
             </Flex>

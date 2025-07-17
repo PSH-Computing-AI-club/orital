@@ -1,4 +1,9 @@
-import type {ColorPalette} from "@chakra-ui/react";
+import type {
+    BoxProps,
+    ButtonProps,
+    ColorPalette,
+    StackProps,
+} from "@chakra-ui/react";
 import {
     Box,
     Bleed,
@@ -18,7 +23,7 @@ import Links from "~/components/common/links";
 
 import {buildAppURL} from "~/utils/url";
 
-export interface ISidebarButtonProps extends PropsWithChildren {
+export interface ISidebarButtonProps extends ButtonProps {
     readonly colorPalette?: ColorPalette;
 
     readonly disabled?: boolean;
@@ -26,34 +31,32 @@ export interface ISidebarButtonProps extends PropsWithChildren {
     readonly onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
-export interface ISidebarIconProps extends PropsWithChildren {}
+export interface ISidebarIconProps extends BoxProps {}
 
-export interface ISidebarLinkProps extends PropsWithChildren {
+export interface ISidebarLinkProps extends ButtonProps {
     readonly colorPalette?: ColorPalette;
 
     readonly to: To;
 }
 
-export interface ISidebarBodyProps extends PropsWithChildren {
+export interface ISidebarContainerProps extends StackProps {
     readonly fluid?: boolean;
 }
 
-export interface IAppShellRootProps extends PropsWithChildren {}
-
-export interface ISidebarRootProps extends PropsWithChildren {}
+export interface ISidebarRootProps extends BoxProps {}
 
 function SidebarIcon(props: ISidebarIconProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
-        <Box width="2.5em" height="2.5em" asChild>
+        <Box width="2.5em" height="2.5em" asChild {...rest}>
             {children}
         </Box>
     );
 }
 
 function SidebarButton(props: ISidebarButtonProps) {
-    const {children, colorPalette, disabled = false, onClick} = props;
+    const {children, colorPalette, disabled = false, onClick, ...rest} = props;
 
     return (
         <Button
@@ -67,6 +70,7 @@ function SidebarButton(props: ISidebarButtonProps) {
             paddingY="10"
             gap="2"
             onClick={onClick}
+            {...rest}
         >
             {children}
         </Button>
@@ -74,7 +78,7 @@ function SidebarButton(props: ISidebarButtonProps) {
 }
 
 function SidebarLink(props: ISidebarLinkProps) {
-    const {children, colorPalette, to} = props;
+    const {children, colorPalette, to, ...rest} = props;
     const location = useLocation();
 
     const currentURL = buildAppURL(location);
@@ -96,6 +100,7 @@ function SidebarLink(props: ISidebarLinkProps) {
             paddingY="10"
             gap="2"
             asChild
+            {...rest}
         >
             <Links.InternalLink variant="plain" to={to}>
                 {children}
@@ -104,11 +109,11 @@ function SidebarLink(props: ISidebarLinkProps) {
     );
 }
 
-function SidebarContainer(props: ISidebarBodyProps) {
-    const {children} = props;
+function SidebarContainer(props: ISidebarContainerProps) {
+    const {children, ...rest} = props;
 
     return (
-        <VStack gap="2" padding="2" blockSize="full">
+        <VStack gap="2" padding="2" blockSize="full" {...rest}>
             <Bleed blockStart="2" inline="2" paddingBlock="4">
                 <Image
                     src="/images/logo.monochrome.dark.webp"
@@ -124,7 +129,7 @@ function SidebarContainer(props: ISidebarBodyProps) {
 }
 
 function SidebarRoot(props: ISidebarRootProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
         <>
@@ -138,6 +143,7 @@ function SidebarRoot(props: ISidebarRootProps) {
                 blockSize="dvh"
                 minInlineSize="32"
                 maxInlineSize="32"
+                {...rest}
             >
                 {children}
             </Box>
@@ -152,7 +158,11 @@ function SidebarRoot(props: ISidebarRootProps) {
                         cursor="pointer"
                     />
 
-                    <Drawer.Content minInlineSize="32" maxInlineSize="32">
+                    <Drawer.Content
+                        minInlineSize="32"
+                        maxInlineSize="32"
+                        {...rest}
+                    >
                         {children}
                     </Drawer.Content>
                 </Drawer.Positioner>

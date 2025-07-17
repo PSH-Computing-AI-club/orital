@@ -1,22 +1,29 @@
+import type {SeparatorProps} from "@chakra-ui/react";
 import {Separator as ChakraSeparator} from "@chakra-ui/react";
 
-function SeparatorHorizontal() {
+export interface ISeparatorHorizontalProps extends SeparatorProps {}
+
+export interface ISeparatorVerticalProps extends SeparatorProps {}
+
+function SeparatorHorizontal(props: ISeparatorHorizontalProps) {
     return (
         <ChakraSeparator
             borderColor="currentcolor"
             inlineSize="full"
             opacity="0.2"
+            {...props}
         />
     );
 }
 
-function SeparatorVertical() {
+function SeparatorVertical(props: ISeparatorVerticalProps) {
     return (
         <ChakraSeparator
             orientation="vertical"
             borderColor="currentcolor"
             blockSize="full"
             opacity="0.2"
+            {...props}
         />
     );
 }

@@ -23,6 +23,15 @@ import Links from "~/components/common/links";
 
 import {buildAppURL} from "~/utils/url";
 
+export const SIDEBAR_LINK_COMPARATORS = {
+    equal: "equal",
+
+    startsWith: "startsWith",
+} as const;
+
+export type ISidebarLinkComparators =
+    (typeof SIDEBAR_LINK_COMPARATORS)[keyof typeof SIDEBAR_LINK_COMPARATORS];
+
 export interface ISidebarButtonProps extends ButtonProps {
     readonly colorPalette?: ColorPalette;
 
@@ -36,6 +45,8 @@ export interface ISidebarIconProps extends BoxProps {}
 export interface ISidebarLinkProps extends ButtonProps {
     readonly colorPalette?: ColorPalette;
 
+    readonly comparator?: ISidebarLinkComparators;
+
     readonly to: To;
 }
 
@@ -44,6 +55,27 @@ export interface ISidebarContainerProps extends StackProps {
 }
 
 export interface ISidebarRootProps extends BoxProps {}
+
+function evaluateSidebarLinkComparator(
+    comparator: ISidebarLinkComparators,
+    to: To,
+) {
+    const location = useLocation();
+
+    const currentURL = buildAppURL(location);
+    const toURL = buildAppURL(to);
+
+    const currentURLText = currentURL.toString();
+    const toURLText = toURL.toString();
+
+    switch (comparator) {
+        case SIDEBAR_LINK_COMPARATORS.equal:
+            return currentURLText === toURLText;
+
+        case SIDEBAR_LINK_COMPARATORS.startsWith:
+            return currentURLText.startsWith(toURLText);
+    }
+}
 
 function SidebarIcon(props: ISidebarIconProps) {
     const {children, ...rest} = props;
@@ -78,13 +110,16 @@ function SidebarButton(props: ISidebarButtonProps) {
 }
 
 function SidebarLink(props: ISidebarLinkProps) {
-    const {children, colorPalette, to, ...rest} = props;
-    const location = useLocation();
+    const {
+        children,
+        colorPalette,
+        comparator = SIDEBAR_LINK_COMPARATORS.equal,
+        to,
+        ...rest
+    } = props;
 
-    const currentURL = buildAppURL(location);
-    const toURL = buildAppURL(to);
+    const isActive = evaluateSidebarLinkComparator(comparator, to);
 
-    const isActive = currentURL.toString() === toURL.toString();
     const preferredColorPalette: ColorPalette | undefined = isActive
         ? "cyan"
         : undefined;

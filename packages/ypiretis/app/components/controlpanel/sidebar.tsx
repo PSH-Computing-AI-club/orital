@@ -14,7 +14,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import type {MouseEventHandler, PropsWithChildren} from "react";
+import type {MouseEventHandler} from "react";
 
 import type {To} from "react-router";
 import {useLocation} from "react-router";

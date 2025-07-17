@@ -1,6 +1,7 @@
 import {Temporal} from "@js-temporal/polyfill";
 
-import {and, desc, eq, getTableColumns, lte, sql} from "drizzle-orm";
+import type {SQL} from "drizzle-orm";
+import {and, desc, eq, getTableColumns, lte} from "drizzle-orm";
 
 import {slug as slugify} from "github-slugger";
 
@@ -13,11 +14,20 @@ import {
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
+import type {ISelectUser} from "../database/tables/users_table";
 import USERS_TABLE from "../database/tables/users_table";
+
+import type {
+    IPaginationOptions,
+    IPaginationResults,
+} from "../database/utils/pagination";
+import {
+    executePagination,
+    selectPaginationColumns,
+} from "../database/utils/pagination";
 
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
-import type {IPaginationOptions, IPaginationResults} from "./types";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
@@ -36,6 +46,10 @@ export type IArticleUpdate = Partial<
         "articleID" | "createdAt" | "id" | "posterUserID" | "updatedAt"
     >
 >;
+
+export interface IArticleWithPoster extends IArticle {
+    readonly poster: IUser;
+}
 
 export interface IPublishedArticle extends IArticle {
     readonly publishedAt: Temporal.Instant;
@@ -66,6 +80,91 @@ function mapArticle(article: ISelectArticle): IArticle {
         ...article,
 
         slug,
+    };
+}
+
+async function internalFindAll(
+    options: {
+        includePoster: true;
+        orderBy?: SQL<unknown>;
+        where?: SQL<unknown>;
+    } & IFindAllOptions,
+): Promise<IFindAllArticlesResults<IPublishedArticleWithPoster>>;
+async function internalFindAll(
+    options: {
+        includePoster: false;
+        orderBy?: SQL<unknown>;
+        where?: SQL<unknown>;
+    } & IFindAllOptions,
+): Promise<IFindAllArticlesResults<IPublishedArticle>>;
+async function internalFindAll(
+    options: {
+        includePoster: boolean;
+        orderBy?: SQL<unknown>;
+        where?: SQL<unknown>;
+    } & IFindAllOptions,
+): Promise<IFindAllArticlesResults> {
+    const {pagination, includePoster, orderBy, where} = options;
+    const {limit, page} = pagination;
+
+    let query = DATABASE.select({
+        ...getTableColumns(ARTICLES_TABLE),
+
+        ...selectPaginationColumns(ARTICLES_TABLE.id),
+
+        ...(includePoster && {
+            poster: USERS_TABLE,
+        }),
+    })
+        .from(ARTICLES_TABLE)
+        .$dynamic();
+
+    if (includePoster) {
+        // @ts-expect-error - **HACK:** The join works properly. It is just the
+        // typing is too strict. So, we are going to just override type checking.
+        query =
+            //
+            query.innerJoin(
+                USERS_TABLE,
+                eq(ARTICLES_TABLE.posterUserID, USERS_TABLE.id),
+            );
+    }
+
+    if (where) {
+        query = query.where(where);
+    }
+
+    if (orderBy) {
+        query = query.orderBy(orderBy);
+    }
+
+    const {pagination: paginationResults, rows} = await executePagination(
+        query,
+        {
+            limit,
+            page,
+        },
+    );
+
+    const articles = rows.map((row) => {
+        const {poster, ...article} = row;
+
+        const mappedArticle = mapArticle(article);
+
+        if (poster) {
+            return {
+                ...mappedArticle,
+
+                poster: mapUser(poster as ISelectUser),
+            };
+        }
+
+        return mappedArticle;
+    });
+
+    return {
+        articles,
+        pagination: paginationResults,
     };
 }
 
@@ -101,114 +200,24 @@ export async function findOnePublishedByArticleID(
 
 export async function findAll(
     options: IFindAllOptions,
-): Promise<IFindAllArticlesResults> {
-    const {pagination} = options;
-    const {limit, page} = pagination;
-
-    const offset = (page - 1) * limit;
-
-    const results = await DATABASE.select({
-        ...getTableColumns(ARTICLES_TABLE),
-
-        articleCount: sql<number>`COUNT(${ARTICLES_TABLE.id}) OVER()`.as(
-            "article_count",
-        ),
-
-        poster: USERS_TABLE,
-    })
-        .from(ARTICLES_TABLE)
-        .innerJoin(USERS_TABLE, eq(ARTICLES_TABLE.posterUserID, USERS_TABLE.id))
-        .orderBy(desc(ARTICLES_TABLE.publishedAt))
-        .limit(limit)
-        .offset(offset);
-
-    if (results.length === 0) {
-        return {
-            articles: [],
-
-            pagination: {
-                page,
-                pages: 1,
-            },
-        };
-    }
-
-    const {articleCount} = results[0];
-    const pages = Math.ceil(articleCount / limit);
-
-    const articles = results.map((result) => {
-        const {articleCount: _articleCount, poster, ...article} = result;
-
-        return {
-            ...(mapArticle(article) as IPublishedArticle),
-
-            poster: poster ? mapUser(poster) : null,
-        };
-    });
-
-    return {
-        articles,
-
-        pagination: {
-            page,
-            pages,
-        },
-    };
+): Promise<IFindAllArticlesResults<IArticleWithPoster>> {
+    return internalFindAll({...options, includePoster: true});
 }
 
 export async function findAllPublished(
     options: IFindAllOptions,
 ): Promise<IFindAllArticlesResults<IPublishedArticle>> {
-    const {pagination} = options;
-    const {limit, page} = pagination;
-
-    const offset = (page - 1) * limit;
     const nowInstant = Temporal.Now.instant();
 
-    const results = await DATABASE.select({
-        ...getTableColumns(ARTICLES_TABLE),
+    return internalFindAll({
+        ...options,
 
-        articleCount: sql<number>`COUNT(${ARTICLES_TABLE.id}) OVER()`.as(
-            "article_count",
+        includePoster: false,
+
+        orderBy: desc(ARTICLES_TABLE.publishedAt),
+        where: and(
+            eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
+            lte(ARTICLES_TABLE.publishedAt, nowInstant),
         ),
-    })
-        .from(ARTICLES_TABLE)
-        .where(
-            and(
-                eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
-                lte(ARTICLES_TABLE.publishedAt, nowInstant),
-            ),
-        )
-        .orderBy(desc(ARTICLES_TABLE.publishedAt))
-        .limit(limit)
-        .offset(offset);
-
-    if (results.length === 0) {
-        return {
-            articles: [],
-
-            pagination: {
-                page,
-                pages: 1,
-            },
-        };
-    }
-
-    const {articleCount} = results[0];
-    const pages = Math.ceil(articleCount / limit);
-
-    const articles = results.map((result) => {
-        const {articleCount: _articleCount, ...article} = result;
-
-        return mapArticle(article) as IPublishedArticle;
     });
-
-    return {
-        articles,
-
-        pagination: {
-            page,
-            pages,
-        },
-    };
 }

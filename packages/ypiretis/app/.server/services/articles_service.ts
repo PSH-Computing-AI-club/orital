@@ -6,6 +6,10 @@ import {slug as slugify} from "github-slugger";
 
 import DATABASE from "../configuration/database";
 
+import {
+    IInsertArticle,
+    ISelectArticle,
+} from "../database/tables/articles_table";
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
@@ -16,18 +20,18 @@ import type {IPaginationOptions, IPaginationResults} from "./types";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
-export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect> & {
+export type IArticle = ISelectArticle & {
     readonly slug: string;
 };
 
 export type IArticleInsert = Omit<
-    Readonly<typeof ARTICLES_TABLE.$inferInsert>,
+    IInsertArticle,
     "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
 >;
 
 export type IArticleUpdate = Partial<
     Omit<
-        Readonly<typeof ARTICLES_TABLE.$inferInsert>,
+        IInsertArticle,
         "articleID" | "createdAt" | "id" | "posterUserID" | "updatedAt"
     >
 >;
@@ -51,7 +55,7 @@ export interface IFindAllPublishedArticlesResults {
     readonly pagination: IPaginationResults;
 }
 
-function mapArticle(article: typeof ARTICLES_TABLE.$inferSelect): IArticle {
+function mapArticle(article: ISelectArticle): IArticle {
     const {title} = article;
 
     const slug = slugify(title, false);

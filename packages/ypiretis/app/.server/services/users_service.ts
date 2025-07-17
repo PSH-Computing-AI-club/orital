@@ -6,6 +6,7 @@ import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
 import * as persistentSession from "../configuration/persistent_session";
 
+import type {IInsertUser, ISelectUser} from "../database/tables/users_table";
 import USERS_TABLE from "../database/tables/users_table";
 
 import makeSessionGuard from "../guards/session_guard";
@@ -14,24 +15,19 @@ const ACCOUNT_ADMIN_IDENTIFIERS = new Set(
     ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
 );
 
-export type IUser = Readonly<typeof USERS_TABLE.$inferSelect> & {
+export type IUser = ISelectUser & {
     readonly isAdmin: boolean;
 };
 
 export type IPublicUser = Omit<IUser, "createdAt" | "id">;
 
-export type IUserInsert = Omit<
-    Readonly<typeof USERS_TABLE.$inferInsert>,
-    "createdAt" | "id"
->;
+export type IUserInsert = Omit<IInsertUser, "createdAt" | "id">;
 
 export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-export function mapUser(
-    user: Readonly<typeof USERS_TABLE.$inferSelect>,
-): IUser {
+export function mapUser(user: ISelectUser): IUser {
     const {accountID} = user;
 
     const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);

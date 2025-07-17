@@ -57,14 +57,14 @@ function SidebarView() {
                     Dashboard
                 </Sidebar.Link>
 
-                <Sidebar.Link to={`/admin/news`}>
+                <Sidebar.Link to={`/admin/news`} comparator="startsWith">
                     <Sidebar.Icon>
                         <TextIcon />
                     </Sidebar.Icon>
                     News
                 </Sidebar.Link>
 
-                <Sidebar.Link to={`/admin/events`}>
+                <Sidebar.Link to={`/admin/events`} comparator="startsWith">
                     <Sidebar.Icon>
                         <CalendarTextIcon />
                     </Sidebar.Icon>
@@ -86,7 +86,7 @@ function SidebarView() {
     );
 }
 
-export default function FrontpageLayout(props: Route.ComponentProps) {
+export default function AdminLayout(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {publicUser} = loaderData;
 

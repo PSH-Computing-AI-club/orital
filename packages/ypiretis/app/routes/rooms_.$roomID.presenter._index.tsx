@@ -6,7 +6,6 @@ import type {
 import {
     Box,
     Button,
-    Card,
     Grid,
     GridItem,
     HStack,
@@ -31,6 +30,7 @@ import type {IRoomStates} from "~/.server/services/rooms_service";
 import type {IPublicUser} from "~/.server/services/users_service";
 
 import Layout from "~/components/controlpanel/layout";
+import SectionCard from "~/components/controlpanel/section_card";
 import Title from "~/components/controlpanel/title";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
@@ -538,82 +538,84 @@ function AttendeesCard() {
     }
 
     return (
-        <>
-            <Card.Body gap="4" maxBlockSize="full" overflow="hidden">
-                <Card.Title display="flex" gap="2" alignItems="center">
-                    Attendees
-                    <Spacer />
-                    <SegmentGroup.Root
-                        value={modeValue}
-                        size="sm"
-                        fontWeight="normal"
-                        onValueChange={onModeValueChange}
+        <GridItem colSpan={2} maxBlockSize="full" overflow="hidden" asChild>
+            <SectionCard.Root>
+                <SectionCard.Body>
+                    <SectionCard.Title>
+                        Attendees
+                        <Spacer />
+                        <SegmentGroup.Root
+                            value={modeValue}
+                            size="sm"
+                            fontWeight="normal"
+                            onValueChange={onModeValueChange}
+                        >
+                            <SegmentGroup.Indicator bg="bg" />
+
+                            <SegmentGroup.Item value="active">
+                                <SegmentGroup.ItemText
+                                    color={
+                                        modeValue === "active"
+                                            ? "green.fg"
+                                            : undefined
+                                    }
+                                >
+                                    Active ({activeUsers.length})
+                                </SegmentGroup.ItemText>
+                                <SegmentGroup.ItemHiddenInput />
+                            </SegmentGroup.Item>
+
+                            <SegmentGroup.Item value="pending">
+                                <SegmentGroup.ItemText
+                                    color={
+                                        modeValue === "pending"
+                                            ? "yellow.fg"
+                                            : undefined
+                                    }
+                                >
+                                    Pending ({pendingUsers.length})
+                                </SegmentGroup.ItemText>
+                                <SegmentGroup.ItemHiddenInput />
+                            </SegmentGroup.Item>
+
+                            <SegmentGroup.Item value="disconnected">
+                                <SegmentGroup.ItemText
+                                    color={
+                                        modeValue === "disconnected"
+                                            ? "red.fg"
+                                            : undefined
+                                    }
+                                >
+                                    Disconnected ({disconnectedUsers.length})
+                                </SegmentGroup.ItemText>
+                                <SegmentGroup.ItemHiddenInput />
+                            </SegmentGroup.Item>
+                        </SegmentGroup.Root>
+                        <UsersIcon />
+                    </SectionCard.Title>
+
+                    <VStack
+                        alignItems="stretch"
+                        gap="2"
+                        flexGrow="1"
+                        padding="3"
+                        maxBlockSize="full"
+                        bg="bg.muted"
+                        borderColor="border"
+                        borderStyle="solid"
+                        borderWidth="thin"
+                        overflowBlock="auto"
+                        overflowInline="hidden"
                     >
-                        <SegmentGroup.Indicator bg="bg" />
+                        <AttendeeList users={listedUsers} />
+                    </VStack>
+                </SectionCard.Body>
 
-                        <SegmentGroup.Item value="active">
-                            <SegmentGroup.ItemText
-                                color={
-                                    modeValue === "active"
-                                        ? "green.fg"
-                                        : undefined
-                                }
-                            >
-                                Active ({activeUsers.length})
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-
-                        <SegmentGroup.Item value="pending">
-                            <SegmentGroup.ItemText
-                                color={
-                                    modeValue === "pending"
-                                        ? "yellow.fg"
-                                        : undefined
-                                }
-                            >
-                                Pending ({pendingUsers.length})
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-
-                        <SegmentGroup.Item value="disconnected">
-                            <SegmentGroup.ItemText
-                                color={
-                                    modeValue === "disconnected"
-                                        ? "red.fg"
-                                        : undefined
-                                }
-                            >
-                                Disconnected ({disconnectedUsers.length})
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-                    </SegmentGroup.Root>
-                    <UsersIcon />
-                </Card.Title>
-
-                <VStack
-                    alignItems="stretch"
-                    gap="2"
-                    flexGrow="1"
-                    padding="3"
-                    maxBlockSize="full"
-                    bg="bg.muted"
-                    borderColor="border"
-                    borderStyle="solid"
-                    borderWidth="thin"
-                    overflowBlock="auto"
-                    overflowInline="hidden"
-                >
-                    <AttendeeList users={listedUsers} />
-                </VStack>
-            </Card.Body>
-
-            <Card.Footer justifyContent="flex-end">
-                <AttendeesCardActions />
-            </Card.Footer>
-        </>
+                <SectionCard.Footer justifyContent="flex-end">
+                    <AttendeesCardActions />
+                </SectionCard.Footer>
+            </SectionCard.Root>
+        </GridItem>
     );
 }
 
@@ -648,13 +650,13 @@ function PINCard() {
     }
 
     return (
-        <>
-            <Card.Body gap="4">
-                <Card.Title display="flex" alignItems="center">
+        <SectionCard.Root>
+            <SectionCard.Body>
+                <SectionCard.Title>
                     Room PIN
                     <Spacer />
                     <PinIcon />
-                </Card.Title>
+                </SectionCard.Title>
 
                 <PinInput.Root
                     value={Array.from(pin)}
@@ -676,9 +678,9 @@ function PINCard() {
                         <PinInput.Input index={5} readOnly />
                     </PinInput.Control>
                 </PinInput.Root>
-            </Card.Body>
+            </SectionCard.Body>
 
-            <Card.Footer>
+            <SectionCard.Footer>
                 <Button
                     disabled={!canFetchAction}
                     hideBelow="lg"
@@ -756,8 +758,8 @@ function PINCard() {
                 >
                     <CopyIcon />
                 </IconButton>
-            </Card.Footer>
-        </>
+            </SectionCard.Footer>
+        </SectionCard.Root>
     );
 }
 
@@ -839,13 +841,13 @@ function StateCard() {
         makeStateActionEventHandler("STATE_PERMISSIVE");
 
     return (
-        <>
-            <Card.Body gap="4">
-                <Card.Title display="flex" alignItems="center">
+        <SectionCard.Root>
+            <SectionCard.Body>
+                <SectionCard.Title>
                     Room State
                     <Spacer />
                     <ShieldIcon />
-                </Card.Title>
+                </SectionCard.Title>
 
                 <SimpleGrid
                     columns={3}
@@ -889,8 +891,8 @@ function StateCard() {
                         Permissive
                     </StateCardButton>
                 </SimpleGrid>
-            </Card.Body>
-        </>
+            </SectionCard.Body>
+        </SectionCard.Root>
     );
 }
 
@@ -955,24 +957,10 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 maxBlockSize="full"
                 overflow="hidden"
             >
-                <Card.Root>
-                    <PINCard />
-                </Card.Root>
+                <PINCard />
+                <StateCard />
 
-                <Card.Root>
-                    <StateCard />
-                </Card.Root>
-
-                <GridItem
-                    colSpan={2}
-                    display="flex"
-                    maxBlockSize="full"
-                    overflow="hidden"
-                >
-                    <Card.Root flexGrow="1">
-                        <AttendeesCard />
-                    </Card.Root>
-                </GridItem>
+                <AttendeesCard />
             </Grid>
         </Layout.Container>
     );

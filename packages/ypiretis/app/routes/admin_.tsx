@@ -22,15 +22,8 @@ import {PublicUserContextProvider} from "~/state/public_user";
 import {Route} from "./+types/admin_";
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const session = await requireAuthenticatedSession(loaderArgs);
+    const {identifiable: user} = await requireAuthenticatedSession(loaderArgs);
 
-    if (!session) {
-        throw data("Unauthorized", {
-            status: 401,
-        });
-    }
-
-    const {identifiable: user} = session;
     const {isAdmin} = user;
 
     if (!isAdmin) {
@@ -39,7 +32,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const publicUser = mapPublicUser(session.identifiable);
+    const publicUser = mapPublicUser(user);
 
     return {
         publicUser,

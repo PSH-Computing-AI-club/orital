@@ -1,5 +1,6 @@
-import {Spacer} from "@chakra-ui/react";
+import {Spacer, Strong, Text} from "@chakra-ui/react";
 
+import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet, data} from "react-router";
 
 import {
@@ -21,6 +22,16 @@ import {PublicUserContextProvider} from "~/state/public_user";
 
 import {Route} from "./+types/admin_";
 
+export const shouldRevalidate = ((_revalidateArgs) => {
+    return false;
+}) satisfies ShouldRevalidateFunction;
+
+export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
+    return loaderArgs.serverLoader();
+}
+
+clientLoader.hydrate = true as const;
+
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {identifiable: user} = await requireAuthenticatedSession(loaderArgs);
 
@@ -37,6 +48,21 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         publicUser,
     };
+}
+
+export function HydrateFallback() {
+    return (
+        <>
+            <noscript>
+                <Text>
+                    JavaScript is <Strong color="red.solid">required</Strong> to
+                    use the admin panel.
+                </Text>
+            </noscript>
+
+            <Text>Loading...</Text>
+        </>
+    );
 }
 
 function SidebarView() {

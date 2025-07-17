@@ -3,15 +3,18 @@ import type {
     CardRootProps,
     CardFooterProps,
     CardTitleProps,
+    StackProps,
     TextProps,
 } from "@chakra-ui/react";
-import {Card, Text} from "@chakra-ui/react";
+import {Card, Text, VStack} from "@chakra-ui/react";
 
 export interface ISectionCardFooterProps extends CardFooterProps {}
 
 export interface ISectionCardTextProps extends TextProps {}
 
 export interface ISectionCardTitleProps extends CardTitleProps {}
+
+export interface ISectionCardScrollableProps extends StackProps {}
 
 export interface ISectionCardBodyProps extends CardBodyProps {}
 
@@ -39,6 +42,29 @@ function SectionCardTitle(props: ISectionCardTitleProps) {
     );
 }
 
+function SectionCardScrollable(props: ISectionCardScrollableProps) {
+    const {children, ...rest} = props;
+
+    return (
+        <VStack
+            alignItems="stretch"
+            gap="2"
+            flexGrow="1"
+            padding="3"
+            maxBlockSize="full"
+            bg="bg.muted"
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
+            overflowBlock="auto"
+            overflowInline="hidden"
+            {...rest}
+        >
+            {children}
+        </VStack>
+    );
+}
+
 function SectionCardBody(props: ISectionCardBodyProps) {
     const {children} = props;
 
@@ -63,6 +89,7 @@ const SectionCard = {
     Body: SectionCardBody,
     Footer: SectionCardFooter,
     Root: SectionCardRoot,
+    Scrollable: SectionCardScrollable,
     Text: SectionCardText,
     Title: SectionCardTitle,
 } as const;

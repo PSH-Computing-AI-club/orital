@@ -594,21 +594,9 @@ function AttendeesCard() {
                         <UsersIcon />
                     </SectionCard.Title>
 
-                    <VStack
-                        alignItems="stretch"
-                        gap="2"
-                        flexGrow="1"
-                        padding="3"
-                        maxBlockSize="full"
-                        bg="bg.muted"
-                        borderColor="border"
-                        borderStyle="solid"
-                        borderWidth="thin"
-                        overflowBlock="auto"
-                        overflowInline="hidden"
-                    >
+                    <SectionCard.Scrollable>
                         <AttendeeList users={listedUsers} />
-                    </VStack>
+                    </SectionCard.Scrollable>
                 </SectionCard.Body>
 
                 <SectionCard.Footer justifyContent="flex-end">
@@ -771,9 +759,7 @@ function StateCardButton(props: ButtonProps & {active?: boolean}) {
         flexDirection = "column",
         fontWeight = "bold",
         gap = "2",
-
         size = {base: "lg", xlDown: "md", lgDown: "sm"},
-
         ...rest
     } = props;
 

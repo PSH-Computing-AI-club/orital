@@ -45,11 +45,12 @@ export interface IPublishedArticle extends IArticle {
 export interface IPublishedArticleWithPoster extends IPublishedArticle {
     readonly poster: IUser;
 }
-export interface IFindAllPublishedArticlesOptions {
+
+export interface IFindAllOptions {
     readonly pagination: IPaginationOptions;
 }
 
-export interface IFindAllPublishedArticlesResults {
+export interface IFindAllArticlesResults {
     readonly articles: IPublishedArticle[];
 
     readonly pagination: IPaginationResults;
@@ -98,8 +99,8 @@ export async function findOnePublishedByArticleID(
 }
 
 export async function findAllPublished(
-    options: IFindAllPublishedArticlesOptions,
-): Promise<IFindAllPublishedArticlesResults> {
+    options: IFindAllOptions,
+): Promise<IFindAllArticlesResults> {
     const {pagination} = options;
     const {limit, page} = pagination;
 

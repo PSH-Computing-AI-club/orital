@@ -20,16 +20,6 @@ export type IArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect> & {
     readonly slug: string;
 };
 
-export interface IPublishedArticle extends IArticle {
-    readonly publishedAt: Temporal.Instant;
-
-    readonly state: (typeof ARTICLE_STATES)["published"];
-}
-
-export interface IPublishedArticleWithPoster extends IPublishedArticle {
-    readonly poster: IUser;
-}
-
 export type IArticleInsert = Omit<
     Readonly<typeof ARTICLES_TABLE.$inferInsert>,
     "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
@@ -42,6 +32,15 @@ export type IArticleUpdate = Partial<
     >
 >;
 
+export interface IPublishedArticle extends IArticle {
+    readonly publishedAt: Temporal.Instant;
+
+    readonly state: (typeof ARTICLE_STATES)["published"];
+}
+
+export interface IPublishedArticleWithPoster extends IPublishedArticle {
+    readonly poster: IUser;
+}
 export interface IFindAllPublishedArticlesOptions {
     readonly pagination: IPaginationOptions;
 }

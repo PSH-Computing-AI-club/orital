@@ -46,7 +46,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedArticles = await Promise.all(
         articles.map(async (article) => {
-            const {articleID, createdAt, publishedAt, title, updatedAt} =
+            const {articleID, createdAt, publishedAt, state, title, updatedAt} =
                 article;
 
             const zonedCreatedAt =
@@ -81,6 +81,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 createdAtText,
                 publishedAtText,
                 updatedAtText,
+                state,
                 title,
             };
         }),

@@ -13,6 +13,7 @@ import {
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
+import USERS_TABLE from "../database/tables/users_table";
 
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
@@ -98,9 +99,63 @@ export async function findOnePublishedByArticleID(
     };
 }
 
-export async function findAllPublished(
+export async function findAll(
     options: IFindAllOptions,
 ): Promise<IFindAllArticlesResults> {
+    const {pagination} = options;
+    const {limit, page} = pagination;
+
+    const offset = (page - 1) * limit;
+
+    const results = await DATABASE.select({
+        ...getTableColumns(ARTICLES_TABLE),
+
+        articleCount: sql<number>`COUNT(${ARTICLES_TABLE.id}) OVER()`.as(
+            "article_count",
+        ),
+
+        poster: USERS_TABLE,
+    })
+        .from(ARTICLES_TABLE)
+        .innerJoin(USERS_TABLE, eq(ARTICLES_TABLE.posterUserID, USERS_TABLE.id))
+        .orderBy(desc(ARTICLES_TABLE.publishedAt))
+        .limit(limit)
+        .offset(offset);
+
+    if (results.length === 0) {
+        return {
+            articles: [],
+
+            pagination: {
+                page,
+                pages: 1,
+            },
+        };
+    }
+
+    const {articleCount} = results[0];
+    const pages = Math.ceil(articleCount / limit);
+
+    const articles = results.map((result) => {
+        const {articleCount: _articleCount, poster, ...article} = result;
+
+        return {
+            ...(mapArticle(article) as IPublishedArticle),
+
+            poster: poster ? mapUser(poster) : null,
+        };
+    });
+
+    return {
+        articles,
+
+        pagination: {
+            page,
+            pages,
+        },
+    };
+}
+
 export async function findAllPublished(
     options: IFindAllOptions,
 ): Promise<IFindAllArticlesResults<IPublishedArticle>> {

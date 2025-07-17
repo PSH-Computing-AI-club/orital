@@ -3,34 +3,56 @@ import {Box, Container, Drawer, Flex, IconButton} from "@chakra-ui/react";
 
 import MenuIcon from "~/components/icons/menu_icon";
 
-export interface ILayoutContainerProps extends BoxProps {
-    readonly fluid?: boolean;
-}
+export interface ILayoutFixedContainerProps extends BoxProps {}
+
+export interface ILayoutFluidContainerProps extends BoxProps {}
 
 export interface ILayoutRootProps extends DrawerRootProps {}
 
-function LayoutContainer(props: ILayoutContainerProps) {
-    const {children, fluid = false, ...rest} = props;
+function LayoutFixedContainer(props: ILayoutFixedContainerProps) {
+    const {children, ...rest} = props;
 
     return (
         <Box
-            display={fluid ? undefined : "flex"}
-            flexDirection={fluid ? undefined : "column"}
+            display="flex"
+            flexDirection="column"
             flexGrow="1"
             marginInlineStart={{base: "32", lgDown: "0"}}
-            maxBlockSize={fluid ? undefined : "dvh"}
-            minBlockSize={fluid ? undefined : "dvh"}
+            maxBlockSize="dvh"
+            minBlockSize="dvh"
             overflowX="hidden"
-            overflowY={fluid ? undefined : "hidden"}
+            overflowY="hidden"
             {...rest}
         >
             <Container
                 display="flex"
                 flexDirection="column"
                 gap="4"
-                flexGrow={fluid ? undefined : "1"}
-                maxBlockSize={fluid ? undefined : "full"}
-                overflow={fluid ? undefined : "hidden"}
+                flexGrow="1"
+                maxBlockSize="full"
+                overflow="hidden"
+                paddingBlock="4"
+            >
+                {children}
+            </Container>
+        </Box>
+    );
+}
+
+function LayoutFluidContainer(props: ILayoutFluidContainerProps) {
+    const {children, ...rest} = props;
+
+    return (
+        <Box
+            flexGrow="1"
+            marginInlineStart={{base: "32", lgDown: "0"}}
+            overflowX="hidden"
+            {...rest}
+        >
+            <Container
+                display="flex"
+                flexDirection="column"
+                gap="4"
                 paddingBlock="4"
             >
                 {children}
@@ -64,7 +86,8 @@ function LayoutRoot(props: ILayoutRootProps) {
 }
 
 const Layout = {
-    Container: LayoutContainer,
+    FixedContainer: LayoutFixedContainer,
+    FluidContainer: LayoutFluidContainer,
     Root: LayoutRoot,
 } as const;
 

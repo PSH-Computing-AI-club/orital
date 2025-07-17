@@ -4,8 +4,8 @@ import {Route} from "./+types/rooms_.$roomID.presenter.settings";
 
 export default function RoomsPresenterSettings(_props: Route.ComponentProps) {
     return (
-        <Layout.Container>
+        <Layout.FixedContainer>
             Stuff will happun here at da settings!
-        </Layout.Container>
+        </Layout.FixedContainer>
     );
 }

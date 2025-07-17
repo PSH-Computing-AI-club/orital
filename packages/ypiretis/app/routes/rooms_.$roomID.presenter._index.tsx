@@ -935,7 +935,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     }
 
     return (
-        <Layout.Container>
+        <Layout.FixedContainer>
             {isDisposed ? (
                 <Title.Text title={title} />
             ) : (
@@ -962,6 +962,6 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
 
                 <AttendeesCard />
             </Grid>
-        </Layout.Container>
+        </Layout.FixedContainer>
     );
 }

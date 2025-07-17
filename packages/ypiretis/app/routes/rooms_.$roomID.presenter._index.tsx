@@ -596,12 +596,15 @@ function AttendeesCard() {
                 <VStack
                     alignItems="stretch"
                     gap="2"
-                    bg="bg.muted"
                     flexGrow="1"
                     padding="3"
                     maxBlockSize="full"
-                    overflowInline="hidden"
+                    bg="bg.muted"
+                    borderColor="border"
+                    borderStyle="solid"
+                    borderWidth="thin"
                     overflowBlock="auto"
+                    overflowInline="hidden"
                 >
                     <AttendeeList users={listedUsers} />
                 </VStack>

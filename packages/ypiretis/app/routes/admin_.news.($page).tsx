@@ -8,6 +8,7 @@ import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Layout from "~/components/controlpanel/layout";
+import Title from "~/components/controlpanel/title";
 
 import {validateParams} from "~/guards/validation";
 
@@ -112,6 +113,7 @@ export default function AdminNews(props: Route.ComponentProps) {
 
     return (
         <Layout.FixedContainer>
+            <Title.Text title="News Articles" />
             News index unda construction
         </Layout.FixedContainer>
     );

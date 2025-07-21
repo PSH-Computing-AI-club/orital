@@ -150,20 +150,31 @@ export default function AdminNews(props: Route.ComponentProps) {
                                 },
                             }}
                         >
-                            <Table.ColumnHeader>Article ID</Table.ColumnHeader>
-                            <Table.ColumnHeader>Title</Table.ColumnHeader>
-                            <Table.ColumnHeader>Poster</Table.ColumnHeader>
-                            <Table.ColumnHeader>State</Table.ColumnHeader>
+                            <Table.ColumnHeader fontWeight="bold">
+                                Article ID
+                            </Table.ColumnHeader>
 
-                            <Table.ColumnHeader>
+                            <Table.ColumnHeader fontWeight="bold">
+                                Title
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
+                                Poster
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
+                                State
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
                                 Created Date
                             </Table.ColumnHeader>
 
-                            <Table.ColumnHeader>
+                            <Table.ColumnHeader fontWeight="bold">
                                 Published Date
                             </Table.ColumnHeader>
 
-                            <Table.ColumnHeader>
+                            <Table.ColumnHeader fontWeight="bold">
                                 Updated Date
                             </Table.ColumnHeader>
                         </Table.Row>

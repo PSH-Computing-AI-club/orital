@@ -1,5 +1,3 @@
-import Layout from "~/components/controlpanel/layout";
-
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -8,6 +6,8 @@ import {findAll} from "~/.server/services/articles_service";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+
+import Layout from "~/components/controlpanel/layout";
 
 import {validateParams} from "~/guards/validation";
 

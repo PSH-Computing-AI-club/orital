@@ -27,6 +27,9 @@ const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
 
 const PAGINATION_PAGE_RANGE = 3;
 
+const PAGINATION_URL_TEMPLATE = (({page}) =>
+    `/news/${page}`) satisfies IPaginationTemplate;
+
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
         v.pipe(
@@ -104,9 +107,6 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
     const {page, pages} = pagination;
 
-    const paginationTemplate = (({page}) =>
-        `/news/${page}`) satisfies IPaginationTemplate;
-
     return (
         <>
             <Title title={`Page ${page} :: /news`} />
@@ -171,7 +171,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                         currentPage={page}
                         pageRange={PAGINATION_PAGE_RANGE}
                         pages={pages}
-                        template={paginationTemplate}
+                        template={PAGINATION_URL_TEMPLATE}
                     />
                 </ContentSection.Container>
             </ContentSection.Root>

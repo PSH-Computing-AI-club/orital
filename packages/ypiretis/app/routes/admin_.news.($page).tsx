@@ -1,6 +1,6 @@
-import {Code, Spacer, Table} from "@chakra-ui/react";
+import {Code, IconButton, Spacer, Table} from "@chakra-ui/react";
 
-import {data} from "react-router";
+import {Link as RouterLink, data} from "react-router";
 
 import * as v from "valibot";
 
@@ -11,8 +11,11 @@ import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import type {IPaginationTemplate} from "~/components/common/pagination";
 import Pagination from "~/components/common/pagination";
+
 import Layout from "~/components/controlpanel/layout";
 import Title from "~/components/controlpanel/title";
+
+import EditIcon from "~/components/icons/edit_icon";
 
 import {validateParams} from "~/guards/validation";
 
@@ -151,6 +154,10 @@ export default function AdminNews(props: Route.ComponentProps) {
                             }}
                         >
                             <Table.ColumnHeader fontWeight="bold">
+                                Actions
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
                                 Article ID
                             </Table.ColumnHeader>
 
@@ -196,6 +203,21 @@ export default function AdminNews(props: Route.ComponentProps) {
 
                             return (
                                 <Table.Row key={articleID}>
+                                    <Table.Cell textAlign="center">
+                                        <IconButton
+                                            variant="ghost"
+                                            colorPalette="cyan"
+                                            size="xs"
+                                            asChild
+                                        >
+                                            <RouterLink
+                                                to={`/admin/news/articles/${articleID}`}
+                                            >
+                                                <EditIcon />
+                                            </RouterLink>
+                                        </IconButton>
+                                    </Table.Cell>
+
                                     <Table.Cell>
                                         <Code>{articleID}</Code>
                                     </Table.Cell>

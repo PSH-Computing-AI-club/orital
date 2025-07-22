@@ -30,17 +30,20 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {poster, publishedAt, slug: articleSlug, title, updatedAt} = article;
+    const {
+        hasBeenEdited,
+        poster,
+        publishedAt,
+        slug: articleSlug,
+        title,
+        updatedAt,
+    } = article;
     const {accountID, firstName, lastName} = poster;
 
     const zonedPublishedAt =
         publishedAt?.toZonedDateTimeISO(SYSTEM_TIMEZONE) ?? null;
 
     const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-    const hasBeenEdited = publishedAt
-        ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
-        : false;
 
     const publishedAtText = zonedPublishedAt
         ? formatZonedDateTime(zonedPublishedAt)

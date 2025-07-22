@@ -32,6 +32,8 @@ import {mapUser} from "./users_service";
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
 export type IArticle = ISelectArticle & {
+    readonly hasBeenEdited: boolean;
+
     readonly slug: string;
 };
 
@@ -72,13 +74,18 @@ export interface IFindAllArticlesResults<T extends IArticle = IArticle> {
 }
 
 function mapArticle(article: ISelectArticle): IArticle {
-    const {title} = article;
+    const {publishedAt, title, updatedAt} = article;
+
+    const hasBeenEdited = publishedAt
+        ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
+        : false;
 
     const slug = slugify(title, false);
 
     return {
         ...article,
 
+        hasBeenEdited,
         slug,
     };
 }

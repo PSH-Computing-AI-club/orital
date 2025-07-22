@@ -67,6 +67,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const {
         content,
+        hasBeenEdited,
         poster,
         publishedAt,
         slug: articleSlug,
@@ -97,7 +98,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         );
     }
 
-    const hasBeenEdited = Temporal.Instant.compare(updatedAt, publishedAt) > 0;
     const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
     const publishedAtTimestamp = zonedPublishedAt.toString({

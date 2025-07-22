@@ -108,7 +108,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 updatedAt,
             } = article;
 
-            const {firstName, lastName} = poster;
+            const {accountID, firstName, lastName} = poster;
 
             const zonedCreatedAt =
                 createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
@@ -138,6 +138,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 articleID,
                 createdAtText,
                 poster: {
+                    accountID,
                     firstName,
                     lastName,
                 },
@@ -251,7 +252,7 @@ export default function AdminNews(props: Route.ComponentProps) {
                                 updatedAtText,
                             } = article;
 
-                            const {firstName, lastName} = poster;
+                            const {accountID, firstName, lastName} = poster;
 
                             return (
                                 <Table.Row key={articleID}>
@@ -277,7 +278,8 @@ export default function AdminNews(props: Route.ComponentProps) {
                                     <Table.Cell>{title}</Table.Cell>
 
                                     <Table.Cell>
-                                        {lastName}, {firstName}
+                                        {lastName}, {firstName} (
+                                        <Code>{accountID}</Code>)
                                     </Table.Cell>
 
                                     <Table.Cell>

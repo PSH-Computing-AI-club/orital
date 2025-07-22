@@ -36,7 +36,13 @@ function SectionCardTitle(props: ISectionCardTitleProps) {
     const {children, ...rest} = props;
 
     return (
-        <Card.Title display="flex" gap="2" alignItems="center" {...rest}>
+        <Card.Title
+            as="h2"
+            display="flex"
+            gap="2"
+            alignItems="center"
+            {...rest}
+        >
             {children}
         </Card.Title>
     );

@@ -1,5 +1,3 @@
-import {Temporal} from "@js-temporal/polyfill";
-
 import {data} from "react-router";
 
 import * as v from "valibot";
@@ -7,13 +5,13 @@ import * as v from "valibot";
 import {findOneByArticleID} from "~/.server/services/articles_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
+import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Layout from "~/components/controlpanel/layout";
 
 import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),

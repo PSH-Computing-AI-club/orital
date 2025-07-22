@@ -1,6 +1,6 @@
-import {Code, IconButton, Spacer, Table} from "@chakra-ui/react";
+import {Button, Code, IconButton, Spacer, Table} from "@chakra-ui/react";
 
-import {Link as RouterLink, data} from "react-router";
+import {Form, Link as RouterLink, data, useNavigation} from "react-router";
 
 import * as v from "valibot";
 
@@ -16,8 +16,9 @@ import Layout from "~/components/controlpanel/layout";
 import Title from "~/components/controlpanel/title";
 
 import EditIcon from "~/components/icons/edit_icon";
+import NotesPlusIcon from "~/components/icons/notes_plus_icon";
 
-import {validateParams} from "~/guards/validation";
+import {validateFormData, validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news.($page)";
 
@@ -28,6 +29,10 @@ const PAGINATION_PAGE_RANGE = 3;
 const PAGINATION_URL_TEMPLATE = (({page}) =>
     `/admin/news/${page}`) satisfies IPaginationTemplate;
 
+const ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.picklist(["create"])),
+});
+
 const LOADER_PARAMS_SCHEMA = v.object({
     page: v.optional(
         v.pipe(
@@ -37,6 +42,18 @@ const LOADER_PARAMS_SCHEMA = v.object({
         ),
     ),
 });
+
+export async function action(actionArgs: Route.ActionArgs) {
+    const {action} = await validateFormData(
+        ACTION_FORM_DATA_SCHEMA,
+        actionArgs,
+    );
+
+    switch (action) {
+        case "create":
+            console.log({action});
+    }
+}
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
@@ -125,9 +142,25 @@ export default function AdminNews(props: Route.ComponentProps) {
 
     const {page, pages} = pagination;
 
+    const navigation = useNavigation();
+
     return (
         <Layout.FixedContainer>
-            <Title.Text title={`News Articles Page ${page}`} />
+            <Title.Text title={`News Articles Page ${page}`}>
+                <Spacer />
+                <Form method="POST">
+                    <Button
+                        disabled={navigation.state !== "idle"}
+                        colorPalette="green"
+                        type="submit"
+                        name="action"
+                        value="create"
+                    >
+                        Create News Article
+                        <NotesPlusIcon />
+                    </Button>
+                </Form>
+            </Title.Text>
 
             <Table.ScrollArea
                 borderColor="border"

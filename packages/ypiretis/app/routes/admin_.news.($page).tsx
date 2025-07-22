@@ -17,7 +17,7 @@ import {
 } from "~/.server/services/articles_service";
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
-import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
+import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import type {IPaginationTemplate} from "~/components/common/pagination";

@@ -43,6 +43,13 @@
       "when": 1752278455782,
       "tag": "0005_legal_sabretooth",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1753186627357,
+      "tag": "0006_clean_mister_fear",
+      "breakpoints": true
     }
   ]
 }

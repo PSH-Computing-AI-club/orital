@@ -168,6 +168,30 @@ async function internalFindAll(
     };
 }
 
+export async function findOneByArticleID(
+    articleID: string,
+): Promise<IArticleWithPoster | null> {
+    const results = await DATABASE.query.articles.findFirst({
+        where: eq(ARTICLES_TABLE.articleID, articleID),
+
+        with: {
+            poster: true,
+        },
+    });
+
+    if (!results) {
+        return null;
+    }
+
+    const {poster, ...article} = results;
+
+    return {
+        ...(mapArticle(article) as IArticle),
+
+        poster: mapUser(poster),
+    };
+}
+
 export async function findOnePublishedByArticleID(
     articleID: string,
 ): Promise<IPublishedArticleWithPoster | null> {
@@ -220,4 +244,12 @@ export async function findAllPublished(
             lte(ARTICLES_TABLE.publishedAt, nowInstant),
         ),
     });
+}
+
+export async function insertOne(article: IArticleInsert): Promise<IArticle> {
+    const [insertedArticle] = await DATABASE.insert(ARTICLES_TABLE)
+        .values(article)
+        .returning();
+
+    return mapArticle(insertedArticle);
 }

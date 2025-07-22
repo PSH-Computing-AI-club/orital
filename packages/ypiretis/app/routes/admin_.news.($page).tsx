@@ -1,10 +1,21 @@
 import {Button, Code, IconButton, Spacer, Table} from "@chakra-ui/react";
 
-import {Form, Link as RouterLink, data, useNavigation} from "react-router";
+import {
+    Form,
+    Link as RouterLink,
+    data,
+    redirect,
+    useNavigation,
+} from "react-router";
 
 import * as v from "valibot";
 
-import {findAll} from "~/.server/services/articles_service";
+import {
+    ARTICLE_STATES,
+    findAll,
+    insertOne,
+} from "~/.server/services/articles_service";
+import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
@@ -49,9 +60,20 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
+    const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
+    const {id: userID} = user;
+
     switch (action) {
-        case "create":
-            console.log({action});
+        case "create": {
+            const {articleID} = await insertOne({
+                content: "",
+                posterUserID: userID,
+                state: ARTICLE_STATES.draft,
+                title: "Untitled Article",
+            });
+
+            return redirect(`/admin/news/articles/${articleID}`);
+        }
     }
 }
 

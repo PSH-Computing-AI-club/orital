@@ -1,4 +1,6 @@
-import {data} from "react-router";
+import {Code, DataList, Spacer} from "@chakra-ui/react";
+
+import {data, useLoaderData} from "react-router";
 
 import * as v from "valibot";
 
@@ -7,9 +9,17 @@ import {findOneByArticleID} from "~/.server/services/articles_service";
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
+import Links from "~/components/common/links";
+
 import Layout from "~/components/controlpanel/layout";
+import SectionCard from "~/components/controlpanel/section_card";
+import Title from "~/components/controlpanel/title";
+
+import InfoBoxIcon from "~/components/icons/info_box_icon";
 
 import {validateParams} from "~/guards/validation";
+
+import {buildAppURL} from "~/utils/url";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
 
@@ -28,14 +38,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {
-        createdAt,
-        poster,
-        publishedAt,
-        slug: articleSlug,
-        title,
-        updatedAt,
-    } = article;
+    const {createdAt, poster, publishedAt, state, title, updatedAt} = article;
     const {accountID, firstName, lastName} = poster;
 
     const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
@@ -58,7 +61,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             articleID,
             createdAtText,
             publishedAtText,
-            slug: articleSlug,
+            state,
             title,
             updatedAtText,
         },
@@ -71,15 +74,86 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
+function DetailsCard() {
+    const {article, poster} = useLoaderData<typeof loader>();
+
+    const {articleID, createdAtText, publishedAtText, state, updatedAtText} =
+        article;
+    const {accountID, firstName, lastName} = poster;
+
+    const href = `/news/articles/${articleID}`;
+    const url = buildAppURL(href);
+
+    return (
+        <SectionCard.Root>
+            <SectionCard.Body>
+                <SectionCard.Title>
+                    Details
+                    <Spacer />
+                    <InfoBoxIcon />
+                </SectionCard.Title>
+
+                <DataList.Root orientation="horizontal">
+                    <DataList.Item>
+                        <DataList.ItemLabel>Article ID</DataList.ItemLabel>
+                        <DataList.ItemValue>{articleID}</DataList.ItemValue>
+                    </DataList.Item>
+
+                    <DataList.Item>
+                        <DataList.ItemLabel>Posted By</DataList.ItemLabel>
+                        <DataList.ItemValue>
+                            {lastName}, {firstName} (<Code>{accountID}</Code>)
+                        </DataList.ItemValue>
+                    </DataList.Item>
+
+                    <DataList.Item>
+                        <DataList.ItemLabel>Created At</DataList.ItemLabel>
+                        <DataList.ItemValue>{createdAtText}</DataList.ItemValue>
+                    </DataList.Item>
+
+                    <DataList.Item>
+                        <DataList.ItemLabel>Updated At</DataList.ItemLabel>
+                        <DataList.ItemValue>{updatedAtText}</DataList.ItemValue>
+                    </DataList.Item>
+
+                    <DataList.Item>
+                        <DataList.ItemLabel>Published At</DataList.ItemLabel>
+                        <DataList.ItemValue>
+                            {publishedAtText ?? "-"}
+                        </DataList.ItemValue>
+                    </DataList.Item>
+
+                    <DataList.Item>
+                        <DataList.ItemLabel>Permalink</DataList.ItemLabel>
+                        <DataList.ItemValue>
+                            {state === "STATE_PUBLISHED" ? (
+                                <Code>
+                                    <Links.InternalLink to={href}>
+                                        {url.toString()}
+                                    </Links.InternalLink>
+                                </Code>
+                            ) : (
+                                "-"
+                            )}
+                        </DataList.ItemValue>
+                    </DataList.Item>
+                </DataList.Root>
+            </SectionCard.Body>
+        </SectionCard.Root>
+    );
+}
+
 export default function AdminNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {article, poster} = loaderData;
+    const {article} = loaderData;
 
-    console.log({article, poster});
+    const {title} = article;
 
     return (
         <Layout.FixedContainer>
-            News edit unda construction
+            <Title.Text title={title} />
+
+            <DetailsCard />
         </Layout.FixedContainer>
     );
 }

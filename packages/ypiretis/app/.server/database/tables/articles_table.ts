@@ -1,6 +1,6 @@
 import {Temporal} from "@js-temporal/polyfill";
 
-import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import {index, integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
 
@@ -16,37 +16,55 @@ export const ARTICLE_STATES = {
     published: "STATE_PUBLISHED",
 } as const;
 
-const ARTICLES_TABLE = sqliteTable("articles", {
-    id: integer("id").primaryKey({autoIncrement: true}),
+const ARTICLES_TABLE = sqliteTable(
+    "articles",
+    {
+        id: integer("id").primaryKey({autoIncrement: true}),
 
-    articleID: text("article_id", {length: 26})
-        .notNull()
-        .unique()
-        .$defaultFn(() => ulid()),
+        articleID: text("article_id", {length: 26})
+            .notNull()
+            .unique()
+            .$defaultFn(() => ulid()),
 
-    posterUserID: integer("poster_user_id")
-        .notNull()
-        .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
+        posterUserID: integer("poster_user_id")
+            .notNull()
+            .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
-    state: text("state", {
-        enum: [ARTICLE_STATES.draft, ARTICLE_STATES.published],
-    }).notNull(),
+        state: text("state", {
+            enum: [ARTICLE_STATES.draft, ARTICLE_STATES.published],
+        }).notNull(),
 
-    title: text("title", {length: 64}).notNull(),
+        title: text("title", {length: 64}).notNull(),
 
-    content: text("content").notNull(),
+        content: text("content").notNull(),
 
-    createdAt: temporalInstant("created_at")
-        .notNull()
-        .default(DEFAULT_TEMPORAL_INSTANT),
+        createdAt: temporalInstant("created_at")
+            .notNull()
+            .default(DEFAULT_TEMPORAL_INSTANT),
 
-    updatedAt: temporalInstant("updated_at")
-        .notNull()
-        .default(DEFAULT_TEMPORAL_INSTANT)
-        .$onUpdate(() => Temporal.Now.instant()),
+        updatedAt: temporalInstant("updated_at")
+            .notNull()
+            .default(DEFAULT_TEMPORAL_INSTANT)
+            .$onUpdate(() => Temporal.Now.instant()),
 
-    publishedAt: temporalInstant("published_at"),
-});
+        publishedAt: temporalInstant("published_at"),
+    },
+
+    (table) => {
+        return [
+            index("articles_created_at_idx").on(table.createdAt),
+            index("articles_published_at_idx").on(table.publishedAt),
+            index("articles_state_idx").on(table.state),
+            index("articles_title_idx").on(table.title),
+            index("articles_updated_at_idx").on(table.updatedAt),
+
+            index("articles_state_published_at_idx").on(
+                table.state,
+                table.publishedAt,
+            ),
+        ];
+    },
+);
 
 export type IInsertArticle = Readonly<typeof ARTICLES_TABLE.$inferInsert>;
 

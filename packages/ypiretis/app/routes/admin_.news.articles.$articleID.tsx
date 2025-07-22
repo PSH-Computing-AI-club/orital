@@ -30,14 +30,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {
-        hasBeenEdited,
-        poster,
-        publishedAt,
-        slug: articleSlug,
-        title,
-        updatedAt,
-    } = article;
+    const {poster, publishedAt, slug: articleSlug, title, updatedAt} = article;
     const {accountID, firstName, lastName} = poster;
 
     const zonedPublishedAt =
@@ -49,9 +42,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         ? formatZonedDateTime(zonedPublishedAt)
         : null;
 
-    const updatedAtText = hasBeenEdited
-        ? formatZonedDateTime(zonedUpdatedAt)
-        : null;
+    const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
     return {
         article: {

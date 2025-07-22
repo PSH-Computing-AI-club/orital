@@ -120,19 +120,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const zonedUpdatedAt =
                 updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
-            const createdAtText = formatZonedDateTime(zonedCreatedAt, {
-                detail: FORMAT_DETAIL.long,
-            });
+            const createdAtText = formatZonedDateTime(zonedCreatedAt);
 
             const publishedAtText = zonedPublishedAt
-                ? formatZonedDateTime(zonedPublishedAt, {
-                      detail: FORMAT_DETAIL.long,
-                  })
+                ? formatZonedDateTime(zonedPublishedAt)
                 : null;
 
-            const updatedAtText = formatZonedDateTime(zonedUpdatedAt, {
-                detail: FORMAT_DETAIL.long,
-            });
+            const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
             return {
                 articleID,

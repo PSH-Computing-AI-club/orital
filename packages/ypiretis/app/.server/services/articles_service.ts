@@ -232,7 +232,13 @@ export async function findOnePublishedByArticleID(
 export async function findAll(
     options: IFindAllOptions,
 ): Promise<IFindAllArticlesResults<IArticleWithPoster>> {
-    return internalFindAll({...options, includePoster: true});
+    return internalFindAll({
+        ...options,
+
+        includePoster: true,
+
+        orderBy: desc(ARTICLES_TABLE.articleID),
+    });
 }
 
 export async function findAllPublished(

@@ -223,11 +223,11 @@ export default function AdminNews(props: Route.ComponentProps) {
                             </Table.ColumnHeader>
 
                             <Table.ColumnHeader fontWeight="bold">
-                                Created Date
+                                Published Date
                             </Table.ColumnHeader>
 
                             <Table.ColumnHeader fontWeight="bold">
-                                Published Date
+                                Created Date
                             </Table.ColumnHeader>
 
                             <Table.ColumnHeader fontWeight="bold">
@@ -284,15 +284,12 @@ export default function AdminNews(props: Route.ComponentProps) {
                                             : "published"}
                                     </Table.Cell>
 
-                                    <Table.Cell>{createdAtText}</Table.Cell>
-
                                     <Table.Cell>
                                         {publishedAtText ?? "-"}
                                     </Table.Cell>
 
-                                    <Table.Cell>
-                                        {updatedAtText ?? "-"}
-                                    </Table.Cell>
+                                    <Table.Cell>{createdAtText}</Table.Cell>
+                                    <Table.Cell>{updatedAtText}</Table.Cell>
                                 </Table.Row>
                             );
                         })}

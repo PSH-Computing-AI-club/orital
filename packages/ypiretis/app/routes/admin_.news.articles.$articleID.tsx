@@ -28,13 +28,24 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {poster, publishedAt, slug: articleSlug, title, updatedAt} = article;
+    const {
+        createdAt,
+        poster,
+        publishedAt,
+        slug: articleSlug,
+        title,
+        updatedAt,
+    } = article;
     const {accountID, firstName, lastName} = poster;
+
+    const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
     const zonedPublishedAt =
         publishedAt?.toZonedDateTimeISO(SYSTEM_TIMEZONE) ?? null;
 
     const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+
+    const createdAtText = formatZonedDateTime(zonedCreatedAt);
 
     const publishedAtText = zonedPublishedAt
         ? formatZonedDateTime(zonedPublishedAt)
@@ -45,6 +56,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         article: {
             articleID,
+            createdAtText,
             publishedAtText,
             slug: articleSlug,
             title,

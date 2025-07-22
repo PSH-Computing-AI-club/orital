@@ -61,7 +61,13 @@ export async function action(actionArgs: Route.ActionArgs) {
     );
 
     const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
-    const {id: userID} = user;
+    const {id: userID, isAdmin} = user;
+
+    if (!isAdmin) {
+        throw data("Unauthorized", {
+            status: 401,
+        });
+    }
 
     switch (action) {
         case "create": {

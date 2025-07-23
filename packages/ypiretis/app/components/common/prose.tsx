@@ -31,6 +31,10 @@ const Prose = chakra("div", {
             color: "blue.solid",
         },
 
+        "& em": {
+            fontStyle: "italic",
+        },
+
         "& strong": {
             fontWeight: "600",
         },

@@ -1,4 +1,7 @@
+import type {HTMLChakraProps} from "@chakra-ui/react";
 import {chakra} from "@chakra-ui/react";
+
+export interface IProseProps extends HTMLChakraProps<"div"> {}
 
 const Prose = chakra("div", {
     base: {

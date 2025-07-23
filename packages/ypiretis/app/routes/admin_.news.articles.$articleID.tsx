@@ -237,7 +237,11 @@ function ContentCard() {
     );
 
     const onMarkdownChange = useCallback(
-        ((markdown, _initialMarkdownNormalize) => {
+        ((markdown, initialMarkdownNormalize) => {
+            if (initialMarkdownNormalize) {
+                return;
+            }
+
             setLiveContent(markdown);
         }) satisfies IChangeCallback,
 

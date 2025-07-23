@@ -40,7 +40,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {createdAt, poster, publishedAt, state, title, updatedAt} = article;
+    const {content, createdAt, poster, publishedAt, state, title, updatedAt} =
+        article;
     const {accountID, firstName, lastName} = poster;
 
     const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
@@ -61,6 +62,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         article: {
             articleID,
+            content,
             createdAtText,
             publishedAtText,
             state,

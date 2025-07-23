@@ -1,7 +1,5 @@
 import {Avatar, Span} from "@chakra-ui/react";
 
-import {Temporal} from "@js-temporal/polyfill";
-
 import {data, redirect} from "react-router";
 
 import * as v from "valibot";

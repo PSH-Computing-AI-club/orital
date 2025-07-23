@@ -25,17 +25,17 @@ import {
     toolbarPlugin,
 } from "@mdxeditor/editor";
 
+import type {IProseProps} from "./prose";
 import Prose from "./prose";
 
 import "@mdxeditor/editor/style.css";
-
 import "~/styles/markdown-editor.css";
 
-export interface IMarkdownEditorProps {}
+export interface IMarkdownEditorProps extends IProseProps {}
 
 export default function MarkdownEditor(props: IMarkdownEditorProps) {
     return (
-        <Prose>
+        <Prose asChild {...props}>
             <MDXEditor
                 className="markdown-editor"
                 contentEditableClassName="markdown-editor--content-editable"

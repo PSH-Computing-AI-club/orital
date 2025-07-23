@@ -35,7 +35,12 @@ export interface IMarkdownEditorProps extends IProseProps {}
 
 export default function MarkdownEditor(props: IMarkdownEditorProps) {
     return (
-        <Prose asChild {...props}>
+        <Prose
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
+            {...props}
+        >
             <MDXEditor
                 className="markdown-editor"
                 contentEditableClassName="markdown-editor--content-editable"

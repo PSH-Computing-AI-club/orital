@@ -1,0 +1,23 @@
+.markdown-editor,
+.markdown-editor *[class*="_codeMirrorWrapper_"] {
+    border: thin var(--chakra-colors-border) solid;
+}
+.markdown-editor,
+.markdown-editor * {
+    border-radius: 0;
+}
+
+.markdown-editor--content-editable > :first-child,
+.markdown-editor--content-editable > :first-child > table {
+    margin-block-start: 0 !important;
+}
+
+.markdown-editor--content-editable > :last-child,
+.markdown-editor--content-editable > :last-child > table {
+    margin-block-end: 0 !important;
+}
+
+.markdown-editor--toolbar {
+    background-color: var(--chakra-colors-bg-muted);
+    color: var(--chakra-colors-fg);
+}

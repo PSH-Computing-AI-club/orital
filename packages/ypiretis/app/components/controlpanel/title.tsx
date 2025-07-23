@@ -67,7 +67,7 @@ function TitleEditable(props: ITitleEditableProps) {
         <>
             <SiteTitle title={title} />
 
-            <Heading as="h1" {...rest}>
+            <Heading as="h1" fontSize="2xl" {...rest}>
                 <Editable.Root
                     disabled={disabled}
                     value={title}
@@ -122,7 +122,13 @@ function TitleText(props: ITitleTextProps) {
         <>
             <SiteTitle title={title} />
 
-            <Heading as="h1" display="flex" alignItems="center" {...rest}>
+            <Heading
+                as="h1"
+                display="flex"
+                alignItems="center"
+                fontSize="2xl"
+                {...rest}
+            >
                 {title}
                 {children}
             </Heading>

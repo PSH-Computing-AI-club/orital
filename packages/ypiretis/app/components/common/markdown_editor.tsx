@@ -36,6 +36,74 @@ const TO_MARKDOWN_OPTIONS = {
     emphasis: "_",
 } satisfies ToMarkdownOptions;
 
+const CODE_BLOCK_PLUGIN_OPTIONS = {
+    defaultCodeBlockLanguage: "plaintext",
+
+    codeBlockEditorDescriptors: [
+        {
+            priority: -10,
+            match: (_) => true,
+            Editor: CodeMirrorEditor,
+        },
+    ],
+} satisfies Exclude<Parameters<typeof codeBlockPlugin>[0], undefined>;
+
+const CODE_MIRROR_PLUGIN_OPTIONS = {
+    codeBlockLanguages: {
+        plaintext: "Plain Text",
+        cpp: "C++",
+        csharp: "C#",
+        css: "CSS",
+        dockerfile: "Dockerfile",
+        html: "HTML",
+        java: "Java",
+        kotlin: "Kotlin",
+        php: "PHP",
+        powershell: "PowerShell",
+        python: "Python",
+        r: "R",
+        rust: "Rust",
+        shell: "Shell",
+        sql: "SQL",
+        swift: "Swift",
+        toml: "TOML",
+        ts: "TypeScript",
+        tsx: "TypeScript (React)",
+        xml: "XML",
+        yaml: "YAML",
+    },
+} satisfies Exclude<Parameters<typeof codeMirrorPlugin>[0], undefined>;
+
+const HEADINGS_PLUGIN_OPTIONS = {
+    allowedHeadingLevels: [2, 3, 4, 5, 6],
+} satisfies Exclude<Parameters<typeof headingsPlugin>[0], undefined>;
+
+const TOOLBAR_PLUGIN_CONTENTS = (() => {
+    return (
+        <>
+            <UndoRedo />
+            <Separator />
+            <BoldItalicUnderlineToggles />
+            <CodeToggle />
+            <Separator />
+            <StrikeThroughSupSubToggles />
+            <Separator />
+            <ListsToggle options={["bullet", "number"]} />
+            <Separator />
+            <BlockTypeSelect />
+            <Separator />
+            <CreateLink />
+            <Separator />
+            <InsertTable />
+            <InsertCodeBlock />
+            <InsertThematicBreak />
+        </>
+    );
+}) satisfies Exclude<
+    Parameters<typeof toolbarPlugin>[0],
+    undefined
+>["toolbarContents"];
+
 export type IChangeCallback = MDXEditorProps["onChange"];
 
 export interface IMarkdownEditorProps extends IProseProps {
@@ -60,48 +128,9 @@ export default function MarkdownEditor(props: IMarkdownEditorProps) {
                 markdown={markdown}
                 toMarkdownOptions={TO_MARKDOWN_OPTIONS}
                 plugins={[
-                    codeBlockPlugin({
-                        defaultCodeBlockLanguage: "plaintext",
-
-                        codeBlockEditorDescriptors: [
-                            {
-                                priority: -10,
-                                match: (_) => true,
-                                Editor: CodeMirrorEditor,
-                            },
-                        ],
-                    }),
-
-                    codeMirrorPlugin({
-                        codeBlockLanguages: {
-                            plaintext: "Plain Text",
-                            cpp: "C++",
-                            csharp: "C#",
-                            css: "CSS",
-                            dockerfile: "Dockerfile",
-                            html: "HTML",
-                            java: "Java",
-                            kotlin: "Kotlin",
-                            php: "PHP",
-                            powershell: "PowerShell",
-                            python: "Python",
-                            r: "R",
-                            rust: "Rust",
-                            shell: "Shell",
-                            sql: "SQL",
-                            swift: "Swift",
-                            toml: "TOML",
-                            ts: "TypeScript",
-                            tsx: "TypeScript (React)",
-                            xml: "XML",
-                            yaml: "YAML",
-                        },
-                    }),
-
-                    headingsPlugin({
-                        allowedHeadingLevels: [2, 3, 4, 5, 6],
-                    }),
-
+                    codeBlockPlugin(CODE_BLOCK_PLUGIN_OPTIONS),
+                    codeMirrorPlugin(CODE_MIRROR_PLUGIN_OPTIONS),
+                    headingsPlugin(HEADINGS_PLUGIN_OPTIONS),
                     linkPlugin(),
                     linkDialogPlugin(),
                     listsPlugin(),
@@ -109,34 +138,9 @@ export default function MarkdownEditor(props: IMarkdownEditorProps) {
                     tablePlugin(),
                     thematicBreakPlugin(),
                     markdownShortcutPlugin(),
-
                     toolbarPlugin({
                         toolbarClassName: "markdown-editor--toolbar",
-
-                        toolbarContents() {
-                            return (
-                                <>
-                                    <UndoRedo />
-                                    <Separator />
-                                    <BoldItalicUnderlineToggles />
-                                    <CodeToggle />
-                                    <Separator />
-                                    <StrikeThroughSupSubToggles />
-                                    <Separator />
-                                    <ListsToggle
-                                        options={["bullet", "number"]}
-                                    />
-                                    <Separator />
-                                    <BlockTypeSelect />
-                                    <Separator />
-                                    <CreateLink />
-                                    <Separator />
-                                    <InsertTable />
-                                    <InsertCodeBlock />
-                                    <InsertThematicBreak />
-                                </>
-                            );
-                        },
+                        toolbarContents: TOOLBAR_PLUGIN_CONTENTS,
                     }),
                 ]}
                 onChange={onMarkdownChange}

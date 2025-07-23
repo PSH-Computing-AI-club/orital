@@ -76,9 +76,19 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "content.update": {
             const {content} = actionFormData;
 
-            await updateOneByArticleID(articleID, {
-                content,
-            });
+            try {
+                await updateOneByArticleID(articleID, {
+                    content,
+                });
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
         }
     }
 }

@@ -271,7 +271,14 @@ export async function updateOneByArticleID(
     articleID: string,
     article: IArticleUpdate,
 ): Promise<void> {
-    await DATABASE.update(ARTICLES_TABLE)
+    const articles = await DATABASE.update(ARTICLES_TABLE)
         .set(article)
-        .where(eq(ARTICLES_TABLE.articleID, articleID));
+        .where(eq(ARTICLES_TABLE.articleID, articleID))
+        .returning();
+
+    if (articles.length === 0) {
+        throw ReferenceError(
+            `bad argument #0 to 'updateOneByArticleID' (article id '${articleID}' was not found in the database)`,
+        );
+    }
 }

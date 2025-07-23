@@ -1,4 +1,4 @@
-import {Code, DataList, Spacer} from "@chakra-ui/react";
+import {Button, Code, DataList, Spacer} from "@chakra-ui/react";
 
 import {data, useLoaderData} from "react-router";
 
@@ -10,11 +10,13 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Links from "~/components/common/links";
+import MarkdownEditor from "~/components/common/markdown_editor";
 
 import Layout from "~/components/controlpanel/layout";
 import SectionCard from "~/components/controlpanel/section_card";
 import Title from "~/components/controlpanel/title";
 
+import ArticleIcon from "~/components/icons/article_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
 
 import {validateParams} from "~/guards/validation";
@@ -143,6 +145,32 @@ function DetailsCard() {
     );
 }
 
+function ContentCard() {
+    return (
+        <SectionCard.Root flexGrow="1">
+            <SectionCard.Body>
+                <SectionCard.Title>
+                    Content
+                    <Spacer />
+                    <ArticleIcon />
+                </SectionCard.Title>
+
+                <MarkdownEditor
+                    flexGrow="1"
+                    height="0"
+                    overflowX="hidden"
+                    overflowY="auto"
+                />
+            </SectionCard.Body>
+
+            <SectionCard.Footer>
+                <Spacer />
+                <Button colorPalette="green">Update Content</Button>
+            </SectionCard.Footer>
+        </SectionCard.Root>
+    );
+}
+
 export default function AdminNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {article} = loaderData;
@@ -154,6 +182,7 @@ export default function AdminNewsArticle(props: Route.ComponentProps) {
             <Title.Text title={title} />
 
             <DetailsCard />
+            <ContentCard />
         </Layout.FixedContainer>
     );
 }

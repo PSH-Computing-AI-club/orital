@@ -17,6 +17,12 @@
     margin-block-end: 0 !important;
 }
 
+.markdown-editor.mdxeditor-popup-container {
+    position: absolute;
+
+    inset-block-start: 0;
+}
+
 .markdown-editor--toolbar {
     background-color: var(--chakra-colors-bg-muted);
     color: var(--chakra-colors-fg);

@@ -17,12 +17,15 @@ const Prose = chakra("div", {
         },
 
         "& a": {
-            color: "fg",
+            color: "blue.fg",
             textDecoration: "underline",
-            textUnderlineOffset: "3px",
-            textDecorationThickness: "2px",
-            textDecorationColor: "border.muted",
+            textDecorationThickness: "thin",
+            textDecorationColor: "currentColor",
             fontWeight: "500",
+        },
+
+        "& a:hover": {
+            color: "blue.solid",
         },
 
         "& strong": {

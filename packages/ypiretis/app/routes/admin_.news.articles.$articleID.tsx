@@ -142,7 +142,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-function DetailsCard() {
+function OverviewCard() {
     const {article, poster} = useLoaderData<typeof loader>();
 
     const {articleID, createdAtText, publishedAtText, state, updatedAtText} =
@@ -156,7 +156,7 @@ function DetailsCard() {
         <SectionCard.Root>
             <SectionCard.Body>
                 <SectionCard.Title>
-                    Details
+                    Overview
                     <Spacer />
                     <InfoBoxIcon />
                 </SectionCard.Title>
@@ -297,7 +297,7 @@ export default function AdminNewsArticle(props: Route.ComponentProps) {
         <Layout.FixedContainer>
             <Title.Text title={title} />
 
-            <DetailsCard />
+            <OverviewCard />
             <ContentCard />
         </Layout.FixedContainer>
     );

@@ -1,3 +1,4 @@
+import type {MDXEditorProps} from "@mdxeditor/editor";
 import {
     BlockTypeSelect,
     BoldItalicUnderlineToggles,
@@ -31,20 +32,28 @@ import Prose from "./prose";
 import "@mdxeditor/editor/style.css";
 import "~/styles/markdown-editor.css";
 
-export interface IMarkdownEditorProps extends IProseProps {}
+export type IChangeCallback = MDXEditorProps["onChange"];
+
+export interface IMarkdownEditorProps extends IProseProps {
+    readonly markdown?: string;
+
+    readonly onMarkdownChange?: IChangeCallback;
+}
 
 export default function MarkdownEditor(props: IMarkdownEditorProps) {
+    const {markdown = "", onMarkdownChange, ...rest} = props;
+
     return (
         <Prose
             borderColor="border"
             borderStyle="solid"
             borderWidth="thin"
-            {...props}
+            {...rest}
         >
             <MDXEditor
                 className="markdown-editor"
                 contentEditableClassName="markdown-editor--content-editable"
-                markdown=""
+                markdown={markdown}
                 plugins={[
                     codeBlockPlugin({
                         defaultCodeBlockLanguage: "plaintext",
@@ -125,6 +134,7 @@ export default function MarkdownEditor(props: IMarkdownEditorProps) {
                         },
                     }),
                 ]}
+                onChange={onMarkdownChange}
             />
         </Prose>
     );

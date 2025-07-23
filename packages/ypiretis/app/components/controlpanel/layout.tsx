@@ -20,8 +20,7 @@ function LayoutFixedContainer(props: ILayoutFixedContainerProps) {
             marginInlineStart={{base: "32", lgDown: "0"}}
             maxBlockSize="dvh"
             minBlockSize="dvh"
-            overflowX="hidden"
-            overflowY="hidden"
+            overflow="hidden"
             {...rest}
         >
             <Container

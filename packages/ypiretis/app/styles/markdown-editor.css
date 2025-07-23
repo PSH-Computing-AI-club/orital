@@ -30,3 +30,7 @@
     background-color: var(--chakra-colors-bg-muted);
     color: var(--chakra-colors-fg);
 }
+
+.markdown-editor :is(*[class*="_code_"], .cm-content) {
+    font-family: var(--chakra-fonts-mono);
+}

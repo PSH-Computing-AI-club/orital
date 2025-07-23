@@ -1,6 +1,5 @@
 import {Spacer, Strong, Text} from "@chakra-ui/react";
 
-import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet, data} from "react-router";
 
 import {
@@ -21,10 +20,6 @@ import HomeIcon from "~/components/icons/home_icon";
 import {PublicUserContextProvider} from "~/state/public_user";
 
 import {Route} from "./+types/admin_";
-
-export const shouldRevalidate = ((_revalidateArgs) => {
-    return false;
-}) satisfies ShouldRevalidateFunction;
 
 export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
     return loaderArgs.serverLoader();

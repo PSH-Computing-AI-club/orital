@@ -1,8 +1,9 @@
 import {Button, Code, DataList, Spacer} from "@chakra-ui/react";
 
+import type {MouseEventHandler} from "react";
 import {useCallback, useState} from "react";
 
-import {data, useLoaderData} from "react-router";
+import {data, useLoaderData, useFetcher} from "react-router";
 
 import * as v from "valibot";
 
@@ -46,6 +47,8 @@ const ACTION_PARAMS_SCHEMA = v.object({
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
 });
+
+type IActionFormDataSchema = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 
 export async function action(actionArgs: Route.ActionArgs) {
     const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
@@ -198,7 +201,25 @@ function ContentCard() {
 
     const {content: loaderContent} = article;
 
+    const contentUpdateFetcher = useFetcher();
     const [liveContent, setLiveContent] = useState<string>(loaderContent);
+
+    const onContentUpdateClick = useCallback(
+        ((_event) => {
+            contentUpdateFetcher.submit(
+                {
+                    action: "content.update",
+                    content: liveContent,
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [contentUpdateFetcher, liveContent],
+    );
 
     const onMarkdownChange = useCallback(
         ((markdown, _initialMarkdownNormalize) => {
@@ -209,6 +230,10 @@ function ContentCard() {
     );
 
     const isLiveContentDirty = liveContent !== loaderContent;
+    const isContentUpdateFetcherIdle = contentUpdateFetcher.state === "idle";
+
+    const isContentUpdateDisabled =
+        !isContentUpdateFetcherIdle || !isLiveContentDirty;
 
     return (
         <SectionCard.Root flexGrow="1">
@@ -231,7 +256,11 @@ function ContentCard() {
 
             <SectionCard.Footer>
                 <Spacer />
-                <Button disabled={!isLiveContentDirty} colorPalette="green">
+                <Button
+                    disabled={isContentUpdateDisabled}
+                    colorPalette="green"
+                    onClick={onContentUpdateClick}
+                >
                     Update Content
                 </Button>
             </SectionCard.Footer>

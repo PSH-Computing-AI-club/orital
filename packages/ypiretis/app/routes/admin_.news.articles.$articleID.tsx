@@ -7,6 +7,7 @@ import {data, useLoaderData} from "react-router";
 import * as v from "valibot";
 
 import {findOneByArticleID} from "~/.server/services/articles_service";
+import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
@@ -22,15 +23,57 @@ import Title from "~/components/controlpanel/title";
 import ArticleIcon from "~/components/icons/article_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
 
-import {validateParams} from "~/guards/validation";
+import {validateFormData, validateParams} from "~/guards/validation";
 
 import {buildAppURL} from "~/utils/url";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
 
+const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("content.update")),
+
+    content: v.pipe(v.string()),
+});
+
+const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
+    CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+]);
+
+const ACTION_PARAMS_SCHEMA = v.object({
+    articleID: v.pipe(v.string(), v.ulid()),
+});
+
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
 });
+
+export async function action(actionArgs: Route.ActionArgs) {
+    const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
+
+    const actionFormData = await validateFormData(
+        ACTION_FORM_DATA_SCHEMA,
+        actionArgs,
+    );
+
+    const {action} = actionFormData;
+
+    const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
+    const {isAdmin} = user;
+
+    if (!isAdmin) {
+        throw data("Unauthorized", {
+            status: 401,
+        });
+    }
+
+    switch (action) {
+        case "content.update": {
+            const {content} = actionFormData;
+
+            console.log({action, articleID, content});
+        }
+    }
+}
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);

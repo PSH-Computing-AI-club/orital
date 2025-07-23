@@ -266,3 +266,12 @@ export async function insertOne(article: IArticleInsert): Promise<IArticle> {
 
     return mapArticle(insertedArticle);
 }
+
+export async function updateOneByArticleID(
+    articleID: string,
+    article: IArticleUpdate,
+): Promise<void> {
+    await DATABASE.update(ARTICLES_TABLE)
+        .set(article)
+        .where(eq(ARTICLES_TABLE.articleID, articleID));
+}

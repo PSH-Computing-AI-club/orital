@@ -7,7 +7,10 @@ import {data, useLoaderData, useFetcher} from "react-router";
 
 import * as v from "valibot";
 
-import {findOneByArticleID} from "~/.server/services/articles_service";
+import {
+    findOneByArticleID,
+    updateOneByArticleID,
+} from "~/.server/services/articles_service";
 import {requireAuthenticatedSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -73,7 +76,9 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "content.update": {
             const {content} = actionFormData;
 
-            console.log({action, articleID, content});
+            await updateOneByArticleID(articleID, {
+                content,
+            });
         }
     }
 }
@@ -205,8 +210,8 @@ function ContentCard() {
     const [liveContent, setLiveContent] = useState<string>(loaderContent);
 
     const onContentUpdateClick = useCallback(
-        ((_event) => {
-            contentUpdateFetcher.submit(
+        (async (_event) => {
+            await contentUpdateFetcher.submit(
                 {
                     action: "content.update",
                     content: liveContent,

@@ -1,5 +1,7 @@
 import {Button, Code, DataList, Spacer} from "@chakra-ui/react";
 
+import {useCallback, useState} from "react";
+
 import {data, useLoaderData} from "react-router";
 
 import * as v from "valibot";
@@ -10,6 +12,7 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Links from "~/components/common/links";
+import type {IChangeCallback} from "~/components/common/markdown_editor";
 import MarkdownEditor from "~/components/common/markdown_editor";
 
 import Layout from "~/components/controlpanel/layout";
@@ -148,6 +151,22 @@ function DetailsCard() {
 }
 
 function ContentCard() {
+    const {article} = useLoaderData<typeof loader>();
+
+    const {content: loaderContent} = article;
+
+    const [liveContent, setLiveContent] = useState<string>(loaderContent);
+
+    const onMarkdownChange = useCallback(
+        ((markdown, _initialMarkdownNormalize) => {
+            setLiveContent(markdown);
+        }) satisfies IChangeCallback,
+
+        [setLiveContent],
+    );
+
+    const isLiveContentDirty = liveContent !== loaderContent;
+
     return (
         <SectionCard.Root flexGrow="1">
             <SectionCard.Body>
@@ -158,16 +177,20 @@ function ContentCard() {
                 </SectionCard.Title>
 
                 <MarkdownEditor
+                    markdown={loaderContent}
                     flexGrow="1"
                     height="0"
                     overflowX="hidden"
                     overflowY="auto"
+                    onMarkdownChange={onMarkdownChange}
                 />
             </SectionCard.Body>
 
             <SectionCard.Footer>
                 <Spacer />
-                <Button colorPalette="green">Update Content</Button>
+                <Button disabled={!isLiveContentDirty} colorPalette="green">
+                    Update Content
+                </Button>
             </SectionCard.Footer>
         </SectionCard.Root>
     );

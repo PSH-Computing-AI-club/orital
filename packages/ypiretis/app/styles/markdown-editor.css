@@ -1,3 +1,7 @@
+.markdown-editor {
+    font-family: inherit;
+}
+
 .markdown-editor,
 .markdown-editor *[class*="_codeMirrorWrapper_"] {
     border: thin var(--chakra-colors-border) solid;

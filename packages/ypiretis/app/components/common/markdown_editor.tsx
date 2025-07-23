@@ -1,4 +1,4 @@
-import type {MDXEditorProps} from "@mdxeditor/editor";
+import type {MDXEditorProps, ToMarkdownOptions} from "@mdxeditor/editor";
 import {
     BlockTypeSelect,
     BoldItalicUnderlineToggles,
@@ -32,6 +32,10 @@ import Prose from "./prose";
 import "@mdxeditor/editor/style.css";
 import "~/styles/markdown-editor.css";
 
+const TO_MARKDOWN_OPTIONS = {
+    emphasis: "_",
+} satisfies ToMarkdownOptions;
+
 export type IChangeCallback = MDXEditorProps["onChange"];
 
 export interface IMarkdownEditorProps extends IProseProps {
@@ -54,6 +58,7 @@ export default function MarkdownEditor(props: IMarkdownEditorProps) {
                 className="markdown-editor"
                 contentEditableClassName="markdown-editor--content-editable"
                 markdown={markdown}
+                toMarkdownOptions={TO_MARKDOWN_OPTIONS}
                 plugins={[
                     codeBlockPlugin({
                         defaultCodeBlockLanguage: "plaintext",

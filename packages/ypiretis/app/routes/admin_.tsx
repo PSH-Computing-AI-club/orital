@@ -93,7 +93,7 @@ function SidebarView() {
                     <Sidebar.Icon>
                         <HomeIcon />
                     </Sidebar.Icon>
-                    Landing Page
+                    Home
                 </Sidebar.Link>
             </Sidebar.Container>
         </Sidebar.Root>

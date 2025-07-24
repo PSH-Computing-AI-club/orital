@@ -53,6 +53,7 @@ import {validateFormData, validateParams} from "~/guards/validation";
 
 import {toLocalISOString} from "~/utils/datetime";
 import {buildAppURL} from "~/utils/url";
+import {title} from "~/utils/valibot";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
 
@@ -60,15 +61,6 @@ const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("content.update")),
 
     content: v.pipe(v.string()),
-});
-
-const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("state.update")),
-
-    state: v.pipe(
-        v.string(),
-        v.picklist([ARTICLE_STATES.draft, ARTICLE_STATES.published]),
-    ),
 });
 
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -81,10 +73,26 @@ const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     ),
 });
 
+const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("state.update")),
+
+    state: v.pipe(
+        v.string(),
+        v.picklist([ARTICLE_STATES.draft, ARTICLE_STATES.published]),
+    ),
+});
+
+const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("title.update")),
+
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(64), title),
+});
+
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
 
 const ACTION_PARAMS_SCHEMA = v.object({
@@ -165,6 +173,26 @@ export async function action(actionArgs: Route.ActionArgs) {
                 await updateOneByArticleID(articleID, {
                     publishedAt,
                     state,
+                });
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
+
+            break;
+        }
+
+        case "title.update": {
+            const {title} = actionFormData;
+
+            try {
+                await updateOneByArticleID(articleID, {
+                    title,
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {

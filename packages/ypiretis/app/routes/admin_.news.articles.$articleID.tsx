@@ -1,11 +1,17 @@
-import type {SegmentGroupValueChangeDetails} from "@chakra-ui/react";
+import type {
+    SegmentGroupValueChangeDetails,
+    RadioCardValueChangeDetails,
+} from "@chakra-ui/react";
 import {
     Button,
     Code,
     DataList,
     HStack,
+    Icon,
+    RadioCard,
     SegmentGroup,
     Spacer,
+    Strong,
 } from "@chakra-ui/react";
 
 import type {MouseEventHandler} from "react";
@@ -16,6 +22,7 @@ import {data, useLoaderData, useFetcher} from "react-router";
 import * as v from "valibot";
 
 import {
+    ARTICLE_STATES,
     findOneByArticleID,
     updateOneByArticleID,
 } from "~/.server/services/articles_service";
@@ -33,6 +40,8 @@ import SectionCard from "~/components/controlpanel/section_card";
 import Title from "~/components/controlpanel/title";
 
 import ArticleIcon from "~/components/icons/article_icon";
+import EyeIcon from "~/components/icons/eye_icon";
+import EyeClosedIcon from "~/components/icons/eye_closed_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
 
@@ -48,8 +57,18 @@ const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     content: v.pipe(v.string()),
 });
 
+const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("state.update")),
+
+    state: v.pipe(
+        v.string(),
+        v.picklist([ARTICLE_STATES.draft, ARTICLE_STATES.published]),
+    ),
+});
+
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
 
 const ACTION_PARAMS_SCHEMA = v.object({
@@ -98,6 +117,14 @@ export async function action(actionArgs: Route.ActionArgs) {
 
                 throw error;
             }
+
+            break;
+        }
+
+        case "state.update": {
+            const {state} = actionFormData;
+
+            console.log({state});
         }
     }
 }
@@ -169,7 +196,83 @@ function SettingsCardActionsView() {
 }
 
 function SettingsCardPublishingView() {
-    return <>settings card publishing view unda construction</>;
+    const {article} = useLoaderData<typeof loader>();
+
+    const {state} = article;
+
+    const stateUpdateFetcher = useFetcher();
+
+    const onStateChange = useCallback(
+        (async (details) => {
+            const {value} = details;
+
+            await stateUpdateFetcher.submit(
+                {
+                    action: "state.update",
+                    state: value as "STATE_DRAFT" | "STATE_PUBLISHED",
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+        }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
+
+        [stateUpdateFetcher],
+    );
+
+    const isDraft = state === "STATE_DRAFT";
+    const isPublished = state === "STATE_PUBLISHED";
+    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
+
+    const canDraft = isStateUpdateFetcherIdle && !isDraft;
+    const canPublish = isStateUpdateFetcherIdle && !isPublished;
+
+    return (
+        <>
+            <RadioCard.Root
+                variant="surface"
+                orientation="vertical"
+                align="center"
+                value={state}
+                onValueChange={onStateChange}
+            >
+                <RadioCard.Label>Publishing State</RadioCard.Label>
+
+                <HStack justifyContent="stretch">
+                    <RadioCard.Item
+                        value="STATE_DRAFT"
+                        colorPalette="red"
+                        cursor={canDraft ? "pointer" : "disabled"}
+                    >
+                        <RadioCard.ItemHiddenInput />
+                        <RadioCard.ItemControl>
+                            <Icon fontSize="2xl">
+                                <EyeClosedIcon />
+                            </Icon>
+
+                            <RadioCard.ItemText>Draft</RadioCard.ItemText>
+                        </RadioCard.ItemControl>
+                    </RadioCard.Item>
+
+                    <RadioCard.Item
+                        value="STATE_PUBLISHED"
+                        colorPalette="green"
+                        cursor={canPublish ? "pointer" : "disabled"}
+                    >
+                        <RadioCard.ItemHiddenInput />
+                        <RadioCard.ItemControl>
+                            <Icon fontSize="2xl">
+                                <EyeIcon />
+                            </Icon>
+
+                            <RadioCard.ItemText>Published</RadioCard.ItemText>
+                        </RadioCard.ItemControl>
+                    </RadioCard.Item>
+                </HStack>
+            </RadioCard.Root>
+        </>
+    );
 }
 
 function SettingsCardUploadsView() {

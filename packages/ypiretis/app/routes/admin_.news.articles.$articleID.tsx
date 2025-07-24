@@ -368,7 +368,7 @@ function OverviewCard() {
     const url = buildAppURL(href);
 
     return (
-        <SectionCard.Root>
+        <SectionCard.Root inlineSize="xl">
             <SectionCard.Body>
                 <SectionCard.Title>
                     Overview

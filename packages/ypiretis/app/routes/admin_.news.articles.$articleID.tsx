@@ -176,6 +176,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         ? formatZonedDateTime(zonedPublishedAt)
         : null;
 
+    const publishedAtTimestamp = publishedAt?.epochMilliseconds;
+
     const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
     return {
@@ -184,6 +186,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             content,
             createdAtText,
             publishedAtText,
+            publishedAtTimestamp,
             state,
             title,
             updatedAtText,
@@ -217,7 +220,7 @@ function SettingsCardActionsView() {
 function SettingsCardPublishingView() {
     const {article} = useLoaderData<typeof loader>();
 
-    const {state} = article;
+    const {publishedAtTimestamp, state} = article;
 
     const stateUpdateFetcher = useFetcher();
 

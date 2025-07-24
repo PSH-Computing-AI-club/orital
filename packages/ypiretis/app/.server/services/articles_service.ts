@@ -77,7 +77,8 @@ function mapArticle(article: ISelectArticle): IArticle {
     const {publishedAt, title, updatedAt} = article;
 
     const hasBeenEdited = publishedAt
-        ? Temporal.Instant.compare(updatedAt, publishedAt) > 0
+        ? updatedAt.epochMilliseconds - publishedAt.epochMilliseconds >
+          1000 * 60
         : false;
 
     const slug = slugify(title, false);

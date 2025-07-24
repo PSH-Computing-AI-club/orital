@@ -8,8 +8,10 @@ import {
     Button,
     Code,
     DataList,
+    Field,
     HStack,
     Icon,
+    Input,
     RadioCard,
     SegmentGroup,
     Spacer,
@@ -48,6 +50,7 @@ import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
+import {toLocalISOString} from "~/utils/datetime";
 import {buildAppURL} from "~/utils/url";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
@@ -251,6 +254,15 @@ function SettingsCardPublishingView() {
     const canPublish = isStateUpdateFetcherIdle && !isPublished;
 
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
+
+    const localPublishedAt = publishedAtTimestamp
+        ? new Date(publishedAtTimestamp)
+        : null;
+
+    const localPublishedAtTimestmap = localPublishedAt
+        ? toLocalISOString(localPublishedAt)
+        : null;
+
     return (
         <>
             <RadioCard.Root
@@ -298,6 +310,17 @@ function SettingsCardPublishingView() {
                     </RadioCard.Item>
                 </HStack>
             </RadioCard.Root>
+
+            {localPublishedAtTimestmap ? (
+                <Field.Root>
+                    <Field.Label>Published At</Field.Label>
+
+                    <Input
+                        type="datetime-local"
+                        value={localPublishedAtTimestmap}
+                    />
+                </Field.Root>
+            ) : undefined}
         </>
     );
 }

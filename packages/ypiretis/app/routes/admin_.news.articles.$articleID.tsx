@@ -1,6 +1,7 @@
 import {Temporal} from "@js-temporal/polyfill";
 
 import type {
+    EditableValueChangeDetails,
     SegmentGroupValueChangeDetails,
     RadioCardValueChangeDetails,
 } from "@chakra-ui/react";
@@ -102,6 +103,13 @@ const ACTION_PARAMS_SCHEMA = v.object({
 const LOADER_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
 });
+
+const UX_TITLE_SCHEMA = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.maxLength(64),
+    title,
+);
 
 type IActionFormDataSchema = v.InferOutput<typeof ACTION_FORM_DATA_SCHEMA>;
 
@@ -665,15 +673,65 @@ function ContentCard() {
     );
 }
 
-export default function AdminNewsArticle(props: Route.ComponentProps) {
-    const {loaderData} = props;
-    const {article} = loaderData;
+function ArticleTitle() {
+    const {article} = useLoaderData<typeof loader>();
 
     const {title} = article;
 
+    const titleUpdateFetcher = useFetcher();
+
+    const isTitleUpdateFetcherIdle = titleUpdateFetcher.state === "idle";
+    const isTitleUpdateDisabled = !isTitleUpdateFetcherIdle;
+
+    const onTitleCommit = useCallback(
+        (async (details) => {
+            const {value} = details;
+
+            if (title === value) {
+                return;
+            }
+
+            await titleUpdateFetcher.submit(
+                {
+                    action: "title.update",
+                    title: value,
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+        }) satisfies (details: EditableValueChangeDetails) => Promise<void>,
+
+        [title, titleUpdateFetcher],
+    );
+
+    const onTitleIsValid = useCallback(
+        ((details) => {
+            const {value} = details;
+            const {success} = v.safeParse(UX_TITLE_SCHEMA, value);
+
+            return success;
+        }) satisfies (details: EditableValueChangeDetails) => boolean,
+
+        [],
+    );
+
+    return (
+        <Title.Editable
+            disabled={isTitleUpdateDisabled}
+            title={title}
+            maxLength={64}
+            onTitleCommit={onTitleCommit}
+            onTitleIsValid={onTitleIsValid}
+        />
+    );
+}
+
+export default function AdminNewsArticle(_props: Route.ComponentProps) {
     return (
         <Layout.FixedContainer>
-            <Title.Text title={title} />
+            <ArticleTitle />
 
             <HStack alignItems="stretch">
                 <OverviewCard />

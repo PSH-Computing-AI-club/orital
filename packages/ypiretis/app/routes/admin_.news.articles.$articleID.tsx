@@ -1,4 +1,12 @@
-import {Button, Code, DataList, Spacer} from "@chakra-ui/react";
+import type {SegmentGroupValueChangeDetails} from "@chakra-ui/react";
+import {
+    Button,
+    Code,
+    DataList,
+    HStack,
+    SegmentGroup,
+    Spacer,
+} from "@chakra-ui/react";
 
 import type {MouseEventHandler} from "react";
 import {useCallback, useState} from "react";
@@ -26,6 +34,7 @@ import Title from "~/components/controlpanel/title";
 
 import ArticleIcon from "~/components/icons/article_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
+import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
@@ -140,6 +149,109 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             lastName,
         },
     };
+}
+
+function matchSettingsCardView(view: "actions" | "publishing" | "uploads") {
+    switch (view) {
+        case "actions":
+            return SettingsCardActionsView;
+
+        case "publishing":
+            return SettingsCardPublishingView;
+
+        case "uploads":
+            return SettingsCardUploadsView;
+    }
+}
+
+function SettingsCardActionsView() {
+    return <>settings card actions view unda construction</>;
+}
+
+function SettingsCardPublishingView() {
+    return <>settings card publishing view unda construction</>;
+}
+
+function SettingsCardUploadsView() {
+    return <>settings card uploads view unda construction</>;
+}
+
+function SettingsCard() {
+    const [selectedView, setSelectedView] = useState<
+        "actions" | "publishing" | "uploads"
+    >("actions");
+
+    const onViewSelected = useCallback(
+        ((details) => {
+            const {value} = details;
+
+            setSelectedView(value as "actions" | "publishing" | "uploads");
+        }) satisfies (details: SegmentGroupValueChangeDetails) => void,
+
+        [setSelectedView],
+    );
+
+    const SelectedView = matchSettingsCardView(selectedView);
+
+    return (
+        <SectionCard.Root flexGrow="1">
+            <SectionCard.Body>
+                <SectionCard.Title>
+                    Settings
+                    <Spacer />
+                    <SegmentGroup.Root
+                        value={selectedView}
+                        size="sm"
+                        fontWeight="normal"
+                        onValueChange={onViewSelected}
+                    >
+                        <SegmentGroup.Indicator bg="bg" />
+
+                        <SegmentGroup.Item value="actions">
+                            <SegmentGroup.ItemText
+                                color={
+                                    selectedView === "actions"
+                                        ? "cyan.fg"
+                                        : undefined
+                                }
+                            >
+                                Actions
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+
+                        <SegmentGroup.Item value="publishing">
+                            <SegmentGroup.ItemText
+                                color={
+                                    selectedView === "publishing"
+                                        ? "cyan.fg"
+                                        : undefined
+                                }
+                            >
+                                Publishing
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+
+                        <SegmentGroup.Item value="uploads">
+                            <SegmentGroup.ItemText
+                                color={
+                                    selectedView === "uploads"
+                                        ? "cyan.fg"
+                                        : undefined
+                                }
+                            >
+                                Uploads
+                            </SegmentGroup.ItemText>
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+                    </SegmentGroup.Root>
+                    <SlidersIcon />
+                </SectionCard.Title>
+                <SelectedView />
+            </SectionCard.Body>
+        </SectionCard.Root>
+    );
 }
 
 function OverviewCard() {
@@ -297,7 +409,11 @@ export default function AdminNewsArticle(props: Route.ComponentProps) {
         <Layout.FixedContainer>
             <Title.Text title={title} />
 
-            <OverviewCard />
+            <HStack alignItems="stretch">
+                <OverviewCard />
+                <SettingsCard />
+            </HStack>
+
             <ContentCard />
         </Layout.FixedContainer>
     );

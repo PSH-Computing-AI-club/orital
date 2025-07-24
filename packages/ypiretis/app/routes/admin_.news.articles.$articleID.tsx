@@ -427,7 +427,7 @@ function OverviewCard() {
 
                     <DataList.Item>
                         <DataList.ItemLabel>Permalink</DataList.ItemLabel>
-                        <DataList.ItemValue>
+                        <DataList.ItemValue blockSize="9">
                             {state === "STATE_PUBLISHED" ? (
                                 <Code>
                                     <Links.InternalLink to={href}>

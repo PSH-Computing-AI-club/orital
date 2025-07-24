@@ -150,6 +150,14 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
         unregisterTab,
     } satisfies ITabbedSectionCardContext;
 
+    useEffect(() => {
+        if (selectedTab && !tabs.includes(selectedTab)) {
+            const [firstTab] = tabs;
+
+            setSelectedTab(firstTab ?? null);
+        }
+    }, [selectedTab, tabs]);
+
     return (
         <TabbedSectionCardContext.Provider value={context}>
             <SectionCard.Root {...rest}>{children}</SectionCard.Root>

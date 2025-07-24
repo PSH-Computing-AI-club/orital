@@ -11,7 +11,6 @@ import {
     RadioCard,
     SegmentGroup,
     Spacer,
-    Strong,
 } from "@chakra-ui/react";
 
 import type {MouseEventHandler} from "react";

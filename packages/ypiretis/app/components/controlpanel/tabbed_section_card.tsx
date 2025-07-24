@@ -122,12 +122,12 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
                 return [...previousTabs, title];
             });
 
-            if (!selectedTab) {
-                setSelectedTab(title);
-            }
+            setSelectedTab((selectedTitle) => {
+                return selectedTitle ?? title;
+            });
         }) satisfies ITabbedSectionCardContext["registerTab"],
 
-        [selectedTab],
+        [setSelectedTab, setTabs],
     );
 
     const unregisterTab = useCallback(

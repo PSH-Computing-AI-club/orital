@@ -9,6 +9,7 @@ import {
     Code,
     DataList,
     Field,
+    Group,
     HStack,
     Icon,
     Input,
@@ -257,6 +258,35 @@ function SettingsCardPublishingView() {
     const stateUpdateFetcher = useFetcher();
     const publishedAtUpdateFetcher = useFetcher();
 
+    const isDraft = state === "STATE_DRAFT";
+    const isPublished = state === "STATE_PUBLISHED";
+
+    const localPublishedAt = publishedAtTimestamp
+        ? new Date(publishedAtTimestamp)
+        : null;
+
+    const localPublishedAtDateTime = localPublishedAt
+        ? toLocalISOString(localPublishedAt)
+        : null;
+
+    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
+    const isPublishedAtUpdateFetcherIdle =
+        publishedAtUpdateFetcher.state === "idle";
+
+    const [liveLocalPublishedAt, setLiveLocalPublishedAt] =
+        useState<Date | null>(localPublishedAt);
+
+    const isLiveLocalPublishedAtDirty =
+        liveLocalPublishedAt?.getTime() !== localPublishedAt?.getTime();
+
+    const canDraft = isStateUpdateFetcherIdle && !isDraft;
+    const canPublish = isStateUpdateFetcherIdle && !isPublished;
+
+    const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
+    const isPublishedAtFieldDisabled = !isPublishedAtUpdateFetcherIdle;
+    const isPublishedAtUpdateDisabled =
+        !isPublishedAtUpdateFetcherIdle || !isLiveLocalPublishedAtDirty;
+
     const onStateChange = useCallback(
         (async (details) => {
             const {value} = details;
@@ -276,49 +306,37 @@ function SettingsCardPublishingView() {
         [stateUpdateFetcher],
     );
 
-    const onPublishedAtChange = useCallback(
-        (async (event) => {
-            const {target} = event;
-            const {value} = target as HTMLInputElement;
-
-            const newLocalPublishedAt = new Date(value);
-            const newPublishedAtTimestamp = newLocalPublishedAt.getTime();
+    const onUpdatePublisheddAt = useCallback(
+        (async (_event) => {
+            if (!liveLocalPublishedAt) {
+                return;
+            }
 
             await publishedAtUpdateFetcher.submit(
                 {
                     action: "publishedAt.update",
-                    publishedAtTimestamp: newPublishedAtTimestamp,
+                    publishedAtTimestamp: liveLocalPublishedAt?.getTime(),
                 } satisfies IActionFormDataSchema,
 
                 {
                     method: "POST",
                 },
             );
-        }) satisfies FormEventHandler<HTMLInputElement>,
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [publishedAtUpdateFetcher],
+        [liveLocalPublishedAt, publishedAtUpdateFetcher],
     );
 
-    const isDraft = state === "STATE_DRAFT";
-    const isPublished = state === "STATE_PUBLISHED";
+    const onPublishedAtChange = useCallback(
+        ((event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
 
-    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
-    const isPublishedAtUpdateFetcherIdle =
-        publishedAtUpdateFetcher.state === "idle";
+            setLiveLocalPublishedAt(new Date(value));
+        }) satisfies FormEventHandler<HTMLInputElement>,
 
-    const canDraft = isStateUpdateFetcherIdle && !isDraft;
-    const canPublish = isStateUpdateFetcherIdle && !isPublished;
-
-    const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
-    const isPublishedAtUpdateDisabled = !isPublishedAtUpdateFetcherIdle;
-
-    const localPublishedAt = publishedAtTimestamp
-        ? new Date(publishedAtTimestamp)
-        : null;
-
-    const localPublishedAtDateTime = localPublishedAt
-        ? toLocalISOString(localPublishedAt)
-        : null;
+        [setLiveLocalPublishedAt],
+    );
 
     return (
         <>
@@ -372,12 +390,23 @@ function SettingsCardPublishingView() {
                 <Field.Root>
                     <Field.Label>Published At</Field.Label>
 
-                    <Input
-                        disabled={isPublishedAtUpdateDisabled}
-                        type="datetime-local"
-                        value={localPublishedAtDateTime}
-                        onChange={onPublishedAtChange}
-                    />
+                    <Group alignSelf="stretch">
+                        <Input
+                            disabled={isPublishedAtFieldDisabled}
+                            type="datetime-local"
+                            defaultValue={localPublishedAtDateTime}
+                            flexGrow="1"
+                            onChange={onPublishedAtChange}
+                        />
+
+                        <Button
+                            disabled={isPublishedAtUpdateDisabled}
+                            colorPalette="green"
+                            onClick={onUpdatePublisheddAt}
+                        >
+                            Update Timestamp
+                        </Button>
+                    </Group>
                 </Field.Root>
             ) : undefined}
         </>

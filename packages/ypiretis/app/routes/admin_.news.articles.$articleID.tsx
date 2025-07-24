@@ -42,6 +42,7 @@ import MarkdownEditor from "~/components/common/markdown_editor";
 
 import Layout from "~/components/controlpanel/layout";
 import SectionCard from "~/components/controlpanel/section_card";
+import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
 
 import ArticleIcon from "~/components/icons/article_icon";
@@ -269,21 +270,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-function matchSettingsCardView(view: "actions" | "publishing" | "uploads") {
-    switch (view) {
-        case "actions":
-            return SettingsCardActionsView;
-
-        case "publishing":
-            return SettingsCardPublishingView;
-
-        case "uploads":
-            return SettingsCardUploadsView;
-    }
-}
-
 function SettingsCardActionsView() {
-    return <>settings card actions view unda construction</>;
+    return (
+        <TabbedSectionCard.View title="Actions">
+            settings card actions view unda construction
+        </TabbedSectionCard.View>
+    );
 }
 
 function SettingsCardPublishingView() {
@@ -375,7 +367,7 @@ function SettingsCardPublishingView() {
     );
 
     return (
-        <>
+        <TabbedSectionCard.View title="Publishing">
             <RadioCard.Root
                 variant="surface"
                 orientation="vertical"
@@ -445,89 +437,34 @@ function SettingsCardPublishingView() {
                     </Group>
                 </Field.Root>
             ) : undefined}
-        </>
+        </TabbedSectionCard.View>
     );
 }
 
 function SettingsCardUploadsView() {
-    return <>settings card uploads view unda construction</>;
+    return (
+        <TabbedSectionCard.View title="Uploads">
+            settings card uploads view unda construction
+        </TabbedSectionCard.View>
+    );
 }
 
 function SettingsCard() {
-    const [selectedView, setSelectedView] = useState<
-        "actions" | "publishing" | "uploads"
-    >("actions");
-
-    const onViewSelected = useCallback(
-        ((details) => {
-            const {value} = details;
-
-            setSelectedView(value as "actions" | "publishing" | "uploads");
-        }) satisfies (details: SegmentGroupValueChangeDetails) => void,
-
-        [setSelectedView],
-    );
-
-    const SelectedView = matchSettingsCardView(selectedView);
-
     return (
-        <SectionCard.Root flexGrow="1">
-            <SectionCard.Body>
-                <SectionCard.Title>
+        <TabbedSectionCard.Root flexGrow="1">
+            <TabbedSectionCard.Body>
+                <TabbedSectionCard.Title>
                     Settings
                     <Spacer />
-                    <SegmentGroup.Root
-                        value={selectedView}
-                        size="sm"
-                        fontWeight="normal"
-                        onValueChange={onViewSelected}
-                    >
-                        <SegmentGroup.Indicator bg="bg" />
-
-                        <SegmentGroup.Item value="actions">
-                            <SegmentGroup.ItemText
-                                color={
-                                    selectedView === "actions"
-                                        ? "cyan.fg"
-                                        : undefined
-                                }
-                            >
-                                Actions
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-
-                        <SegmentGroup.Item value="publishing">
-                            <SegmentGroup.ItemText
-                                color={
-                                    selectedView === "publishing"
-                                        ? "cyan.fg"
-                                        : undefined
-                                }
-                            >
-                                Publishing
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-
-                        <SegmentGroup.Item value="uploads">
-                            <SegmentGroup.ItemText
-                                color={
-                                    selectedView === "uploads"
-                                        ? "cyan.fg"
-                                        : undefined
-                                }
-                            >
-                                Uploads
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-                    </SegmentGroup.Root>
+                    <TabbedSectionCard.Tabs />
                     <SlidersIcon />
-                </SectionCard.Title>
-                <SelectedView />
-            </SectionCard.Body>
-        </SectionCard.Root>
+                </TabbedSectionCard.Title>
+
+                <SettingsCardActionsView />
+                <SettingsCardPublishingView />
+                <SettingsCardUploadsView />
+            </TabbedSectionCard.Body>
+        </TabbedSectionCard.Root>
     );
 }
 

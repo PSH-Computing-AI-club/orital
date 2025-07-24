@@ -1,3 +1,5 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import type {
     SegmentGroupValueChangeDetails,
     RadioCardValueChangeDetails,
@@ -123,7 +125,25 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "state.update": {
             const {state} = actionFormData;
 
-            console.log({state});
+            try {
+                const publishedAt =
+                    state === ARTICLE_STATES.draft
+                        ? null
+                        : Temporal.Now.instant();
+
+                await updateOneByArticleID(articleID, {
+                    publishedAt,
+                    state,
+                });
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
         }
     }
 }

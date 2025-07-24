@@ -19,7 +19,7 @@ const TabbedSectionCardContext =
 interface ITabbedSectionCardContext {
     readonly selectedTab: string | null;
 
-    readonly tabs: string[];
+    readonly tabs: Set<string>;
 
     setSelectedTab(title: string | null): void;
 
@@ -87,7 +87,7 @@ function TabbedSectionCardTabs() {
         >
             <SegmentGroup.Indicator bg="bg" />
 
-            {tabs.map((tabTitle) => {
+            {Array.from(tabs).map((tabTitle) => {
                 const isTabSelected = selectedTab === tabTitle;
 
                 return (
@@ -114,12 +114,16 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
     const {children, ...rest} = props;
 
     const [selectedTab, setSelectedTab] = useState<string | null>(null);
-    const [tabs, setTabs] = useState<string[]>([]);
+    const [tabs, setTabs] = useState<Set<string>>(new Set());
 
     const registerTab = useCallback(
         ((title) => {
             setTabs((previousTabs) => {
-                return [...previousTabs, title];
+                const newTabs = new Set(previousTabs);
+
+                newTabs.add(title);
+
+                return newTabs;
             });
 
             setSelectedTab((selectedTitle) => {
@@ -132,11 +136,13 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
 
     const unregisterTab = useCallback(
         ((title) => {
-            setTabs((registeredTabs) =>
-                registeredTabs.filter((registeredTitle) => {
-                    return registeredTitle !== title;
-                }),
-            );
+            setTabs((previousTabs) => {
+                const newTabs = new Set(previousTabs);
+
+                newTabs.delete(title);
+
+                return newTabs;
+            });
         }) satisfies ITabbedSectionCardContext["unregisterTab"],
 
         [setTabs],
@@ -151,7 +157,7 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
     } satisfies ITabbedSectionCardContext;
 
     useEffect(() => {
-        if (selectedTab && !tabs.includes(selectedTab)) {
+        if (selectedTab && !tabs.has(selectedTab)) {
             const [firstTab] = tabs;
 
             setSelectedTab(firstTab ?? null);

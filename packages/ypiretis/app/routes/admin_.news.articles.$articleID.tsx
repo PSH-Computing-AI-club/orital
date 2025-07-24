@@ -70,8 +70,19 @@ const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     ),
 });
 
+const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("publishedAt.update")),
+
+    publishedAtTimestamp: v.pipe(
+        v.string(),
+        v.transform((value) => Number(value)),
+        v.number(),
+    ),
+});
+
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
 
@@ -125,6 +136,29 @@ export async function action(actionArgs: Route.ActionArgs) {
             break;
         }
 
+        case "publishedAt.update": {
+            const {publishedAtTimestamp} = actionFormData;
+
+            const publishedAt =
+                Temporal.Instant.fromEpochMilliseconds(publishedAtTimestamp);
+
+            try {
+                await updateOneByArticleID(articleID, {
+                    publishedAt,
+                });
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
+
+            break;
+        }
+
         case "state.update": {
             const {state} = actionFormData;
 
@@ -147,6 +181,8 @@ export async function action(actionArgs: Route.ActionArgs) {
 
                 throw error;
             }
+
+            break;
         }
     }
 }

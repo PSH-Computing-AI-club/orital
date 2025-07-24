@@ -584,6 +584,14 @@ function ContentCard() {
                 <SectionCard.Title>
                     Content
                     <Spacer />
+                    <Button
+                        disabled={isContentUpdateDisabled}
+                        colorPalette="green"
+                        size="sm"
+                        onClick={onContentUpdateClick}
+                    >
+                        Update Content
+                    </Button>
                     <ArticleIcon />
                 </SectionCard.Title>
 
@@ -596,17 +604,6 @@ function ContentCard() {
                     onMarkdownChange={onMarkdownChange}
                 />
             </SectionCard.Body>
-
-            <SectionCard.Footer>
-                <Spacer />
-                <Button
-                    disabled={isContentUpdateDisabled}
-                    colorPalette="green"
-                    onClick={onContentUpdateClick}
-                >
-                    Update Content
-                </Button>
-            </SectionCard.Footer>
         </SectionCard.Root>
     );
 }

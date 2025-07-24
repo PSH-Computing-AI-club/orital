@@ -15,7 +15,7 @@ import {
     findAll,
     insertOne,
 } from "~/.server/services/articles_service";
-import {requireAuthenticatedSession} from "~/.server/services/users_service";
+import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
@@ -60,14 +60,10 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
-    const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
-    const {id: userID, isAdmin} = user;
+    const {identifiable: user} =
+        await requireAuthenticatedAdminSession(actionArgs);
 
-    if (!isAdmin) {
-        throw data("Unauthorized", {
-            status: 401,
-        });
-    }
+    const {id: userID} = user;
 
     switch (action) {
         case "create": {

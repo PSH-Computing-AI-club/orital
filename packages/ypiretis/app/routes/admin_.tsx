@@ -1,10 +1,10 @@
 import {Spacer, Strong, Text} from "@chakra-ui/react";
 
-import {Outlet, data} from "react-router";
+import {Outlet} from "react-router";
 
 import {
     mapPublicUser,
-    requireAuthenticatedSession,
+    requireAuthenticatedAdminSession,
 } from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
@@ -28,15 +28,8 @@ export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
 clientLoader.hydrate = true as const;
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    const {identifiable: user} = await requireAuthenticatedSession(loaderArgs);
-
-    const {isAdmin} = user;
-
-    if (!isAdmin) {
-        throw data("Unauthorized", {
-            status: 401,
-        });
-    }
+    const {identifiable: user} =
+        await requireAuthenticatedAdminSession(loaderArgs);
 
     const publicUser = mapPublicUser(user);
 

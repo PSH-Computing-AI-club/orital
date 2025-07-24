@@ -29,7 +29,7 @@ import {
     findOneByArticleID,
     updateOneByArticleID,
 } from "~/.server/services/articles_service";
-import {requireAuthenticatedSession} from "~/.server/services/users_service";
+import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
@@ -106,14 +106,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {action} = actionFormData;
 
-    const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
-    const {isAdmin} = user;
-
-    if (!isAdmin) {
-        throw data("Unauthorized", {
-            status: 401,
-        });
-    }
+    await requireAuthenticatedAdminSession(actionArgs);
 
     switch (action) {
         case "content.update": {

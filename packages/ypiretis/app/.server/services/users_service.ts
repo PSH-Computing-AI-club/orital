@@ -1,6 +1,13 @@
 import {eq} from "drizzle-orm";
 
-import type {SessionData} from "react-router";
+import type {
+    ActionFunctionArgs,
+    ClientActionFunctionArgs,
+    ClientLoaderFunctionArgs,
+    LoaderFunctionArgs,
+    SessionData,
+} from "react-router";
+import {data} from "react-router";
 
 import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
@@ -27,18 +34,6 @@ export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-export function mapUser(user: ISelectUser): IUser {
-    const {accountID} = user;
-
-    const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);
-
-    return {
-        ...user,
-
-        isAdmin,
-    };
-}
-
 const sessionGuard = makeSessionGuard(
     USERS_TABLE,
     persistentSession,
@@ -56,6 +51,18 @@ export const requireAuthenticatedSession =
     sessionGuard.requireAuthenticatedSession;
 
 export const requireGuestSession = sessionGuard.requireGuestSession;
+
+export function mapUser(user: ISelectUser): IUser {
+    const {accountID} = user;
+
+    const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);
+
+    return {
+        ...user,
+
+        isAdmin,
+    };
+}
 
 export async function findOne(userID: number): Promise<IUser | null> {
     const user = await DATABASE.query.users.findFirst({
@@ -92,4 +99,24 @@ export function mapPublicUser(user: IUser): IPublicUser {
         lastName,
         isAdmin,
     };
+}
+
+export async function requireAuthenticatedAdminSession(
+    requestArgs:
+        | ActionFunctionArgs
+        | ClientActionFunctionArgs
+        | ClientLoaderFunctionArgs
+        | LoaderFunctionArgs,
+): Extract<ReturnType<typeof requireAuthenticatedSession>, Promise<unknown>> {
+    const session = await requireAuthenticatedSession(requestArgs);
+
+    const {isAdmin} = session.identifiable;
+
+    if (!isAdmin) {
+        throw data("Unauthorized", {
+            status: 401,
+        });
+    }
+
+    return session;
 }

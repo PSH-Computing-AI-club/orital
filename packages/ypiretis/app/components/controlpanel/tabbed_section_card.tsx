@@ -62,7 +62,7 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
         };
     }, [registerTab, title, unregisterTab]);
 
-    return selectedTab === title ? <>{children}</> : null;
+    return selectedTab === title ? children : null;
 }
 
 function TabbedSectionCardTabs() {

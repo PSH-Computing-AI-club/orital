@@ -17,7 +17,7 @@ import {
     Spacer,
 } from "@chakra-ui/react";
 
-import type {MouseEventHandler} from "react";
+import type {FormEventHandler, MouseEventHandler} from "react";
 import {useCallback, useState} from "react";
 
 import {data, useLoaderData, useFetcher} from "react-router";
@@ -262,6 +262,7 @@ function SettingsCardPublishingView() {
     const {publishedAtTimestamp, state} = article;
 
     const stateUpdateFetcher = useFetcher();
+    const publishedAtUpdateFetcher = useFetcher();
 
     const onStateChange = useCallback(
         (async (details) => {
@@ -282,20 +283,47 @@ function SettingsCardPublishingView() {
         [stateUpdateFetcher],
     );
 
+    const onPublishedAtChange = useCallback(
+        (async (event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
+
+            const newLocalPublishedAt = new Date(value);
+            const newPublishedAtTimestamp = newLocalPublishedAt.getTime();
+
+            await publishedAtUpdateFetcher.submit(
+                {
+                    action: "publishedAt.update",
+                    publishedAtTimestamp: newPublishedAtTimestamp,
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+        }) satisfies FormEventHandler<HTMLInputElement>,
+
+        [publishedAtUpdateFetcher],
+    );
+
     const isDraft = state === "STATE_DRAFT";
     const isPublished = state === "STATE_PUBLISHED";
+
     const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
+    const isPublishedAtUpdateFetcherIdle =
+        publishedAtUpdateFetcher.state === "idle";
 
     const canDraft = isStateUpdateFetcherIdle && !isDraft;
     const canPublish = isStateUpdateFetcherIdle && !isPublished;
 
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
+    const isPublishedAtUpdateDisabled = !isPublishedAtUpdateFetcherIdle;
 
     const localPublishedAt = publishedAtTimestamp
         ? new Date(publishedAtTimestamp)
         : null;
 
-    const localPublishedAtTimestmap = localPublishedAt
+    const localPublishedAtDateTime = localPublishedAt
         ? toLocalISOString(localPublishedAt)
         : null;
 
@@ -347,13 +375,15 @@ function SettingsCardPublishingView() {
                 </HStack>
             </RadioCard.Root>
 
-            {localPublishedAtTimestmap ? (
+            {localPublishedAtDateTime ? (
                 <Field.Root>
                     <Field.Label>Published At</Field.Label>
 
                     <Input
+                        disabled={isPublishedAtUpdateDisabled}
                         type="datetime-local"
-                        value={localPublishedAtTimestmap}
+                        value={localPublishedAtDateTime}
+                        onChange={onPublishedAtChange}
                     />
                 </Field.Root>
             ) : undefined}

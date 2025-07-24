@@ -247,6 +247,7 @@ function SettingsCardPublishingView() {
     const canDraft = isStateUpdateFetcherIdle && !isDraft;
     const canPublish = isStateUpdateFetcherIdle && !isPublished;
 
+    const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
     return (
         <>
             <RadioCard.Root
@@ -260,11 +261,13 @@ function SettingsCardPublishingView() {
 
                 <HStack justifyContent="stretch">
                     <RadioCard.Item
+                        disabled={isStateUpdateDisabled}
                         value="STATE_DRAFT"
                         colorPalette="red"
                         cursor={canDraft ? "pointer" : "disabled"}
                     >
                         <RadioCard.ItemHiddenInput />
+
                         <RadioCard.ItemControl>
                             <Icon fontSize="2xl">
                                 <EyeClosedIcon />
@@ -275,11 +278,13 @@ function SettingsCardPublishingView() {
                     </RadioCard.Item>
 
                     <RadioCard.Item
+                        disabled={isStateUpdateDisabled}
                         value="STATE_PUBLISHED"
                         colorPalette="green"
                         cursor={canPublish ? "pointer" : "disabled"}
                     >
                         <RadioCard.ItemHiddenInput />
+
                         <RadioCard.ItemControl>
                             <Icon fontSize="2xl">
                                 <EyeIcon />

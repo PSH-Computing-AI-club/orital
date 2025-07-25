@@ -17,27 +17,33 @@ export interface IRadioCardGroupRootProps extends RadioCardRootProps {}
 function RadioCardGroupOption(props: IRadioCardGroupOptionProps) {
     const {colorPalette = "current", icon, label, value, ...rest} = props;
 
-    const {getRootProps, value: selectedValue} = useRadioCardContext();
-    const disabled = getRootProps()["aria-disabled"];
-
-    const isActive = selectedValue === value;
-    const canSetCursor = !disabled && !isActive;
-
-    const cursor = isActive ? "default" : "pointer";
+    const {getRootProps} = useRadioCardContext();
+    const isDisabled =
+        typeof (getRootProps() as {["data-disabled"]: string | undefined})[
+            "data-disabled"
+        ] === "string";
 
     return (
         <RadioCard.Item
+            disabled={isDisabled}
             value={value}
             colorPalette={colorPalette}
-            borderColor={isActive ? undefined : `${colorPalette}.solid`}
-            cursor={canSetCursor ? cursor : undefined}
+            css={{
+                "&[data-disabled]": {
+                    cursor: "disabled",
+                },
+
+                "&:not([data-disabled])[data-state=unchecked]": {
+                    borderColor: `${colorPalette}.solid`,
+                    cursor: "pointer",
+                    color: `${colorPalette}.fg`,
+                },
+            }}
             {...rest}
         >
             <RadioCard.ItemHiddenInput />
 
-            <RadioCard.ItemControl
-                color={isActive ? undefined : `${colorPalette}.fg`}
-            >
+            <RadioCard.ItemControl color="currentcolor">
                 {icon ? <Icon fontSize="2xl">{icon}</Icon> : undefined}
 
                 <RadioCard.ItemText flexGrow="unset">

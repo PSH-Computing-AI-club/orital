@@ -787,7 +787,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {room} = usePresenterContext();
     const {state, title} = room;
 
-    const [isFetchingAction, onTitleCommit] = useAsyncCallback(
+    const [isFetchingAction, onTitleChange] = useAsyncCallback(
         (async (details) => {
             const {value: newTitle} = details;
 
@@ -807,7 +807,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
         [],
     );
 
-    const onTitleIsValid = useCallback(
+    const onTitleValidate = useCallback(
         ((details) => {
             const {value: newTitle} = details;
             const {success} = v.safeParse(UX_TITLE_SCHEMA, newTitle);
@@ -830,8 +830,8 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                     disabled={isActionDisabled}
                     title={title}
                     maxLength={32}
-                    onTitleCommit={onTitleCommit}
-                    onTitleIsValid={onTitleIsValid}
+                    onCommit={onTitleChange}
+                    onValidate={onTitleValidate}
                 />
             )}
 

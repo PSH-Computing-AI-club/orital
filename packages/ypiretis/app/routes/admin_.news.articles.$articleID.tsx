@@ -616,7 +616,7 @@ function ArticleTitle() {
     const isTitleUpdateFetcherIdle = titleUpdateFetcher.state === "idle";
     const isTitleUpdateDisabled = !isTitleUpdateFetcherIdle;
 
-    const onTitleCommit = useCallback(
+    const onTitleChange = useCallback(
         (async (details) => {
             const {value} = details;
 
@@ -639,7 +639,7 @@ function ArticleTitle() {
         [title, titleUpdateFetcher],
     );
 
-    const onTitleIsValid = useCallback(
+    const onValidateTitle = useCallback(
         ((details) => {
             const {value} = details;
             const {success} = v.safeParse(UX_TITLE_SCHEMA, value);
@@ -655,8 +655,8 @@ function ArticleTitle() {
             disabled={isTitleUpdateDisabled}
             title={title}
             maxLength={64}
-            onTitleCommit={onTitleCommit}
-            onTitleIsValid={onTitleIsValid}
+            onCommit={onTitleChange}
+            onValidate={onValidateTitle}
         />
     );
 }

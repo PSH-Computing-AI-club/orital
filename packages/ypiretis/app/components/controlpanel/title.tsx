@@ -23,16 +23,16 @@ export interface ITitleEditableProps extends ITitleProps {
 
     readonly maxLength?: number;
 
-    readonly onTitleCommit: (details: EditableValueChangeDetails) => void;
+    readonly onCommit: (details: EditableValueChangeDetails) => void;
 
-    readonly onTitleIsValid?: (details: EditableValueChangeDetails) => boolean;
+    readonly onValidate?: (details: EditableValueChangeDetails) => boolean;
 }
 
 function TitleEditable(props: ITitleEditableProps) {
     const {
         disabled = false,
-        onTitleCommit,
-        onTitleIsValid,
+        onCommit,
+        onValidate,
         maxLength,
         title,
         ...rest
@@ -54,13 +54,13 @@ function TitleEditable(props: ITitleEditableProps) {
     }
 
     function onValueChange(details: EditableValueChangeDetails): void {
-        setIsValid(onTitleIsValid!(details));
+        setIsValid(onValidate!(details));
 
         setValue(details.value);
     }
 
     function onValueCommit(_details: EditableValueChangeDetails): void {
-        onTitleCommit({value});
+        onCommit({value});
     }
 
     return (
@@ -80,7 +80,7 @@ function TitleEditable(props: ITitleEditableProps) {
                     fontSize="inherit"
                     lineHeight="inherit"
                     onEditChange={onEditChange}
-                    onValueChange={onTitleIsValid ? onValueChange : undefined}
+                    onValueChange={onValidate ? onValueChange : undefined}
                     onValueCommit={onValueCommit}
                 >
                     <Editable.Preview />

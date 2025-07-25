@@ -268,6 +268,79 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
+function ContentCard() {
+    const {article} = useLoaderData<typeof loader>();
+
+    const {content: loaderContent} = article;
+
+    const contentUpdateFetcher = useFetcher();
+    const [liveContent, setLiveContent] = useState<string>(loaderContent);
+
+    const onContentUpdateClick = useCallback(
+        (async (_event) => {
+            await contentUpdateFetcher.submit(
+                {
+                    action: "content.update",
+                    content: liveContent,
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [contentUpdateFetcher, liveContent],
+    );
+
+    const onMarkdownChange = useCallback(
+        ((markdown, initialMarkdownNormalize) => {
+            if (initialMarkdownNormalize) {
+                return;
+            }
+
+            setLiveContent(markdown);
+        }) satisfies IChangeCallback,
+
+        [setLiveContent],
+    );
+
+    const isLiveContentDirty = liveContent !== loaderContent;
+    const isContentUpdateFetcherIdle = contentUpdateFetcher.state === "idle";
+
+    const isContentUpdateDisabled =
+        !isContentUpdateFetcherIdle || !isLiveContentDirty;
+
+    return (
+        <SectionCard.Root flexGrow="1">
+            <SectionCard.Body>
+                <SectionCard.Title>
+                    Content
+                    <Spacer />
+                    <Button
+                        disabled={isContentUpdateDisabled}
+                        colorPalette="green"
+                        size="sm"
+                        onClick={onContentUpdateClick}
+                    >
+                        Update Content
+                    </Button>
+                    <ArticleIcon />
+                </SectionCard.Title>
+
+                <MarkdownEditor
+                    markdown={loaderContent}
+                    flexGrow="1"
+                    height="0"
+                    overflowX="hidden"
+                    overflowY="auto"
+                    onMarkdownChange={onMarkdownChange}
+                />
+            </SectionCard.Body>
+        </SectionCard.Root>
+    );
+}
+
 function SettingsCardActionsView() {
     return (
         <TabbedSectionCard.View label="Actions">
@@ -528,79 +601,6 @@ function OverviewCard() {
                         </DataList.ItemValue>
                     </DataList.Item>
                 </DataList.Root>
-            </SectionCard.Body>
-        </SectionCard.Root>
-    );
-}
-
-function ContentCard() {
-    const {article} = useLoaderData<typeof loader>();
-
-    const {content: loaderContent} = article;
-
-    const contentUpdateFetcher = useFetcher();
-    const [liveContent, setLiveContent] = useState<string>(loaderContent);
-
-    const onContentUpdateClick = useCallback(
-        (async (_event) => {
-            await contentUpdateFetcher.submit(
-                {
-                    action: "content.update",
-                    content: liveContent,
-                } satisfies IActionFormDataSchema,
-
-                {
-                    method: "POST",
-                },
-            );
-        }) satisfies MouseEventHandler<HTMLButtonElement>,
-
-        [contentUpdateFetcher, liveContent],
-    );
-
-    const onMarkdownChange = useCallback(
-        ((markdown, initialMarkdownNormalize) => {
-            if (initialMarkdownNormalize) {
-                return;
-            }
-
-            setLiveContent(markdown);
-        }) satisfies IChangeCallback,
-
-        [setLiveContent],
-    );
-
-    const isLiveContentDirty = liveContent !== loaderContent;
-    const isContentUpdateFetcherIdle = contentUpdateFetcher.state === "idle";
-
-    const isContentUpdateDisabled =
-        !isContentUpdateFetcherIdle || !isLiveContentDirty;
-
-    return (
-        <SectionCard.Root flexGrow="1">
-            <SectionCard.Body>
-                <SectionCard.Title>
-                    Content
-                    <Spacer />
-                    <Button
-                        disabled={isContentUpdateDisabled}
-                        colorPalette="green"
-                        size="sm"
-                        onClick={onContentUpdateClick}
-                    >
-                        Update Content
-                    </Button>
-                    <ArticleIcon />
-                </SectionCard.Title>
-
-                <MarkdownEditor
-                    markdown={loaderContent}
-                    flexGrow="1"
-                    height="0"
-                    overflowX="hidden"
-                    overflowY="auto"
-                    onMarkdownChange={onMarkdownChange}
-                />
             </SectionCard.Body>
         </SectionCard.Root>
     );

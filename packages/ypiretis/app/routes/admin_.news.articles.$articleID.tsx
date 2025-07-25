@@ -419,29 +419,29 @@ function SettingsCardPublishingView() {
                 </RadioCard.Root>
             </Field.Root>
 
-            {localPublishedAtDateTime ? (
-                <Field.Root>
-                    <Field.Label>Published At</Field.Label>
+            <Field.Root
+                visibility={localPublishedAtDateTime ? "hidden" : undefined}
+            >
+                <Field.Label>Published At</Field.Label>
 
-                    <Group alignSelf="stretch">
-                        <Input
-                            disabled={isPublishedAtFieldDisabled}
-                            type="datetime-local"
-                            defaultValue={localPublishedAtDateTime}
-                            flexGrow="1"
-                            onChange={onPublishedAtChange}
-                        />
+                <Group alignSelf="stretch">
+                    <Input
+                        disabled={isPublishedAtFieldDisabled}
+                        type="datetime-local"
+                        defaultValue={localPublishedAtDateTime ?? ""}
+                        flexGrow="1"
+                        onChange={onPublishedAtChange}
+                    />
 
-                        <Button
-                            disabled={isPublishedAtUpdateDisabled}
-                            colorPalette="green"
-                            onClick={onUpdatePublisheddAt}
-                        >
-                            Update Timestamp
-                        </Button>
-                    </Group>
-                </Field.Root>
-            ) : undefined}
+                    <Button
+                        disabled={isPublishedAtUpdateDisabled}
+                        colorPalette="green"
+                        onClick={onUpdatePublisheddAt}
+                    >
+                        Update Timestamp
+                    </Button>
+                </Group>
+            </Field.Root>
         </TabbedSectionCard.View>
     );
 }

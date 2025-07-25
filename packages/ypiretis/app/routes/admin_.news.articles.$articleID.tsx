@@ -333,6 +333,17 @@ function SettingsCardPublishingView() {
         [stateUpdateFetcher],
     );
 
+    const onPublishedAtChange = useCallback(
+        ((event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
+
+            setLiveLocalPublishedAt(new Date(value));
+        }) satisfies FormEventHandler<HTMLInputElement>,
+
+        [setLiveLocalPublishedAt],
+    );
+
     const onUpdatePublisheddAt = useCallback(
         (async (_event) => {
             if (!liveLocalPublishedAt) {
@@ -352,17 +363,6 @@ function SettingsCardPublishingView() {
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
         [liveLocalPublishedAt, publishedAtUpdateFetcher],
-    );
-
-    const onPublishedAtChange = useCallback(
-        ((event) => {
-            const {target} = event;
-            const {value} = target as HTMLInputElement;
-
-            setLiveLocalPublishedAt(new Date(value));
-        }) satisfies FormEventHandler<HTMLInputElement>,
-
-        [setLiveLocalPublishedAt],
     );
 
     useEffect(() => {

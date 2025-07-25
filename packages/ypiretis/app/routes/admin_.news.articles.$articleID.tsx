@@ -313,7 +313,9 @@ function SettingsCardPublishingView() {
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
     const isPublishedAtFieldDisabled = !isPublishedAtUpdateFetcherIdle;
     const isPublishedAtUpdateDisabled =
-        !isPublishedAtUpdateFetcherIdle || !isLiveLocalPublishedAtDirty;
+        isDraft ||
+        !isPublishedAtUpdateFetcherIdle ||
+        !isLiveLocalPublishedAtDirty;
 
     const onStateChange = useCallback(
         (async (details) => {

@@ -40,6 +40,7 @@ function ContentSectionProse(props: IContentSectionProseProps) {
         <Prose
             marginInline="auto"
             padding="6"
+            inlineSize="full"
             bg="bg.panel"
             borderColor="border"
             borderStyle="solid"

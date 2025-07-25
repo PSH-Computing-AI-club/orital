@@ -244,7 +244,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         ? formatZonedDateTime(zonedPublishedAt)
         : null;
 
-    const publishedAtTimestamp = publishedAt?.epochMilliseconds;
+    const publishedAtTimestamp = publishedAt?.epochMilliseconds ?? null;
 
     const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 

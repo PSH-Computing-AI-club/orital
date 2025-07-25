@@ -559,7 +559,9 @@ function OverviewCard() {
                 <DataList.Root orientation="horizontal">
                     <DataList.Item>
                         <DataList.ItemLabel>Article ID</DataList.ItemLabel>
-                        <DataList.ItemValue>{articleID}</DataList.ItemValue>
+                        <DataList.ItemValue>
+                            <Code>{articleID}</Code>
+                        </DataList.ItemValue>
                     </DataList.Item>
 
                     <DataList.Item>

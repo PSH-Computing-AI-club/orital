@@ -546,6 +546,137 @@ function AttendeesCard() {
     );
 }
 
+function StateCardButton(props: ButtonProps & {active?: boolean}) {
+    const {
+        active = false,
+        blockSize = "full",
+        children,
+        flexDirection = "column",
+        fontWeight = "bold",
+        gap = "2",
+        size = {base: "lg", xlDown: "md", lgDown: "sm"},
+        ...rest
+    } = props;
+
+    return (
+        <Button
+            variant={active ? "solid" : "ghost"}
+            size={size}
+            flexDirection={flexDirection}
+            fontWeight={fontWeight}
+            gap={gap}
+            blockSize={blockSize}
+            {...rest}
+        >
+            {children}
+        </Button>
+    );
+}
+
+function StateCardIcon(props: PropsWithChildren) {
+    const {children} = props;
+
+    return (
+        <Box width="2.5em" height="2.5em" asChild>
+            {children}
+        </Box>
+    );
+}
+
+function StateCard() {
+    const {room} = usePresenterContext();
+    const {state} = room;
+
+    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const canFetchAction = !(isDisposed || fetchingAction);
+
+    function makeStateActionEventHandler(
+        newState: Exclude<IRoomStates, "STATE_DISPOSED">,
+    ): (
+        event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    ) => Promise<void> {
+        return async (_event) => {
+            if (state === newState) {
+                return;
+            }
+
+            setFetchingAction(true);
+
+            await fetch("./presenter/actions/room", {
+                method: "POST",
+                body: buildFormData<IRoomActionFormData>({
+                    action: "state.update",
+                    state: newState,
+                }),
+            });
+
+            setFetchingAction(false);
+        };
+    }
+
+    const onLockedStateClick = makeStateActionEventHandler("STATE_LOCKED");
+    const onUnlockedStateClick = makeStateActionEventHandler("STATE_UNLOCKED");
+    const onPermissiveStateClick =
+        makeStateActionEventHandler("STATE_PERMISSIVE");
+
+    return (
+        <SectionCard.Root flexGrow="1">
+            <SectionCard.Body>
+                <SectionCard.Title>
+                    Room State
+                    <Spacer />
+                    <ShieldIcon />
+                </SectionCard.Title>
+
+                <SimpleGrid
+                    columns={3}
+                    gap="2"
+                    justifyContent="space-around"
+                    blockSize="full"
+                >
+                    <StateCardButton
+                        active={state === "STATE_LOCKED"}
+                        disabled={!canFetchAction}
+                        colorPalette="red"
+                        onClick={onLockedStateClick}
+                    >
+                        <StateCardIcon>
+                            <LockIcon />
+                        </StateCardIcon>
+                        Locked
+                    </StateCardButton>
+
+                    <StateCardButton
+                        active={state === "STATE_UNLOCKED"}
+                        disabled={!canFetchAction}
+                        colorPalette="green"
+                        onClick={onUnlockedStateClick}
+                    >
+                        <StateCardIcon>
+                            <LockOpenIcon />
+                        </StateCardIcon>
+                        Unlocked
+                    </StateCardButton>
+
+                    <StateCardButton
+                        active={state === "STATE_PERMISSIVE"}
+                        disabled={!canFetchAction}
+                        colorPalette="yellow"
+                        onClick={onPermissiveStateClick}
+                    >
+                        <StateCardIcon>
+                            <NotificationIcon />
+                        </StateCardIcon>
+                        Permissive
+                    </StateCardButton>
+                </SimpleGrid>
+            </SectionCard.Body>
+        </SectionCard.Root>
+    );
+}
+
 function PINCard() {
     const {room} = usePresenterContext();
     const {pin, roomID, state} = room;
@@ -686,137 +817,6 @@ function PINCard() {
                     <CopyIcon />
                 </IconButton>
             </SectionCard.Footer>
-        </SectionCard.Root>
-    );
-}
-
-function StateCardButton(props: ButtonProps & {active?: boolean}) {
-    const {
-        active = false,
-        blockSize = "full",
-        children,
-        flexDirection = "column",
-        fontWeight = "bold",
-        gap = "2",
-        size = {base: "lg", xlDown: "md", lgDown: "sm"},
-        ...rest
-    } = props;
-
-    return (
-        <Button
-            variant={active ? "solid" : "ghost"}
-            size={size}
-            flexDirection={flexDirection}
-            fontWeight={fontWeight}
-            gap={gap}
-            blockSize={blockSize}
-            {...rest}
-        >
-            {children}
-        </Button>
-    );
-}
-
-function StateCardIcon(props: PropsWithChildren) {
-    const {children} = props;
-
-    return (
-        <Box width="2.5em" height="2.5em" asChild>
-            {children}
-        </Box>
-    );
-}
-
-function StateCard() {
-    const {room} = usePresenterContext();
-    const {state} = room;
-
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
-
-    const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
-
-    function makeStateActionEventHandler(
-        newState: Exclude<IRoomStates, "STATE_DISPOSED">,
-    ): (
-        event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ) => Promise<void> {
-        return async (_event) => {
-            if (state === newState) {
-                return;
-            }
-
-            setFetchingAction(true);
-
-            await fetch("./presenter/actions/room", {
-                method: "POST",
-                body: buildFormData<IRoomActionFormData>({
-                    action: "state.update",
-                    state: newState,
-                }),
-            });
-
-            setFetchingAction(false);
-        };
-    }
-
-    const onLockedStateClick = makeStateActionEventHandler("STATE_LOCKED");
-    const onUnlockedStateClick = makeStateActionEventHandler("STATE_UNLOCKED");
-    const onPermissiveStateClick =
-        makeStateActionEventHandler("STATE_PERMISSIVE");
-
-    return (
-        <SectionCard.Root flexGrow="1">
-            <SectionCard.Body>
-                <SectionCard.Title>
-                    Room State
-                    <Spacer />
-                    <ShieldIcon />
-                </SectionCard.Title>
-
-                <SimpleGrid
-                    columns={3}
-                    gap="2"
-                    justifyContent="space-around"
-                    blockSize="full"
-                >
-                    <StateCardButton
-                        active={state === "STATE_LOCKED"}
-                        disabled={!canFetchAction}
-                        colorPalette="red"
-                        onClick={onLockedStateClick}
-                    >
-                        <StateCardIcon>
-                            <LockIcon />
-                        </StateCardIcon>
-                        Locked
-                    </StateCardButton>
-
-                    <StateCardButton
-                        active={state === "STATE_UNLOCKED"}
-                        disabled={!canFetchAction}
-                        colorPalette="green"
-                        onClick={onUnlockedStateClick}
-                    >
-                        <StateCardIcon>
-                            <LockOpenIcon />
-                        </StateCardIcon>
-                        Unlocked
-                    </StateCardButton>
-
-                    <StateCardButton
-                        active={state === "STATE_PERMISSIVE"}
-                        disabled={!canFetchAction}
-                        colorPalette="yellow"
-                        onClick={onPermissiveStateClick}
-                    >
-                        <StateCardIcon>
-                            <NotificationIcon />
-                        </StateCardIcon>
-                        Permissive
-                    </StateCardButton>
-                </SimpleGrid>
-            </SectionCard.Body>
         </SectionCard.Root>
     );
 }

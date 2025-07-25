@@ -26,7 +26,7 @@
     inset-block-start: 0;
 }
 
-.markdown-editor--toolbar {
+.markdown-editor .markdown-editor--toolbar {
     background-color: var(--chakra-colors-bg-muted);
     color: var(--chakra-colors-fg);
 }

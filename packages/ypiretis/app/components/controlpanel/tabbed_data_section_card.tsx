@@ -49,7 +49,9 @@ export interface ITabbedDataSectionCardRootProps extends ISectionCardRootProps {
     readonly children: ReactNode;
 }
 
-function useTabbedDataSectionCard<T>(): ITabbedDataSectionCardContext<T> {
+function useTabbedDataSectionCardContext<
+    T,
+>(): ITabbedDataSectionCardContext<T> {
     const context = useContext(
         TabbedDataSectionCardContext,
     ) as ITabbedDataSectionCardContext<T> | null;
@@ -67,7 +69,7 @@ function TabbedDataSectionCardView<T>(
     props: ITabbedDataSectionCardViewProps<T>,
 ) {
     const {children} = props;
-    const {selectedTab, tabs} = useTabbedDataSectionCard<T>();
+    const {selectedTab, tabs} = useTabbedDataSectionCardContext<T>();
 
     const provider = selectedTab ? tabs.get(selectedTab) : null;
     const data = provider ? provider() : null;
@@ -77,7 +79,7 @@ function TabbedDataSectionCardView<T>(
 
 function TabbedDataSectionCardTab<T>(props: ITabbedDataSectionCardTabProps<T>) {
     const {title, provider} = props;
-    const {registerTab, unregisterTab} = useTabbedDataSectionCard<T>();
+    const {registerTab, unregisterTab} = useTabbedDataSectionCardContext<T>();
 
     useEffect(() => {
         registerTab(title, provider);
@@ -91,7 +93,8 @@ function TabbedDataSectionCardTab<T>(props: ITabbedDataSectionCardTabProps<T>) {
 }
 
 function TabbedDataSectionCardTabs() {
-    const {selectedTab, setSelectedTab, tabs} = useTabbedDataSectionCard();
+    const {selectedTab, setSelectedTab, tabs} =
+        useTabbedDataSectionCardContext();
 
     const onTabSelected = useCallback(
         ((details) => {

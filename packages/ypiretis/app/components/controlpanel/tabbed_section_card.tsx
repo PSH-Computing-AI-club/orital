@@ -38,7 +38,7 @@ export interface ITabbedSectionCardRootProps extends ISectionCardRootProps {
     readonly children: ReactNode;
 }
 
-function useTabbedSectionCard(): ITabbedSectionCardContext {
+function useTabbedSectionCardContext(): ITabbedSectionCardContext {
     const context = useContext(TabbedSectionCardContext);
 
     if (!context) {
@@ -52,7 +52,8 @@ function useTabbedSectionCard(): ITabbedSectionCardContext {
 
 function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
     const {children, title} = props;
-    const {registerTab, unregisterTab, selectedTab} = useTabbedSectionCard();
+    const {registerTab, unregisterTab, selectedTab} =
+        useTabbedSectionCardContext();
 
     useEffect(() => {
         registerTab(title);
@@ -66,7 +67,7 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
 }
 
 function TabbedSectionCardTabs() {
-    const {selectedTab, setSelectedTab, tabs} = useTabbedSectionCard();
+    const {selectedTab, setSelectedTab, tabs} = useTabbedSectionCardContext();
 
     const onTabSelected = useCallback(
         ((details) => {

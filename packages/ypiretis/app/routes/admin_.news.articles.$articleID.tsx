@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 
 import type {FormEventHandler, MouseEventHandler} from "react";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {data, useLoaderData, useFetcher} from "react-router";
 
@@ -279,6 +279,8 @@ function SettingsCardActionsView() {
 function SettingsCardPublishingView() {
     const {article} = useLoaderData<typeof loader>();
 
+    const publishedAtInputRef = useRef<HTMLInputElement | null>(null);
+
     const {publishedAtTimestamp, state} = article;
 
     const stateUpdateFetcher = useFetcher();
@@ -364,6 +366,25 @@ function SettingsCardPublishingView() {
         [setLiveLocalPublishedAt],
     );
 
+    useEffect(() => {
+        const {current: inputElement} = publishedAtInputRef;
+
+        if (!inputElement || !isPublished || publishedAtTimestamp === null) {
+            return;
+        }
+
+        const localPublishedAt = new Date(publishedAtTimestamp);
+        const localPublishedAtDateTime = toLocalISOString(localPublishedAt);
+
+        inputElement.value = localPublishedAtDateTime;
+        setLiveLocalPublishedAt(localPublishedAt);
+    }, [
+        isPublished,
+        publishedAtInputRef,
+        publishedAtTimestamp,
+        setLiveLocalPublishedAt,
+    ]);
+
     return (
         <TabbedSectionCard.View title="Publishing">
             <Field.Root flexGrow="1">
@@ -430,6 +451,7 @@ function SettingsCardPublishingView() {
 
                 <Group alignSelf="stretch">
                     <Input
+                        ref={publishedAtInputRef}
                         disabled={isPublishedAtFieldDisabled}
                         type="datetime-local"
                         defaultValue={localPublishedAtDateTime ?? ""}

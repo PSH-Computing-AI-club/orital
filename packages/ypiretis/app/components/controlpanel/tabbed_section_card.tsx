@@ -38,7 +38,7 @@ export interface ITabbedSectionCardRootProps extends ISectionCardRootProps {
     readonly children: ReactNode;
 }
 
-function useTabbedSectionCard() {
+function useTabbedSectionCard(): ITabbedSectionCardContext {
     const context = useContext(TabbedSectionCardContext);
 
     if (!context) {

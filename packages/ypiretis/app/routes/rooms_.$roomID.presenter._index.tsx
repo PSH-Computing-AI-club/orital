@@ -863,7 +863,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 />
             )}
 
-            <HStack alignItems="stretch">
+            <HStack gap="inherit" alignItems="stretch">
                 <PINCard />
                 <StateCard />
             </HStack>

@@ -271,7 +271,7 @@ export async function insertOne(article: IArticleInsert): Promise<IArticle> {
 export async function updateOneByArticleID(
     articleID: string,
     article: IArticleUpdate,
-): Promise<void> {
+): Promise<IArticle> {
     const articles = await DATABASE.update(ARTICLES_TABLE)
         .set(article)
         .where(eq(ARTICLES_TABLE.articleID, articleID))
@@ -282,4 +282,8 @@ export async function updateOneByArticleID(
             `bad argument #0 to 'updateOneByArticleID' (article id '${articleID}' was not found in the database)`,
         );
     }
+
+    const [updatedArticle] = articles;
+
+    return mapArticle(updatedArticle);
 }

@@ -368,51 +368,56 @@ function SettingsCardPublishingView() {
 
     return (
         <TabbedSectionCard.View title="Publishing">
-            <RadioCard.Root
-                variant="surface"
-                orientation="vertical"
-                align="center"
-                value={state}
-                onValueChange={onStateChange}
-            >
-                <RadioCard.Label>Publishing State</RadioCard.Label>
+            <Field.Root>
+                <Field.Label>Published At</Field.Label>
 
-                <HStack justifyContent="stretch">
-                    <RadioCard.Item
-                        disabled={isStateUpdateDisabled}
-                        value="STATE_DRAFT"
-                        colorPalette="red"
-                        cursor={canDraft ? "pointer" : "default"}
-                    >
-                        <RadioCard.ItemHiddenInput />
+                <RadioCard.Root
+                    variant="surface"
+                    orientation="vertical"
+                    align="center"
+                    alignSelf="stretch"
+                    value={state}
+                    onValueChange={onStateChange}
+                >
+                    <HStack justifyContent="stretch">
+                        <RadioCard.Item
+                            disabled={isStateUpdateDisabled}
+                            value="STATE_DRAFT"
+                            colorPalette="red"
+                            cursor={canDraft ? "pointer" : "default"}
+                        >
+                            <RadioCard.ItemHiddenInput />
 
-                        <RadioCard.ItemControl>
-                            <Icon fontSize="2xl">
-                                <EyeClosedIcon />
-                            </Icon>
+                            <RadioCard.ItemControl>
+                                <Icon fontSize="2xl">
+                                    <EyeClosedIcon />
+                                </Icon>
 
-                            <RadioCard.ItemText>Draft</RadioCard.ItemText>
-                        </RadioCard.ItemControl>
-                    </RadioCard.Item>
+                                <RadioCard.ItemText>Draft</RadioCard.ItemText>
+                            </RadioCard.ItemControl>
+                        </RadioCard.Item>
 
-                    <RadioCard.Item
-                        disabled={isStateUpdateDisabled}
-                        value="STATE_PUBLISHED"
-                        colorPalette="green"
-                        cursor={canPublish ? "pointer" : "default"}
-                    >
-                        <RadioCard.ItemHiddenInput />
+                        <RadioCard.Item
+                            disabled={isStateUpdateDisabled}
+                            value="STATE_PUBLISHED"
+                            colorPalette="green"
+                            cursor={canPublish ? "pointer" : "default"}
+                        >
+                            <RadioCard.ItemHiddenInput />
 
-                        <RadioCard.ItemControl>
-                            <Icon fontSize="2xl">
-                                <EyeIcon />
-                            </Icon>
+                            <RadioCard.ItemControl>
+                                <Icon fontSize="2xl">
+                                    <EyeIcon />
+                                </Icon>
 
-                            <RadioCard.ItemText>Published</RadioCard.ItemText>
-                        </RadioCard.ItemControl>
-                    </RadioCard.Item>
-                </HStack>
-            </RadioCard.Root>
+                                <RadioCard.ItemText>
+                                    Published
+                                </RadioCard.ItemText>
+                            </RadioCard.ItemControl>
+                        </RadioCard.Item>
+                    </HStack>
+                </RadioCard.Root>
+            </Field.Root>
 
             {localPublishedAtDateTime ? (
                 <Field.Root>

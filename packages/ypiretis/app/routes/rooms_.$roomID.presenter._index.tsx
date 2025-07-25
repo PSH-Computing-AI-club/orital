@@ -155,9 +155,10 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     }
 
     const {room} = usePresenterContext();
-    const {state: roomState} = room;
 
+    const {state: roomState} = room;
     const {accountID, entityID, isRaisingHand, state: userState} = user;
+
     const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
 
     const isDisposed = roomState === "STATE_DISPOSED";
@@ -384,6 +385,7 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
 
 function AttendeesCardActions() {
     const {room} = usePresenterContext();
+
     const {attendees} = room;
 
     const accountEmailAddresses = attendees
@@ -442,6 +444,7 @@ function AttendeesCardActions() {
 
 function AttendeesCardDisconnectedTab() {
     const {room} = usePresenterContext();
+
     const {attendees} = room;
 
     const users = attendees
@@ -462,6 +465,7 @@ function AttendeesCardDisconnectedTab() {
 
 function AttendeesCardPendingTab() {
     const {room} = usePresenterContext();
+
     const {attendees} = room;
 
     const users = attendees
@@ -481,10 +485,10 @@ function AttendeesCardPendingTab() {
 }
 
 function AttendeesCardActiveTab() {
-    const {room} = usePresenterContext();
-    const {attendees} = room;
-
     const session = useAuthenticatedPublicUserContext();
+    const {room} = usePresenterContext();
+
+    const {attendees} = room;
 
     const loweredHandAttendees: IAttendee[] = [];
     const raisedHandAttendees: IAttendee[] = [];
@@ -558,6 +562,7 @@ function AttendeesCard() {
 
 function StateCard() {
     const {room} = usePresenterContext();
+
     const {state} = room;
 
     const [isFetchingAction, onStateChange] = useAsyncCallback(
@@ -642,6 +647,7 @@ function StateCard() {
 
 function PINCard() {
     const {room} = usePresenterContext();
+
     const {pin, roomID, state} = room;
 
     const onCopyClick = useCallback(

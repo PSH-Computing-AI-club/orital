@@ -506,7 +506,17 @@ function AttendeesCardActiveTab() {
 
 function AttendeesCard() {
     return (
+        <TabbedDataSectionCard.Root
+            flexGrow="1"
+            maxBlockSize="full"
             overflow="hidden"
+        >
+            <TabbedDataSectionCard.Body>
+                <TabbedDataSectionCard.Title>
+                    Attendees
+                    <Spacer />
+                    <TabbedDataSectionCard.Tabs />
+                    <UsersIcon />
                 </TabbedDataSectionCard.Title>
 
                 <AttendeesCardActiveTab />

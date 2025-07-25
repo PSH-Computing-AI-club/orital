@@ -2,8 +2,6 @@ import type {ButtonProps, EditableValueChangeDetails} from "@chakra-ui/react";
 import {
     Box,
     Button,
-    Grid,
-    GridItem,
     HStack,
     IconButton,
     Menu,
@@ -508,41 +506,33 @@ function AttendeesCardActiveTab() {
 
 function AttendeesCard() {
     return (
-        <GridItem colSpan={2} maxBlockSize="full" overflow="hidden" asChild>
-            <TabbedDataSectionCard.Root>
-                <TabbedDataSectionCard.Body>
-                    <TabbedDataSectionCard.Title>
-                        Attendees
-                        <Spacer />
-                        <TabbedDataSectionCard.Tabs />
-                        <UsersIcon />
-                    </TabbedDataSectionCard.Title>
+            overflow="hidden"
+                </TabbedDataSectionCard.Title>
 
-                    <AttendeesCardActiveTab />
-                    <AttendeesCardPendingTab />
-                    <AttendeesCardDisconnectedTab />
+                <AttendeesCardActiveTab />
+                <AttendeesCardPendingTab />
+                <AttendeesCardDisconnectedTab />
 
-                    <TabbedDataSectionCard.View>
-                        {(users: IUser[]) => {
-                            return (
-                                <TabbedDataSectionCard.Scrollable>
-                                    {users.map((user) => (
-                                        <AttendeeListItem
-                                            key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
-                                            user={user}
-                                        />
-                                    ))}
-                                </TabbedDataSectionCard.Scrollable>
-                            );
-                        }}
-                    </TabbedDataSectionCard.View>
-                </TabbedDataSectionCard.Body>
+                <TabbedDataSectionCard.View>
+                    {(users: IUser[]) => {
+                        return (
+                            <TabbedDataSectionCard.Scrollable>
+                                {users.map((user) => (
+                                    <AttendeeListItem
+                                        key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
+                                        user={user}
+                                    />
+                                ))}
+                            </TabbedDataSectionCard.Scrollable>
+                        );
+                    }}
+                </TabbedDataSectionCard.View>
+            </TabbedDataSectionCard.Body>
 
-                <TabbedDataSectionCard.Footer justifyContent="flex-end">
-                    <AttendeesCardActions />
-                </TabbedDataSectionCard.Footer>
-            </TabbedDataSectionCard.Root>
-        </GridItem>
+            <TabbedDataSectionCard.Footer justifyContent="flex-end">
+                <AttendeesCardActions />
+            </TabbedDataSectionCard.Footer>
+        </TabbedDataSectionCard.Root>
     );
 }
 
@@ -766,7 +756,7 @@ function StateCard() {
         makeStateActionEventHandler("STATE_PERMISSIVE");
 
     return (
-        <SectionCard.Root>
+        <SectionCard.Root flexGrow="1">
             <SectionCard.Body>
                 <SectionCard.Title>
                     Room State
@@ -873,20 +863,12 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 />
             )}
 
-            <Grid
-                templateRows="auto 1fr"
-                templateColumns="1fr 1fr"
-                columnGap="8"
-                rowGap="4"
-                flexGrow="1"
-                maxBlockSize="full"
-                overflow="hidden"
-            >
+            <HStack alignItems="stretch">
                 <PINCard />
                 <StateCard />
+            </HStack>
 
-                <AttendeesCard />
-            </Grid>
+            <AttendeesCard />
         </Layout.FixedContainer>
     );
 }

@@ -368,18 +368,24 @@ function SettingsCardPublishingView() {
 
     return (
         <TabbedSectionCard.View title="Publishing">
-            <Field.Root>
+            <Field.Root flexGrow="1">
                 <Field.Label>Published At</Field.Label>
 
                 <RadioCard.Root
                     variant="surface"
                     orientation="vertical"
                     align="center"
+                    justify="center"
                     alignSelf="stretch"
+                    flexGrow="1"
                     value={state}
                     onValueChange={onStateChange}
                 >
-                    <HStack justifyContent="stretch">
+                    <HStack
+                        flexGrow="1"
+                        alignItems="stretch"
+                        justifyContent="stretch"
+                    >
                         <RadioCard.Item
                             disabled={isStateUpdateDisabled}
                             value="STATE_DRAFT"
@@ -393,7 +399,9 @@ function SettingsCardPublishingView() {
                                     <EyeClosedIcon />
                                 </Icon>
 
-                                <RadioCard.ItemText>Draft</RadioCard.ItemText>
+                                <RadioCard.ItemText flexGrow="unset">
+                                    Draft
+                                </RadioCard.ItemText>
                             </RadioCard.ItemControl>
                         </RadioCard.Item>
 
@@ -410,7 +418,7 @@ function SettingsCardPublishingView() {
                                     <EyeIcon />
                                 </Icon>
 
-                                <RadioCard.ItemText>
+                                <RadioCard.ItemText flexGrow="unset">
                                     Published
                                 </RadioCard.ItemText>
                             </RadioCard.ItemControl>

@@ -1,8 +1,4 @@
-import type {
-    ButtonProps,
-    EditableValueChangeDetails,
-    SegmentGroupValueChangeDetails,
-} from "@chakra-ui/react";
+import type {ButtonProps, EditableValueChangeDetails} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -12,7 +8,6 @@ import {
     IconButton,
     Menu,
     Portal,
-    SegmentGroup,
     SimpleGrid,
     Spacer,
     Span,
@@ -31,6 +26,7 @@ import type {IPublicUser} from "~/.server/services/users_service";
 
 import Layout from "~/components/controlpanel/layout";
 import SectionCard from "~/components/controlpanel/section_card";
+import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
 import Title from "~/components/controlpanel/title";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
@@ -76,79 +72,21 @@ const UX_TITLE_SCHEMA = v.pipe(
     title,
 );
 
+type IUser = IAttendee | IPublicUser;
+
 interface IAttendeeListItemActionsProps {
-    readonly user: IAttendee | IPublicUser;
+    readonly user: IUser;
 }
 
 interface IAttendeeListItemProps {
-    readonly user: IAttendee | IPublicUser;
-}
-
-interface IAttendeeListProps {
-    readonly users: (IAttendee | IPublicUser)[];
-}
-
-function getModeUsers(
-    modeValue: "active" | "disconnected" | "pending" | null,
-): (IAttendee | IPublicUser)[] {
-    const {room} = usePresenterContext();
-    const {attendees} = room;
-
-    switch (modeValue) {
-        case "active": {
-            const session = useAuthenticatedPublicUserContext();
-
-            const loweredHandAttendees: IAttendee[] = [];
-            const raisedHandAttendees: IAttendee[] = [];
-
-            for (const attendee of attendees) {
-                if (attendee.state !== "STATE_CONNECTED") {
-                    continue;
-                }
-
-                if (attendee.isRaisingHand) {
-                    loweredHandAttendees.push(attendee);
-                } else {
-                    raisedHandAttendees.push(attendee);
-                }
-            }
-
-            loweredHandAttendees.sort(sortUsers);
-            raisedHandAttendees.sort(sortUsers);
-
-            return [session, ...loweredHandAttendees, ...raisedHandAttendees];
-        }
-
-        case "disconnected":
-            return attendees
-                .filter((attendee) => {
-                    const {state} = attendee;
-
-                    return state === "STATE_DISPOSED";
-                })
-                .sort(sortUsers);
-
-        case "pending": {
-            return attendees
-                .filter((attendee) => {
-                    const {state} = attendee;
-
-                    return state === "STATE_AWAITING";
-                })
-                .sort(sortUsers);
-        }
-    }
-
-    throw new TypeError(
-        `bad dispatch to 'getModeUsers' (unsupported mode '${modeValue}')`,
-    );
+    readonly user: IUser;
 }
 
 function isAttendee(value: unknown): value is IAttendee {
     return value !== null && typeof value === "object" && "state" in value;
 }
 
-function matchUserIcon(user: IAttendee | IPublicUser) {
+function matchUserIcon(user: IUser) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -165,7 +103,7 @@ function matchUserIcon(user: IAttendee | IPublicUser) {
     return TeachIcon;
 }
 
-function matchUserTagPalette(user: IAttendee | IPublicUser) {
+function matchUserTagPalette(user: IUser) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -182,7 +120,7 @@ function matchUserTagPalette(user: IAttendee | IPublicUser) {
     return "orange";
 }
 
-function matchUserTagText(user: IAttendee | IPublicUser): string {
+function matchUserTagText(user: IUser): string {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -199,10 +137,7 @@ function matchUserTagText(user: IAttendee | IPublicUser): string {
     return "Presenter";
 }
 
-function sortUsers(
-    attendeeA: IAttendee | IPublicUser,
-    attendeeB: IAttendee | IPublicUser,
-): number {
+function sortUsers(attendeeA: IUser, attendeeB: IUser): number {
     const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
     const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
 
@@ -439,19 +374,6 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
     );
 }
 
-function AttendeeList(props: IAttendeeListProps) {
-    const {users} = props;
-
-    // **TODO:** use a virtualized list implementation here
-
-    return users.map((user) => (
-        <AttendeeListItem
-            key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
-            user={user}
-        />
-    ));
-}
-
 function AttendeesCardActions() {
     const {room} = usePresenterContext();
     const {attendees} = room;
@@ -510,99 +432,116 @@ function AttendeesCardActions() {
     );
 }
 
-function AttendeesCard() {
-    const [modeValue, setModeValue] = useState<
-        "active" | "disconnected" | "pending" | null
-    >("active");
+function AttendeesCardDisconnectedTab() {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
 
-    const activeUsers = getModeUsers("active");
-    const disconnectedUsers = getModeUsers("disconnected");
-    const pendingUsers = getModeUsers("pending");
+    const users = attendees
+        .filter((attendee) => {
+            const {state} = attendee;
 
-    let listedUsers = activeUsers;
-
-    switch (modeValue) {
-        case "disconnected":
-            listedUsers = disconnectedUsers;
-            break;
-
-        case "pending":
-            listedUsers = pendingUsers;
-            break;
-    }
-
-    function onModeValueChange(event: SegmentGroupValueChangeDetails): void {
-        const {value} = event;
-
-        setModeValue(value as "active" | "pending" | null);
-    }
+            return state === "STATE_DISPOSED";
+        })
+        .sort(sortUsers);
 
     return (
+        <TabbedDataSectionCard.Tab
+            title={`Disconnected (${users.length})`}
+            provider={() => users satisfies IUser[]}
+        />
+    );
+}
+
+function AttendeesCardPendingTab() {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
+    const users = attendees
+        .filter((attendee) => {
+            const {state} = attendee;
+
+            return state === "STATE_AWAITING";
+        })
+        .sort(sortUsers);
+
+    return (
+        <TabbedDataSectionCard.Tab
+            title={`Pending (${users.length})`}
+            provider={() => users satisfies IUser[]}
+        />
+    );
+}
+
+function AttendeesCardActiveTab() {
+    const {room} = usePresenterContext();
+    const {attendees} = room;
+
+    const session = useAuthenticatedPublicUserContext();
+
+    const loweredHandAttendees: IAttendee[] = [];
+    const raisedHandAttendees: IAttendee[] = [];
+
+    for (const attendee of attendees) {
+        if (attendee.state !== "STATE_CONNECTED") {
+            continue;
+        }
+
+        if (attendee.isRaisingHand) {
+            loweredHandAttendees.push(attendee);
+        } else {
+            raisedHandAttendees.push(attendee);
+        }
+    }
+
+    loweredHandAttendees.sort(sortUsers);
+    raisedHandAttendees.sort(sortUsers);
+
+    const users = [session, ...loweredHandAttendees, ...raisedHandAttendees];
+
+    return (
+        <TabbedDataSectionCard.Tab
+            title={`Active (${users.length})`}
+            provider={() => users satisfies IUser[]}
+        />
+    );
+}
+
+function AttendeesCard() {
+    return (
         <GridItem colSpan={2} maxBlockSize="full" overflow="hidden" asChild>
-            <SectionCard.Root>
-                <SectionCard.Body>
-                    <SectionCard.Title>
+            <TabbedDataSectionCard.Root>
+                <TabbedDataSectionCard.Body>
+                    <TabbedDataSectionCard.Title>
                         Attendees
                         <Spacer />
-                        <SegmentGroup.Root
-                            value={modeValue}
-                            size="sm"
-                            fontWeight="normal"
-                            onValueChange={onModeValueChange}
-                        >
-                            <SegmentGroup.Indicator bg="bg" />
-
-                            <SegmentGroup.Item value="active">
-                                <SegmentGroup.ItemText
-                                    color={
-                                        modeValue === "active"
-                                            ? "green.fg"
-                                            : undefined
-                                    }
-                                >
-                                    Active ({activeUsers.length})
-                                </SegmentGroup.ItemText>
-                                <SegmentGroup.ItemHiddenInput />
-                            </SegmentGroup.Item>
-
-                            <SegmentGroup.Item value="pending">
-                                <SegmentGroup.ItemText
-                                    color={
-                                        modeValue === "pending"
-                                            ? "yellow.fg"
-                                            : undefined
-                                    }
-                                >
-                                    Pending ({pendingUsers.length})
-                                </SegmentGroup.ItemText>
-                                <SegmentGroup.ItemHiddenInput />
-                            </SegmentGroup.Item>
-
-                            <SegmentGroup.Item value="disconnected">
-                                <SegmentGroup.ItemText
-                                    color={
-                                        modeValue === "disconnected"
-                                            ? "red.fg"
-                                            : undefined
-                                    }
-                                >
-                                    Disconnected ({disconnectedUsers.length})
-                                </SegmentGroup.ItemText>
-                                <SegmentGroup.ItemHiddenInput />
-                            </SegmentGroup.Item>
-                        </SegmentGroup.Root>
+                        <TabbedDataSectionCard.Tabs />
                         <UsersIcon />
-                    </SectionCard.Title>
+                    </TabbedDataSectionCard.Title>
 
-                    <SectionCard.Scrollable>
-                        <AttendeeList users={listedUsers} />
-                    </SectionCard.Scrollable>
-                </SectionCard.Body>
+                    <AttendeesCardActiveTab />
+                    <AttendeesCardPendingTab />
+                    <AttendeesCardDisconnectedTab />
 
-                <SectionCard.Footer justifyContent="flex-end">
+                    <TabbedDataSectionCard.View>
+                        {(users: IUser[]) => {
+                            return (
+                                <TabbedDataSectionCard.Scrollable>
+                                    {users.map((user) => (
+                                        <AttendeeListItem
+                                            key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
+                                            user={user}
+                                        />
+                                    ))}
+                                </TabbedDataSectionCard.Scrollable>
+                            );
+                        }}
+                    </TabbedDataSectionCard.View>
+                </TabbedDataSectionCard.Body>
+
+                <TabbedDataSectionCard.Footer justifyContent="flex-end">
                     <AttendeesCardActions />
-                </SectionCard.Footer>
-            </SectionCard.Root>
+                </TabbedDataSectionCard.Footer>
+            </TabbedDataSectionCard.Root>
         </GridItem>
     );
 }

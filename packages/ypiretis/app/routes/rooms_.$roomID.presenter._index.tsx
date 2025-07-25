@@ -1,4 +1,7 @@
-import type {ButtonProps, EditableValueChangeDetails} from "@chakra-ui/react";
+import type {
+    EditableValueChangeDetails,
+    RadioCardValueChangeDetails,
+} from "@chakra-ui/react";
 import {
     Box,
     Button,
@@ -6,7 +9,6 @@ import {
     IconButton,
     Menu,
     Portal,
-    SimpleGrid,
     Spacer,
     Span,
     PinInput,
@@ -14,8 +16,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import type {MouseEvent, PropsWithChildren, ReactElement} from "react";
-import {useState} from "react";
+import type {MouseEvent, ReactElement} from "react";
+import {useCallback, useState} from "react";
 
 import * as v from "valibot";
 
@@ -23,6 +25,7 @@ import type {IRoomStates} from "~/.server/services/rooms_service";
 import type {IPublicUser} from "~/.server/services/users_service";
 
 import Layout from "~/components/controlpanel/layout";
+import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
 import Title from "~/components/controlpanel/title";
@@ -153,10 +156,10 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {state: roomState} = room;
 
     const {accountID, entityID, isRaisingHand, state: userState} = user;
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
 
     const isDisposed = roomState === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
+    const canFetchAction = !(isDisposed || isFetchingAction);
 
     function makeActionEventHandler(
         action: IAttendeeActionFormData["action"],
@@ -164,16 +167,17 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
         event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
     ) => Promise<void> {
         return async (_event) => {
-            setFetchingAction(true);
+            setIsFetchingAction(true);
 
             await fetch(`./presenter/actions/attendees/${entityID}`, {
                 method: "POST",
+
                 body: buildFormData<IAttendeeActionFormData>({
                     action,
                 }),
             });
 
-            setFetchingAction(false);
+            setIsFetchingAction(false);
         };
     }
 
@@ -546,80 +550,35 @@ function AttendeesCard() {
     );
 }
 
-function StateCardButton(props: ButtonProps & {active?: boolean}) {
-    const {
-        active = false,
-        blockSize = "full",
-        children,
-        flexDirection = "column",
-        fontWeight = "bold",
-        gap = "2",
-        size = {base: "lg", xlDown: "md", lgDown: "sm"},
-        ...rest
-    } = props;
-
-    return (
-        <Button
-            variant={active ? "solid" : "ghost"}
-            size={size}
-            flexDirection={flexDirection}
-            fontWeight={fontWeight}
-            gap={gap}
-            blockSize={blockSize}
-            {...rest}
-        >
-            {children}
-        </Button>
-    );
-}
-
-function StateCardIcon(props: PropsWithChildren) {
-    const {children} = props;
-
-    return (
-        <Box width="2.5em" height="2.5em" asChild>
-            {children}
-        </Box>
-    );
-}
-
 function StateCard() {
     const {room} = usePresenterContext();
     const {state} = room;
 
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
+    const canFetchAction = !(isDisposed || isFetchingAction);
 
-    function makeStateActionEventHandler(
-        newState: Exclude<IRoomStates, "STATE_DISPOSED">,
-    ): (
-        event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ) => Promise<void> {
-        return async (_event) => {
-            if (state === newState) {
-                return;
-            }
+    const onStateChange = useCallback(
+        (async (details) => {
+            const {value} = details;
 
-            setFetchingAction(true);
+            setIsFetchingAction(true);
 
             await fetch("./presenter/actions/room", {
                 method: "POST",
+
                 body: buildFormData<IRoomActionFormData>({
                     action: "state.update",
-                    state: newState,
+                    state: value as Exclude<IRoomStates, "STATE_DISPOSED">,
                 }),
             });
 
-            setFetchingAction(false);
-        };
-    }
+            setIsFetchingAction(false);
+        }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
-    const onLockedStateClick = makeStateActionEventHandler("STATE_LOCKED");
-    const onUnlockedStateClick = makeStateActionEventHandler("STATE_UNLOCKED");
-    const onPermissiveStateClick =
-        makeStateActionEventHandler("STATE_PERMISSIVE");
+        [setIsFetchingAction],
+    );
 
     return (
         <SectionCard.Root flexGrow="1">
@@ -630,48 +589,52 @@ function StateCard() {
                     <ShieldIcon />
                 </SectionCard.Title>
 
-                <SimpleGrid
-                    columns={3}
-                    gap="2"
-                    justifyContent="space-around"
-                    blockSize="full"
+                <RadioCardGroup.Root
+                    disabled={!canFetchAction}
+                    value={state}
+                    flexGrow="1"
+                    fontSize="xl"
+                    onValueChange={onStateChange}
                 >
-                    <StateCardButton
-                        active={state === "STATE_LOCKED"}
-                        disabled={!canFetchAction}
+                    <RadioCardGroup.Option
+                        value={
+                            "STATE_LOCKED" satisfies Exclude<
+                                IRoomStates,
+                                "STATE_DISPOSED"
+                            >
+                        }
+                        label="Locked"
+                        icon={<LockIcon width="1.5em" height="1.5em" />}
                         colorPalette="red"
-                        onClick={onLockedStateClick}
-                    >
-                        <StateCardIcon>
-                            <LockIcon />
-                        </StateCardIcon>
-                        Locked
-                    </StateCardButton>
+                        fontSize="inherit"
+                    />
 
-                    <StateCardButton
-                        active={state === "STATE_UNLOCKED"}
-                        disabled={!canFetchAction}
+                    <RadioCardGroup.Option
+                        value={
+                            "STATE_UNLOCKED" satisfies Exclude<
+                                IRoomStates,
+                                "STATE_DISPOSED"
+                            >
+                        }
+                        label="Unlocked"
+                        icon={<LockOpenIcon width="1.5em" height="1.5em" />}
                         colorPalette="green"
-                        onClick={onUnlockedStateClick}
-                    >
-                        <StateCardIcon>
-                            <LockOpenIcon />
-                        </StateCardIcon>
-                        Unlocked
-                    </StateCardButton>
+                        fontSize="inherit"
+                    />
 
-                    <StateCardButton
-                        active={state === "STATE_PERMISSIVE"}
-                        disabled={!canFetchAction}
+                    <RadioCardGroup.Option
+                        value={
+                            "STATE_PERMISSIVE" satisfies Exclude<
+                                IRoomStates,
+                                "STATE_DISPOSED"
+                            >
+                        }
+                        label="Permissive"
+                        icon={<NotificationIcon width="1.5em" height="1.5em" />}
                         colorPalette="yellow"
-                        onClick={onPermissiveStateClick}
-                    >
-                        <StateCardIcon>
-                            <NotificationIcon />
-                        </StateCardIcon>
-                        Permissive
-                    </StateCardButton>
-                </SimpleGrid>
+                        fontSize="inherit"
+                    />
+                </RadioCardGroup.Root>
             </SectionCard.Body>
         </SectionCard.Root>
     );
@@ -681,10 +644,10 @@ function PINCard() {
     const {room} = usePresenterContext();
     const {pin, roomID, state} = room;
 
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
+    const canFetchAction = !(isDisposed || isFetchingAction);
 
     async function onCopyClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -695,16 +658,17 @@ function PINCard() {
     async function onRegenerateClick(
         _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     ): Promise<void> {
-        setFetchingAction(true);
+        setIsFetchingAction(true);
 
         await fetch("./presenter/actions/room", {
             method: "POST",
+
             body: buildFormData<IRoomActionFormData>({
                 action: "pin.regenerate",
             }),
         });
 
-        setFetchingAction(false);
+        setIsFetchingAction(false);
     }
 
     return (
@@ -825,10 +789,10 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {room} = usePresenterContext();
     const {state, title} = room;
 
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
+    const canFetchAction = !(isDisposed || isFetchingAction);
 
     async function onTitleCommit(
         details: EditableValueChangeDetails,
@@ -839,7 +803,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
             return;
         }
 
-        setFetchingAction(true);
+        setIsFetchingAction(true);
 
         await fetch("./presenter/actions/room", {
             method: "POST",
@@ -849,7 +813,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
             }),
         });
 
-        setFetchingAction(false);
+        setIsFetchingAction(false);
     }
 
     function onTitleIsValid(details: EditableValueChangeDetails): boolean {

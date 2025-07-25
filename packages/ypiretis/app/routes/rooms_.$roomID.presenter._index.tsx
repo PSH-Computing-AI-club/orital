@@ -789,8 +789,9 @@ function PINCard() {
     );
 }
 
-export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
+function RoomTitle() {
     const {room} = usePresenterContext();
+
     const {state, title} = room;
 
     const [isFetchingAction, onTitleChange] = useAsyncCallback(
@@ -827,19 +828,23 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const isDisposed = state === "STATE_DISPOSED";
     const isActionDisabled = isDisposed || isFetchingAction;
 
+    return isDisposed ? (
+        <Title.Text title={title} />
+    ) : (
+        <Title.Editable
+            disabled={isActionDisabled}
+            title={title}
+            maxLength={32}
+            onCommit={onTitleChange}
+            onValidate={onTitleValidate}
+        />
+    );
+}
+
+export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     return (
         <Layout.FixedContainer>
-            {isDisposed ? (
-                <Title.Text title={title} />
-            ) : (
-                <Title.Editable
-                    disabled={isActionDisabled}
-                    title={title}
-                    maxLength={32}
-                    onCommit={onTitleChange}
-                    onValidate={onTitleValidate}
-                />
-            )}
+            <RoomTitle />
 
             <HStack gap="inherit" alignItems="stretch">
                 <PINCard />

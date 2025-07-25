@@ -2,7 +2,6 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import type {
     EditableValueChangeDetails,
-    SegmentGroupValueChangeDetails,
     RadioCardValueChangeDetails,
 } from "@chakra-ui/react";
 import {
@@ -15,7 +14,6 @@ import {
     Icon,
     Input,
     RadioCard,
-    SegmentGroup,
     Spacer,
 } from "@chakra-ui/react";
 

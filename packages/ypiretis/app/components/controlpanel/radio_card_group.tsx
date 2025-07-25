@@ -15,7 +15,7 @@ export interface IRadioCardGroupOptionProps
 export interface IRadioCardGroupRootProps extends RadioCardRootProps {}
 
 function RadioCardGroupOption(props: IRadioCardGroupOptionProps) {
-    const {icon, label, value, ...rest} = props;
+    const {colorPalette = "current", icon, label, value, ...rest} = props;
 
     const {getRootProps, value: selectedValue} = useRadioCardContext();
     const disabled = getRootProps()["aria-disabled"];
@@ -28,12 +28,16 @@ function RadioCardGroupOption(props: IRadioCardGroupOptionProps) {
     return (
         <RadioCard.Item
             value={value}
+            colorPalette={colorPalette}
+            borderColor={isActive ? undefined : `${colorPalette}.solid`}
             cursor={canSetCursor ? cursor : undefined}
             {...rest}
         >
             <RadioCard.ItemHiddenInput />
 
-            <RadioCard.ItemControl>
+            <RadioCard.ItemControl
+                color={isActive ? undefined : `${colorPalette}.fg`}
+            >
                 {icon ? <Icon fontSize="2xl">{icon}</Icon> : undefined}
 
                 <RadioCard.ItemText flexGrow="unset">

@@ -382,7 +382,7 @@ function SettingsCardPublishingView() {
                         disabled={isStateUpdateDisabled}
                         value="STATE_DRAFT"
                         colorPalette="red"
-                        cursor={canDraft ? "pointer" : "disabled"}
+                        cursor={canDraft ? "pointer" : "default"}
                     >
                         <RadioCard.ItemHiddenInput />
 
@@ -399,7 +399,7 @@ function SettingsCardPublishingView() {
                         disabled={isStateUpdateDisabled}
                         value="STATE_PUBLISHED"
                         colorPalette="green"
-                        cursor={canPublish ? "pointer" : "disabled"}
+                        cursor={canPublish ? "pointer" : "default"}
                     >
                         <RadioCard.ItemHiddenInput />
 

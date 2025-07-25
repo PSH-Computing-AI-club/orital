@@ -21,9 +21,9 @@ interface ITabbedSectionCardContext {
 
     readonly tabs: Set<string>;
 
-    setSelectedTab(title: string | null): void;
-
     registerTab(title: string): void;
+
+    setSelectedTab(title: string | null): void;
 
     unregisterTab(title: string): void;
 }
@@ -149,9 +149,9 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
     );
 
     const context = {
+        registerTab,
         selectedTab,
         setSelectedTab,
-        registerTab,
         tabs,
         unregisterTab,
     } satisfies ITabbedSectionCardContext;

@@ -11,9 +11,7 @@ import {
     Field,
     Group,
     HStack,
-    Icon,
     Input,
-    RadioCard,
     Spacer,
 } from "@chakra-ui/react";
 
@@ -40,6 +38,7 @@ import type {IChangeCallback} from "~/components/common/markdown_editor";
 import MarkdownEditor from "~/components/common/markdown_editor";
 
 import Layout from "~/components/controlpanel/layout";
+import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
@@ -308,9 +307,6 @@ function SettingsCardPublishingView() {
     const isLiveLocalPublishedAtDirty =
         liveLocalPublishedAt?.getTime() !== localPublishedAt?.getTime();
 
-    const canDraft = isStateUpdateFetcherIdle && !isDraft;
-    const canPublish = isStateUpdateFetcherIdle && !isPublished;
-
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
     const isPublishedAtFieldDisabled = !isPublishedAtUpdateFetcherIdle;
     const isPublishedAtUpdateDisabled =
@@ -393,60 +389,26 @@ function SettingsCardPublishingView() {
             <Field.Root flexGrow="1">
                 <Field.Label>Published At</Field.Label>
 
-                <RadioCard.Root
-                    variant="surface"
-                    orientation="vertical"
-                    align="center"
-                    justify="center"
-                    alignSelf="stretch"
-                    flexGrow="1"
+                <RadioCardGroup.Root
+                    disabled={isStateUpdateDisabled}
                     value={state}
+                    flexGrow="1"
                     onValueChange={onStateChange}
                 >
-                    <HStack
-                        flexGrow="1"
-                        alignItems="stretch"
-                        justifyContent="stretch"
-                    >
-                        <RadioCard.Item
-                            disabled={isStateUpdateDisabled}
-                            value={"STATE_DRAFT" satisfies IArticleStates}
-                            colorPalette="red"
-                            cursor={canDraft ? "pointer" : "default"}
-                        >
-                            <RadioCard.ItemHiddenInput />
+                    <RadioCardGroup.Option
+                        value={"STATE_DRAFT" satisfies IArticleStates}
+                        label="Draft"
+                        icon={<EyeClosedIcon />}
+                        colorPalette="red"
+                    />
 
-                            <RadioCard.ItemControl>
-                                <Icon fontSize="2xl">
-                                    <EyeClosedIcon />
-                                </Icon>
-
-                                <RadioCard.ItemText flexGrow="unset">
-                                    Draft
-                                </RadioCard.ItemText>
-                            </RadioCard.ItemControl>
-                        </RadioCard.Item>
-
-                        <RadioCard.Item
-                            disabled={isStateUpdateDisabled}
-                            value={"STATE_PUBLISHED" satisfies IArticleStates}
-                            colorPalette="green"
-                            cursor={canPublish ? "pointer" : "default"}
-                        >
-                            <RadioCard.ItemHiddenInput />
-
-                            <RadioCard.ItemControl>
-                                <Icon fontSize="2xl">
-                                    <EyeIcon />
-                                </Icon>
-
-                                <RadioCard.ItemText flexGrow="unset">
-                                    Published
-                                </RadioCard.ItemText>
-                            </RadioCard.ItemControl>
-                        </RadioCard.Item>
-                    </HStack>
-                </RadioCard.Root>
+                    <RadioCardGroup.Option
+                        value={"STATE_PUBLISHED" satisfies IArticleStates}
+                        label="Published"
+                        icon={<EyeIcon />}
+                        colorPalette="green"
+                    />
+                </RadioCardGroup.Root>
             </Field.Root>
 
             <Field.Root visibility={isDraft ? "hidden" : undefined}>

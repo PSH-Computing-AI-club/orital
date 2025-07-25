@@ -444,7 +444,7 @@ function AttendeesCardDisconnectedTab() {
 
     return (
         <TabbedDataSectionCard.Tab
-            title={`Disconnected (${users.length})`}
+            label={`Disconnected (${users.length})`}
             provider={() => users satisfies IUser[]}
         />
     );
@@ -464,7 +464,7 @@ function AttendeesCardPendingTab() {
 
     return (
         <TabbedDataSectionCard.Tab
-            title={`Pending (${users.length})`}
+            label={`Pending (${users.length})`}
             provider={() => users satisfies IUser[]}
         />
     );
@@ -498,7 +498,7 @@ function AttendeesCardActiveTab() {
 
     return (
         <TabbedDataSectionCard.Tab
-            title={`Active (${users.length})`}
+            label={`Active (${users.length})`}
             provider={() => users satisfies IUser[]}
         />
     );

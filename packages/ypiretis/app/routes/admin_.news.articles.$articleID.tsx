@@ -270,7 +270,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
 function SettingsCardActionsView() {
     return (
-        <TabbedSectionCard.View title="Actions">
+        <TabbedSectionCard.View label="Actions">
             settings card actions view unda construction
         </TabbedSectionCard.View>
     );
@@ -385,7 +385,7 @@ function SettingsCardPublishingView() {
     ]);
 
     return (
-        <TabbedSectionCard.View title="Publishing">
+        <TabbedSectionCard.View label="Publishing">
             <Field.Root flexGrow="1">
                 <Field.Label>Published At</Field.Label>
 
@@ -439,7 +439,7 @@ function SettingsCardPublishingView() {
 
 function SettingsCardUploadsView() {
     return (
-        <TabbedSectionCard.View title="Uploads">
+        <TabbedSectionCard.View label="Uploads">
             settings card uploads view unda construction
         </TabbedSectionCard.View>
     );

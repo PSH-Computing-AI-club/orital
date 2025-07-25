@@ -21,15 +21,15 @@ interface ITabbedSectionCardContext {
 
     readonly tabs: Set<string>;
 
-    registerTab(title: string): void;
+    registerTab(label: string): void;
 
-    setSelectedTab(title: string | null): void;
+    setSelectedTab(label: string | null): void;
 
-    unregisterTab(title: string): void;
+    unregisterTab(label: string): void;
 }
 
 export interface ITabbedSectionCardViewProps extends PropsWithChildren {
-    readonly title: string;
+    readonly label: string;
 }
 
 export interface ITabbedSectionCardTabsProps {}
@@ -51,19 +51,19 @@ function useTabbedSectionCardContext(): ITabbedSectionCardContext {
 }
 
 function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
-    const {children, title} = props;
+    const {children, label} = props;
     const {registerTab, unregisterTab, selectedTab} =
         useTabbedSectionCardContext();
 
     useEffect(() => {
-        registerTab(title);
+        registerTab(label);
 
         return () => {
-            unregisterTab(title);
+            unregisterTab(label);
         };
-    }, [registerTab, title, unregisterTab]);
+    }, [registerTab, label, unregisterTab]);
 
-    return selectedTab === title ? children : null;
+    return selectedTab === label ? children : null;
 }
 
 function TabbedSectionCardTabs() {
@@ -88,13 +88,13 @@ function TabbedSectionCardTabs() {
         >
             <SegmentGroup.Indicator bg="bg" />
 
-            {Array.from(tabs).map((tabTitle) => {
-                const isTabSelected = selectedTab === tabTitle;
+            {Array.from(tabs).map((tabLabel) => {
+                const isTabSelected = selectedTab === tabLabel;
 
                 return (
                     <SegmentGroup.Item
-                        key={tabTitle}
-                        value={tabTitle}
+                        key={tabLabel}
+                        value={tabLabel}
                         cursor={isTabSelected ? "default" : "pointer"}
                     >
                         <SegmentGroup.ItemHiddenInput />
@@ -102,7 +102,7 @@ function TabbedSectionCardTabs() {
                         <SegmentGroup.ItemText
                             color={isTabSelected ? "cyan.fg" : undefined}
                         >
-                            {tabTitle}
+                            {tabLabel}
                         </SegmentGroup.ItemText>
                     </SegmentGroup.Item>
                 );
@@ -118,17 +118,17 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
     const [tabs, setTabs] = useState<Set<string>>(new Set());
 
     const registerTab = useCallback(
-        ((title) => {
+        ((label) => {
             setTabs((previousTabs) => {
                 const newTabs = new Set(previousTabs);
 
-                newTabs.add(title);
+                newTabs.add(label);
 
                 return newTabs;
             });
 
-            setSelectedTab((selectedTitle) => {
-                return selectedTitle ?? title;
+            setSelectedTab((selectedLabel) => {
+                return selectedLabel ?? label;
             });
         }) satisfies ITabbedSectionCardContext["registerTab"],
 
@@ -136,11 +136,11 @@ function TabbedSectionCardRoot(props: ITabbedSectionCardRootProps) {
     );
 
     const unregisterTab = useCallback(
-        ((title) => {
+        ((label) => {
             setTabs((previousTabs) => {
                 const newTabs = new Set(previousTabs);
 
-                newTabs.delete(title);
+                newTabs.delete(label);
 
                 return newTabs;
             });

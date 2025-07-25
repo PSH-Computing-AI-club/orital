@@ -22,13 +22,13 @@ interface ITabbedDataSectionCardContext<T> {
     readonly tabs: Map<string, ITabbedDataSectionCardProvider<T>>;
 
     registerTab(
-        title: string,
+        label: string,
         providier: ITabbedDataSectionCardProvider<T>,
     ): void;
 
-    setSelectedTab(title: string | null): void;
+    setSelectedTab(label: string | null): void;
 
-    unregisterTab(title: string): void;
+    unregisterTab(label: string): void;
 }
 
 export type ITabbedDataSectionCardProvider<T> = () => T;
@@ -38,7 +38,7 @@ export interface ITabbedDataSectionCardViewProps<T> {
 }
 
 export interface ITabbedDataSectionCardTabProps<T> {
-    readonly title: string;
+    readonly label: string;
 
     provider(): T;
 }
@@ -78,16 +78,16 @@ function TabbedDataSectionCardView<T>(
 }
 
 function TabbedDataSectionCardTab<T>(props: ITabbedDataSectionCardTabProps<T>) {
-    const {title, provider} = props;
+    const {label, provider} = props;
     const {registerTab, unregisterTab} = useTabbedDataSectionCardContext<T>();
 
     useEffect(() => {
-        registerTab(title, provider);
+        registerTab(label, provider);
 
         return () => {
-            unregisterTab(title);
+            unregisterTab(label);
         };
-    }, [title, provider, registerTab, unregisterTab]);
+    }, [label, provider, registerTab, unregisterTab]);
 
     return <></>;
 }
@@ -115,13 +115,13 @@ function TabbedDataSectionCardTabs() {
         >
             <SegmentGroup.Indicator bg="bg" />
 
-            {Array.from(tabs.keys()).map((tabTitle) => {
-                const isTabSelected = selectedTab === tabTitle;
+            {Array.from(tabs.keys()).map((tabLabel) => {
+                const isTabSelected = selectedTab === tabLabel;
 
                 return (
                     <SegmentGroup.Item
-                        key={tabTitle}
-                        value={tabTitle}
+                        key={tabLabel}
+                        value={tabLabel}
                         cursor={isTabSelected ? "default" : "pointer"}
                     >
                         <SegmentGroup.ItemHiddenInput />
@@ -129,7 +129,7 @@ function TabbedDataSectionCardTabs() {
                         <SegmentGroup.ItemText
                             color={isTabSelected ? "cyan.fg" : undefined}
                         >
-                            {tabTitle}
+                            {tabLabel}
                         </SegmentGroup.ItemText>
                     </SegmentGroup.Item>
                 );
@@ -147,20 +147,20 @@ function TabbedDataSectionCardRoot<T>(props: ITabbedDataSectionCardRootProps) {
     >(new Map());
 
     const registerTab = useCallback(
-        ((title, provider) => {
+        ((label, provider) => {
             setTabs((previousTabs) => {
                 const newTabs = new Map<
                     string,
                     ITabbedDataSectionCardProvider<T>
                 >(previousTabs);
 
-                newTabs.set(title, provider);
+                newTabs.set(label, provider);
 
                 return newTabs;
             });
 
-            setSelectedTab((selectedTitle) => {
-                return selectedTitle ?? title;
+            setSelectedTab((selectedLabel) => {
+                return selectedLabel ?? label;
             });
         }) satisfies ITabbedDataSectionCardContext<T>["registerTab"],
 
@@ -168,14 +168,14 @@ function TabbedDataSectionCardRoot<T>(props: ITabbedDataSectionCardRootProps) {
     );
 
     const unregisterTab = useCallback(
-        ((title) => {
+        ((label) => {
             setTabs((previousTabs) => {
                 const newTabs = new Map<
                     string,
                     ITabbedDataSectionCardProvider<T>
                 >(previousTabs);
 
-                newTabs.delete(title);
+                newTabs.delete(label);
 
                 return newTabs;
             });

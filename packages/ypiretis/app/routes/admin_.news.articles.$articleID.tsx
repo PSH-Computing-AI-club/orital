@@ -427,9 +427,7 @@ function SettingsCardPublishingView() {
                 </RadioCard.Root>
             </Field.Root>
 
-            <Field.Root
-                visibility={localPublishedAtDateTime ? "hidden" : undefined}
-            >
+            <Field.Root visibility={isDraft ? "hidden" : undefined}>
                 <Field.Label>Published At</Field.Label>
 
                 <Group alignSelf="stretch">

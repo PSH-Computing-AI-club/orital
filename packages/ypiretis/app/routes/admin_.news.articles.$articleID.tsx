@@ -24,6 +24,7 @@ import {data, useLoaderData, useFetcher} from "react-router";
 
 import * as v from "valibot";
 
+import type {IArticleStates} from "~/.server/database/tables/articles_table";
 import {
     ARTICLE_STATES,
     findOneByArticleID,
@@ -324,7 +325,7 @@ function SettingsCardPublishingView() {
             await stateUpdateFetcher.submit(
                 {
                     action: "state.update",
-                    state: value as "STATE_DRAFT" | "STATE_PUBLISHED",
+                    state: value as IArticleStates,
                 } satisfies IActionFormDataSchema,
 
                 {
@@ -409,7 +410,7 @@ function SettingsCardPublishingView() {
                     >
                         <RadioCard.Item
                             disabled={isStateUpdateDisabled}
-                            value="STATE_DRAFT"
+                            value={"STATE_DRAFT" satisfies IArticleStates}
                             colorPalette="red"
                             cursor={canDraft ? "pointer" : "default"}
                         >
@@ -428,7 +429,7 @@ function SettingsCardPublishingView() {
 
                         <RadioCard.Item
                             disabled={isStateUpdateDisabled}
-                            value="STATE_PUBLISHED"
+                            value={"STATE_PUBLISHED" satisfies IArticleStates}
                             colorPalette="green"
                             cursor={canPublish ? "pointer" : "default"}
                         >

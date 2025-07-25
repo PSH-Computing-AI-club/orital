@@ -719,7 +719,7 @@ function PINCard() {
                 </Button>
 
                 <IconButton
-                    disabled={isDisposed}
+                    disabled={isActionDisabled}
                     hideFrom="lg"
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"

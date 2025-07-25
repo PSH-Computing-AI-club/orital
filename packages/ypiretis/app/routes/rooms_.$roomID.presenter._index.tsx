@@ -16,7 +16,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import type {MouseEvent, ReactElement} from "react";
+import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
 import {useCallback, useState} from "react";
 
 import * as v from "valibot";
@@ -52,6 +52,8 @@ import ShieldIcon from "~/components/icons/shield_icon";
 import TeachIcon from "~/components/icons/teach_icon";
 import UserXIcon from "~/components/icons/user_x_icon";
 import UsersIcon from "~/components/icons/users_icon";
+
+import {useAsyncCallback} from "~/hooks/async_callback";
 
 import type {IAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
@@ -161,25 +163,29 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const isDisposed = roomState === "STATE_DISPOSED";
     const canFetchAction = !(isDisposed || isFetchingAction);
 
-    function makeActionEventHandler(
-        action: IAttendeeActionFormData["action"],
-    ): (
-        event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-    ) => Promise<void> {
-        return async (_event) => {
-            setIsFetchingAction(true);
+    const makeActionEventHandler = useCallback(
+        ((action) => {
+            return async (_event) => {
+                setIsFetchingAction(true);
 
-            await fetch(`./presenter/actions/attendees/${entityID}`, {
-                method: "POST",
+                await fetch(`./presenter/actions/attendees/${entityID}`, {
+                    method: "POST",
 
-                body: buildFormData<IAttendeeActionFormData>({
-                    action,
-                }),
-            });
+                    body: buildFormData<IAttendeeActionFormData>({
+                        action,
+                    }),
+                });
 
-            setIsFetchingAction(false);
-        };
-    }
+                setIsFetchingAction(false);
+            };
+        }) satisfies (
+            action: IAttendeeActionFormData["action"],
+        ) => (
+            event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        ) => Promise<void>,
+
+        [entityID, setIsFetchingAction],
+    );
 
     const menuItems: ReactElement[] = [];
 
@@ -554,16 +560,9 @@ function StateCard() {
     const {room} = usePresenterContext();
     const {state} = room;
 
-    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
-
-    const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || isFetchingAction);
-
-    const onStateChange = useCallback(
+    const [isFetchingAction, onStateChange] = useAsyncCallback(
         (async (details) => {
             const {value} = details;
-
-            setIsFetchingAction(true);
 
             await fetch("./presenter/actions/room", {
                 method: "POST",
@@ -573,12 +572,13 @@ function StateCard() {
                     state: value as Exclude<IRoomStates, "STATE_DISPOSED">,
                 }),
             });
-
-            setIsFetchingAction(false);
         }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
-        [setIsFetchingAction],
+        [],
     );
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const isActionDisabled = isDisposed || isFetchingAction;
 
     return (
         <SectionCard.Root flexGrow="1">
@@ -590,7 +590,7 @@ function StateCard() {
                 </SectionCard.Title>
 
                 <RadioCardGroup.Root
-                    disabled={!canFetchAction}
+                    disabled={isActionDisabled}
                     value={state}
                     flexGrow="1"
                     fontSize="xl"
@@ -644,32 +644,30 @@ function PINCard() {
     const {room} = usePresenterContext();
     const {pin, roomID, state} = room;
 
-    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
+    const onCopyClick = useCallback(
+        (async (_event) => {
+            await navigator.clipboard.writeText(pin);
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [pin],
+    );
+
+    const [isFetchingAction, onRegenerateClick] = useAsyncCallback(
+        (async (_event) => {
+            await fetch("./presenter/actions/room", {
+                method: "POST",
+
+                body: buildFormData<IRoomActionFormData>({
+                    action: "pin.regenerate",
+                }),
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [],
+    );
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || isFetchingAction);
-
-    async function onCopyClick(
-        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ): Promise<void> {
-        await navigator.clipboard.writeText(pin);
-    }
-
-    async function onRegenerateClick(
-        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ): Promise<void> {
-        setIsFetchingAction(true);
-
-        await fetch("./presenter/actions/room", {
-            method: "POST",
-
-            body: buildFormData<IRoomActionFormData>({
-                action: "pin.regenerate",
-            }),
-        });
-
-        setIsFetchingAction(false);
-    }
+    const isActionDisabled = isDisposed || isFetchingAction;
 
     return (
         <SectionCard.Root>
@@ -704,7 +702,7 @@ function PINCard() {
 
             <SectionCard.Footer>
                 <Button
-                    disabled={!canFetchAction}
+                    disabled={isActionDisabled}
                     hideBelow="lg"
                     size={{base: "md", lgDown: "sm"}}
                     colorPalette="red"
@@ -789,39 +787,39 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
     const {room} = usePresenterContext();
     const {state, title} = room;
 
-    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, onTitleCommit] = useAsyncCallback(
+        (async (details) => {
+            const {value: newTitle} = details;
+
+            if (title === newTitle) {
+                return;
+            }
+
+            await fetch("./presenter/actions/room", {
+                method: "POST",
+                body: buildFormData<IRoomActionFormData>({
+                    action: "title.update",
+                    title: newTitle,
+                }),
+            });
+        }) satisfies (details: EditableValueChangeDetails) => Promise<void>,
+
+        [],
+    );
+
+    const onTitleIsValid = useCallback(
+        ((details) => {
+            const {value: newTitle} = details;
+            const {success} = v.safeParse(UX_TITLE_SCHEMA, newTitle);
+
+            return success;
+        }) satisfies (details: EditableValueChangeDetails) => boolean,
+
+        [],
+    );
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || isFetchingAction);
-
-    async function onTitleCommit(
-        details: EditableValueChangeDetails,
-    ): Promise<void> {
-        const {value: newTitle} = details;
-
-        if (title === newTitle) {
-            return;
-        }
-
-        setIsFetchingAction(true);
-
-        await fetch("./presenter/actions/room", {
-            method: "POST",
-            body: buildFormData<IRoomActionFormData>({
-                action: "title.update",
-                title: newTitle,
-            }),
-        });
-
-        setIsFetchingAction(false);
-    }
-
-    function onTitleIsValid(details: EditableValueChangeDetails): boolean {
-        const {value: newTitle} = details;
-        const {success} = v.safeParse(UX_TITLE_SCHEMA, newTitle);
-
-        return success;
-    }
+    const isActionDisabled = isDisposed || isFetchingAction;
 
     return (
         <Layout.FixedContainer>
@@ -829,7 +827,7 @@ export default function RoomsPresenterIndex(_props: Route.ComponentProps) {
                 <Title.Text title={title} />
             ) : (
                 <Title.Editable
-                    disabled={!canFetchAction}
+                    disabled={isActionDisabled}
                     title={title}
                     maxLength={32}
                     onTitleCommit={onTitleCommit}

@@ -62,6 +62,9 @@ export const ENVIRONMENT_SCHEMA = v.object({
     // **TODO:** verify that string is a file path
     DATABASE_FILE_PATH: v.string(),
 
+    // **TODO:** verify that string is a file path
+    UPLOADS_DIRECTORY_PATH: v.string(),
+
     SMTP_HOST: hostname,
     SMTP_PORT: v.pipe(
         v.string(),

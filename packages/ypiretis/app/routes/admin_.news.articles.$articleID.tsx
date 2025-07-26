@@ -510,10 +510,10 @@ function SettingsCardPublishingView() {
     );
 }
 
-function SettingsCardUploadsView() {
+function SettingsCardAttachmentsView() {
     return (
-        <TabbedSectionCard.View label="Uploads">
-            settings card uploads view unda construction
+        <TabbedSectionCard.View label="Attachments">
+            settings card attachments view unda construction
         </TabbedSectionCard.View>
     );
 }
@@ -531,7 +531,7 @@ function SettingsCard() {
 
                 <SettingsCardActionsView />
                 <SettingsCardPublishingView />
-                <SettingsCardUploadsView />
+                <SettingsCardAttachmentsView />
             </TabbedSectionCard.Body>
         </TabbedSectionCard.Root>
     );

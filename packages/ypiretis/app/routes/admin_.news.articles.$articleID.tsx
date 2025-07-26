@@ -341,10 +341,10 @@ function ContentCard() {
     );
 }
 
-function SettingsCardActionsView() {
+function SettingsCardAttachmentsView() {
     return (
-        <TabbedSectionCard.View label="Actions">
-            settings card actions view unda construction
+        <TabbedSectionCard.View label="Attachments">
+            settings card attachments view unda construction
         </TabbedSectionCard.View>
     );
 }
@@ -510,10 +510,10 @@ function SettingsCardPublishingView() {
     );
 }
 
-function SettingsCardAttachmentsView() {
+function SettingsCardActionsView() {
     return (
-        <TabbedSectionCard.View label="Attachments">
-            settings card attachments view unda construction
+        <TabbedSectionCard.View label="Actions">
+            settings card actions view unda construction
         </TabbedSectionCard.View>
     );
 }

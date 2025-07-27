@@ -109,7 +109,9 @@ export async function validateMultipartFormData<T extends IObjectSchema>(
         const {fieldName} = fileUpload;
 
         if (!fileUploadFields.has(fieldName)) {
-            // todo: do something here
+            throw ReferenceError(
+                `bad arugment #0 to 'onFileUpload' (field name '${fieldName}' does not support files)`,
+            );
         }
 
         const file = await handleFileUpload(fileUpload);
@@ -141,7 +143,8 @@ export async function validateMultipartFormData<T extends IObjectSchema>(
             error instanceof MaxFileSizeExceededError ||
             error instanceof MaxHeaderSizeExceededError ||
             error instanceof MaxFilesExceededError ||
-            error instanceof MultipartParseError
+            error instanceof MultipartParseError ||
+            error instanceof ReferenceError
         ) {
             throw data(errorData, {
                 status: 400,

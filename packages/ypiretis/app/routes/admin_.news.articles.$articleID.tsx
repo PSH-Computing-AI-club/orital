@@ -352,9 +352,9 @@ function SettingsCardAttachmentsView() {
 function SettingsCardPublishingView() {
     const {article} = useLoaderData<typeof loader>();
 
-    const publishedAtInputRef = useRef<HTMLInputElement | null>(null);
-
     const {publishedAtTimestamp, state} = article;
+
+    const publishedAtInputRef = useRef<HTMLInputElement | null>(null);
 
     const stateUpdateFetcher = useFetcher();
     const publishedAtUpdateFetcher = useFetcher();

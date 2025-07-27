@@ -1,17 +1,11 @@
-import type {FormDataEntryValue} from "bun";
-
-import type {FileUploadHandler} from "@remix-run/form-data-parser";
-import {parseFormData} from "@remix-run/form-data-parser";
-
 import {data} from "react-router";
 
 import * as v from "valibot";
 
 import {updateOneByArticleID} from "~/.server/services/articles_service";
-import {handleFileUpload} from "~/.server/services/temporary_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
-import {validateParams} from "~/guards/validation";
+import {validateMultipartFormData, validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload";
 
@@ -32,27 +26,21 @@ export type IActionFormDataSchema = v.InferInput<
 export async function action(actionArgs: Route.ActionArgs) {
     const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
 
+    // **NOTE:** Normally we handle parsing and validating _before_
+    // authentication since authentication requires a database hit.
+    //
+    // However, since we accept file uploads at this endpoint we want to
+    // reject those requests to those immediately as soon as possible instead.
+    //
+    // Since attackers could fill up our disk before even checking if they
+    // were allowed to in the first place.
+
     await requireAuthenticatedAdminSession(actionArgs);
 
-    const {request} = actionArgs;
-
-    const formData = await parseFormData(request, handleFileUpload);
-
-    const obj = Object.fromEntries(
-        formData.entries() as IterableIterator<[string, FormDataEntryValue]>,
+    const {action, file} = await validateMultipartFormData(
+        ACTION_FORM_DATA_SCHEMA,
+        actionArgs,
     );
-
-    const {issues, output, success} = v.safeParse(ACTION_FORM_DATA_SCHEMA, obj);
-
-    if (!success) {
-        console.log({issues});
-
-        throw data("Bad Request.", {
-            status: 400,
-        });
-    }
-
-    const {action, file} = output;
 
     console.log({
         action,

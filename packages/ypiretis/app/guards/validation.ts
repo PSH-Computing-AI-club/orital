@@ -1,6 +1,9 @@
 // **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
 // imported by server-only modules.
 
+import type {FileUploadHandler} from "@remix-run/form-data-parser";
+import {parseFormData} from "@remix-run/form-data-parser";
+
 import type {
     ActionFunctionArgs,
     ClientActionFunctionArgs,
@@ -19,6 +22,8 @@ import type {
 } from "valibot";
 import * as v from "valibot";
 
+import {handleFileUpload} from "~/.server/services/temporary_service";
+
 export type IObjectSchema = ObjectSchema<
     ObjectEntries,
     ErrorMessage<ObjectIssue> | undefined
@@ -36,6 +41,52 @@ export async function validateFormData<T extends IObjectLikeSchema>(
     const {request} = actionArgs;
 
     const formData = await request.formData();
+
+    const {output, success} = v.safeParse(
+        schema,
+        Object.fromEntries(formData.entries()),
+    );
+
+    if (!success) {
+        throw data(errorData, {
+            status: 400,
+        });
+    }
+
+    return output;
+}
+
+export async function validateMultipartFormData<T extends IObjectSchema>(
+    schema: T,
+    actionArgs: ActionFunctionArgs | ClientActionFunctionArgs,
+    errorData: unknown = "Bad Request",
+): Promise<InferOutput<T>> {
+    const {request} = actionArgs;
+    const {entries} = schema;
+
+    const onFileUpload = ((fileUpload) => {
+        const {fieldName} = fileUpload;
+
+        const fieldSchema = entries[fieldName];
+
+        if (!fieldSchema || fieldSchema.type !== "file") {
+            // todo: do something here
+        }
+
+        return handleFileUpload(fileUpload);
+    }) satisfies FileUploadHandler;
+
+    const formData = await parseFormData(
+        request,
+        {
+            // **NOTE:** We should enforce a upload-per-request model globally. There
+            // is at no endpoint where we would actually need to ingest multiple files
+            // at any given point. Plus, this helps simplifies things.
+            maxFiles: 1,
+        },
+
+        onFileUpload,
+    );
 
     const {output, success} = v.safeParse(
         schema,

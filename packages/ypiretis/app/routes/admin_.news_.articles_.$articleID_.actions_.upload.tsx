@@ -1,3 +1,5 @@
+import type {FormDataEntryValue} from "bun";
+
 import type {FileUploadHandler} from "@remix-run/form-data-parser";
 import {parseFormData} from "@remix-run/form-data-parser";
 
@@ -19,7 +21,7 @@ const ACTION_PARAMS_SCHEMA = v.object({
 export interface IActionFormDataSchema {
     readonly action: "upload.file";
 
-    readonly file: boolean;
+    readonly file: File;
 }
 
 export async function action(actionArgs: Route.ActionArgs) {
@@ -39,12 +41,14 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const formData = await parseFormData(request, uploadHandler);
 
-    const {action, file} = Object.fromEntries(formData.entries());
+    const {action, file} = Object.fromEntries(
+        formData.entries() as IterableIterator<[string, FormDataEntryValue]>,
+    );
 
     if (
         typeof action !== "string" ||
         action !== "upload.file" ||
-        typeof file !== "boolean"
+        !(file instanceof Blob)
     ) {
         throw data("Bad Request.", {
             status: 400,

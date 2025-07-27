@@ -19,11 +19,15 @@ const ACTION_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
 });
 
-export interface IActionFormDataSchema {
-    readonly action: "upload.file";
+const ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.pipe(v.string(), v.literal("upload.file")),
 
-    readonly file: File;
-}
+    file: v.pipe(v.file(), v.maxSize(1024 ** 2 * 5)),
+});
+
+export type IActionFormDataSchema = v.InferInput<
+    typeof ACTION_FORM_DATA_SCHEMA
+>;
 
 export async function action(actionArgs: Route.ActionArgs) {
     const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
@@ -34,17 +38,24 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const formData = await parseFormData(request, handleFileUpload);
 
-    const {action, file} = Object.fromEntries(
+    const obj = Object.fromEntries(
         formData.entries() as IterableIterator<[string, FormDataEntryValue]>,
     );
 
-    if (
-        typeof action !== "string" ||
-        action !== "upload.file" ||
-        !(file instanceof Blob)
-    ) {
+    const {issues, output, success} = v.safeParse(ACTION_FORM_DATA_SCHEMA, obj);
+
+    if (!success) {
+        console.log({issues});
+
         throw data("Bad Request.", {
             status: 400,
         });
     }
+
+    const {action, file} = output;
+
+    console.log({
+        action,
+        file,
+    });
 }

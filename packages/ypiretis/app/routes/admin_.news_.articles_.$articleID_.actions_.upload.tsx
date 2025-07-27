@@ -8,6 +8,7 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import {updateOneByArticleID} from "~/.server/services/articles_service";
+import {handleFileUpload} from "~/.server/services/temporary_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {validateParams} from "~/guards/validation";
@@ -31,15 +32,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {request} = actionArgs;
 
-    const uploadHandler = (async (fileUpload) => {
-        const {fieldName} = fileUpload;
-
-        if (fieldName === "file") {
-            console.log({fileUpload});
-        }
-    }) satisfies FileUploadHandler;
-
-    const formData = await parseFormData(request, uploadHandler);
+    const formData = await parseFormData(request, handleFileUpload);
 
     const {action, file} = Object.fromEntries(
         formData.entries() as IterableIterator<[string, FormDataEntryValue]>,

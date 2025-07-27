@@ -1,8 +1,17 @@
 // **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
 // imported by server-only modules.
 
+import type {BunFile} from "bun";
+
 import type {FileUploadHandler} from "@remix-run/form-data-parser";
-import {parseFormData} from "@remix-run/form-data-parser";
+import {
+    FormDataParseError,
+    MaxFileSizeExceededError,
+    MaxHeaderSizeExceededError,
+    MaxFilesExceededError,
+    MultipartParseError,
+    parseFormData,
+} from "@remix-run/form-data-parser";
 
 import type {
     ActionFunctionArgs,
@@ -64,29 +73,83 @@ export async function validateMultipartFormData<T extends IObjectSchema>(
     const {request} = actionArgs;
     const {entries} = schema;
 
-    const onFileUpload = ((fileUpload) => {
+    const fileUploadFields = new Set(
+        Object.entries(entries)
+            .filter((entry, _index) => {
+                const [, fieldSchema] = entry;
+                const {type} = fieldSchema;
+
+                return type === "file";
+            })
+            .map((entry, _index) => {
+                const [fieldName] = entry;
+
+                return fieldName;
+            }),
+    );
+
+    let fileIndex = 0;
+    const uploadedFiles: BunFile[] = Array.from({
+        length: fileUploadFields.size,
+    });
+
+    const onFileCleanup = async (): Promise<void> => {
+        await Promise.all(
+            uploadedFiles.map((file, _index) => {
+                if (!file) {
+                    return null;
+                }
+
+                return file.unlink();
+            }),
+        );
+    };
+
+    const onFileUpload = (async (fileUpload) => {
         const {fieldName} = fileUpload;
 
-        const fieldSchema = entries[fieldName];
-
-        if (!fieldSchema || fieldSchema.type !== "file") {
+        if (!fileUploadFields.has(fieldName)) {
             // todo: do something here
         }
 
-        return handleFileUpload(fileUpload);
+        const file = await handleFileUpload(fileUpload);
+        uploadedFiles[fileIndex] = file;
+
+        fileIndex++;
+        return file;
     }) satisfies FileUploadHandler;
 
-    const formData = await parseFormData(
-        request,
-        {
-            // **NOTE:** We should enforce a upload-per-request model globally. There
-            // is at no endpoint where we would actually need to ingest multiple files
-            // at any given point. Plus, this helps simplifies things.
-            maxFiles: 1,
-        },
+    let formData: FormData;
 
-        onFileUpload,
-    );
+    try {
+        formData = await parseFormData(
+            request,
+            {
+                // **NOTE:** We should enforce a upload-per-request model globally. There
+                // is at no endpoint where we would actually need to ingest multiple files
+                // at any given point. Plus, this helps simplifies things.
+                maxFiles: 1,
+            },
+
+            onFileUpload,
+        );
+    } catch (error) {
+        await onFileCleanup();
+
+        if (
+            error instanceof FormDataParseError ||
+            error instanceof MaxFileSizeExceededError ||
+            error instanceof MaxHeaderSizeExceededError ||
+            error instanceof MaxFilesExceededError ||
+            error instanceof MultipartParseError
+        ) {
+            throw data(errorData, {
+                status: 400,
+            });
+        }
+
+        throw error;
+    }
 
     const {output, success} = v.safeParse(
         schema,
@@ -94,6 +157,8 @@ export async function validateMultipartFormData<T extends IObjectSchema>(
     );
 
     if (!success) {
+        await onFileCleanup();
+
         throw data(errorData, {
             status: 400,
         });

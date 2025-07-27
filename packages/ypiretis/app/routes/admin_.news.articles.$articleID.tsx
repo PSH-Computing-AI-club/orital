@@ -342,9 +342,23 @@ function ContentCard() {
 }
 
 function SettingsCardAttachmentsView() {
+    const {article} = useLoaderData<typeof loader>();
+
+    const {articleID} = article;
+
     return (
         <TabbedSectionCard.View label="Attachments">
-            settings card attachments view unda construction
+            <form
+                action={`./${articleID}/actions/upload`}
+                method="POST"
+                encType="multipart/form-data"
+            >
+                <input type="file" name="file" />
+
+                <button type="submit" name="action" value="upload.file">
+                    Upload
+                </button>
+            </form>
         </TabbedSectionCard.View>
     );
 }

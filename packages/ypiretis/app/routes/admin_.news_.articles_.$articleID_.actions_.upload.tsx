@@ -1,0 +1,53 @@
+import type {FileUploadHandler} from "@remix-run/form-data-parser";
+import {parseFormData} from "@remix-run/form-data-parser";
+
+import {data} from "react-router";
+
+import * as v from "valibot";
+
+import {updateOneByArticleID} from "~/.server/services/articles_service";
+import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
+
+import {validateParams} from "~/guards/validation";
+
+import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload";
+
+const ACTION_PARAMS_SCHEMA = v.object({
+    articleID: v.pipe(v.string(), v.ulid()),
+});
+
+export interface IActionFormDataSchema {
+    readonly action: "upload.file";
+
+    readonly file: boolean;
+}
+
+export async function action(actionArgs: Route.ActionArgs) {
+    const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);
+
+    await requireAuthenticatedAdminSession(actionArgs);
+
+    const {request} = actionArgs;
+
+    const uploadHandler = (async (fileUpload) => {
+        const {fieldName} = fileUpload;
+
+        if (fieldName === "file") {
+            console.log({fileUpload});
+        }
+    }) satisfies FileUploadHandler;
+
+    const formData = await parseFormData(request, uploadHandler);
+
+    const {action, file} = Object.fromEntries(formData.entries());
+
+    if (
+        typeof action !== "string" ||
+        action !== "upload.file" ||
+        typeof file !== "boolean"
+    ) {
+        throw data("Bad Request.", {
+            status: 400,
+        });
+    }
+}

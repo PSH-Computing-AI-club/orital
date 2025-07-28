@@ -1,3 +1,5 @@
+import {exit} from "node:process";
+
 import {Temporal} from "@js-temporal/polyfill";
 
 import * as v from "valibot";
@@ -150,6 +152,24 @@ export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;
 
 export type IEnvironmentParsed = v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
 
-const ENVIRONMENT = v.parse(ENVIRONMENT_SCHEMA, process.env);
+let ENVIRONMENT: v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
+
+try {
+    ENVIRONMENT = await v.parseAsync(ENVIRONMENT_SCHEMA, process.env);
+} catch (error) {
+    console.error(
+        "An error occurred while processing the environment variables:",
+    );
+
+    if (error instanceof Error) {
+        const {message} = error;
+
+        console.error(message);
+    } else {
+        console.error((error as any).toString());
+    }
+
+    exit(1);
+}
 
 export default ENVIRONMENT;

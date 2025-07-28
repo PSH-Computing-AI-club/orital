@@ -2,12 +2,12 @@ import {CronPattern} from "croner";
 
 import * as v from "valibot";
 
-export const cron_expression = v.pipe(
+export const cronExpression = v.pipe(
     v.string(),
     v.check((value) => {
         try {
             new CronPattern(value);
-        } catch (error) {
+        } catch (_error) {
             return false;
         }
 

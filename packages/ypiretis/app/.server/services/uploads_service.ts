@@ -10,6 +10,8 @@ import type {
 } from "../database/tables/uploads_table";
 import UPLOADS_TABLE from "../database/tables/uploads_table";
 
+import {moveFile} from "../utils/bun";
+
 import type {IUser} from "./users_service";
 
 const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
@@ -61,6 +63,6 @@ export async function handleFile(
         recursive: true,
     });
 
-    await rename(filePath, uploadFilePath);
+    await moveFile(file, uploadFilePath);
     return upload;
 }

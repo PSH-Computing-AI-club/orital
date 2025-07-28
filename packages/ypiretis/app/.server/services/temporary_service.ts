@@ -8,9 +8,9 @@ import type {FileUpload} from "@remix-run/form-data-parser";
 
 import {ulid} from "ulid";
 
-import {sanitizeBasename} from "../utils/path";
-
 import {PACKAGE_NAME} from "../../utils/constants";
+
+import {sanitizeBasename} from "../utils/path";
 
 const SYSTEM_TEMPORARY_DIRECTORY = tmpdir();
 

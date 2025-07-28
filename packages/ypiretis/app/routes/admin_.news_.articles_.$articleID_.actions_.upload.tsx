@@ -3,6 +3,7 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import {updateOneByArticleID} from "~/.server/services/articles_service";
+import {handleFile} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {validateMultipartFormData, validateParams} from "~/guards/validation";
@@ -35,15 +36,17 @@ export async function action(actionArgs: Route.ActionArgs) {
     // Since attackers could fill up our disk before even checking if they
     // were allowed to in the first place.
 
-    await requireAuthenticatedAdminSession(actionArgs);
+    const {identifiable: user} =
+        await requireAuthenticatedAdminSession(actionArgs);
 
-    const {action, file} = await validateMultipartFormData(
+    const {file} = await validateMultipartFormData(
         ACTION_FORM_DATA_SCHEMA,
         actionArgs,
     );
 
+    const upload = await handleFile(file, user);
+
     console.log({
-        action,
-        file,
+        upload,
     });
 }

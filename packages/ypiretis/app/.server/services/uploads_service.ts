@@ -1,4 +1,4 @@
-import {mkdir, rename} from "node:fs/promises";
+import {mkdir} from "node:fs/promises";
 import {basename, join} from "node:path";
 
 import DATABASE from "../configuration/database";

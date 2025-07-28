@@ -12,7 +12,7 @@ import {
 } from "../../utils/valibot";
 
 import makeSecret from "../utils/secret";
-import {cron_expression} from "../utils/valibot";
+import {cronExpression, directoryPath, filePath} from "../utils/valibot";
 
 export const NODE_ENVIRONMENT_MODES = {
     development: "development",
@@ -36,7 +36,7 @@ export const LOGGING_LEVELS = {
     warn: "warn",
 } as const;
 
-export const ENVIRONMENT_SCHEMA = v.object({
+export const ENVIRONMENT_SCHEMA = v.objectAsync({
     NODE_ENV: v.enum(NODE_ENVIRONMENT_MODES),
 
     SERVER_LOGGING_LEVEL: v.enum(LOGGING_LEVELS),
@@ -59,11 +59,9 @@ export const ENVIRONMENT_SCHEMA = v.object({
         v.transform((value) => makeSecret(value)),
     ),
 
-    // **TODO:** verify that string is a file path
-    DATABASE_FILE_PATH: v.string(),
+    DATABASE_FILE_PATH: filePath,
 
-    // **TODO:** verify that string is a file path
-    UPLOADS_DIRECTORY_PATH: v.string(),
+    UPLOADS_DIRECTORY_PATH: directoryPath,
 
     SMTP_HOST: hostname,
     SMTP_PORT: v.pipe(
@@ -131,9 +129,9 @@ export const ENVIRONMENT_SCHEMA = v.object({
         v.transform((value) => Temporal.Duration.from(value)),
     ),
 
-    CRONJOB_ROOMS_DISCONNECT_CLEANUP: cron_expression,
-    CRONJOB_ROOMS_LIFETIME_CLEANUP: cron_expression,
-    CRONJOB_TOKENS_CLEANUP: cron_expression,
+    CRONJOB_ROOMS_DISCONNECT_CLEANUP: cronExpression,
+    CRONJOB_ROOMS_LIFETIME_CLEANUP: cronExpression,
+    CRONJOB_TOKENS_CLEANUP: cronExpression,
 
     QUEUE_EMAILS_MAX: v.pipe(
         v.string(),

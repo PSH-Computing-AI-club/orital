@@ -30,11 +30,17 @@ async function insertOne(uploadInsert: IUploadInsert): Promise<IUpload> {
 }
 
 export async function handleFile(
-    file: File,
+    file: Bun.BunFile,
     uploader: IUser,
 ): Promise<IUpload> {
     const {name: filePath, size: fileSize, type: mimeType} = file;
     const {id: userID} = uploader;
+
+    if (!filePath) {
+        throw ReferenceError(
+            `bad argument #0 to 'handleFile' ('Bun.BunFile.name' was 'undefined')`,
+        );
+    }
 
     const fileName = basename(filePath);
 

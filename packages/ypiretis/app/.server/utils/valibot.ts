@@ -58,6 +58,16 @@ export const systemPath = v.union([
     v.pipe(v.string(), systemRelativePath),
 ]);
 
+export const bunFile = v.transform<File, Bun.BunFile>((value) => {
+    if (value instanceof File) {
+        const {name} = value;
+
+        return Bun.file(name);
+    }
+
+    return value as Bun.BunFile;
+});
+
 export const cronExpression = v.pipe(
     v.string(),
     v.check((value) => {

@@ -6,6 +6,8 @@ import {updateOneByArticleID} from "~/.server/services/articles_service";
 import {handleFile} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
+import {bunFile} from "~/.server/utils/valibot";
+
 import {validateMultipartFormData, validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload";
@@ -17,7 +19,7 @@ const ACTION_PARAMS_SCHEMA = v.object({
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("upload.file")),
 
-    file: v.pipe(v.file(), v.maxSize(1024 ** 2 * 5)),
+    file: v.pipe(v.file(), v.maxSize(1024 ** 2 * 5), bunFile),
 });
 
 export type IActionFormDataSchema = v.InferInput<

@@ -1,12 +1,31 @@
 import {relations} from "drizzle-orm";
 
 import ARTICLES_TABLE from "./articles_table";
+import ARTICLES_ATTACHMENTS_TABLE from "./articles_attachments_table";
 import ATTENDEES_TABLE from "./attendees_table";
 import CALLBACK_TOKENS_TABLE from "./callback_tokens_table";
 import CONSENT_TOKENS_TABLE from "./consent_tokens_table";
 import ROOMS_TABLE from "./rooms_table";
 import UPLOADS_TABLE from "./uploads_table";
 import USERS_TABLE from "./users_table";
+
+export const ARTICLES_ATTACHMENTS_RELATIONS = relations(
+    ARTICLES_ATTACHMENTS_TABLE,
+
+    ({one}) => {
+        return {
+            article: one(ARTICLES_TABLE, {
+                fields: [ARTICLES_ATTACHMENTS_TABLE.targetID],
+                references: [ARTICLES_TABLE.id],
+            }),
+
+            upload: one(UPLOADS_TABLE, {
+                fields: [ARTICLES_ATTACHMENTS_TABLE.uploadID],
+                references: [UPLOADS_TABLE.id],
+            }),
+        };
+    },
+);
 
 export const ARTICLES_RELATIONS = relations(
     ARTICLES_TABLE,

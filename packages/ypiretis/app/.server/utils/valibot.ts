@@ -3,6 +3,8 @@ import {dirname, isAbsolute, resolve} from "node:path";
 import {cwd} from "node:process";
 import {platform} from "node:os";
 
+import bytes from "bytes";
+
 import {CronPattern} from "croner";
 
 import * as v from "valibot";
@@ -67,6 +69,16 @@ export const bunFile = v.transform<File, Bun.BunFile>((value) => {
 
     return value as Bun.BunFile;
 });
+
+export const byteSize = v.pipe(
+    v.string(),
+    v.check((value) => {
+        return !!bytes(value);
+    }, "Invalid byte size format."),
+    v.transform((value) => {
+        return bytes(value)!;
+    }),
+);
 
 export const cronExpression = v.pipe(
     v.string(),

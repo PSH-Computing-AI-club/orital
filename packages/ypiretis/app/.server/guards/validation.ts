@@ -18,7 +18,11 @@ import * as v from "valibot";
 
 import type {IObjectSchema} from "../../guards/validation";
 
+import ENVIRONMENT from "../configuration/environment";
+
 import {handleFileUpload} from "../services/temporary_service";
+
+const {UPLOADS_MAX_FILE_SIZE} = ENVIRONMENT;
 
 export async function validateMultipartFormData<T extends IObjectSchema>(
     schema: T,
@@ -86,6 +90,7 @@ export async function validateMultipartFormData<T extends IObjectSchema>(
                 // is at no endpoint where we would actually need to ingest multiple files
                 // at any given point. Plus, this helps simplifies things.
                 maxFiles: 1,
+                maxFileSize: UPLOADS_MAX_FILE_SIZE,
             },
 
             onFileUpload,

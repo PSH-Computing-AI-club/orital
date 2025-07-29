@@ -2,6 +2,8 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
+import ENVIRONMENT from "~/.server/configuration/environment";
+
 import {validateMultipartFormData} from "~/.server/guards/validation";
 
 import {updateOneByArticleID} from "~/.server/services/articles_service";
@@ -14,6 +16,8 @@ import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload";
 
+const {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} = ENVIRONMENT;
+
 const ACTION_PARAMS_SCHEMA = v.object({
     articleID: v.pipe(v.string(), v.ulid()),
 });
@@ -21,7 +25,11 @@ const ACTION_PARAMS_SCHEMA = v.object({
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("upload.file")),
 
-    file: v.pipe(v.file(), v.maxSize(1024 ** 2 * 5), bunFile),
+    file: v.pipe(
+        v.file(),
+        v.maxSize(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE),
+        bunFile,
+    ),
 });
 
 export type IActionFormDataSchema = v.InferInput<

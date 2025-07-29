@@ -14,7 +14,12 @@ import {
 } from "../../utils/valibot";
 
 import makeSecret from "../utils/secret";
-import {cronExpression, directoryPath, filePath} from "../utils/valibot";
+import {
+    byteSize,
+    cronExpression,
+    directoryPath,
+    filePath,
+} from "../utils/valibot";
 
 export const NODE_ENVIRONMENT_MODES = {
     development: "development",
@@ -64,6 +69,11 @@ export const ENVIRONMENT_SCHEMA = v.objectAsync({
     DATABASE_FILE_PATH: filePath,
 
     UPLOADS_DIRECTORY_PATH: directoryPath,
+    UPLOADS_MAX_FILE_SIZE: byteSize,
+
+    ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: byteSize,
+
+    EVENTS_ATTACHMENTS_MAX_FILE_SIZE: byteSize,
 
     SMTP_HOST: hostname,
     SMTP_PORT: v.pipe(

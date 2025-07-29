@@ -1,7 +1,6 @@
 import {mkdir} from "node:fs/promises";
 import {dirname, isAbsolute, resolve} from "node:path";
 import {cwd} from "node:process";
-import {platform} from "node:os";
 
 import bytes from "bytes";
 
@@ -9,7 +8,7 @@ import {CronPattern} from "croner";
 
 import * as v from "valibot";
 
-const IS_WINDOWS = platform() === "win32";
+import {IS_WINDOWS} from "./platform";
 
 const PROCESS_CWD = cwd();
 

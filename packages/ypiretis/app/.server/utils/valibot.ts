@@ -72,15 +72,18 @@ export const systemPath = v.union([
     v.pipe(v.string(), v.nonEmpty(), systemRelativePathFormat),
 ]);
 
-export const bunFile = v.transform<File, Bun.BunFile>((value) => {
-    if (value instanceof File) {
-        const {name} = value;
+export const bunFile = v.pipe(
+    v.file(),
+    v.transform<File, Bun.BunFile>((value) => {
+        if (value instanceof File) {
+            const {name} = value;
 
-        return Bun.file(name);
-    }
+            return Bun.file(name);
+        }
 
-    return value as Bun.BunFile;
-});
+        return value as Bun.BunFile;
+    }),
+);
 
 export const byteSize = v.pipe(
     v.string(),

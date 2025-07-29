@@ -5,6 +5,7 @@ import ATTENDEES_TABLE from "./attendees_table";
 import CALLBACK_TOKENS_TABLE from "./callback_tokens_table";
 import CONSENT_TOKENS_TABLE from "./consent_tokens_table";
 import ROOMS_TABLE from "./rooms_table";
+import UPLOADS_TABLE from "./uploads_table";
 import USERS_TABLE from "./users_table";
 
 export const ARTICLES_RELATIONS = relations(
@@ -66,6 +67,19 @@ export const ROOMS_RELATIONS = relations(
     },
 );
 
+export const UPLOADS_RELATIONS = relations(
+    UPLOADS_TABLE,
+
+    ({one}) => {
+        return {
+            uploader: one(USERS_TABLE, {
+                fields: [UPLOADS_TABLE.uploaderUserID],
+                references: [USERS_TABLE.id],
+            }),
+        };
+    },
+);
+
 export const USERS_RELATIONS = relations(
     USERS_TABLE,
 
@@ -74,6 +88,7 @@ export const USERS_RELATIONS = relations(
             attendedRooms: many(ATTENDEES_TABLE),
             presentedRooms: many(ROOMS_TABLE),
             postedArticles: many(ARTICLES_TABLE),
+            fileUploads: many(UPLOADS_TABLE),
         };
     },
 );

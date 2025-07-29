@@ -38,7 +38,7 @@ export async function handleFile(
     const {id: userID} = uploader;
 
     if (!filePath) {
-        throw ReferenceError(
+        throw TypeError(
             `bad argument #0 to 'handleFile' ('Bun.BunFile.name' was 'undefined')`,
         );
     }

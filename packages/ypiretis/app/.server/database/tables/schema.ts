@@ -6,6 +6,7 @@
 // to provide query API types and migration support.
 
 export {default as articles} from "./articles_table";
+export {default as articles_attachments} from "./articles_attachments_table";
 export {default as attendees} from "./attendees_table";
 export {default as callbackTokens} from "./callback_tokens_table";
 export {default as consentTokens} from "./consent_tokens_table";

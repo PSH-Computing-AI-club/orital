@@ -31,6 +31,8 @@ import NotesPlusIcon from "~/components/icons/notes_plus_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
+import {number} from "~/utils/valibot";
+
 import {Route} from "./+types/admin_.news.($page)";
 
 const ARTICLES_PER_PAGE = 25;
@@ -45,13 +47,7 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    page: v.optional(
-        v.pipe(
-            v.string(),
-            v.transform((value) => Number(value)),
-            v.number(),
-        ),
-    ),
+    page: v.optional(number),
 });
 
 export async function action(actionArgs: Route.ActionArgs) {

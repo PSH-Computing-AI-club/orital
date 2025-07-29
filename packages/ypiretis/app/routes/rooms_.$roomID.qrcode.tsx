@@ -9,6 +9,8 @@ import {
     requireAuthenticatedDisplayConnection,
 } from "~/.server/services/rooms_service";
 
+import {ulid} from "~/.server/utils/valibot";
+
 import Links from "~/components/common/links";
 
 import {validateParams} from "~/guards/validation";
@@ -24,7 +26,7 @@ import {buildAppURL} from "~/utils/url";
 import {Route} from "./+types/rooms_.$roomID.qrcode";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    roomID: v.pipe(v.string(), v.ulid()),
+    roomID: ulid,
 });
 
 export const shouldRevalidate = ((_revalidateArgs) => {

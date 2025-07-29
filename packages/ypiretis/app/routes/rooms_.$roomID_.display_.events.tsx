@@ -6,6 +6,7 @@ import {
     requireAuthenticatedDisplayConnection,
 } from "~/.server/services/rooms_service";
 
+import {ulid} from "~/.server/utils/valibot";
 import {webSocket} from "~/.server/utils/web_socket";
 
 import {validateParams} from "~/guards/validation";
@@ -13,7 +14,7 @@ import {validateParams} from "~/guards/validation";
 import type {Route} from "./+types/rooms_.$roomID_.display_.events";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    roomID: v.pipe(v.string(), v.ulid()),
+    roomID: ulid,
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

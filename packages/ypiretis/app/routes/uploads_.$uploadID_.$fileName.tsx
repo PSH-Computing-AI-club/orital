@@ -4,6 +4,8 @@ import * as v from "valibot";
 
 import ENVIRONMENT from "~/.server/configuration/environment";
 
+import {ulid} from "~/.server/utils/valibot";
+
 import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/uploads_.$uploadID_.$fileName";
@@ -11,9 +13,9 @@ import {Route} from "./+types/uploads_.$uploadID_.$fileName";
 const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    fileName: v.pipe(v.string()),
+    fileName: v.string(),
 
-    uploadID: v.pipe(v.string(), v.ulid()),
+    uploadID: ulid,
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

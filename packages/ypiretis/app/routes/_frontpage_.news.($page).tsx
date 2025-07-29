@@ -19,6 +19,8 @@ import PageHero from "~/components/frontpage/page_hero";
 
 import {validateParams} from "~/guards/validation";
 
+import {number} from "~/utils/valibot";
+
 import {Route} from "./+types/_frontpage_.news.($page)";
 
 const ARTICLES_PER_PAGE = 10;
@@ -31,13 +33,7 @@ const PAGINATION_URL_TEMPLATE = (({page}) =>
     `/news/${page}`) satisfies IPaginationTemplate;
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    page: v.optional(
-        v.pipe(
-            v.string(),
-            v.transform((value) => Number(value)),
-            v.number(),
-        ),
-    ),
+    page: v.optional(number),
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

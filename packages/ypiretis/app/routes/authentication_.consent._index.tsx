@@ -31,6 +31,8 @@ import {
 import {insertOne as insertOneGrantToken} from "~/.server/services/grant_tokens_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
+import {token} from "~/.server/utils/valibot";
+
 import TimeDeltaText from "~/components/common/time_delta_text";
 import SearchIcon from "~/components/icons/search_icon";
 import UserPlusIcon from "~/components/icons/user_plus_icon";
@@ -48,7 +50,7 @@ import {
     ACCOUNT_PROVIDER_NAME,
     APP_NAME,
 } from "~/utils/constants";
-import {alphanumerical, token} from "~/utils/valibot";
+import {alphanumerical, number} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.consent._index";
 
@@ -59,19 +61,15 @@ const ACTION_ERROR_TYPES = {
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["authorize", "revoke"])),
 
-    consentToken: v.pipe(v.string(), token("TCSN")),
+    consentToken: token("TCSN"),
 });
 
 const HASH_LOADER_HASH_SCHEMA = v.object({
-    accountID: v.pipe(v.string(), v.nonEmpty(), alphanumerical),
+    accountID: alphanumerical,
 
-    consentToken: v.pipe(v.string(), token("TCSN")),
+    consentToken: token("TCSN"),
 
-    consentTokenExpiresAt: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    consentTokenExpiresAt: number,
 });
 
 const useHashLoader = withHashLoader((hash) => {

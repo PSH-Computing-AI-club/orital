@@ -9,14 +9,12 @@ import {
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
+import {number} from "~/utils/valibot";
+
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 
 const ACTION_PARAMS_SCHEMA = v.object({
-    entityID: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    entityID: number,
 });
 
 const MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA = v.object({

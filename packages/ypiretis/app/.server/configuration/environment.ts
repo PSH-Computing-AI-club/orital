@@ -1,23 +1,24 @@
 import {exit} from "node:process";
 
-import {Temporal} from "@js-temporal/polyfill";
-
 import * as v from "valibot";
 
 import {
     alphanumerical,
-    domain,
-    duration,
-    hostname,
+    email,
     identifier,
-    list,
+    identifierList,
+    number,
+    url,
 } from "../../utils/valibot";
 
-import makeSecret from "../utils/secret";
 import {
     byteSize,
     cronExpression,
+    cryptographicKey,
+    domain,
     directoryPath,
+    duration,
+    hostname,
     filePath,
 } from "../utils/valibot";
 
@@ -49,22 +50,10 @@ export const ENVIRONMENT_SCHEMA = v.objectAsync({
     SERVER_LOGGING_LEVEL: v.enum(LOGGING_LEVELS),
 
     SERVER_HOST: hostname,
-    SERVER_PORT: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-    ),
+    SERVER_PORT: number,
 
-    SECRET_KEY: v.pipe(
-        v.string(),
-        v.minBytes(32),
-        v.transform((value) => makeSecret(value)),
-    ),
-
-    SECRET_SALT: v.pipe(
-        v.string(),
-        v.minBytes(32),
-        v.transform((value) => makeSecret(value)),
-    ),
+    SECRET_KEY: cryptographicKey,
+    SECRET_SALT: cryptographicKey,
 
     DATABASE_FILE_PATH: filePath,
 
@@ -76,86 +65,40 @@ export const ENVIRONMENT_SCHEMA = v.objectAsync({
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE: byteSize,
 
     SMTP_HOST: hostname,
-    SMTP_PORT: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-    ),
+    SMTP_PORT: number,
 
-    SMTP_EMAIL: v.pipe(v.string(), v.rfcEmail()),
+    SMTP_EMAIL: email,
     SMTP_PASSWORD: v.string(),
 
-    APP_NAME: v.pipe(v.string(), v.maxLength(32)),
-    APP_URL: v.pipe(
-        v.string(),
-        v.url(),
-        v.transform((value) => new URL(value)),
-    ),
+    APP_NAME: v.pipe(v.string(), v.nonEmpty(), v.maxLength(32)),
+    APP_URL: url,
 
-    ACCOUNT_PROVIDER_DOMAIN: v.pipe(v.string(), domain),
-    ACCOUNT_PROVIDER_NAME: v.pipe(v.string(), v.maxLength(64)),
+    ACCOUNT_PROVIDER_DOMAIN: domain,
+    ACCOUNT_PROVIDER_NAME: v.pipe(v.string(), v.nonEmpty(), v.maxLength(64)),
 
-    ACCOUNT_ADMIN_IDENTIFIERS: v.pipe(
-        list,
-        v.array(v.pipe(v.string(), identifier)),
-    ),
+    ACCOUNT_ADMIN_IDENTIFIERS: identifierList,
 
-    SESSION_EPHEMERAL_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
+    SESSION_EPHEMERAL_TTL: duration,
+    SESSION_PERSISTENT_TTL: duration,
 
-    SESSION_PERSISTENT_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
+    TOKEN_CALLBACK_TTL: duration,
+    TOKEN_CONSENT_TTL: duration,
+    TOKEN_GRANT_TTL: duration,
 
-    TOKEN_CALLBACK_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
-
-    TOKEN_CONSENT_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
-
-    TOKEN_GRANT_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
-
-    ROOMS_DISCONNECT_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
-
-    ROOMS_LIFETIME_TTL: v.pipe(
-        v.string(),
-        duration,
-        v.transform((value) => Temporal.Duration.from(value)),
-    ),
+    ROOMS_DISCONNECT_TTL: duration,
+    ROOMS_LIFETIME_TTL: duration,
 
     CRONJOB_ROOMS_DISCONNECT_CLEANUP: cronExpression,
     CRONJOB_ROOMS_LIFETIME_CLEANUP: cronExpression,
     CRONJOB_TOKENS_CLEANUP: cronExpression,
 
-    QUEUE_EMAILS_MAX: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    QUEUE_EMAILS_MAX: number,
 
-    DISCORD_INVITE_CODE: v.pipe(v.string(), alphanumerical),
+    DISCORD_INVITE_CODE: alphanumerical,
 
-    ENGAGE_ORGANIZATION_IDENTIFIER: v.pipe(v.string(), identifier),
+    ENGAGE_ORGANIZATION_IDENTIFIER: identifier,
 
-    GITHUB_ORGANIZATION_IDENTIFIER: v.pipe(v.string(), identifier),
+    GITHUB_ORGANIZATION_IDENTIFIER: identifier,
 });
 
 export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;

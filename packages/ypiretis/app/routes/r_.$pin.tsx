@@ -12,7 +12,7 @@ import {pin as pinValidator} from "~/utils/valibot";
 import {Route} from "./+types/r_.$pin";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    pin: v.pipe(v.string(), v.length(6), pinValidator),
+    pin: pinValidator,
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

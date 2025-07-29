@@ -15,6 +15,8 @@ import {
 
 import {mapPublicUser} from "~/.server/services/users_service";
 
+import {ulid} from "~/.server/utils/valibot";
+
 import Separator from "~/components/common/separator";
 
 import Layout from "~/components/controlpanel/layout";
@@ -41,7 +43,7 @@ import type {IActionFormData} from "./rooms_.$roomID_.presenter_.actions_.room";
 import {Route} from "./+types/rooms_.$roomID.presenter";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    roomID: v.pipe(v.string(), v.ulid()),
+    roomID: ulid,
 });
 
 export const shouldRevalidate = ((_revalidateArgs) => {

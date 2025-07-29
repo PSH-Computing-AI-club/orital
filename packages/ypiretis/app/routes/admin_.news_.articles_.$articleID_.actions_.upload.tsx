@@ -10,7 +10,7 @@ import {updateOneByArticleID} from "~/.server/services/articles_service";
 import {handleFile} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
-import {bunFile} from "~/.server/utils/valibot";
+import {bunFile, ulid} from "~/.server/utils/valibot";
 
 import {validateParams} from "~/guards/validation";
 
@@ -19,7 +19,7 @@ import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload
 const {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} = ENVIRONMENT;
 
 const ACTION_PARAMS_SCHEMA = v.object({
-    articleID: v.pipe(v.string(), v.ulid()),
+    articleID: ulid,
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.object({

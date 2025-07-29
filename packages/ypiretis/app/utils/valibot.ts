@@ -3,19 +3,9 @@
 
 import * as v from "valibot";
 
-import {isValid} from "ulid";
-
 export const EXPRESSION_ALPHABETIC = /^[A-Za-z]*$/u;
 
 export const EXPRESSION_ALPHANUMERICAL = /^[0-9A-Za-z]*$/u;
-
-// SOURCE: https://github.com/fabian-hiller/valibot/issues/894#issuecomment-2763071920
-export const EXPRESSION_DOMAIN =
-    /^(?!-)([a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,36}$/iu;
-
-// SOURCE: https://rgxdb.com/r/MD2234J
-export const EXPRESSION_DURATION =
-    /^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/;
 
 export const EXPRESSION_IDENTIFIER = /^[0-9A-Za-z\-]*$/u;
 
@@ -25,65 +15,61 @@ export const EXPRESSION_PIN = /^[0-9A-NP-Z]*$/u;
 
 export const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
 
-export const alphabetic = v.regex(
-    EXPRESSION_ALPHABETIC,
-    "Invalid alphabetic format",
-);
-
-export const alphanumerical = v.regex(
-    EXPRESSION_ALPHANUMERICAL,
-    "Invalid alphanumerical format.",
-);
-
-export const identifier = v.regex(
-    EXPRESSION_IDENTIFIER,
-    "Invalid identifier format.",
-);
-
-export const domain = v.regex(EXPRESSION_DOMAIN, "Invalid domain format.");
-
-export const duration = v.regex(
-    EXPRESSION_DURATION,
-    "Invalid duration format.",
-);
-
-export const hostname = v.union(
-    [
-        v.literal("localhost"),
-        v.pipe(v.string(), domain),
-        v.pipe(v.string(), v.ip()),
-    ],
-    "Invalid hostname format.",
-);
-
 export const list = v.pipe(
     v.string(),
+    v.nonEmpty(),
     v.transform((value) =>
         value.split(",").map((substring) => substring.trim()),
     ),
 );
 
-export const numeric = v.regex(EXPRESSION_NUMERIC, "Invalid numeric format.");
+export const number = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_NUMERIC, "Invalid numeric format."),
+    v.transform((value) => {
+        return Number(value);
+    }),
+);
 
-export const pin = v.regex(EXPRESSION_PIN, "Invalid PIN format.");
+export const alphabetic = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_ALPHABETIC, "Invalid alphabetic format"),
+);
 
-export const title = v.regex(EXPRESSION_TITLE, "Invalid title format.");
+export const alphanumerical = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_ALPHANUMERICAL, "Invalid alphanumerical format."),
+);
 
-export const token = (namespace: string) => {
-    const prefix = `${namespace}_`;
+export const identifier = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_IDENTIFIER, "Invalid identifier format."),
+);
 
-    return v.pipe(
-        v.string(),
-        v.check((value) => {
-            if (!value.startsWith(prefix)) {
-                return false;
-            }
+export const email = v.pipe(v.string(), v.nonEmpty(), v.rfcEmail());
 
-            if (!isValid(value.slice(prefix.length))) {
-                return false;
-            }
+export const identifierList = v.pipe(list, v.array(identifier));
 
-            return true;
-        }, "Invalid token format."),
-    );
-};
+export const pin = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.length(6),
+    v.regex(EXPRESSION_PIN, "Invalid PIN format."),
+);
+
+export const title = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_TITLE, "Invalid title format."),
+);
+
+export const url = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.url(),
+    v.transform((value) => new URL(value)),
+);

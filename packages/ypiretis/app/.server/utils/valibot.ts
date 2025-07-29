@@ -2,15 +2,28 @@ import {mkdir} from "node:fs/promises";
 import {dirname, isAbsolute, resolve} from "node:path";
 import {cwd} from "node:process";
 
+import {Temporal} from "@js-temporal/polyfill";
+
 import bytes from "bytes";
 
 import {CronPattern} from "croner";
 
+import {isValid} from "ulid";
+
 import * as v from "valibot";
 
 import {IS_WINDOWS} from "./platform";
+import makeSecret from "./secret";
 
 const PROCESS_CWD = cwd();
+
+// SOURCE: https://github.com/fabian-hiller/valibot/issues/894#issuecomment-2763071920
+export const EXPRESSION_DOMAIN =
+    /^(?!-)([a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,36}$/iu;
+
+// SOURCE: https://rgxdb.com/r/MD2234J
+export const EXPRESSION_DURATION =
+    /^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/;
 
 const EXPRESSION_NTFS_ABSOLUTE_PATH =
     /^(?:[a-zA-Z]:\\|\\\\[a-zA-Z0-9_.-]+\\[a-zA-Z0-9_.-]+)\\?(?:[^<>:"/\\|?*]+\\?)*$/;
@@ -26,33 +39,37 @@ const resolvePath = v.transform((path: string) => {
     return isAbsolute(path) ? path : resolve(PROCESS_CWD, path);
 });
 
-const ntfsAbsolutePath = v.regex(
+const ntfsAbsolutePathFormat = v.regex(
     EXPRESSION_NTFS_ABSOLUTE_PATH,
     "Invalid absolute Windows file path format.",
 );
 
-const ntfsRelativePath = v.regex(
+const ntfsRelativePathFormat = v.regex(
     EXPRESSION_NTFS_RELATIVE_PATH,
     "Invalid relative Windows file path format.",
 );
 
-const posixAbsolutePath = v.regex(
+const posixAbsolutePathFormat = v.regex(
     EXPRESSION_POSIX_ABSOLUTE_PATH,
     "Invalid absolute POSIX file path format.",
 );
 
-const posixRelativePath = v.regex(
+const posixRelativePathFormat = v.regex(
     EXPRESSION_POSIX_RELATIVE_PATH,
     "Invalid relative POSIX file path format.",
 );
 
-const systemAbsolutePath = IS_WINDOWS ? ntfsAbsolutePath : posixAbsolutePath;
+const systemAbsolutePathFormat = IS_WINDOWS
+    ? ntfsAbsolutePathFormat
+    : posixAbsolutePathFormat;
 
-const systemRelativePath = IS_WINDOWS ? ntfsRelativePath : posixRelativePath;
+const systemRelativePathFormat = IS_WINDOWS
+    ? ntfsRelativePathFormat
+    : posixRelativePathFormat;
 
 export const systemPath = v.union([
-    v.pipe(v.string(), systemAbsolutePath),
-    v.pipe(v.string(), systemRelativePath),
+    v.pipe(v.string(), v.nonEmpty(), systemAbsolutePathFormat),
+    v.pipe(v.string(), v.nonEmpty(), systemRelativePathFormat),
 ]);
 
 export const bunFile = v.transform<File, Bun.BunFile>((value) => {
@@ -67,6 +84,7 @@ export const bunFile = v.transform<File, Bun.BunFile>((value) => {
 
 export const byteSize = v.pipe(
     v.string(),
+    v.nonEmpty(),
     v.check((value) => {
         return !!bytes(value);
     }, "Invalid byte size format."),
@@ -77,6 +95,7 @@ export const byteSize = v.pipe(
 
 export const cronExpression = v.pipe(
     v.string(),
+    v.nonEmpty(),
     v.check((value) => {
         try {
             new CronPattern(value);
@@ -88,6 +107,21 @@ export const cronExpression = v.pipe(
     }, "Invalid cron expression format."),
 );
 
+export const cryptographicKey = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.minBytes(32),
+    v.transform((value) => makeSecret(value)),
+);
+
+export const domain = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_DOMAIN, "Invalid domain format."),
+);
+
+export const ipAddress = v.pipe(v.string(), v.ip());
+
 export const directoryPath = v.pipeAsync(
     systemPath,
     resolvePath,
@@ -98,6 +132,13 @@ export const directoryPath = v.pipeAsync(
 
         return resolvedDirectoryPath;
     }),
+);
+
+export const duration = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_DURATION, "Invalid duration format."),
+    v.transform((value) => Temporal.Duration.from(value)),
 );
 
 export const filePath = v.pipeAsync(
@@ -112,4 +153,35 @@ export const filePath = v.pipeAsync(
 
         return resolvedFilePath;
     }),
+);
+
+export const localhost = v.pipe(v.string(), v.literal("localhost"));
+
+export const slug = v.pipe(v.string(), v.nonEmpty(), v.slug());
+
+export const token = (namespace: string) => {
+    const prefix = `${namespace}_`;
+
+    return v.pipe(
+        v.string(),
+        v.nonEmpty(),
+        v.check((value) => {
+            if (!value.startsWith(prefix)) {
+                return false;
+            }
+
+            if (!isValid(value.slice(prefix.length))) {
+                return false;
+            }
+
+            return true;
+        }, "Invalid token format."),
+    );
+};
+
+export const ulid = v.pipe(v.string(), v.nonEmpty(), v.ulid());
+
+export const hostname = v.union(
+    [localhost, domain, ipAddress],
+    "Invalid hostname format.",
 );

@@ -4,13 +4,14 @@ import * as v from "valibot";
 
 import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+import {ulid} from "~/.server/utils/valibot";
 
 import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/_frontpage_.news_.articles_.$articleID_.$";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    articleID: v.pipe(v.string(), v.ulid()),
+    articleID: ulid,
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

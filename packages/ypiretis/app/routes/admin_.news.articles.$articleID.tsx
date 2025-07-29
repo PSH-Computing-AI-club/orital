@@ -32,6 +32,7 @@ import {requireAuthenticatedAdminSession} from "~/.server/services/users_service
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+import {ulid} from "~/.server/utils/valibot";
 
 import Links from "~/components/common/links";
 import type {IChangeCallback} from "~/components/common/markdown_editor";
@@ -53,24 +54,20 @@ import {validateFormData, validateParams} from "~/guards/validation";
 
 import {toLocalISOString} from "~/utils/datetime";
 import {buildAppURL} from "~/utils/url";
-import {title} from "~/utils/valibot";
+import {number, title} from "~/utils/valibot";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
 
 const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("content.update")),
 
-    content: v.pipe(v.string()),
+    content: v.string(),
 });
 
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("publishedAt.update")),
 
-    publishedAtTimestamp: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    publishedAtTimestamp: number,
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -96,11 +93,11 @@ const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
 ]);
 
 const ACTION_PARAMS_SCHEMA = v.object({
-    articleID: v.pipe(v.string(), v.ulid()),
+    articleID: ulid,
 });
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    articleID: v.pipe(v.string(), v.ulid()),
+    articleID: ulid,
 });
 
 const UX_TITLE_SCHEMA = v.pipe(

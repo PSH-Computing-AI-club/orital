@@ -33,14 +33,12 @@ import {buildWebSocketURL} from "~/utils/url";
 
 import type {ILoginEvents} from "./authentication_.log-in_.events";
 
+import {number} from "~/utils/valibot";
+
 import {Route} from "./+types/authentication_.log-in.pending";
 
 const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
-    callbackTokenExpiresAt: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    callbackTokenExpiresAt: number,
 });
 
 export const shouldRevalidate = ((_revalidateArgs) => {

@@ -9,6 +9,7 @@ import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
+import {slug, ulid} from "~/.server/utils/valibot";
 
 import Links from "~/components/common/links";
 import Title from "~/components/common/title";
@@ -19,31 +20,20 @@ import PageHero from "~/components/frontpage/page_hero";
 import {validateParams} from "~/guards/validation";
 
 import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
+import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    articleID: v.pipe(v.string(), v.ulid()),
+    articleID: ulid,
 
-    day: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    day: number,
 
-    month: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    month: number,
 
-    slug: v.pipe(v.string(), v.nonEmpty(), v.slug()),
+    slug: slug,
 
-    year: v.pipe(
-        v.string(),
-        v.transform((value) => Number(value)),
-        v.number(),
-    ),
+    year: number,
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {

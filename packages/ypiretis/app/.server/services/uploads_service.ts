@@ -1,6 +1,8 @@
 import {mkdir} from "node:fs/promises";
 import {basename, join} from "node:path";
 
+import {ulid} from "ulid";
+
 import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
 
@@ -18,10 +20,7 @@ const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
 export type IUpload = ISelectUpload;
 
-export type IUploadInsert = Omit<
-    IInsertUpload,
-    "createdAt" | "id" | "uploadID"
->;
+export type IUploadInsert = Omit<IInsertUpload, "createdAt" | "id">;
 
 async function insertOne(uploadInsert: IUploadInsert): Promise<IUpload> {
     const [upload] = await DATABASE.insert(UPLOADS_TABLE)
@@ -45,16 +44,7 @@ export async function handleFile(
     }
 
     const fileName = basename(filePath);
-
-    const upload = await insertOne({
-        fileName,
-        fileSize,
-        mimeType,
-
-        uploaderUserID: userID,
-    });
-
-    const {uploadID} = upload;
+    const uploadID = ulid();
 
     const uploadDirectoryPath = join(UPLOADS_DIRECTORY_PATH, uploadID);
     const uploadFilePath = join(uploadDirectoryPath, fileName);
@@ -64,5 +54,13 @@ export async function handleFile(
     });
 
     await moveFile(file, uploadFilePath);
-    return upload;
+
+    return insertOne({
+        fileName,
+        fileSize,
+        mimeType,
+        uploadID,
+
+        uploaderUserID: userID,
+    });
 }

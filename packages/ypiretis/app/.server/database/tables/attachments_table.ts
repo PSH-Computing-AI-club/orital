@@ -27,6 +27,8 @@ const ATTACHMENTS_TABLE = sqliteTable(
 
     (table) => {
         return [
+            index("attachments_target_id_idx").on(table.targetID),
+
             index("attachments_target_id_upload_id_idx").on(
                 table.targetID,
                 table.uploadID,

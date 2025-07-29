@@ -26,33 +26,29 @@ const resolvePath = v.transform((path: string) => {
     return isAbsolute(path) ? path : resolve(PROCESS_CWD, path);
 });
 
-export const ntfsAbsolutePath = v.regex(
+const ntfsAbsolutePath = v.regex(
     EXPRESSION_NTFS_ABSOLUTE_PATH,
     "Invalid absolute Windows file path format.",
 );
 
-export const ntfsRelativePath = v.regex(
+const ntfsRelativePath = v.regex(
     EXPRESSION_NTFS_RELATIVE_PATH,
     "Invalid relative Windows file path format.",
 );
 
-export const posixAbsolutePath = v.regex(
+const posixAbsolutePath = v.regex(
     EXPRESSION_POSIX_ABSOLUTE_PATH,
     "Invalid absolute POSIX file path format.",
 );
 
-export const posixRelativePath = v.regex(
+const posixRelativePath = v.regex(
     EXPRESSION_POSIX_RELATIVE_PATH,
     "Invalid relative POSIX file path format.",
 );
 
-export const systemAbsolutePath = IS_WINDOWS
-    ? ntfsAbsolutePath
-    : posixAbsolutePath;
+const systemAbsolutePath = IS_WINDOWS ? ntfsAbsolutePath : posixAbsolutePath;
 
-export const systemRelativePath = IS_WINDOWS
-    ? ntfsRelativePath
-    : posixRelativePath;
+const systemRelativePath = IS_WINDOWS ? ntfsRelativePath : posixRelativePath;
 
 export const systemPath = v.union([
     v.pipe(v.string(), systemAbsolutePath),

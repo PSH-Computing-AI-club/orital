@@ -7,7 +7,7 @@ import ENVIRONMENT from "~/.server/configuration/environment";
 import {validateMultipartFormData} from "~/.server/guards/validation";
 
 import {updateOneByArticleID} from "~/.server/services/articles_service";
-import {handleFile} from "~/.server/services/uploads_service";
+import {handleOneUpload} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {bunFile, ulid} from "~/.server/utils/valibot";
@@ -52,7 +52,7 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
-    const upload = await handleFile(user, file);
+    const upload = await handleOneUpload(user, file);
 
     console.log({
         upload,

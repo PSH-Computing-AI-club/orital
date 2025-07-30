@@ -19,7 +19,7 @@ const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
 export type IUpload = ISelectUpload;
 
-export async function deleteFile(uploadID: number): Promise<void> {
+export async function deleteOneUpload(uploadID: number): Promise<void> {
     const upload = await DATABASE.query.uploads.findFirst({
         where: eq(UPLOADS_TABLE.id, uploadID),
     });
@@ -41,7 +41,7 @@ export async function deleteFile(uploadID: number): Promise<void> {
     await DATABASE.delete(UPLOADS_TABLE).where(eq(UPLOADS_TABLE.id, uploadID));
 }
 
-export async function handleFile(
+export async function handleOneUpload(
     uploader: IUser,
     file: Bun.BunFile,
 ): Promise<IUpload> {

@@ -6,7 +6,7 @@ import type {
     ISelectAttachment,
 } from "../database/tables/attachments_table";
 
-import {deleteFile, handleFile} from "./uploads_service";
+import {deleteOneUpload, handleOneUpload} from "./uploads_service";
 import type {IUser} from "./users_service";
 
 export type IAttachment = ISelectAttachment;
@@ -20,7 +20,7 @@ export interface IAttachmentsService {
 
     findAllAttachmentsByTargetID(targetID: number): Promise<IAttachment[]>;
 
-    handleAttachment(
+    handleOneAttachment(
         targetID: number,
         user: IUser,
         file: Bun.BunFile,
@@ -49,7 +49,7 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
                 );
             }
 
-            await deleteFile(uploadID);
+            await deleteOneUpload(uploadID);
         },
 
         findAllAttachmentsByTargetID(targetID) {
@@ -58,8 +58,8 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
                 .where(eq(table.targetID, targetID));
         },
 
-        async handleAttachment(targetID, user, file) {
-            const upload = await handleFile(user, file);
+        async handleOneAttachment(targetID, user, file) {
+            const upload = await handleOneUpload(user, file);
 
             const {id: uploadID} = upload;
             const [firstAttachment] = await DATABASE.insert(

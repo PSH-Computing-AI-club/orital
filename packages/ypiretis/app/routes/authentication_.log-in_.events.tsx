@@ -7,7 +7,7 @@ import {
 } from "~/.server/services/consent_tokens_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
-import {webSocket} from "~/.server/utils/web_socket";
+import {useWebSocket} from "~/.server/state/web_socket";
 
 import type {Route} from "./+types/authentication_.log-in_.events";
 
@@ -36,7 +36,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     let destructor: (() => void) | null = null;
 
-    webSocket({
+    useWebSocket({
         onClose(_event, _connection) {
             if (destructor) {
                 destructor();

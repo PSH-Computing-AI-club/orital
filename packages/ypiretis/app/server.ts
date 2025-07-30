@@ -2,8 +2,8 @@ import {createHonoServer} from "react-router-hono-server/bun";
 
 import ENVIRONMENT from "~/.server/configuration/environment";
 
-import type {IWSEvents, IWebSocketContext} from "./.server/utils/web_socket";
-import {WEBSOCKET_CONTEXT} from "./.server/utils/web_socket";
+import type {IWSEvents, IWebSocketContext} from "./.server/state/web_socket";
+import {WEBSOCKET_CONTEXT} from "./.server/state/web_socket";
 
 const {SERVER_PORT} = ENVIRONMENT;
 

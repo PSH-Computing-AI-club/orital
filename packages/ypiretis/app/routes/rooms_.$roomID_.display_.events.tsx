@@ -6,8 +6,9 @@ import {
     requireAuthenticatedDisplayConnection,
 } from "~/.server/services/rooms_service";
 
+import {useWebSocket} from "~/.server/state/web_socket";
+
 import {ulid} from "~/.server/utils/valibot";
-import {webSocket} from "~/.server/utils/web_socket";
 
 import {validateParams} from "~/guards/validation";
 
@@ -27,7 +28,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     let display: IDisplayEntity | null = null;
 
-    webSocket({
+    useWebSocket({
         onClose(_event, _connection) {
             if (display !== null && display.state !== ENTITY_STATES.disposed) {
                 display._dispose();

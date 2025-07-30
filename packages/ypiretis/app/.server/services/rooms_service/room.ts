@@ -1,9 +1,10 @@
 import {Temporal} from "@js-temporal/polyfill";
 
+import type {IWSContext} from "../../state/web_socket";
+
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
 import {makeIDPool} from "../../utils/id_pool";
-import type {IWSContext} from "../../utils/web_socket";
 
 import {IUser} from "../users_service";
 

@@ -1,7 +1,7 @@
+import type {IWSContext} from "../../state/web_socket";
+
 import type {IEvent} from "../../../utils/event";
 import makeEvent from "../../../utils/event";
-
-import type {IWSContext} from "../../utils/web_socket";
 
 import {EntityConnectionError, EntityStateError} from "./errors";
 import type {

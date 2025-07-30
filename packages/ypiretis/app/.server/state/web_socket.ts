@@ -48,12 +48,12 @@ export interface IWebSocketContext {
 
 export const WEBSOCKET_CONTEXT = new AsyncLocalStorage<IWebSocketContext>();
 
-export function webSocket(events: IWSEvents): void {
+export function useWebSocket(events: IWSEvents): void {
     const context = WEBSOCKET_CONTEXT.getStore() ?? null;
 
     if (context === null) {
         throw new ReferenceError(
-            `bad dispatch to 'webSocket' (not running in the 'WEBSOCKET_CONTEXT' context)`,
+            `bad dispatch to 'useWebSocket' (not in the stack of 'WEBSOCKET_CONTEXT.run')`,
         );
     }
 

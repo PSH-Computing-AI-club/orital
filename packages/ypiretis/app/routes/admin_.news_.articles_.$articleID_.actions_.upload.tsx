@@ -52,7 +52,7 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
-    const upload = await handleFile(file, user);
+    const upload = await handleFile(user, file);
 
     console.log({
         upload,

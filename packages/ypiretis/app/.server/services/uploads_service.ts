@@ -31,8 +31,8 @@ async function insertOne(uploadInsert: IUploadInsert): Promise<IUpload> {
 }
 
 export async function handleFile(
-    file: Bun.BunFile,
     uploader: IUser,
+    file: Bun.BunFile,
 ): Promise<IUpload> {
     const {name: filePath, size: fileSize, type: mimeType} = file;
     const {id: userID} = uploader;

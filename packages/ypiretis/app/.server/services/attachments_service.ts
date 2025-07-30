@@ -28,7 +28,7 @@ export interface IAttachmentsService {
     ): Promise<IAttachment>;
 }
 
-export function makeAttachmentsService<T extends IAttachmentsTable>(
+export default function makeAttachmentsService<T extends IAttachmentsTable>(
     options: IAttachmentsServiceOptions<T>,
 ): IAttachmentsService {
     const {table} = options;

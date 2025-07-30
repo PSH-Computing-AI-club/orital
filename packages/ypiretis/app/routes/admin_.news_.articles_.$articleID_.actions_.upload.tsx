@@ -6,8 +6,10 @@ import ENVIRONMENT from "~/.server/configuration/environment";
 
 import {validateMultipartFormData} from "~/.server/guards/validation";
 
-import {updateOneByArticleID} from "~/.server/services/articles_service";
-import {handleOneUpload} from "~/.server/services/uploads_service";
+import {
+    findOneByArticleID,
+    handleOneAttachment,
+} from "~/.server/services/articles_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {bunFile, ulid} from "~/.server/utils/valibot";
@@ -52,9 +54,15 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
-    const upload = await handleOneUpload(user, file);
+    const article = await findOneByArticleID(articleID);
 
-    console.log({
-        upload,
-    });
+    if (!article) {
+        throw data("Not Found.", {
+            status: 404,
+        });
+    }
+
+    const {id: internalID} = article;
+
+    await handleOneAttachment(internalID, user, file);
 }

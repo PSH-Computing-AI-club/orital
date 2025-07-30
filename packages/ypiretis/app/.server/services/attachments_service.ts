@@ -1,3 +1,6 @@
+import {eq} from "drizzle-orm";
+
+import DATABASE from "../configuration/database";
 import type {
     IAttachmentsTable,
     ISelectAttachment,
@@ -23,7 +26,11 @@ export function makeAttachmentsService<A extends IAttachmentsTable>(
     return {
         deleteAttachment(targetID, uploadID) {},
 
-        findAllAttachments(targetID) {},
+        findAllAttachments(targetID) {
+            return DATABASE.select()
+                .from(attachmentsTable)
+                .where(eq(attachmentsTable.targetID, targetID));
+        },
 
         async handleAttachment(targetID, user, file) {},
     };

@@ -1,4 +1,4 @@
-import {mkdir} from "node:fs/promises";
+import {mkdirSync} from "node:fs";
 import {dirname, isAbsolute, resolve} from "node:path";
 import {cwd} from "node:process";
 
@@ -125,11 +125,11 @@ export const domain = v.pipe(
 
 export const ipAddress = v.pipe(v.string(), v.ip());
 
-export const directoryPath = v.pipeAsync(
+export const directoryPath = v.pipe(
     systemPath,
     resolvePath,
-    v.transformAsync(async (resolvedDirectoryPath) => {
-        await mkdir(resolvedDirectoryPath, {
+    v.transform((resolvedDirectoryPath) => {
+        mkdirSync(resolvedDirectoryPath, {
             recursive: true,
         });
 
@@ -144,13 +144,13 @@ export const duration = v.pipe(
     v.transform((value) => Temporal.Duration.from(value)),
 );
 
-export const filePath = v.pipeAsync(
+export const filePath = v.pipe(
     systemPath,
     resolvePath,
-    v.transformAsync(async (resolvedFilePath) => {
+    v.transform((resolvedFilePath) => {
         const directoryPath = dirname(resolvedFilePath);
 
-        await mkdir(directoryPath, {
+        mkdirSync(directoryPath, {
             recursive: true,
         });
 

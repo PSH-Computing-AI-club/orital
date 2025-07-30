@@ -44,7 +44,7 @@ export const LOGGING_LEVELS = {
     warn: "warn",
 } as const;
 
-export const ENVIRONMENT_SCHEMA = v.objectAsync({
+export const ENVIRONMENT_SCHEMA = v.object({
     NODE_ENV: v.enum(NODE_ENVIRONMENT_MODES),
 
     SERVER_LOGGING_LEVEL: v.enum(LOGGING_LEVELS),
@@ -108,7 +108,7 @@ export type IEnvironmentParsed = v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
 let ENVIRONMENT: v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
 
 try {
-    ENVIRONMENT = await v.parseAsync(ENVIRONMENT_SCHEMA, process.env);
+    ENVIRONMENT = v.parse(ENVIRONMENT_SCHEMA, process.env);
 } catch (error) {
     console.error(
         "An error occurred while processing the environment variables:",

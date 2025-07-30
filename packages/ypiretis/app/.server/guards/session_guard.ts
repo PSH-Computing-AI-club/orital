@@ -10,9 +10,9 @@ import type {
 } from "react-router";
 import {data} from "react-router";
 
-import DATABASE from "../configuration/database";
-
 import type {IIdentifiablesTable} from "../database/tables/identifiables_table";
+
+import {useTransaction} from "../state/transaction";
 
 import {IGuardRequisiteFunc, IGuardHeadersFunc} from "./guard";
 
@@ -95,7 +95,10 @@ export default function makeSessionGuard<
             return null;
         }
 
-        const [firstIdentifiable] = await DATABASE.select()
+        const transaction = useTransaction();
+
+        const [firstIdentifiable] = await transaction
+            .select()
             .from(table)
             .where(eq(table.id, id))
             .limit(1);

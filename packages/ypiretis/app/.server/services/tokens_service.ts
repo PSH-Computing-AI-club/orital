@@ -5,9 +5,9 @@ import {eq} from "drizzle-orm";
 
 import {isValid, ulid} from "ulid";
 
-import DATABASE from "../configuration/database";
-
 import type {ITokensTable} from "../database/tables/tokens_table";
+
+import {useTransaction} from "../state/transaction";
 
 import {hashSecret} from "../utils/crypto";
 import type {ISecret, ISecretMaybe} from "../utils/secret";
@@ -70,11 +70,16 @@ export default function makeTokensService<
 
     return {
         async deleteOne(id) {
-            await DATABASE.delete(table).where(eq(table.id, id));
+            const transaction = useTransaction();
+
+            await transaction.delete(table).where(eq(table.id, id));
         },
 
         async findOne(id) {
-            const [firstToken] = await DATABASE.select()
+            const transaction = useTransaction();
+
+            const [firstToken] = await transaction
+                .select()
                 .from(table)
                 .where(eq(table.id, id))
                 .limit(1);
@@ -87,7 +92,10 @@ export default function makeTokensService<
             const now = Temporal.Now.instant();
 
             if (Temporal.Instant.compare(expiresAt, now) === -1) {
-                await DATABASE.delete(table).where(eq(table.id, id)).limit(1);
+                await transaction
+                    .delete(table)
+                    .where(eq(table.id, id))
+                    .limit(1);
 
                 return null;
             }
@@ -112,7 +120,10 @@ export default function makeTokensService<
 
             const hash = hashSecret(token);
 
-            const [firstToken] = await DATABASE.select()
+            const transaction = useTransaction();
+
+            const [firstToken] = await transaction
+                .select()
                 .from(table)
                 .where(
                     eq(
@@ -131,7 +142,10 @@ export default function makeTokensService<
             const now = Temporal.Now.instant();
 
             if (Temporal.Instant.compare(expiresAt, now) === -1) {
-                await DATABASE.delete(table).where(eq(table.id, id)).limit(1);
+                await transaction
+                    .delete(table)
+                    .where(eq(table.id, id))
+                    .limit(1);
 
                 return null;
             }
@@ -157,12 +171,15 @@ export default function makeTokensService<
 
             const hash = hashSecret(token);
 
-            const [insertedToken] = await DATABASE.insert(
-                // **HACK:** TypeScript hates my generic ;-;... So, we have to
-                // force the issue and hard cast the typing to the super table
-                // typing.
-                table as ITokensTable,
-            )
+            const transaction = useTransaction();
+
+            const [insertedToken] = await transaction
+                .insert(
+                    // **HACK:** TypeScript hates my generic ;-;... So, we have to
+                    // force the issue and hard cast the typing to the super table
+                    // typing.
+                    table as ITokensTable,
+                )
                 .values({
                     ...tokenInsertData,
 

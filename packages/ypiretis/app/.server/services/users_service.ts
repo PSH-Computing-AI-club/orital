@@ -9,7 +9,6 @@ import type {
 } from "react-router";
 import {data} from "react-router";
 
-import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
 import * as persistentSession from "../configuration/persistent_session";
 
@@ -17,6 +16,8 @@ import type {IInsertUser, ISelectUser} from "../database/tables/users_table";
 import USERS_TABLE from "../database/tables/users_table";
 
 import makeSessionGuard from "../guards/session_guard";
+
+import {useTransaction} from "../state/transaction";
 
 const ACCOUNT_ADMIN_IDENTIFIERS = new Set(
     ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
@@ -65,7 +66,9 @@ export function mapUser(user: ISelectUser): IUser {
 }
 
 export async function findOne(userID: number): Promise<IUser | null> {
-    const user = await DATABASE.query.users.findFirst({
+    const transaction = useTransaction();
+
+    const user = await transaction.query.users.findFirst({
         where: eq(USERS_TABLE.id, userID),
     });
 
@@ -75,7 +78,9 @@ export async function findOne(userID: number): Promise<IUser | null> {
 export async function findOneByAccountID(
     accountID: string,
 ): Promise<IUser | null> {
-    const user = await DATABASE.query.users.findFirst({
+    const transaction = useTransaction();
+
+    const user = await transaction.query.users.findFirst({
         where: eq(USERS_TABLE.accountID, accountID),
     });
 
@@ -83,7 +88,10 @@ export async function findOneByAccountID(
 }
 
 export async function insertOne(userData: IUserInsert): Promise<IUser> {
-    const [user] = await DATABASE.insert(USERS_TABLE)
+    const transaction = useTransaction();
+
+    const [user] = await transaction
+        .insert(USERS_TABLE)
         .values(userData)
         .returning();
 

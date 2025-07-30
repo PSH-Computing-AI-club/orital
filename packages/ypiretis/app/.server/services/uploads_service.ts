@@ -5,11 +5,12 @@ import {eq} from "drizzle-orm";
 
 import {ulid} from "ulid";
 
-import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
 
 import type {ISelectUpload} from "../database/tables/uploads_table";
 import UPLOADS_TABLE from "../database/tables/uploads_table";
+
+import {useTransaction} from "../state/transaction";
 
 import {moveFile} from "../utils/bun";
 
@@ -20,7 +21,9 @@ const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 export type IUpload = ISelectUpload;
 
 export async function deleteOneUpload(uploadID: number): Promise<void> {
-    const upload = await DATABASE.query.uploads.findFirst({
+    const transaction = useTransaction();
+
+    const upload = await transaction.query.uploads.findFirst({
         where: eq(UPLOADS_TABLE.id, uploadID),
     });
 
@@ -38,7 +41,9 @@ export async function deleteOneUpload(uploadID: number): Promise<void> {
         recursive: true,
     });
 
-    await DATABASE.delete(UPLOADS_TABLE).where(eq(UPLOADS_TABLE.id, uploadID));
+    await transaction
+        .delete(UPLOADS_TABLE)
+        .where(eq(UPLOADS_TABLE.id, uploadID));
 }
 
 export async function handleOneUpload(
@@ -66,7 +71,10 @@ export async function handleOneUpload(
 
     await moveFile(file, uploadFilePath);
 
-    const [upload] = await DATABASE.insert(UPLOADS_TABLE)
+    const transaction = useTransaction();
+
+    const [upload] = await transaction
+        .insert(UPLOADS_TABLE)
         .values({
             fileName,
             fileSize,

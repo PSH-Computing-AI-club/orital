@@ -7,10 +7,10 @@ import * as v from "valibot";
 
 import {validateParams} from "../../../guards/validation";
 
-import DATABASE from "../../configuration/database";
-
 import ATTENDEES_TABLE from "../../database/tables/attendees_table";
 import ROOMS_TABLE from "../../database/tables/rooms_table";
+
+import {useTransaction} from "../../state/transaction";
 
 import {generatePIN} from "../../utils/crypto";
 
@@ -96,7 +96,10 @@ export async function insertOneLive(
 
     const {id: userID} = presenter;
 
-    const [storedRoom] = await DATABASE.insert(ROOMS_TABLE)
+    const transaction = useTransaction();
+
+    const [storedRoom] = await transaction
+        .insert(ROOMS_TABLE)
         .values({
             title,
             presenterUserID: userID,
@@ -131,7 +134,10 @@ export async function insertOneLive(
             const {attendee} = event;
             const {id: userID} = attendee;
 
-            await DATABASE.insert(ATTENDEES_TABLE)
+            const transaction = useTransaction();
+
+            await transaction
+                .insert(ATTENDEES_TABLE)
                 .values({
                     userID: userID,
                     roomID: internalRoomID,
@@ -145,12 +151,16 @@ export async function insertOneLive(
             const {attendee} = event;
             const {id: userID} = attendee;
 
-            await DATABASE.delete(ATTENDEES_TABLE).where(
-                and(
-                    eq(ATTENDEES_TABLE.userID, userID),
-                    eq(ATTENDEES_TABLE.roomID, internalRoomID),
-                ),
-            );
+            const transaction = useTransaction();
+
+            await transaction
+                .delete(ATTENDEES_TABLE)
+                .where(
+                    and(
+                        eq(ATTENDEES_TABLE.userID, userID),
+                        eq(ATTENDEES_TABLE.roomID, internalRoomID),
+                    ),
+                );
         },
     );
 
@@ -159,12 +169,16 @@ export async function insertOneLive(
             const {attendee} = event;
             const {id: userID} = attendee;
 
-            await DATABASE.delete(ATTENDEES_TABLE).where(
-                and(
-                    eq(ATTENDEES_TABLE.userID, userID),
-                    eq(ATTENDEES_TABLE.roomID, internalRoomID),
-                ),
-            );
+            const transaction = useTransaction();
+
+            await transaction
+                .delete(ATTENDEES_TABLE)
+                .where(
+                    and(
+                        eq(ATTENDEES_TABLE.userID, userID),
+                        eq(ATTENDEES_TABLE.roomID, internalRoomID),
+                    ),
+                );
         },
     );
 
@@ -181,7 +195,10 @@ export async function insertOneLive(
 
                 const {id: userID} = user;
 
-                await DATABASE.insert(ATTENDEES_TABLE)
+                const transaction = useTransaction();
+
+                await transaction
+                    .insert(ATTENDEES_TABLE)
                     .values({
                         userID: userID,
                         roomID: internalRoomID,
@@ -224,7 +241,10 @@ export async function insertOneLive(
         async (event) => {
             const {newTitle} = event;
 
-            await DATABASE.update(ROOMS_TABLE)
+            const transaction = useTransaction();
+
+            await transaction
+                .update(ROOMS_TABLE)
                 .set({title: newTitle})
                 .where(eq(ROOMS_TABLE.id, internalRoomID));
         },

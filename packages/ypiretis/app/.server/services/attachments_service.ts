@@ -1,10 +1,11 @@
 import {and, eq} from "drizzle-orm";
 
-import DATABASE from "../configuration/database";
 import type {
     IAttachmentsTable,
     ISelectAttachment,
 } from "../database/tables/attachments_table";
+
+import {useTransaction} from "../state/transaction";
 
 import {deleteOneUpload, handleOneUpload} from "./uploads_service";
 import type {IUser} from "./users_service";
@@ -34,7 +35,10 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
 
     return {
         async deleteOneAttachment(targetID, uploadID) {
-            const attachments = await DATABASE.delete(table)
+            const transaction = useTransaction();
+
+            const attachments = await transaction
+                .delete(table)
                 .where(
                     and(
                         eq(table.targetID, targetID),
@@ -53,7 +57,10 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
         },
 
         findAllAttachmentsByTargetID(targetID) {
-            return DATABASE.select()
+            const transaction = useTransaction();
+
+            return transaction
+                .select()
                 .from(table)
                 .where(eq(table.targetID, targetID));
         },
@@ -62,12 +69,16 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
             const upload = await handleOneUpload(user, file);
 
             const {id: uploadID} = upload;
-            const [firstAttachment] = await DATABASE.insert(
-                // **HACK:** TypeScript cannot handle the complex typing using
-                // the base table as a generic. So, we have to forcibly cast it
-                // here.
-                table as IAttachmentsTable,
-            )
+
+            const transaction = useTransaction();
+
+            const [firstAttachment] = await transaction
+                .insert(
+                    // **HACK:** TypeScript cannot handle the complex typing using
+                    // the base table as a generic. So, we have to forcibly cast it
+                    // here.
+                    table as IAttachmentsTable,
+                )
                 .values({
                     uploadID,
                     targetID,

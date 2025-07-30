@@ -5,8 +5,6 @@ import {and, desc, eq, getTableColumns, lte} from "drizzle-orm";
 
 import {slug as slugify} from "github-slugger";
 
-import DATABASE from "../configuration/database";
-
 import {
     IInsertArticle,
     ISelectArticle,
@@ -25,6 +23,8 @@ import {
     executePagination,
     selectPaginationColumns,
 } from "../database/utils/pagination";
+
+import {useTransaction} from "../state/transaction";
 
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
@@ -115,15 +115,18 @@ async function internalFindAll(
     const {pagination, includePoster, orderBy, where} = options;
     const {limit, page} = pagination;
 
-    let query = DATABASE.select({
-        ...getTableColumns(ARTICLES_TABLE),
+    const transaction = useTransaction();
 
-        ...selectPaginationColumns(ARTICLES_TABLE.id),
+    let query = transaction
+        .select({
+            ...getTableColumns(ARTICLES_TABLE),
 
-        ...(includePoster && {
-            poster: USERS_TABLE,
-        }),
-    })
+            ...selectPaginationColumns(ARTICLES_TABLE.id),
+
+            ...(includePoster && {
+                poster: USERS_TABLE,
+            }),
+        })
         .from(ARTICLES_TABLE)
         .$dynamic();
 
@@ -179,7 +182,9 @@ async function internalFindAll(
 export async function findOneByArticleID(
     articleID: string,
 ): Promise<IArticleWithPoster | null> {
-    const results = await DATABASE.query.articles.findFirst({
+    const transaction = useTransaction();
+
+    const results = await transaction.query.articles.findFirst({
         where: eq(ARTICLES_TABLE.articleID, articleID),
 
         with: {
@@ -204,8 +209,9 @@ export async function findOnePublishedByArticleID(
     articleID: string,
 ): Promise<IPublishedArticleWithPoster | null> {
     const nowInstant = Temporal.Now.instant();
+    const transaction = useTransaction();
 
-    const results = await DATABASE.query.articles.findFirst({
+    const results = await transaction.query.articles.findFirst({
         where: and(
             eq(ARTICLES_TABLE.articleID, articleID),
             eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
@@ -261,7 +267,10 @@ export async function findAllPublished(
 }
 
 export async function insertOne(article: IArticleInsert): Promise<IArticle> {
-    const [insertedArticle] = await DATABASE.insert(ARTICLES_TABLE)
+    const transaction = useTransaction();
+
+    const [insertedArticle] = await transaction
+        .insert(ARTICLES_TABLE)
         .values(article)
         .returning();
 
@@ -272,7 +281,10 @@ export async function updateOneByArticleID(
     articleID: string,
     article: IArticleUpdate,
 ): Promise<IArticle> {
-    const articles = await DATABASE.update(ARTICLES_TABLE)
+    const transaction = useTransaction();
+
+    const articles = await transaction
+        .update(ARTICLES_TABLE)
         .set(article)
         .where(eq(ARTICLES_TABLE.articleID, articleID))
         .returning();

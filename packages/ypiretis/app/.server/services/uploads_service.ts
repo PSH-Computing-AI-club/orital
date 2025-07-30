@@ -8,10 +8,7 @@ import {ulid} from "ulid";
 import DATABASE from "../configuration/database";
 import ENVIRONMENT from "../configuration/environment";
 
-import type {
-    IInsertUpload,
-    ISelectUpload,
-} from "../database/tables/uploads_table";
+import type {ISelectUpload} from "../database/tables/uploads_table";
 import UPLOADS_TABLE from "../database/tables/uploads_table";
 
 import {moveFile} from "../utils/bun";
@@ -21,16 +18,6 @@ import type {IUser} from "./users_service";
 const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
 export type IUpload = ISelectUpload;
-
-export type IUploadInsert = Omit<IInsertUpload, "createdAt" | "id">;
-
-async function insertOne(uploadInsert: IUploadInsert): Promise<IUpload> {
-    const [upload] = await DATABASE.insert(UPLOADS_TABLE)
-        .values(uploadInsert)
-        .returning();
-
-    return upload;
-}
 
 export async function deleteFile(uploadID: number): Promise<void> {
     const upload = await DATABASE.query.uploads.findFirst({
@@ -79,12 +66,16 @@ export async function handleFile(
 
     await moveFile(file, uploadFilePath);
 
-    return insertOne({
-        fileName,
-        fileSize,
-        mimeType,
-        uploadID,
+    const [upload] = await DATABASE.insert(UPLOADS_TABLE)
+        .values({
+            fileName,
+            fileSize,
+            mimeType,
+            uploadID,
 
-        uploaderUserID: userID,
-    });
+            uploaderUserID: userID,
+        })
+        .returning();
+
+    return upload;
 }

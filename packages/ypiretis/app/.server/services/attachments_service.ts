@@ -63,7 +63,9 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
 
             const {id: uploadID} = upload;
             const [firstAttachment] = await DATABASE.insert(
-                // **HACK:** See comment for `deleteOneAttachment`.
+                // **HACK:** TypeScript cannot handle the complex typing using
+                // the base table as a generic. So, we have to forcibly cast it
+                // here.
                 table as IAttachmentsTable,
             )
                 .values({

@@ -12,6 +12,8 @@ import {
 } from "~/.server/services/articles_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
+import {createTransaction} from "~/.server/state/transaction";
+
 import {bunFile, ulid} from "~/.server/utils/valibot";
 
 import {validateParams} from "~/guards/validation";
@@ -64,5 +66,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     const {id: internalID} = article;
 
-    await handleOneAttachment(internalID, user, file);
+    await createTransaction(async () => {
+        await handleOneAttachment(internalID, user, file);
+    });
 }

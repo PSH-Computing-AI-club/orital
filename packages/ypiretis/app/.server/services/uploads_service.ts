@@ -20,21 +20,21 @@ const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
 export type IUpload = ISelectUpload;
 
-export async function deleteOneUpload(uploadID: number): Promise<void> {
+export async function deleteOneUpload(internalUploadID: number): Promise<void> {
     const transaction = useTransaction();
 
     const upload = await transaction.query.uploads.findFirst({
-        where: eq(UPLOADS_TABLE.id, uploadID),
+        where: eq(UPLOADS_TABLE.id, internalUploadID),
     });
 
     if (!upload) {
         throw ReferenceError(
-            `bad argument #0 to 'deleteOneUpload' (upload ID '${uploadID}' was not found)`,
+            `bad argument #0 to 'deleteOneUpload' (upload ID '${internalUploadID}' was not found)`,
         );
     }
 
-    const {uploadID: uploadULID} = upload;
-    const uploadDirectoryPath = join(UPLOADS_DIRECTORY_PATH, uploadULID);
+    const {uploadID} = upload;
+    const uploadDirectoryPath = join(UPLOADS_DIRECTORY_PATH, uploadID);
 
     await rm(uploadDirectoryPath, {
         force: true,
@@ -43,7 +43,7 @@ export async function deleteOneUpload(uploadID: number): Promise<void> {
 
     await transaction
         .delete(UPLOADS_TABLE)
-        .where(eq(UPLOADS_TABLE.id, uploadID));
+        .where(eq(UPLOADS_TABLE.id, internalUploadID));
 }
 
 export async function handleOneUpload(

@@ -17,12 +17,17 @@ export interface IAttachmentsServiceOptions<T extends IAttachmentsTable> {
 }
 
 export interface IAttachmentsService {
-    deleteOneAttachment(targetID: number, uploadID: number): Promise<void>;
+    deleteOneAttachment(
+        internalTargetID: number,
+        internalUploadID: number,
+    ): Promise<void>;
 
-    findAllAttachmentsByTargetID(targetID: number): Promise<IAttachment[]>;
+    findAllAttachmentsByTargetID(
+        internalTargetID: number,
+    ): Promise<IAttachment[]>;
 
     handleOneAttachment(
-        targetID: number,
+        internalTargetID: number,
         user: IUser,
         file: Bun.BunFile,
     ): Promise<IAttachment>;
@@ -34,41 +39,41 @@ export default function makeAttachmentsService<T extends IAttachmentsTable>(
     const {table} = options;
 
     return {
-        async deleteOneAttachment(targetID, uploadID) {
+        async deleteOneAttachment(internalTargetID, internalUploadID) {
             const transaction = useTransaction();
 
             const attachments = await transaction
                 .delete(table)
                 .where(
                     and(
-                        eq(table.targetID, targetID),
-                        eq(table.uploadID, uploadID),
+                        eq(table.targetID, internalTargetID),
+                        eq(table.uploadID, internalUploadID),
                     ),
                 )
                 .returning();
 
             if (attachments.length === 0) {
                 throw ReferenceError(
-                    `bad argument #0 or #1 to 'IAttachmentsService.deleteOneAttachment' (target ID '${targetID}' or upload ID '${uploadID}' was not found)`,
+                    `bad argument #0 or #1 to 'IAttachmentsService.deleteOneAttachment' (target ID '${internalTargetID}' or upload ID '${internalUploadID}' was not found)`,
                 );
             }
 
-            await deleteOneUpload(uploadID);
+            await deleteOneUpload(internalUploadID);
         },
 
-        findAllAttachmentsByTargetID(targetID) {
+        findAllAttachmentsByTargetID(internalTargetID) {
             const transaction = useTransaction();
 
             return transaction
                 .select()
                 .from(table)
-                .where(eq(table.targetID, targetID));
+                .where(eq(table.targetID, internalTargetID));
         },
 
-        async handleOneAttachment(targetID, user, file) {
+        async handleOneAttachment(internalTargetID, user, file) {
             const upload = await handleOneUpload(user, file);
 
-            const {id: uploadID} = upload;
+            const {id: internalUploadID} = upload;
 
             const transaction = useTransaction();
 
@@ -80,8 +85,8 @@ export default function makeAttachmentsService<T extends IAttachmentsTable>(
                     table as IAttachmentsTable,
                 )
                 .values({
-                    uploadID,
-                    targetID,
+                    uploadID: internalUploadID,
+                    targetID: internalTargetID,
                 })
                 .returning();
 

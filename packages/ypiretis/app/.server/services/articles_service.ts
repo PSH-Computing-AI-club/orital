@@ -12,6 +12,7 @@ import {
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
+import ARTICLES_ATTACHMENTS_TABLE from "../database/tables/articles_attachments_table";
 import type {ISelectUser} from "../database/tables/users_table";
 import USERS_TABLE from "../database/tables/users_table";
 
@@ -26,6 +27,7 @@ import {
 
 import {useTransaction} from "../state/transaction";
 
+import makeAttachmentsService from "./attachments_service";
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
 
@@ -72,6 +74,14 @@ export interface IFindAllArticlesResults<T extends IArticle = IArticle> {
 
     readonly pagination: IPaginationResults;
 }
+
+export const {
+    deleteOneAttachment,
+    findAllAttachmentsByTargetID,
+    handleOneAttachment,
+} = makeAttachmentsService({
+    table: ARTICLES_ATTACHMENTS_TABLE,
+});
 
 function mapArticle(article: ISelectArticle): IArticle {
     const {publishedAt, title, updatedAt} = article;

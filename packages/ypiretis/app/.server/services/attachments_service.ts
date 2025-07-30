@@ -16,9 +16,9 @@ export interface IAttachmentsServiceOptions<T extends IAttachmentsTable> {
 }
 
 export interface IAttachmentsService {
-    deleteAttachment(targetID: number, uploadID: number): Promise<void>;
+    deleteOneAttachment(targetID: number, uploadID: number): Promise<void>;
 
-    findAllAttachments(targetID: number): Promise<IAttachment[]>;
+    findAllAttachmentsByTargetID(targetID: number): Promise<IAttachment[]>;
 
     handleAttachment(
         targetID: number,
@@ -33,9 +33,9 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
     const {table} = options;
 
     return {
-        deleteAttachment(targetID, uploadID) {},
+        deleteOneAttachment(targetID, uploadID) {},
 
-        findAllAttachments(targetID) {
+        findAllAttachmentsByTargetID(targetID) {
             return DATABASE.select()
                 .from(table)
                 .where(eq(table.targetID, targetID));

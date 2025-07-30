@@ -6,6 +6,7 @@ import type {
     ISelectAttachment,
 } from "../database/tables/attachments_table";
 
+import {handleFile} from "./uploads_service";
 import type {IUser} from "./users_service";
 
 export type IAttachment = ISelectAttachment;
@@ -40,6 +41,23 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
                 .where(eq(table.targetID, targetID));
         },
 
-        async handleAttachment(targetID, user, file) {},
+        async handleAttachment(targetID, user, file) {
+            const upload = await handleFile(user, file);
+
+            const {id: uploadID} = upload;
+            const [firstAttachment] = await DATABASE.insert(
+                // **HACK:** TypeScript cannot handle the complex typing using
+                // the base table as a generic. So, we have to forcibly cast it
+                // here.
+                table as IAttachmentsTable,
+            )
+                .values({
+                    uploadID,
+                    targetID,
+                })
+                .returning();
+
+            return firstAttachment;
+        },
     };
 }

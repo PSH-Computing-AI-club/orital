@@ -8,6 +8,8 @@ import type {
 
 import type {IUser} from "./users_service";
 
+export type IAttachment = ISelectAttachment;
+
 export interface IAttachmentsServiceOptions<T extends IAttachmentsTable> {
     readonly table: T;
 }
@@ -15,13 +17,13 @@ export interface IAttachmentsServiceOptions<T extends IAttachmentsTable> {
 export interface IAttachmentsService {
     deleteAttachment(targetID: number, uploadID: number): Promise<void>;
 
-    findAllAttachments(targetID: number): Promise<ISelectAttachment[]>;
+    findAllAttachments(targetID: number): Promise<IAttachment[]>;
 
     handleAttachment(
         targetID: number,
         user: IUser,
         file: Bun.BunFile,
-    ): Promise<ISelectAttachment>;
+    ): Promise<IAttachment>;
 }
 
 export function makeAttachmentsService<T extends IAttachmentsTable>(

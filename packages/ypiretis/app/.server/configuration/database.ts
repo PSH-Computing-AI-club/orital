@@ -26,4 +26,10 @@ const DATABASE = drizzle({
     },
 });
 
+export type IDatabase = typeof DATABASE;
+
+export type ITransaction = Parameters<
+    Parameters<typeof DATABASE.transaction>[0]
+>[0];
+
 export default DATABASE;

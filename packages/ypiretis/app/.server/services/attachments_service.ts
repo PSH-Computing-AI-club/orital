@@ -1,4 +1,4 @@
-import {eq} from "drizzle-orm";
+import {and, eq} from "drizzle-orm";
 
 import DATABASE from "../configuration/database";
 import type {
@@ -6,7 +6,7 @@ import type {
     ISelectAttachment,
 } from "../database/tables/attachments_table";
 
-import {handleFile} from "./uploads_service";
+import {deleteFile, handleFile} from "./uploads_service";
 import type {IUser} from "./users_service";
 
 export type IAttachment = ISelectAttachment;
@@ -33,7 +33,24 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
     const {table} = options;
 
     return {
-        deleteOneAttachment(targetID, uploadID) {},
+        async deleteOneAttachment(targetID, uploadID) {
+            const attachments = await DATABASE.delete(table)
+                .where(
+                    and(
+                        eq(table.targetID, targetID),
+                        eq(table.uploadID, uploadID),
+                    ),
+                )
+                .returning();
+
+            if (attachments.length === 0) {
+                throw ReferenceError(
+                    `bad argument #0 or #1 to 'IAttachmentsService.deleteOneAttachment' (target ID '${targetID}' or upload ID '${uploadID}' was not found)`,
+                );
+            }
+
+            await deleteFile(uploadID);
+        },
 
         findAllAttachmentsByTargetID(targetID) {
             return DATABASE.select()
@@ -46,9 +63,7 @@ export function makeAttachmentsService<T extends IAttachmentsTable>(
 
             const {id: uploadID} = upload;
             const [firstAttachment] = await DATABASE.insert(
-                // **HACK:** TypeScript cannot handle the complex typing using
-                // the base table as a generic. So, we have to forcibly cast it
-                // here.
+                // **HACK:** See comment for `deleteOneAttachment`.
                 table as IAttachmentsTable,
             )
                 .values({

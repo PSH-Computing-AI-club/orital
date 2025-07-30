@@ -1,5 +1,7 @@
-import {mkdir} from "node:fs/promises";
+import {mkdir, rm} from "node:fs/promises";
 import {basename, join} from "node:path";
+
+import {eq} from "drizzle-orm";
 
 import {ulid} from "ulid";
 
@@ -28,6 +30,28 @@ async function insertOne(uploadInsert: IUploadInsert): Promise<IUpload> {
         .returning();
 
     return upload;
+}
+
+export async function deleteFile(uploadID: number): Promise<void> {
+    const upload = await DATABASE.query.uploads.findFirst({
+        where: eq(UPLOADS_TABLE.id, uploadID),
+    });
+
+    if (!upload) {
+        throw ReferenceError(
+            `bad argument #0 to 'deleteFile' (upload ID '${uploadID}' was not found)`,
+        );
+    }
+
+    const {uploadID: uploadULID} = upload;
+    const uploadDirectoryPath = join(UPLOADS_DIRECTORY_PATH, uploadULID);
+
+    await rm(uploadDirectoryPath, {
+        force: true,
+        recursive: true,
+    });
+
+    await DATABASE.delete(UPLOADS_TABLE).where(eq(UPLOADS_TABLE.id, uploadID));
 }
 
 export async function handleFile(

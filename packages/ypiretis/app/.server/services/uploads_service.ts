@@ -26,7 +26,7 @@ export async function deleteOneUpload(uploadID: number): Promise<void> {
 
     if (!upload) {
         throw ReferenceError(
-            `bad argument #0 to 'deleteFile' (upload ID '${uploadID}' was not found)`,
+            `bad argument #0 to 'deleteOneUpload' (upload ID '${uploadID}' was not found)`,
         );
     }
 
@@ -50,7 +50,7 @@ export async function handleOneUpload(
 
     if (!filePath) {
         throw TypeError(
-            `bad argument #0 to 'handleFile' ('Bun.BunFile.name' was 'undefined')`,
+            `bad argument #0 to 'handleOneUpload' ('Bun.BunFile.name' was 'undefined')`,
         );
     }
 

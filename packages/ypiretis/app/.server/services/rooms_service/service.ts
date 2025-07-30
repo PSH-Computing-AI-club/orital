@@ -13,6 +13,7 @@ import ROOMS_TABLE from "../../database/tables/rooms_table";
 import {useTransaction} from "../../state/transaction";
 
 import {generatePIN} from "../../utils/crypto";
+import {ulid} from "../../utils/valibot";
 
 import type {IUser} from "../users_service";
 import {requireAuthenticatedSession} from "../users_service";
@@ -30,7 +31,7 @@ import {
 } from "./states";
 
 const ACTION_PARAMS_SCHEMA = v.object({
-    roomID: v.pipe(v.string(), v.ulid()),
+    roomID: ulid,
 });
 
 const LIVE_ROOMS_BY_PIN = new Map<string, IRoom>();

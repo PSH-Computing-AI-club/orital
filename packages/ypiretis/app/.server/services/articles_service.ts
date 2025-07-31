@@ -77,7 +77,7 @@ export interface IFindAllArticlesResults<T extends IArticle = IArticle> {
 
 export const {
     deleteOneAttachment,
-    findAllAttachmentsByTargetID,
+    findAllAttachmentsByTargetID: findAllAttachmentsByID,
     handleOneAttachment,
 } = makeAttachmentsService({
     table: ARTICLES_ATTACHMENTS_TABLE,

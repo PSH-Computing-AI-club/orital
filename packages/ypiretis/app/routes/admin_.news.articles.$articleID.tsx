@@ -26,6 +26,7 @@ import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
     findOneByArticleID,
+    findAllAttachmentsByID,
     updateOneByArticleID,
 } from "~/.server/services/articles_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
@@ -224,9 +225,30 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    const {content, createdAt, poster, publishedAt, state, title, updatedAt} =
-        article;
+    const {
+        content,
+        createdAt,
+        id: internalID,
+        poster,
+        publishedAt,
+        state,
+        title,
+        updatedAt,
+    } = article;
     const {accountID, firstName, lastName} = poster;
+
+    const attachments = (await findAllAttachmentsByID(internalID)).map(
+        (upload) => {
+            const {fileName, fileSize, mimeType, uploadID} = upload;
+
+            return {
+                fileName,
+                fileSize,
+                mimeType,
+                uploadID,
+            };
+        },
+    );
 
     const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 
@@ -246,6 +268,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
     return {
+        attachments,
+
         article: {
             articleID,
             content,

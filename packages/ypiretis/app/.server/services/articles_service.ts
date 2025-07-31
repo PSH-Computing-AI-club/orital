@@ -6,6 +6,7 @@ import {and, desc, eq, getTableColumns, lte} from "drizzle-orm";
 import {slug as slugify} from "github-slugger";
 
 import {
+    IArticleStates as _IArticleStates,
     IInsertArticle,
     ISelectArticle,
 } from "../database/tables/articles_table";
@@ -32,6 +33,8 @@ import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
+
+export type IArticleStates = _IArticleStates;
 
 export type IArticle = ISelectArticle & {
     readonly hasBeenEdited: boolean;

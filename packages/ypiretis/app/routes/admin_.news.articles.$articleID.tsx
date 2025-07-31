@@ -22,7 +22,7 @@ import {data, useLoaderData, useFetcher} from "react-router";
 
 import * as v from "valibot";
 
-import type {IArticleStates} from "~/.server/database/tables/articles_table";
+import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
     findOneByArticleID,

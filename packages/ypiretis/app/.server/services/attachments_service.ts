@@ -1,12 +1,14 @@
-import {and, eq} from "drizzle-orm";
+import {and, eq, getTableColumns} from "drizzle-orm";
 
 import type {
     IAttachmentsTable,
     ISelectAttachment,
 } from "../database/tables/attachments_table";
+import UPLOADS_TABLE from "../database/tables/uploads_table";
 
 import {useTransaction} from "../state/transaction";
 
+import type {IUpload} from "./uploads_service";
 import {deleteOneUpload, handleOneUpload} from "./uploads_service";
 import type {IUser} from "./users_service";
 
@@ -22,9 +24,7 @@ export interface IAttachmentsService {
         internalUploadID: number,
     ): Promise<void>;
 
-    findAllAttachmentsByTargetID(
-        internalTargetID: number,
-    ): Promise<IAttachment[]>;
+    findAllAttachmentsByTargetID(internalTargetID: number): Promise<IUpload[]>;
 
     handleOneAttachment(
         internalTargetID: number,
@@ -65,9 +65,10 @@ export default function makeAttachmentsService<T extends IAttachmentsTable>(
             const transaction = useTransaction();
 
             return transaction
-                .select()
+                .select(getTableColumns(UPLOADS_TABLE))
                 .from(table)
-                .where(eq(table.targetID, internalTargetID));
+                .where(eq(table.targetID, internalTargetID))
+                .innerJoin(UPLOADS_TABLE, eq(table.uploadID, UPLOADS_TABLE.id));
         },
 
         async handleOneAttachment(internalTargetID, user, file) {

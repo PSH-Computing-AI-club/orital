@@ -5,7 +5,7 @@ import {sqliteView} from "drizzle-orm/sqlite-core";
 import ARTICLES_TABLE from "../tables/articles_table";
 import USERS_TABLE from "../tables/users_table";
 
-const ARTICLES_WITH_USER_VIEW = sqliteView("articles_with_poster").as(
+const ARTICLES_WITH_POSTER_VIEW = sqliteView("articles_with_poster").as(
     (query) => {
         return query
             .select({
@@ -23,4 +23,4 @@ const ARTICLES_WITH_USER_VIEW = sqliteView("articles_with_poster").as(
     },
 );
 
-export default ARTICLES_WITH_USER_VIEW;
+export default ARTICLES_WITH_POSTER_VIEW;

@@ -41,6 +41,8 @@ export type IInsertAttachment = Readonly<typeof ATTACHMENTS_TABLE.$inferInsert>;
 
 export type ISelectAttachment = Readonly<typeof ATTACHMENTS_TABLE.$inferSelect>;
 
+export type IUpdateAttachment = Partial<IInsertAttachment>;
+
 export type IAttachmentsTable = typeof ATTACHMENTS_TABLE;
 
 export default ATTACHMENTS_TABLE;

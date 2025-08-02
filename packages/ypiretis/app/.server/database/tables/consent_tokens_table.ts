@@ -40,6 +40,8 @@ export type ISelectConsentToken = Readonly<
     typeof CONSENT_TOKENS_TABLE.$inferSelect
 >;
 
+export type IUpdateConsentToken = Partial<IInsertConsentToken>;
+
 export type IConsentTokensTable = typeof CONSENT_TOKENS_TABLE;
 
 export default CONSENT_TOKENS_TABLE;

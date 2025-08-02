@@ -27,6 +27,8 @@ export type ISelectIdentifiable = Readonly<
     typeof IDENTIFIABLES_TABLE.$inferSelect
 >;
 
+export type IUpdateIdentifiable = Partial<IInsertIdentifiable>;
+
 export type IIdentifiablesTable = typeof IDENTIFIABLES_TABLE;
 
 export default IDENTIFIABLES_TABLE;

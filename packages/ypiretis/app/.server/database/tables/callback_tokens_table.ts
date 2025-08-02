@@ -31,6 +31,8 @@ export type ISelectCallbackToken = Readonly<
     typeof CALLBACK_TOKENS_TABLE.$inferSelect
 >;
 
+export type IUpdateCallbackToken = Partial<IInsertCallbackToken>;
+
 export type ICallbackTokensTable = typeof CALLBACK_TOKENS_TABLE;
 
 export default CALLBACK_TOKENS_TABLE;

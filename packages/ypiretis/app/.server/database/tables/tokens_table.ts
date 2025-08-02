@@ -32,6 +32,8 @@ export type IInsertToken = Readonly<typeof TOKENS_TABLE.$inferInsert>;
 
 export type ISelectToken = Readonly<typeof TOKENS_TABLE.$inferSelect>;
 
+export type IUpdateToken = Partial<IInsertToken>;
+
 export type ITokensTable = typeof TOKENS_TABLE;
 
 export default TOKENS_TABLE;

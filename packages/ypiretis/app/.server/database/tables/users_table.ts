@@ -22,6 +22,8 @@ export type IInsertUser = Readonly<typeof USERS_TABLE.$inferInsert>;
 
 export type ISelectUser = Readonly<typeof USERS_TABLE.$inferSelect>;
 
+export type IUpdateUser = Partial<IInsertUser>;
+
 export type IUsersTable = typeof USERS_TABLE;
 
 export default USERS_TABLE;

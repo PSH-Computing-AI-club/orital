@@ -39,6 +39,8 @@ export type IInsertAttendee = Readonly<typeof ATTENDEES_TABLE.$inferInsert>;
 
 export type ISelectAttendee = Readonly<typeof ATTENDEES_TABLE.$inferSelect>;
 
+export type IUpdateAttendee = Partial<IInsertAttendee>;
+
 export type IAttendeesTable = typeof ATTENDEES_TABLE;
 
 export default ATTENDEES_TABLE;

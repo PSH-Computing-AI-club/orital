@@ -70,6 +70,8 @@ export type IInsertArticle = Readonly<typeof ARTICLES_TABLE.$inferInsert>;
 
 export type ISelectArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;
 
+export type IUpdateArticle = Partial<IInsertArticle>;
+
 export type IArticleStates =
     (typeof ARTICLE_STATES)[keyof typeof ARTICLE_STATES];
 

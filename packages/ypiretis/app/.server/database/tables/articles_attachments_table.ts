@@ -36,6 +36,8 @@ export type ISelectArticleAttachment = Readonly<
     typeof ARTICLES_ATTACHMENTS_TABLE.$inferSelect
 >;
 
+export type IUpdateArticleAttachment = Partial<IInsertArticleAttachment>;
+
 export type IArticlesAttachmentsTable = typeof ARTICLES_ATTACHMENTS_TABLE;
 
 export default ARTICLES_ATTACHMENTS_TABLE;

@@ -13,8 +13,6 @@ import {
     requireAuthenticatedPresenterConnection,
 } from "~/.server/services/rooms_service";
 
-import {mapPublicUser} from "~/.server/services/users_service";
-
 import {ulid} from "~/.server/utils/valibot";
 
 import Separator from "~/components/common/separator";
@@ -34,7 +32,7 @@ import {WebSocketCacheProvider} from "~/hooks/web_socket";
 import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
 import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
 
-import {PublicUserContextProvider} from "~/state/public_user";
+import {PublicUserContextProvider, mapPublicUser} from "~/state/public_user";
 
 import {buildFormData} from "~/utils/forms";
 

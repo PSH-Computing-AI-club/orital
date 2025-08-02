@@ -2,15 +2,12 @@ import {Flex} from "@chakra-ui/react";
 
 import {Outlet} from "react-router";
 
-import {
-    getOptionalSession,
-    mapPublicUser,
-} from "~/.server/services/users_service";
+import {getOptionalSession} from "~/.server/services/users_service";
 
 import Footer from "~/components/frontpage/footer";
 import Navbar from "~/components/frontpage/navbar";
 
-import {PublicUserContextProvider} from "~/state/public_user";
+import {PublicUserContextProvider, mapPublicUser} from "~/state/public_user";
 
 import {Route} from "./+types/_frontpage_";
 

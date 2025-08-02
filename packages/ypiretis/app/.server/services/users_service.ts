@@ -33,8 +33,6 @@ export type IInsertUser = ITableInsertUser;
 
 export type IUpdateUser = ITableUpdateUser;
 
-export type IPublicUser = Omit<IUser, "createdAt" | "id">;
-
 export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
@@ -57,18 +55,6 @@ export const requireAuthenticatedSession =
 
 export const requireGuestSession = sessionGuard.requireGuestSession;
 
-export function mapUser(user: ITableSelectUser): IUser {
-    const {accountID} = user;
-
-    const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);
-
-    return {
-        ...user,
-
-        isAdmin,
-    };
-}
-
 export const {
     deleteAll,
     deleteOne,
@@ -89,13 +75,14 @@ export const {
     mapValue: mapUser,
 });
 
-export function mapPublicUser(user: IUser): IPublicUser {
-    const {accountID, firstName, lastName, isAdmin} = user;
+export function mapUser(user: ITableSelectUser): IUser {
+    const {accountID} = user;
+
+    const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);
 
     return {
-        accountID,
-        firstName,
-        lastName,
+        ...user,
+
         isAdmin,
     };
 }

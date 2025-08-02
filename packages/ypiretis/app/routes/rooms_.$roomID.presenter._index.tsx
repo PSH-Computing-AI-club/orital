@@ -22,7 +22,6 @@ import {useCallback, useState} from "react";
 import * as v from "valibot";
 
 import type {IRoomStates} from "~/.server/services/rooms_service";
-import type {IPublicUser} from "~/.server/services/users_service";
 
 import Layout from "~/components/controlpanel/layout";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
@@ -57,6 +56,7 @@ import {useAsyncCallback} from "~/hooks/async_callback";
 
 import type {IAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
+import type {IPublicUser} from "~/state/public_user";
 import {useAuthenticatedPublicUserContext} from "~/state/public_user";
 
 import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";

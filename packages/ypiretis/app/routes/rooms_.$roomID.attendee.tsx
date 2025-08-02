@@ -13,8 +13,6 @@ import {
     requireAuthenticatedAttendeeConnection,
 } from "~/.server/services/rooms_service";
 
-import {mapPublicUser} from "~/.server/services/users_service";
-
 import {ulid} from "~/.server/utils/valibot";
 
 import Separator from "~/components/common/separator";
@@ -32,7 +30,7 @@ import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendeeContext} from "~/state/attendee";
 import {AttendeeContextProvider, useAttendeeContext} from "~/state/attendee";
-import {PublicUserContextProvider} from "~/state/public_user";
+import {PublicUserContextProvider, mapPublicUser} from "~/state/public_user";
 
 import {buildFormData} from "~/utils/forms";
 

@@ -2,10 +2,7 @@ import {Spacer, Strong, Text} from "@chakra-ui/react";
 
 import {Outlet} from "react-router";
 
-import {
-    mapPublicUser,
-    requireAuthenticatedAdminSession,
-} from "~/.server/services/users_service";
+import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
 
@@ -17,7 +14,7 @@ import CalendarMultipleIcon from "~/components/icons/calendar_multiple_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
 import HomeIcon from "~/components/icons/home_icon";
 
-import {PublicUserContextProvider} from "~/state/public_user";
+import {PublicUserContextProvider, mapPublicUser} from "~/state/public_user";
 
 import {Route} from "./+types/admin_";
 

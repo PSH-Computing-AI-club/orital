@@ -9,6 +9,7 @@ import {
     IArticleStates as _IArticleStates,
     IInsertArticle,
     ISelectArticle,
+    IUpdateArticle,
 } from "../database/tables/articles_table";
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
@@ -42,17 +43,9 @@ export type IArticle = ISelectArticle & {
     readonly slug: string;
 };
 
-export type IArticleInsert = Omit<
-    IInsertArticle,
-    "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
->;
+export type IArticleInsert = IInsertArticle;
 
-export type IArticleUpdate = Partial<
-    Omit<
-        IInsertArticle,
-        "articleID" | "createdAt" | "id" | "posterUserID" | "updatedAt"
-    >
->;
+export type IArticleUpdate = IUpdateArticle;
 
 export interface IArticleWithPoster extends IArticle {
     readonly poster: IUser;

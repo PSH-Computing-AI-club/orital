@@ -1,75 +1,67 @@
-import {Temporal} from "@js-temporal/polyfill";
-
-import type {SQL} from "drizzle-orm";
-import {and, desc, eq, getTableColumns, lte} from "drizzle-orm";
-
 import {slug as slugify} from "github-slugger";
 
 import {
+    IArticlesTable,
     IArticleStates as _IArticleStates,
-    IInsertArticle,
-    ISelectArticle,
-    IUpdateArticle,
+    IInsertArticle as _IInsertArticle,
+    ISelectArticle as _ISelectArticle,
+    IUpdateArticle as _IUpdateArticle,
 } from "../database/tables/articles_table";
 import ARTICLES_TABLE, {
     ARTICLE_STATES as _ARTICLE_STATES,
 } from "../database/tables/articles_table";
 import ARTICLES_ATTACHMENTS_TABLE from "../database/tables/articles_attachments_table";
-import type {ISelectUser} from "../database/tables/users_table";
-import USERS_TABLE from "../database/tables/users_table";
-
+import type {ISelectUser as _ISelectUser} from "../database/tables/users_table";
 import type {
-    IPaginationOptions,
-    IPaginationResults,
-} from "../database/utils/pagination";
-import {
-    executePagination,
-    selectPaginationColumns,
-} from "../database/utils/pagination";
-
-import {useTransaction} from "../state/transaction";
+    IArticlesWithPosterView,
+    ISelectArticleWithPoster as _ISelectArticleWithPoster,
+} from "../database/views/articles_with_poster_view";
+import ARTICLES_WITH_POSTER_VIEW from "../database/views/articles_with_poster_view";
+import type {
+    IPublishedArticlesView,
+    ISelectPublishedArticle as _ISelectPublishedArticle,
+} from "../database/views/published_articles_view";
+import PUBLISHED_ARTICLES_VIEW from "../database/views/published_articles_view";
+import type {
+    IPublishedArticlesWithPosterView,
+    ISelectPublishedArticleWithPoster as _ISelectPublishedArticleWithPoster,
+} from "../database/views/published_articles_with_poster_view";
+import PUBLISHED_ARTICLES_WITH_POSTER_VIEW from "../database/views/published_articles_with_poster_view";
 
 import makeAttachmentsService from "./attachments_service";
+import {makeReadableCRUDService, makeWritableCRUDService} from "./crud_service";
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
-export type IArticleStates = _IArticleStates;
-
-export type IArticle = ISelectArticle & {
+type IArticleMappedData = {
     readonly hasBeenEdited: boolean;
 
     readonly slug: string;
 };
 
-export type IArticleInsert = IInsertArticle;
-
-export type IArticleUpdate = IUpdateArticle;
-
-export interface IArticleWithPoster extends IArticle {
+type IArticleMappedPosterData = {
     readonly poster: IUser;
-}
+};
 
-export interface IPublishedArticle extends IArticle {
-    readonly publishedAt: Temporal.Instant;
+export type IArticleStates = _IArticleStates;
 
-    readonly state: (typeof ARTICLE_STATES)["published"];
-}
+export type IArticle = _ISelectArticle & IArticleMappedData;
 
-export interface IPublishedArticleWithPoster extends IPublishedArticle {
-    readonly poster: IUser;
-}
+export type IArticleInsert = _IInsertArticle;
 
-export interface IFindAllOptions {
-    readonly pagination: IPaginationOptions;
-}
+export type IArticleUpdate = _IUpdateArticle;
 
-export interface IFindAllArticlesResults<T extends IArticle = IArticle> {
-    readonly articles: T[];
+export type IArticleWithPoster = _ISelectArticleWithPoster &
+    IArticleMappedData &
+    IArticleMappedPosterData;
 
-    readonly pagination: IPaginationResults;
-}
+export type IPublishedArticle = _ISelectPublishedArticle & IArticleMappedData;
+
+export type IPublishedArticleWithPoster = _ISelectPublishedArticleWithPoster &
+    IArticleMappedData &
+    IArticleMappedPosterData;
 
 export const {
     deleteOneAttachment,
@@ -79,7 +71,61 @@ export const {
     table: ARTICLES_ATTACHMENTS_TABLE,
 });
 
-function mapArticle(article: ISelectArticle): IArticle {
+export const {
+    deleteAll,
+    deleteOne,
+    findAll,
+    findOne,
+    insertAll,
+    insertOne,
+    updateAll,
+    updateOne,
+} = makeWritableCRUDService<
+    IArticlesTable,
+    _ISelectArticle,
+    _IInsertArticle,
+    _IUpdateArticle,
+    IArticle
+>({
+    table: ARTICLES_TABLE,
+    mapValue: mapArticle,
+});
+
+export const {findOne: findOneWithPoster, findAll: findAllWithPoster} =
+    makeReadableCRUDService<
+        IArticlesWithPosterView,
+        _ISelectArticleWithPoster,
+        IArticleWithPoster
+    >({
+        table: ARTICLES_WITH_POSTER_VIEW,
+        mapValue: mapArticleWithPoster,
+    });
+
+export const {findOne: findOnePublished, findAll: findAllPublished} =
+    makeReadableCRUDService<
+        IPublishedArticlesView,
+        _ISelectPublishedArticle,
+        IPublishedArticle
+    >({
+        table: PUBLISHED_ARTICLES_VIEW,
+        mapValue: mapArticle,
+    });
+
+export const {
+    findOne: findOnePublishedWithPoster,
+    findAll: findAllPublishedWithPoster,
+} = makeReadableCRUDService<
+    IPublishedArticlesWithPosterView,
+    _ISelectPublishedArticleWithPoster,
+    IPublishedArticleWithPoster
+>({
+    table: PUBLISHED_ARTICLES_WITH_POSTER_VIEW,
+    mapValue: mapArticleWithPoster,
+});
+
+export function mapArticle<T extends _ISelectArticle, R extends IArticle>(
+    article: T,
+): R {
     const {publishedAt, title, updatedAt} = article;
 
     const hasBeenEdited = publishedAt
@@ -94,212 +140,18 @@ function mapArticle(article: ISelectArticle): IArticle {
 
         hasBeenEdited,
         slug,
-    };
+    } as unknown as R;
 }
 
-async function internalFindAll(
-    options: {
-        includePoster: true;
-        orderBy?: SQL<unknown>;
-        where?: SQL<unknown>;
-    } & IFindAllOptions,
-): Promise<IFindAllArticlesResults<IPublishedArticleWithPoster>>;
-async function internalFindAll(
-    options: {
-        includePoster: false;
-        orderBy?: SQL<unknown>;
-        where?: SQL<unknown>;
-    } & IFindAllOptions,
-): Promise<IFindAllArticlesResults<IPublishedArticle>>;
-async function internalFindAll(
-    options: {
-        includePoster: boolean;
-        orderBy?: SQL<unknown>;
-        where?: SQL<unknown>;
-    } & IFindAllOptions,
-): Promise<IFindAllArticlesResults> {
-    const {pagination, includePoster, orderBy, where} = options;
-    const {limit, page} = pagination;
-
-    const transaction = useTransaction();
-
-    let query = transaction
-        .select({
-            ...getTableColumns(ARTICLES_TABLE),
-
-            ...selectPaginationColumns(ARTICLES_TABLE.id),
-
-            ...(includePoster && {
-                poster: USERS_TABLE,
-            }),
-        })
-        .from(ARTICLES_TABLE)
-        .$dynamic();
-
-    if (includePoster) {
-        // @ts-expect-error - **HACK:** The join works properly. It is just the
-        // typing is too strict. So, we are going to just override type checking.
-        query =
-            //
-            query.innerJoin(
-                USERS_TABLE,
-                eq(ARTICLES_TABLE.posterUserID, USERS_TABLE.id),
-            );
-    }
-
-    if (where) {
-        query = query.where(where);
-    }
-
-    if (orderBy) {
-        query = query.orderBy(orderBy);
-    }
-
-    const {pagination: paginationResults, values: rows} =
-        await executePagination(query, {
-            limit,
-            page,
-        });
-
-    const articles = rows.map((row) => {
-        const {poster, ...article} = row;
-
-        const mappedArticle = mapArticle(article);
-
-        if (poster) {
-            return {
-                ...mappedArticle,
-
-                poster: mapUser(poster as ISelectUser),
-            };
-        }
-
-        return mappedArticle;
-    });
+export function mapArticleWithPoster<
+    T extends _ISelectArticleWithPoster,
+    R extends IArticleWithPoster,
+>(article: T): R {
+    const {poster} = article;
 
     return {
-        articles,
-        pagination: paginationResults,
-    };
-}
-
-export async function findOneByArticleID(
-    articleID: string,
-): Promise<IArticleWithPoster | null> {
-    const transaction = useTransaction();
-
-    const results = await transaction.query.articles.findFirst({
-        where: eq(ARTICLES_TABLE.articleID, articleID),
-
-        with: {
-            poster: true,
-        },
-    });
-
-    if (!results) {
-        return null;
-    }
-
-    const {poster, ...article} = results;
-
-    return {
-        ...(mapArticle(article) as IArticle),
+        ...mapArticle(article),
 
         poster: mapUser(poster),
     };
-}
-
-export async function findOnePublishedByArticleID(
-    articleID: string,
-): Promise<IPublishedArticleWithPoster | null> {
-    const nowInstant = Temporal.Now.instant();
-    const transaction = useTransaction();
-
-    const results = await transaction.query.articles.findFirst({
-        where: and(
-            eq(ARTICLES_TABLE.articleID, articleID),
-            eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
-            lte(ARTICLES_TABLE.publishedAt, nowInstant),
-        ),
-
-        with: {
-            poster: true,
-        },
-    });
-
-    if (!results) {
-        return null;
-    }
-
-    const {poster, ...article} = results;
-
-    return {
-        ...(mapArticle(article) as IPublishedArticle),
-
-        poster: mapUser(poster),
-    };
-}
-
-export async function findAll(
-    options: IFindAllOptions,
-): Promise<IFindAllArticlesResults<IArticleWithPoster>> {
-    return internalFindAll({
-        ...options,
-
-        includePoster: true,
-
-        orderBy: desc(ARTICLES_TABLE.articleID),
-    });
-}
-
-export async function findAllPublished(
-    options: IFindAllOptions,
-): Promise<IFindAllArticlesResults<IPublishedArticle>> {
-    const nowInstant = Temporal.Now.instant();
-
-    return internalFindAll({
-        ...options,
-
-        includePoster: false,
-
-        orderBy: desc(ARTICLES_TABLE.publishedAt),
-        where: and(
-            eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
-            lte(ARTICLES_TABLE.publishedAt, nowInstant),
-        ),
-    });
-}
-
-export async function insertOne(article: IArticleInsert): Promise<IArticle> {
-    const transaction = useTransaction();
-
-    const [insertedArticle] = await transaction
-        .insert(ARTICLES_TABLE)
-        .values(article)
-        .returning();
-
-    return mapArticle(insertedArticle);
-}
-
-export async function updateOneByArticleID(
-    articleID: string,
-    article: IArticleUpdate,
-): Promise<IArticle> {
-    const transaction = useTransaction();
-
-    const articles = await transaction
-        .update(ARTICLES_TABLE)
-        .set(article)
-        .where(eq(ARTICLES_TABLE.articleID, articleID))
-        .returning();
-
-    if (articles.length === 0) {
-        throw ReferenceError(
-            `bad argument #0 to 'updateOneByArticleID' (article id '${articleID}' was not found in the database)`,
-        );
-    }
-
-    const [updatedArticle] = articles;
-
-    return mapArticle(updatedArticle);
 }

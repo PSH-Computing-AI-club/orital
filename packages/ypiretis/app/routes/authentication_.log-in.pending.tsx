@@ -7,13 +7,14 @@ import {data, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
+import {eq} from "~/.server/services/crud_service.filters";
 import {lookupAccountID} from "~/.server/services/directory_service";
 import {
     deleteOne as deleteOneGrantToken,
     requireTokenBearer,
 } from "~/.server/services/grant_tokens_service";
 import {
-    findOneByAccountID as findOneUserByAccountID,
+    findOne as findOneUser,
     insertOne as insertOneUser,
     requireGuestSession,
     getGrantHeaders,
@@ -49,15 +50,19 @@ export async function action(actionArgs: Route.ActionArgs) {
     const {accountID, id: grantTokenID} = await requireTokenBearer(actionArgs);
     const {session} = await requireGuestSession(actionArgs);
 
-    let user = await findOneUserByAccountID(accountID);
+    let user = await findOneUser({
+        where: eq("accountID", accountID),
+    });
 
     if (user === null) {
         const {firstName, lastName} = await lookupAccountID(accountID);
 
         user = await insertOneUser({
-            accountID,
-            firstName,
-            lastName,
+            values: {
+                accountID,
+                firstName,
+                lastName,
+            },
         });
     }
 

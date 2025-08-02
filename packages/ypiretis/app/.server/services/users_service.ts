@@ -11,9 +11,9 @@ import ENVIRONMENT from "../configuration/environment";
 import * as persistentSession from "../configuration/persistent_session";
 
 import type {
-    IInsertUser as ITableInsertUser,
-    ISelectUser as ITableSelectUser,
-    IUpdateUser as ITableUpdateUser,
+    IInsertUser as _IInsertUser,
+    ISelectUser as _ISelectUser,
+    IUpdateUser as _IUpdateUser,
 } from "../database/tables/users_table";
 import USERS_TABLE from "../database/tables/users_table";
 
@@ -25,13 +25,13 @@ const ACCOUNT_ADMIN_IDENTIFIERS = new Set(
     ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
 );
 
-export type IUser = ITableSelectUser & {
+export type IUser = _ISelectUser & {
     readonly isAdmin: boolean;
 };
 
-export type IInsertUser = ITableInsertUser;
+export type IInsertUser = _IInsertUser;
 
-export type IUpdateUser = ITableUpdateUser;
+export type IUpdateUser = _IUpdateUser;
 
 export interface IUserSessionData extends SessionData {
     readonly userID: number;
@@ -66,16 +66,16 @@ export const {
     updateOne,
 } = makeWritableCRUDService<
     typeof USERS_TABLE,
-    ITableSelectUser,
-    ITableInsertUser,
-    ITableUpdateUser,
+    _ISelectUser,
+    _IInsertUser,
+    _IUpdateUser,
     IUser
 >({
     table: USERS_TABLE,
     mapValue: mapUser,
 });
 
-export function mapUser(user: ITableSelectUser): IUser {
+export function mapUser(user: _ISelectUser): IUser {
     const {accountID} = user;
 
     const isAdmin = ACCOUNT_ADMIN_IDENTIFIERS.has(accountID);

@@ -162,13 +162,11 @@ async function internalFindAll(
         query = query.orderBy(orderBy);
     }
 
-    const {pagination: paginationResults, rows} = await executePagination(
-        query,
-        {
+    const {pagination: paginationResults, values: rows} =
+        await executePagination(query, {
             limit,
             page,
-        },
-    );
+        });
 
     const articles = rows.map((row) => {
         const {poster, ...article} = row;

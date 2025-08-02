@@ -1,0 +1,37 @@
+import type {Temporal} from "@js-temporal/polyfill";
+
+import type {InferSelectViewModel} from "drizzle-orm";
+import {and, eq, getTableColumns, lte} from "drizzle-orm";
+
+import {sqliteView} from "drizzle-orm/sqlite-core";
+
+import ARTICLES_TABLE, {ARTICLE_STATES} from "../tables/articles_table";
+
+import {DEFAULT_TEMPORAL_INSTANT} from "../types/temporal_instant";
+
+const PUBLISHED_ARTICLES_VIEW = sqliteView("published_articles").as((query) => {
+    return query
+        .select({
+            ...getTableColumns(ARTICLES_TABLE),
+        })
+        .from(ARTICLES_TABLE)
+        .where(
+            and(
+                eq(ARTICLES_TABLE.state, ARTICLE_STATES.published),
+                lte(ARTICLES_TABLE.publishedAt, DEFAULT_TEMPORAL_INSTANT),
+            ),
+        );
+});
+
+export type ISelectPublishedArticle = Omit<
+    InferSelectViewModel<typeof PUBLISHED_ARTICLES_VIEW>,
+    "publishedAt" | "state"
+> & {
+    publishedAt: Temporal.Instant;
+
+    state: (typeof ARTICLE_STATES)["published"];
+};
+
+export type IPublishedArticlesView = typeof PUBLISHED_ARTICLES_VIEW;
+
+export default PUBLISHED_ARTICLES_VIEW;

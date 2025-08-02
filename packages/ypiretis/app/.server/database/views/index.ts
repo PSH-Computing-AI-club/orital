@@ -6,3 +6,5 @@
 // to provide query API types and migration support.
 
 export {default as articles_with_poster} from "./articles_with_poster_view";
+export {default as published_articles} from "./published_articles_view";
+export {default as published_articles_with_poster} from "./published_articles_with_poster_view";

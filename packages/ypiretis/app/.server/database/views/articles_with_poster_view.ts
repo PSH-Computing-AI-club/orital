@@ -1,3 +1,4 @@
+import type {InferSelectViewModel} from "drizzle-orm";
 import {eq, getTableColumns} from "drizzle-orm";
 
 import {sqliteView} from "drizzle-orm/sqlite-core";
@@ -22,5 +23,11 @@ const ARTICLES_WITH_POSTER_VIEW = sqliteView("articles_with_poster").as(
             );
     },
 );
+
+export type ISelectArticleWithPoster = InferSelectViewModel<
+    typeof ARTICLES_WITH_POSTER_VIEW
+>;
+
+export type IArticlesWithPosterView = typeof ARTICLES_WITH_POSTER_VIEW;
 
 export default ARTICLES_WITH_POSTER_VIEW;

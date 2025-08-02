@@ -11,6 +11,7 @@ import ENVIRONMENT from "../configuration/environment";
 import * as persistentSession from "../configuration/persistent_session";
 
 import type {
+    IUsersTable,
     IInsertUser as _IInsertUser,
     ISelectUser as _ISelectUser,
     IUpdateUser as _IUpdateUser,
@@ -65,7 +66,7 @@ export const {
     updateAll,
     updateOne,
 } = makeWritableCRUDService<
-    typeof USERS_TABLE,
+    IUsersTable,
     _ISelectUser,
     _IInsertUser,
     _IUpdateUser,

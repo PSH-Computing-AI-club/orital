@@ -1,6 +1,8 @@
 // **IMPORTANT:** Do **NOT** use absolute imports in this module. It is
 // imported by server-only modules.
 
+import {isValid} from "ulid";
+
 import * as v from "valibot";
 
 export const EXPRESSION_ALPHABETIC = /^[A-Za-z]*$/u;
@@ -66,6 +68,26 @@ export const title = v.pipe(
     v.nonEmpty(),
     v.regex(EXPRESSION_TITLE, "Invalid title format."),
 );
+
+export const token = (namespace: string) => {
+    const prefix = `${namespace}_`;
+
+    return v.pipe(
+        v.string(),
+        v.nonEmpty(),
+        v.check((value) => {
+            if (!value.startsWith(prefix)) {
+                return false;
+            }
+
+            if (!isValid(value.slice(prefix.length))) {
+                return false;
+            }
+
+            return true;
+        }, "Invalid token format."),
+    );
+};
 
 export const url = v.pipe(
     v.string(),

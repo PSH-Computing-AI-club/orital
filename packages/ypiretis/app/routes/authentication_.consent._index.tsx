@@ -31,8 +31,6 @@ import {
 import {insertOne as insertOneGrantToken} from "~/.server/services/grant_tokens_service";
 import {requireGuestSession} from "~/.server/services/users_service";
 
-import {token} from "~/.server/utils/valibot";
-
 import TimeDeltaText from "~/components/common/time_delta_text";
 import SearchIcon from "~/components/icons/search_icon";
 import UserPlusIcon from "~/components/icons/user_plus_icon";
@@ -50,7 +48,7 @@ import {
     ACCOUNT_PROVIDER_NAME,
     APP_NAME,
 } from "~/utils/constants";
-import {alphanumerical, number} from "~/utils/valibot";
+import {alphanumerical, number, token} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.consent._index";
 

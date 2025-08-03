@@ -8,8 +8,6 @@ import bytes from "bytes";
 
 import {CronPattern} from "croner";
 
-import {isValid} from "ulid";
-
 import * as v from "valibot";
 
 import {IS_WINDOWS} from "./platform";
@@ -161,26 +159,6 @@ export const filePath = v.pipe(
 export const localhost = v.pipe(v.string(), v.literal("localhost"));
 
 export const slug = v.pipe(v.string(), v.nonEmpty(), v.slug());
-
-export const token = (namespace: string) => {
-    const prefix = `${namespace}_`;
-
-    return v.pipe(
-        v.string(),
-        v.nonEmpty(),
-        v.check((value) => {
-            if (!value.startsWith(prefix)) {
-                return false;
-            }
-
-            if (!isValid(value.slice(prefix.length))) {
-                return false;
-            }
-
-            return true;
-        }, "Invalid token format."),
-    );
-};
 
 export const ulid = v.pipe(v.string(), v.nonEmpty(), v.ulid());
 

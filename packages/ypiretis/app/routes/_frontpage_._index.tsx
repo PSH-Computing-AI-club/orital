@@ -70,7 +70,7 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
         },
 
         sort: {
-            by: "id",
+            by: "publishedAt",
             mode: SORT_MODES.descending,
         },
     });

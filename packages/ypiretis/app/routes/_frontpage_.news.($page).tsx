@@ -48,7 +48,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         },
 
         sort: {
-            by: "id",
+            by: "publishedAt",
             mode: SORT_MODES.descending,
         },
     });

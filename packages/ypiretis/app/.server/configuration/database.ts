@@ -2,8 +2,7 @@ import {Database} from "bun:sqlite";
 
 import {drizzle} from "drizzle-orm/bun-sqlite";
 
-import * as DATABASE_TABLES from "../database/tables";
-import * as DATABASE_VIEWS from "../database/views";
+import * as SCHEMA from "../database/schema";
 
 import ENVIRONMENT from "./environment";
 
@@ -21,8 +20,7 @@ const DATABASE = drizzle({
     client: CLIENT,
 
     schema: {
-        ...DATABASE_TABLES,
-        ...DATABASE_VIEWS,
+        ...SCHEMA,
     },
 });
 

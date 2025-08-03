@@ -5,6 +5,7 @@ import {Suspense, lazy} from "react";
 import {ClientOnly} from "remix-utils/client-only";
 
 import {findAllPublished} from "~/.server/services/articles_service";
+import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
@@ -66,6 +67,11 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
             page: 1,
 
             limit: ARTICLES_TO_DISPLAY,
+        },
+
+        sort: {
+            by: "id",
+            mode: SORT_MODES.descending,
         },
     });
 

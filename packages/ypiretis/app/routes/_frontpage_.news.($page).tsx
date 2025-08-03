@@ -3,6 +3,7 @@ import {data} from "react-router";
 import * as v from "valibot";
 
 import {findAllPublished} from "~/.server/services/articles_service";
+import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
@@ -44,6 +45,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             page,
 
             limit: ARTICLES_PER_PAGE,
+        },
+
+        sort: {
+            by: "id",
+            mode: SORT_MODES.descending,
         },
     });
 

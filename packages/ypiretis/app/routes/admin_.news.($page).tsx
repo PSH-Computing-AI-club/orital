@@ -15,6 +15,7 @@ import {
     findAllWithPoster,
     insertOne,
 } from "~/.server/services/articles_service";
+import {SORT_MODES} from "~/.server/services/crud_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -85,6 +86,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             page,
 
             limit: ARTICLES_PER_PAGE,
+        },
+
+        sort: {
+            by: "id",
+            mode: SORT_MODES.descending,
         },
     });
 

@@ -1,3 +1,4 @@
+import type {ActionFunctionArgs, LoaderFunctionArgs} from "react-router";
 import {data} from "react-router";
 
 import type {ITokensTable} from "../database/tables/tokens_table";
@@ -10,16 +11,17 @@ import {BEARER_TYPES} from "./guard";
 
 async function getBearerValue(
     bearerType: IBearerTypes,
-    request: Request,
+    requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
 ): Promise<string | null> {
     switch (bearerType) {
         case BEARER_TYPES.cookie: {
-            const session = await getSession(request);
+            const session = await getSession(requestArgs);
 
             return session.get("bearer") ?? null;
         }
 
         case BEARER_TYPES.header: {
+            const {request} = requestArgs;
             const {headers} = request;
 
             return headers.get("Authorization");
@@ -51,10 +53,10 @@ export default function makeTokenBearerGuard<
 >(tokensService: S): IGuardBearerRequisiteFunc<V> {
     const {findOneByToken} = tokensService;
 
-    return async (request, options = {}) => {
+    return async (requestArgs, options = {}) => {
         const {bearerType = BEARER_TYPES.header} = options;
 
-        const bearerValue = await getBearerValue(bearerType, request);
+        const bearerValue = await getBearerValue(bearerType, requestArgs);
 
         if (!bearerValue) {
             throw data("Unauthorized", {

@@ -321,7 +321,10 @@ export function makeWritableCRUDService<
             const row = (await transaction
                 .delete(table)
                 .where(where(table))
-                .limit(1)
+                // **HACK:** Bun's SQLite3 driver is not compiled with `LIMIT`
+                // enabled for DELETE and UPDATE operations.
+                //
+                //.limit(1)
                 .returning()
 
                 .get()) as S | undefined; // **HACK:** See the above comment about type narrowing.
@@ -397,7 +400,9 @@ export function makeWritableCRUDService<
                 .update(table)
                 .set(values)
                 .where(where(table))
-                .limit(1)
+                // **HACK:** See above comment in `deleteOne` about Bun support.
+                //
+                //.limit(1)
                 .returning()
                 .get()) as unknown as S; // **HACK:** See the above comment about type narrowing.
 

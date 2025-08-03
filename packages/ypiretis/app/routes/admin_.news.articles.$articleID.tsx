@@ -25,7 +25,7 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
-    findOne,
+    findOneWithPoster,
     findAllAttachmentsByID,
     updateOne,
 } from "~/.server/services/articles_service";
@@ -234,7 +234,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOne({
+    const article = await findOneWithPoster({
         where: eq("articleID", articleID),
     });
 

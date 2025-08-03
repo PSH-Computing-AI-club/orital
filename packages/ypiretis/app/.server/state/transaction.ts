@@ -5,17 +5,17 @@ import DATABASE from "../configuration/database";
 
 export type ITransactionContext = IDatabase | ITransaction;
 
-export type ITransactionContextCallback = (
+export type ITransactionContextCallback<T = void> = (
     transaction: ITransaction,
-) => Promise<void> | void;
+) => Promise<T> | T;
 
 export const TRANSACTION_CONTEXT = new AsyncLocalStorage<ITransaction>();
 
-export function createTransaction(
-    callback: ITransactionContextCallback,
-): Promise<void> {
+export function createTransaction<T>(
+    callback: ITransactionContextCallback<T>,
+): Promise<T> {
     return DATABASE.transaction(async (transaction) => {
-        TRANSACTION_CONTEXT.run(transaction, () => {
+        return TRANSACTION_CONTEXT.run(transaction, () => {
             return callback(transaction);
         });
     });

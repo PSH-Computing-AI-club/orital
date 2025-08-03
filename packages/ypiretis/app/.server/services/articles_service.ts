@@ -1,3 +1,5 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import {slug as slugify} from "github-slugger";
 
 import {
@@ -32,6 +34,10 @@ import makeAttachmentsService from "./attachments_service";
 import {makeReadableCRUDService, makeWritableCRUDService} from "./crud_service";
 import type {IUser} from "./users_service";
 import {mapUser} from "./users_service";
+
+const EDIT_GRACE_DURATION = Temporal.Duration.from({
+    minutes: 1,
+});
 
 export const ARTICLE_STATES = _ARTICLE_STATES;
 
@@ -130,7 +136,9 @@ export function mapArticle<T extends _ISelectArticle, R extends IArticle>(
 
     const hasBeenEdited = publishedAt
         ? updatedAt.epochMilliseconds - publishedAt.epochMilliseconds >
-          1000 * 60
+          EDIT_GRACE_DURATION.total({
+              unit: "milliseconds",
+          })
         : false;
 
     const slug = slugify(title, false);

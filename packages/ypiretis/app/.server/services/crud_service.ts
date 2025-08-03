@@ -52,7 +52,7 @@ export type ISortModes = (typeof SORT_MODES)[keyof typeof SORT_MODES];
 export interface ISortOptions<T extends Table | View> {
     readonly by: keyof InferSelectModel<T>;
 
-    readonly mode: ISortModes;
+    readonly mode?: ISortModes;
 }
 
 export interface IDeleteOneOptions<T extends Table> {
@@ -244,7 +244,7 @@ export function makeReadableCRUDService<
             }
 
             if (sort) {
-                const {by, mode} = sort;
+                const {by, mode = SORT_MODES.ascending} = sort;
 
                 // @ts-expect-error - HACK: If we were given a table, then it is
                 // indexable. We just cannot know the type here.

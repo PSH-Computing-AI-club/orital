@@ -68,7 +68,7 @@ const ARTICLES_TABLE = sqliteTable(
 
 export type IInsertArticle = Omit<
     Readonly<typeof ARTICLES_TABLE.$inferInsert>,
-    "articleID" | "createdAt" | "id" | "publishedAt" | "updatedAt"
+    "articleID" | "createdAt" | "id" | "updatedAt"
 >;
 
 export type ISelectArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;

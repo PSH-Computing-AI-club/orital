@@ -8,7 +8,7 @@ import {data, useLocation, useNavigate} from "react-router";
 import * as v from "valibot";
 
 import {eq} from "~/.server/services/crud_service.filters";
-import {lookupAccountID} from "~/.server/services/directory_service";
+import {lookupByAccountID} from "~/.server/services/directory_service";
 import {
     deleteOne as deleteOneGrantToken,
     requireTokenBearer,
@@ -55,7 +55,7 @@ export async function action(actionArgs: Route.ActionArgs) {
     });
 
     if (user === null) {
-        const {firstName, lastName} = await lookupAccountID(accountID);
+        const {firstName, lastName} = await lookupByAccountID(accountID);
 
         user = await insertOneUser({
             values: {

@@ -34,16 +34,16 @@ const PUBLISHED_ARTICLES_WITH_POSTER_VIEW = sqliteView(
         );
 });
 
+export type IPublishedArticlesWithPosterView =
+    typeof PUBLISHED_ARTICLES_WITH_POSTER_VIEW;
+
 export type ISelectPublishedArticleWithPoster = Omit<
-    InferSelectViewModel<typeof PUBLISHED_ARTICLES_WITH_POSTER_VIEW>,
+    InferSelectViewModel<IPublishedArticlesWithPosterView>,
     "publishedAt" | "state"
 > & {
     publishedAt: Temporal.Instant;
 
     state: (typeof ARTICLE_STATES)["published"];
 };
-
-export type IPublishedArticlesWithPosterView =
-    typeof PUBLISHED_ARTICLES_WITH_POSTER_VIEW;
 
 export default PUBLISHED_ARTICLES_WITH_POSTER_VIEW;

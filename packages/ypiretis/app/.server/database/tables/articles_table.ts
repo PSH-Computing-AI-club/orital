@@ -66,18 +66,18 @@ const ARTICLES_TABLE = sqliteTable(
     },
 );
 
-export type IInsertArticle = Omit<
-    Readonly<typeof ARTICLES_TABLE.$inferInsert>,
-    "articleID" | "createdAt" | "id" | "updatedAt"
->;
-
-export type ISelectArticle = Readonly<typeof ARTICLES_TABLE.$inferSelect>;
-
-export type IUpdateArticle = Partial<IInsertArticle>;
-
 export type IArticleStates =
     (typeof ARTICLE_STATES)[keyof typeof ARTICLE_STATES];
 
 export type IArticlesTable = typeof ARTICLES_TABLE;
+
+export type IInsertArticle = Omit<
+    Readonly<IArticlesTable["$inferInsert"]>,
+    "articleID" | "createdAt" | "id" | "updatedAt"
+>;
+
+export type ISelectArticle = Readonly<IArticlesTable["$inferSelect"]>;
+
+export type IUpdateArticle = Partial<IInsertArticle>;
 
 export default ARTICLES_TABLE;

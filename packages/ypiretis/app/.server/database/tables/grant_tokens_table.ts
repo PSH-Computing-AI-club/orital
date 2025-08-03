@@ -25,16 +25,12 @@ const GRANT_TOKENS_TABLE = sqliteTable(
     },
 );
 
-export type IInsertGrantToken = Readonly<
-    typeof GRANT_TOKENS_TABLE.$inferInsert
->;
+export type IGrantTokensTable = typeof GRANT_TOKENS_TABLE;
 
-export type ISelectGrantToken = Readonly<
-    typeof GRANT_TOKENS_TABLE.$inferSelect
->;
+export type IInsertGrantToken = Readonly<IGrantTokensTable["$inferInsert"]>;
+
+export type ISelectGrantToken = Readonly<IGrantTokensTable["$inferSelect"]>;
 
 export type IUpdateGrantToken = Partial<IInsertGrantToken>;
-
-export type IGrantTokensTable = typeof GRANT_TOKENS_TABLE;
 
 export default GRANT_TOKENS_TABLE;

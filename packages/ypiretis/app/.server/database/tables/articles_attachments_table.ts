@@ -28,16 +28,16 @@ const ARTICLES_ATTACHMENTS_TABLE = sqliteTable(
     },
 );
 
+export type IArticlesAttachmentsTable = typeof ARTICLES_ATTACHMENTS_TABLE;
+
 export type IInsertArticleAttachment = Readonly<
-    typeof ARTICLES_ATTACHMENTS_TABLE.$inferInsert
+    IArticlesAttachmentsTable["$inferInsert"]
 >;
 
 export type ISelectArticleAttachment = Readonly<
-    typeof ARTICLES_ATTACHMENTS_TABLE.$inferSelect
+    IArticlesAttachmentsTable["$inferSelect"]
 >;
 
 export type IUpdateArticleAttachment = Partial<IInsertArticleAttachment>;
-
-export type IArticlesAttachmentsTable = typeof ARTICLES_ATTACHMENTS_TABLE;
 
 export default ARTICLES_ATTACHMENTS_TABLE;

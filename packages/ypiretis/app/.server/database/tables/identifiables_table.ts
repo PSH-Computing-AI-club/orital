@@ -19,16 +19,12 @@ const IDENTIFIABLES_TABLE = sqliteTable(
     },
 );
 
-export type IInsertIdentifiable = Readonly<
-    typeof IDENTIFIABLES_TABLE.$inferInsert
->;
+export type IIdentifiablesTable = typeof IDENTIFIABLES_TABLE;
 
-export type ISelectIdentifiable = Readonly<
-    typeof IDENTIFIABLES_TABLE.$inferSelect
->;
+export type IInsertIdentifiable = Readonly<IIdentifiablesTable["$inferInsert"]>;
+
+export type ISelectIdentifiable = Readonly<IIdentifiablesTable["$inferSelect"]>;
 
 export type IUpdateIdentifiable = Partial<IInsertIdentifiable>;
-
-export type IIdentifiablesTable = typeof IDENTIFIABLES_TABLE;
 
 export default IDENTIFIABLES_TABLE;

@@ -27,12 +27,12 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .default(DEFAULT_TEMPORAL_INSTANT),
 });
 
-export type IInsertRoom = Readonly<typeof ROOMS_TABLE.$inferInsert>;
+export type IRoomsTable = typeof ROOMS_TABLE;
 
-export type ISelectRoom = Readonly<typeof ROOMS_TABLE.$inferSelect>;
+export type IInsertRoom = Readonly<IRoomsTable["$inferInsert"]>;
+
+export type ISelectRoom = Readonly<IRoomsTable["$inferSelect"]>;
 
 export type IUpdateRoom = Partial<IInsertRoom>;
-
-export type IRoomsTable = typeof ROOMS_TABLE;
 
 export default ROOMS_TABLE;

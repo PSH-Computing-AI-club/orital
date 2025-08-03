@@ -18,15 +18,15 @@ const USERS_TABLE = sqliteTable("users", {
         .default(DEFAULT_TEMPORAL_INSTANT),
 });
 
+export type IUsersTable = typeof USERS_TABLE;
+
 export type IInsertUser = Omit<
-    Readonly<typeof USERS_TABLE.$inferInsert>,
+    Readonly<IUsersTable["$inferInsert"]>,
     "createdAt" | "id"
 >;
 
-export type ISelectUser = Readonly<typeof USERS_TABLE.$inferSelect>;
+export type ISelectUser = Readonly<IUsersTable["$inferSelect"]>;
 
 export type IUpdateUser = Partial<IInsertUser>;
-
-export type IUsersTable = typeof USERS_TABLE;
 
 export default USERS_TABLE;

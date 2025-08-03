@@ -23,15 +23,15 @@ const PUBLISHED_ARTICLES_VIEW = sqliteView("published_articles").as((query) => {
         );
 });
 
+export type IPublishedArticlesView = typeof PUBLISHED_ARTICLES_VIEW;
+
 export type ISelectPublishedArticle = Omit<
-    InferSelectViewModel<typeof PUBLISHED_ARTICLES_VIEW>,
+    InferSelectViewModel<IPublishedArticlesView>,
     "publishedAt" | "state"
 > & {
     publishedAt: Temporal.Instant;
 
     state: (typeof ARTICLE_STATES)["published"];
 };
-
-export type IPublishedArticlesView = typeof PUBLISHED_ARTICLES_VIEW;
 
 export default PUBLISHED_ARTICLES_VIEW;

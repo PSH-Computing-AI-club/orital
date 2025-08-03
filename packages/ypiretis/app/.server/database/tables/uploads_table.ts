@@ -38,12 +38,12 @@ const UPLOADS_TABLE = sqliteTable(
     },
 );
 
-export type IInsertUpload = Readonly<typeof UPLOADS_TABLE.$inferInsert>;
+export type IUploadsTable = typeof UPLOADS_TABLE;
 
-export type ISelectUpload = Readonly<typeof UPLOADS_TABLE.$inferSelect>;
+export type IInsertUpload = Readonly<IUploadsTable["$inferInsert"]>;
+
+export type ISelectUpload = Readonly<IUploadsTable["$inferSelect"]>;
 
 export type IUpdateUpload = Partial<IInsertUpload>;
-
-export type IUploadsTable = typeof UPLOADS_TABLE;
 
 export default UPLOADS_TABLE;

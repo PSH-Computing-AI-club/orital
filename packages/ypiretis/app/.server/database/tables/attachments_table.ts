@@ -37,12 +37,12 @@ const ATTACHMENTS_TABLE = sqliteTable(
     },
 );
 
-export type IInsertAttachment = Readonly<typeof ATTACHMENTS_TABLE.$inferInsert>;
+export type IAttachmentsTable = typeof ATTACHMENTS_TABLE;
 
-export type ISelectAttachment = Readonly<typeof ATTACHMENTS_TABLE.$inferSelect>;
+export type IInsertAttachment = Readonly<IAttachmentsTable["$inferInsert"]>;
+
+export type ISelectAttachment = Readonly<IAttachmentsTable["$inferSelect"]>;
 
 export type IUpdateAttachment = Partial<IInsertAttachment>;
-
-export type IAttachmentsTable = typeof ATTACHMENTS_TABLE;
 
 export default ATTACHMENTS_TABLE;

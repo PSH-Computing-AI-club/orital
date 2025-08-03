@@ -28,12 +28,12 @@ const TOKENS_TABLE = sqliteTable(
     },
 );
 
-export type IInsertToken = Readonly<typeof TOKENS_TABLE.$inferInsert>;
+export type ITokensTable = typeof TOKENS_TABLE;
 
-export type ISelectToken = Readonly<typeof TOKENS_TABLE.$inferSelect>;
+export type IInsertToken = Readonly<ITokensTable["$inferInsert"]>;
+
+export type ISelectToken = Readonly<ITokensTable["$inferSelect"]>;
 
 export type IUpdateToken = Partial<IInsertToken>;
-
-export type ITokensTable = typeof TOKENS_TABLE;
 
 export default TOKENS_TABLE;

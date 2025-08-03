@@ -25,10 +25,11 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
-    findOneByArticleID,
+    findOne,
     findAllAttachmentsByID,
-    updateOneByArticleID,
+    updateOne,
 } from "~/.server/services/articles_service";
+import {eq} from "~/.server/services/crud_service.filters";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -127,8 +128,12 @@ export async function action(actionArgs: Route.ActionArgs) {
             const {content} = actionFormData;
 
             try {
-                await updateOneByArticleID(articleID, {
-                    content,
+                await updateOne({
+                    where: eq("articleID", articleID),
+
+                    values: {
+                        content,
+                    },
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {
@@ -150,8 +155,12 @@ export async function action(actionArgs: Route.ActionArgs) {
                 Temporal.Instant.fromEpochMilliseconds(publishedAtTimestamp);
 
             try {
-                await updateOneByArticleID(articleID, {
-                    publishedAt,
+                await updateOne({
+                    where: eq("articleID", articleID),
+
+                    values: {
+                        publishedAt,
+                    },
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {
@@ -175,9 +184,13 @@ export async function action(actionArgs: Route.ActionArgs) {
                         ? null
                         : Temporal.Now.instant();
 
-                await updateOneByArticleID(articleID, {
-                    publishedAt,
-                    state,
+                await updateOne({
+                    where: eq("articleID", articleID),
+
+                    values: {
+                        publishedAt,
+                        state,
+                    },
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {
@@ -196,8 +209,12 @@ export async function action(actionArgs: Route.ActionArgs) {
             const {title} = actionFormData;
 
             try {
-                await updateOneByArticleID(articleID, {
-                    title,
+                await updateOne({
+                    where: eq("articleID", articleID),
+
+                    values: {
+                        title,
+                    },
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {
@@ -217,7 +234,9 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOneByArticleID(articleID);
+    const article = await findOne({
+        where: eq("articleID", articleID),
+    });
 
     if (article === null) {
         throw data("Not Found", {

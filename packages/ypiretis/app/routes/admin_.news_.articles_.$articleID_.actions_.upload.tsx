@@ -7,9 +7,10 @@ import ENVIRONMENT from "~/.server/configuration/environment";
 import {validateMultipartFormData} from "~/.server/guards/validation";
 
 import {
-    findOneByArticleID,
+    findOne,
     handleOneAttachment,
 } from "~/.server/services/articles_service";
+import {eq} from "~/.server/services/crud_service.filters";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {createTransaction} from "~/.server/state/transaction";
@@ -56,7 +57,9 @@ export async function action(actionArgs: Route.ActionArgs) {
         actionArgs,
     );
 
-    const article = await findOneByArticleID(articleID);
+    const article = await findOne({
+        where: eq("articleID", articleID),
+    });
 
     if (!article) {
         throw data("Not Found.", {

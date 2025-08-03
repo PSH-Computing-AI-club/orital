@@ -61,7 +61,7 @@ const PEOPLE_TO_DISPLAY = [
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
 export async function loader(_loaderArgs: Route.LoaderArgs) {
-    const {articles} = await findAllPublished({
+    const {values: articles} = await findAllPublished({
         pagination: {
             page: 1,
 

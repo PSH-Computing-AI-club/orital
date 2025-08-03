@@ -2,7 +2,9 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
+import {findOnePublished} from "~/.server/services/articles_service";
+import {eq} from "~/.server/services/crud_service.filters";
+
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
 
@@ -17,7 +19,9 @@ const LOADER_PARAMS_SCHEMA = v.object({
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOnePublishedByArticleID(articleID);
+    const article = await findOnePublished({
+        where: eq("articleID", articleID),
+    });
 
     if (article === null) {
         throw data("Not Found", {

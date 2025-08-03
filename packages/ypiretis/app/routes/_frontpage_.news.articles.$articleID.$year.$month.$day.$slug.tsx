@@ -4,7 +4,8 @@ import {data, redirect} from "react-router";
 
 import * as v from "valibot";
 
-import {findOnePublishedByArticleID} from "~/.server/services/articles_service";
+import {findOnePublishedWithPoster} from "~/.server/services/articles_service";
+import {eq} from "~/.server/services/crud_service.filters";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -45,7 +46,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         year: userYear,
     } = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOnePublishedByArticleID(articleID);
+    const article = await findOnePublishedWithPoster({
+        where: eq("articleID", articleID),
+    });
 
     if (article === null) {
         throw data("Not Found", {

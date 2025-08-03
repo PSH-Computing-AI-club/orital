@@ -12,7 +12,7 @@ import * as v from "valibot";
 
 import {
     ARTICLE_STATES,
-    findAll,
+    findAllWithPoster,
     insertOne,
 } from "~/.server/services/articles_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
@@ -64,10 +64,12 @@ export async function action(actionArgs: Route.ActionArgs) {
     switch (action) {
         case "create": {
             const {articleID} = await insertOne({
-                content: "",
-                posterUserID: userID,
-                state: ARTICLE_STATES.draft,
-                title: "Untitled Article",
+                values: {
+                    content: "",
+                    posterUserID: userID,
+                    state: ARTICLE_STATES.draft,
+                    title: "Untitled Article",
+                },
             });
 
             return redirect(`/admin/news/articles/${articleID}`);
@@ -78,7 +80,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const {articles, pagination} = await findAll({
+    const {pagination, values: articles} = await findAllWithPoster({
         pagination: {
             page,
 

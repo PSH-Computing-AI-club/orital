@@ -39,7 +39,7 @@ const LOADER_PARAMS_SCHEMA = v.object({
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const {articles, pagination} = await findAllPublished({
+    const {pagination, values: articles} = await findAllPublished({
         pagination: {
             page,
 

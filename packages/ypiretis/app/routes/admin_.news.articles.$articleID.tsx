@@ -47,7 +47,7 @@ import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
-import type {IUploadTemplate} from "~/components/controlpanel/upload_dropbox";
+import type {IUploadCallback} from "~/components/controlpanel/upload_dropbox";
 import UploadDropbox from "~/components/controlpanel/upload_dropbox";
 
 import ArticleIcon from "~/components/icons/article_icon";
@@ -60,8 +60,11 @@ import {validateFormData, validateParams} from "~/guards/validation";
 
 import {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} from "~/utils/constants";
 import {toLocalISOString} from "~/utils/datetime";
+import {buildFormData} from "~/utils/forms";
 import {buildAppURL} from "~/utils/url";
 import {number, title} from "~/utils/valibot";
+
+import type {IActionFormData as IUploadActionFormData} from "./admin_.news_.articles_.$articleID_.actions_.upload";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
 
@@ -70,19 +73,19 @@ const MAX_FILE_SIZE_TEXT = format(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE, {
 });
 
 const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("content.update")),
+    action: v.literal("content.update"),
 
     content: v.string(),
 });
 
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("publishedAt.update")),
+    action: v.literal("publishedAt.update"),
 
     publishedAtTimestamp: number,
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("state.update")),
+    action: v.literal("state.update"),
 
     state: v.pipe(
         v.string(),
@@ -91,7 +94,7 @@ const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("title.update")),
+    action: v.literal("title.update"),
 
     title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(64), title),
 });
@@ -395,10 +398,17 @@ function SettingsCardAttachmentsView() {
 
     const {articleID} = article;
 
-    const uploadURLTemplate = useCallback(
-        ((_file) => {
-            return `./${articleID}/actions/upload`;
-        }) satisfies IUploadTemplate,
+    const onUploadFile = useCallback(
+        ((xhr, file) => {
+            const uploadURL = `./${articleID}/actions/upload`;
+            const formData = buildFormData<IUploadActionFormData>({
+                file,
+                action: "upload.file",
+            });
+
+            xhr.open("POST", uploadURL, true);
+            xhr.send(formData);
+        }) satisfies IUploadFileCallback,
 
         [articleID],
     );
@@ -407,7 +417,7 @@ function SettingsCardAttachmentsView() {
         <TabbedSectionCard.View label="Attachments">
             <UploadDropbox
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
-                template={uploadURLTemplate}
+                onUploadFile={onUploadFile}
             />
         </TabbedSectionCard.View>
     );

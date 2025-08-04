@@ -2,12 +2,12 @@ import {Box, Span} from "@chakra-ui/react";
 
 import UploadIcon from "../icons/upload_icon";
 
-export type IUploadTemplate = (file: File) => string | URL;
+export type IUploadFileCallback = (xhr: XMLHttpRequest, file: File) => void;
 
 export interface IUploadDropboxProps {
     readonly helpText?: string;
 
-    readonly template: IUploadTemplate;
+    readonly onUploadFile: IUploadFileCallback;
 }
 
 export default function UploadDropbox(props: IUploadDropboxProps) {

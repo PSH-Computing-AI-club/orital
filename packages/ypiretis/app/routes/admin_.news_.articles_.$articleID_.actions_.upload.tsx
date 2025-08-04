@@ -33,9 +33,7 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
     file: v.pipe(bunFile, v.maxSize(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE)),
 });
 
-export type IActionFormDataSchema = v.InferInput<
-    typeof ACTION_FORM_DATA_SCHEMA
->;
+export type IActionFormData = v.InferInput<typeof ACTION_FORM_DATA_SCHEMA>;
 
 export async function action(actionArgs: Route.ActionArgs) {
     const {articleID} = validateParams(ACTION_PARAMS_SCHEMA, actionArgs);

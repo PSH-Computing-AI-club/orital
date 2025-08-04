@@ -1,5 +1,5 @@
 import type {SegmentGroupValueChangeDetails} from "@chakra-ui/react";
-import {SegmentGroup} from "@chakra-ui/react";
+import {Box, SegmentGroup} from "@chakra-ui/react";
 
 import type {PropsWithChildren, ReactNode} from "react";
 import {
@@ -55,6 +55,8 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
     const {registerTab, unregisterTab, selectedTab} =
         useTabbedSectionCardContext();
 
+    const isTabSelected = selectedTab === label;
+
     useEffect(() => {
         registerTab(label);
 
@@ -63,7 +65,11 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
         };
     }, [registerTab, label, unregisterTab]);
 
-    return selectedTab === label ? children : null;
+    return (
+        <Box display={isTabSelected ? undefined : "none"} flexGrow="1">
+            {children}
+        </Box>
+    );
 }
 
 function TabbedSectionCardTabs() {

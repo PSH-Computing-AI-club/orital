@@ -4,6 +4,7 @@ import {useCallback, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
 
+import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
 export type IUploadCompleteCallback = () => void;
@@ -45,15 +46,19 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
     const boxRef = useRef<HTMLDivElement | null>(null);
     const uploadingFiles = useState<Map<string, IUploadingFile>>(new Map());
 
-    const handleFileDrop = useCallback((files: FileList) => {
+    const handleFileInput = useCallback((files: FileList) => {
         for (const file of files) {
-            // TODO: Create XHR and call onUploadFile for each file.
+            // **TODO:** Create XHR and call onUploadFile for each file.
         }
     }, []);
 
     const isDraggedOver = useFileDrop({
-        handleFileDrop,
+        handleFileDrop: handleFileInput,
+        ref: boxRef,
+    });
 
+    const inputElement = useFileDialogClick({
+        handleFileInput,
         ref: boxRef,
     });
 
@@ -70,14 +75,18 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
             borderStyle={isDraggedOver ? "solid" : "dashed"}
             borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
             bg={isDraggedOver ? "cyan.50" : undefined}
+            cursor="pointer"
             _hover={{
                 bg: "bg.subtle",
                 borderColor: "fg.subtle",
             }}
         >
+            {inputElement}
+
             <UploadIcon marginBlockEnd="2" fontSize="3xl" />
 
-            <Span>Drag and drop files here</Span>
+            <Span>Drag and drop files here, or click to select</Span>
+
             {helpText ? (
                 <Span color="fg.muted" fontSize="smaller">
                     {helpText}

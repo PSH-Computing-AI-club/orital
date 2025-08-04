@@ -20,7 +20,7 @@ import {format} from "bytes";
 import type {FormEventHandler, MouseEventHandler} from "react";
 import {useCallback, useEffect, useRef, useState} from "react";
 
-import {data, useLoaderData, useFetcher} from "react-router";
+import {data, useFetcher, useLoaderData, useRevalidator} from "react-router";
 
 import * as v from "valibot";
 
@@ -47,7 +47,10 @@ import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
-import type {IUploadCallback} from "~/components/controlpanel/upload_dropbox";
+import type {
+    IUploadCompleteCallback,
+    IUploadFileCallback,
+} from "~/components/controlpanel/upload_dropbox";
 import UploadDropbox from "~/components/controlpanel/upload_dropbox";
 
 import ArticleIcon from "~/components/icons/article_icon";
@@ -395,8 +398,17 @@ function ContentCard() {
 
 function SettingsCardAttachmentsView() {
     const {article} = useLoaderData<typeof loader>();
+    const {revalidate} = useRevalidator();
 
     const {articleID} = article;
+
+    const onUploadComplete = useCallback(
+        (() => {
+            revalidate();
+        }) satisfies IUploadCompleteCallback,
+
+        [revalidate],
+    );
 
     const onUploadFile = useCallback(
         ((xhr, file) => {
@@ -417,6 +429,7 @@ function SettingsCardAttachmentsView() {
         <TabbedSectionCard.View label="Attachments">
             <UploadDropbox
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
+                onUploadComplete={onUploadComplete}
                 onUploadFile={onUploadFile}
             />
         </TabbedSectionCard.View>

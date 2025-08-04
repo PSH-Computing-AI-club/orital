@@ -1,4 +1,4 @@
-export type IFormDataObject = Record<string, boolean | number | string>;
+export type IFormDataObject = Record<string, boolean | number | string | Blob>;
 
 export function buildFormData<T extends IFormDataObject>(object: T): FormData {
     const formData = new FormData();

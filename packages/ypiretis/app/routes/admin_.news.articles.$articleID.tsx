@@ -1,5 +1,3 @@
-import {Temporal} from "@js-temporal/polyfill";
-
 import type {
     EditableValueChangeDetails,
     RadioCardValueChangeDetails,
@@ -14,6 +12,10 @@ import {
     Input,
     Spacer,
 } from "@chakra-ui/react";
+
+import {Temporal} from "@js-temporal/polyfill";
+
+import {format} from "bytes";
 
 import type {FormEventHandler, MouseEventHandler} from "react";
 import {useCallback, useEffect, useRef, useState} from "react";
@@ -45,6 +47,8 @@ import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
+import type {IUploadTemplate} from "~/components/controlpanel/upload_dropbox";
+import UploadDropbox from "~/components/controlpanel/upload_dropbox";
 
 import ArticleIcon from "~/components/icons/article_icon";
 import EyeIcon from "~/components/icons/eye_icon";
@@ -54,11 +58,16 @@ import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
+import {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} from "~/utils/constants";
 import {toLocalISOString} from "~/utils/datetime";
 import {buildAppURL} from "~/utils/url";
 import {number, title} from "~/utils/valibot";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
+
+const MAX_FILE_SIZE_TEXT = format(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE, {
+    unitSeparator: " ",
+});
 
 const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.literal("content.update")),
@@ -386,19 +395,20 @@ function SettingsCardAttachmentsView() {
 
     const {articleID} = article;
 
+    const uploadURLTemplate = useCallback(
+        ((_file) => {
+            return `./${articleID}/actions/upload`;
+        }) satisfies IUploadTemplate,
+
+        [articleID],
+    );
+
     return (
         <TabbedSectionCard.View label="Attachments">
-            <form
-                action={`./${articleID}/actions/upload`}
-                method="POST"
-                encType="multipart/form-data"
-            >
-                <input type="file" name="file" />
-
-                <button type="submit" name="action" value="upload.file">
-                    Upload
-                </button>
-            </form>
+            <UploadDropbox
+                helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
+                template={uploadURLTemplate}
+            />
         </TabbedSectionCard.View>
     );
 }

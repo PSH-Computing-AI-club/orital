@@ -11,6 +11,16 @@ export const ACCOUNT_PROVIDER_DOMAIN = __ACCOUNT_PROVIDER_DOMAIN__;
 
 export const ACCOUNT_PROVIDER_NAME = __ACCOUNT_PROVIDER_NAME__;
 
+export const ARTICLES_ATTACHMENTS_MAX_FILE_SIZE = Math.min(
+    __ARTICLES_ATTACHMENTS_MAX_FILE_SIZE__,
+    __UPLOADS_MAX_FILE_SIZE__,
+);
+
+export const EVENTS_ATTACHMENTS_MAX_FILE_SIZE = Math.min(
+    __EVENTS_ATTACHMENTS_MAX_FILE_SIZE__,
+    __UPLOADS_MAX_FILE_SIZE__,
+);
+
 export const IS_CLIENT = typeof window === "object";
 
 export const IS_SERVER = !IS_CLIENT;

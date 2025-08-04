@@ -16,9 +16,12 @@ const {
     ACCOUNT_PROVIDER_NAME,
     APP_NAME,
     APP_URL,
+    ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,
+    EVENTS_ATTACHMENTS_MAX_FILE_SIZE,
     NODE_ENV,
     SERVER_HOST,
     SERVER_PORT,
+    UPLOADS_MAX_FILE_SIZE,
 } = ENVIRONMENT;
 
 const {name: PACKAGE_NAME, version: PACKAGE_VERSION} = PACKAGE;
@@ -45,8 +48,15 @@ export default defineConfig((config) => {
             __APP_NAME__: JSON.stringify(APP_NAME),
             __APP_URL__: JSON.stringify(APP_URL),
             __APP_IS_PRODUCTION__: JSON.stringify(NODE_ENV === "production"),
+            __ARTICLES_ATTACHMENTS_MAX_FILE_SIZE__: JSON.stringify(
+                ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,
+            ),
+            __EVENTS_ATTACHMENTS_MAX_FILE_SIZE__: JSON.stringify(
+                EVENTS_ATTACHMENTS_MAX_FILE_SIZE,
+            ),
             __PACKAGE_NAME__: JSON.stringify(PACKAGE_NAME),
             __PACKAGE_VERSION__: JSON.stringify(PACKAGE_VERSION),
+            __UPLOADS_MAX_FILE_SIZE__: JSON.stringify(UPLOADS_MAX_FILE_SIZE),
         },
 
         resolve:

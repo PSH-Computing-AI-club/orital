@@ -28,7 +28,7 @@ const ACTION_PARAMS_SCHEMA = v.object({
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("upload.file")),
+    action: v.literal("upload.file"),
 
     file: v.pipe(bunFile, v.maxSize(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE)),
 });

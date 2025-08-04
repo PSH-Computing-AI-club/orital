@@ -13,15 +13,15 @@ import {title} from "~/utils/valibot";
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.room";
 
 const PIN_REGENERATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("pin.regenerate")),
+    action: v.literal("pin.regenerate"),
 });
 
 const STATE_DISPOSE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("state.dispose")),
+    action: v.literal("state.dispose"),
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("state.update")),
+    action: v.literal("state.update"),
 
     state: v.pipe(
         v.string(),
@@ -34,7 +34,7 @@ const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("title.update")),
+    action: v.literal("title.update"),
 
     title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(32), title),
 });

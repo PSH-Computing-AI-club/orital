@@ -9,11 +9,11 @@ import {validateFormData} from "~/guards/validation";
 import {Route} from "./+types/rooms_.$roomID_.presenter_.actions_.attendees_.$entityID";
 
 const PARTICIPATION_DISMISS_HAND_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("participation.dismissHand")),
+    action: v.literal("participation.dismissHand"),
 });
 
 const PARTICIPATION_RAISE_HAND_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("participation.raiseHand")),
+    action: v.literal("participation.raiseHand"),
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [

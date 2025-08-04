@@ -18,23 +18,23 @@ const ACTION_PARAMS_SCHEMA = v.object({
 });
 
 const MODERATE_APPROVE_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("moderate.approve")),
+    action: v.literal("moderate.approve"),
 });
 
 const MODERATE_BAN_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("moderate.ban")),
+    action: v.literal("moderate.ban"),
 });
 
 const MODERATE_REJECT_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("moderate.reject")),
+    action: v.literal("moderate.reject"),
 });
 
 const MODERATE_KICK_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("moderate.kick")),
+    action: v.literal("moderate.kick"),
 });
 
 const PARTICIPATION_DISMISS_HAND_ACTION_FORM_DATA_SCHEMA = v.object({
-    action: v.pipe(v.string(), v.literal("participation.dismissHand")),
+    action: v.literal("participation.dismissHand"),
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [

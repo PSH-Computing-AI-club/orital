@@ -156,7 +156,7 @@ export const filePath = v.pipe(
     }),
 );
 
-export const localhost = v.pipe(v.string(), v.literal("localhost"));
+export const localhost = v.literal("localhost");
 
 export const slug = v.pipe(v.string(), v.nonEmpty(), v.slug());
 

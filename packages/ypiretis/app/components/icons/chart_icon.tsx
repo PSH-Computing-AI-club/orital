@@ -1,10 +1,9 @@
-import type {IIconProps} from "./icon";
-import IconRoot from "./icon";
+import {makeIconComponent} from "./icon";
 
-export default function ChartIcon(props: IIconProps) {
-    return (
-        <IconRoot {...props}>
-            <path d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zM9 11H7v6h2v-6zm2-4h2v10h-2V7zm6 6h-2v4h2v-4z" />
-        </IconRoot>
-    );
-}
+const ChartIcon = makeIconComponent({
+    icon: (
+        <path d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zM9 11H7v6h2v-6zm2-4h2v10h-2V7zm6 6h-2v4h2v-4z" />
+    ),
+});
+
+export default ChartIcon;

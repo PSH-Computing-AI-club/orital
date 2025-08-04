@@ -1,10 +1,9 @@
-import type {IIconProps} from "./icon";
-import IconRoot from "./icon";
+import {makeIconComponent} from "./icon";
 
-export default function SearchIcon(props: IIconProps) {
-    return (
-        <IconRoot {...props}>
-            <path d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z" />
-        </IconRoot>
-    );
-}
+const SearchIcon = makeIconComponent({
+    icon: (
+        <path d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z" />
+    ),
+});
+
+export default SearchIcon;

@@ -1,10 +1,9 @@
-import type {IIconProps} from "./icon";
-import IconRoot from "./icon";
+import {makeIconComponent} from "./icon";
 
-export default function CalendarMultipleIcon(props: IIconProps) {
-    return (
-        <IconRoot {...props}>
-            <path d="M17 2h2v2h4v14H5V4h4V2h2v2h6V2zm-6 4H7v2h14V6H11zm-4 4v6h14v-6H7zM3 20h16v2H1V8h2v12z" />
-        </IconRoot>
-    );
-}
+const CalendarMultipleIcon = makeIconComponent({
+    icon: (
+        <path d="M17 2h2v2h4v14H5V4h4V2h2v2h6V2zm-6 4H7v2h14V6H11zm-4 4v6h14v-6H7zM3 20h16v2H1V8h2v12z" />
+    ),
+});
+
+export default CalendarMultipleIcon;

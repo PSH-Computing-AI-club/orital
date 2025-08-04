@@ -1,10 +1,9 @@
-import type {IIconProps} from "./icon";
-import IconRoot from "./icon";
+import {makeIconComponent} from "./icon";
 
-export default function ArrowRightIcon(props: IIconProps) {
-    return (
-        <IconRoot {...props}>
-            <path d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z" />
-        </IconRoot>
-    );
-}
+const ArrowRightIcon = makeIconComponent({
+    icon: (
+        <path d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z" />
+    ),
+});
+
+export default ArrowRightIcon;

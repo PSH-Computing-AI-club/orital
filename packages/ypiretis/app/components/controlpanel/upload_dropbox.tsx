@@ -1,6 +1,10 @@
 import {Box, Span} from "@chakra-ui/react";
 
-import UploadIcon from "../icons/upload_icon";
+import {useCallback, useRef} from "react";
+
+import UploadIcon from "~/components/icons/upload_icon";
+
+import useFileDrop from "~/hooks/file_drop";
 
 export type IUploadCompleteCallback = () => void;
 
@@ -25,10 +29,30 @@ export interface IUploadDropboxProps {
 }
 
 export default function UploadDropbox(props: IUploadDropboxProps) {
-    const {completeUploads = [], helpText} = props;
+    const {
+        completeUploads = [],
+        helpText,
+        onUploadComplete,
+        onUploadFile,
+    } = props;
+
+    const boxRef = useRef<HTMLDivElement | null>(null);
+
+    const handleFileDrop = useCallback((files: FileList) => {
+        for (const file of files) {
+            // TODO: Create XHR and call onUploadFile for each file.
+        }
+    }, []);
+
+    const isDraggedOver = useFileDrop({
+        handleFileDrop,
+
+        ref: boxRef,
+    });
 
     return (
         <Box
+            ref={boxRef}
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -36,8 +60,9 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
             blockSize="full"
             inlineSize="full"
             borderWidth="medium"
-            borderStyle="dashed"
-            borderColor="border.emphasized"
+            borderStyle={isDraggedOver ? "solid" : "dashed"}
+            borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
+            bg={isDraggedOver ? "cyan.50" : undefined}
             _hover={{
                 bg: "bg.subtle",
                 borderColor: "fg.subtle",

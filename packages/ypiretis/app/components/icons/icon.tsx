@@ -1,30 +1,37 @@
 import type {IconProps} from "@chakra-ui/react";
 import {Icon} from "@chakra-ui/react";
 
-export type IIconProps = Omit<IIconRootProps, "children">;
+import type {ReactNode} from "react";
 
-export type IIconRootProps = Omit<IconProps, "as" | "asChild">;
+export type IIconRootProps = Omit<IconProps, "as" | "asChild" | "children">;
 
-export default function IconRoot(props: IIconRootProps) {
-    const {
-        children,
-        fill = "currentcolor",
-        height = "1.25em",
-        viewBox = "0 0 24 24",
-        width = "1.25em",
-        ...rest
-    } = props;
+export interface IMakeIconComponentOptions {
+    readonly icon: ReactNode;
+}
 
-    return (
-        <Icon
-            as="svg"
-            viewBox={viewBox}
-            fill={fill}
-            height={height}
-            width={width}
-            {...rest}
-        >
-            {children}
-        </Icon>
-    );
+export function makeIconComponent(options: IMakeIconComponentOptions) {
+    const {icon} = options;
+
+    return (props: IIconRootProps) => {
+        const {
+            fill = "currentcolor",
+            height = "1.25em",
+            viewBox = "0 0 24 24",
+            width = "1.25em",
+            ...rest
+        } = props;
+
+        return (
+            <Icon
+                as="svg"
+                viewBox={viewBox}
+                fill={fill}
+                height={height}
+                width={width}
+                {...rest}
+            >
+                {icon}
+            </Icon>
+        );
+    };
 }

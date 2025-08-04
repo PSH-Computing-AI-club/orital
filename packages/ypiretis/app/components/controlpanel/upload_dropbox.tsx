@@ -1,6 +1,6 @@
 import {Box, Span} from "@chakra-ui/react";
 
-import {useCallback, useRef} from "react";
+import {useCallback, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
 
@@ -9,6 +9,12 @@ import useFileDrop from "~/hooks/file_drop";
 export type IUploadCompleteCallback = () => void;
 
 export type IUploadFileCallback = (xhr: XMLHttpRequest, file: File) => void;
+
+interface IUploadingFile {
+    readonly file: File;
+
+    readonly progress: number;
+}
 
 export interface IUploadLike {
     readonly name: string;
@@ -37,6 +43,7 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
     } = props;
 
     const boxRef = useRef<HTMLDivElement | null>(null);
+    const uploadingFiles = useState<Map<string, IUploadingFile>>(new Map());
 
     const handleFileDrop = useCallback((files: FileList) => {
         for (const file of files) {

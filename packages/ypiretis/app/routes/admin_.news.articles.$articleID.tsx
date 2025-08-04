@@ -18,7 +18,7 @@ import {Temporal} from "@js-temporal/polyfill";
 import {format} from "bytes";
 
 import type {FormEventHandler, MouseEventHandler} from "react";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {data, useFetcher, useLoaderData, useRevalidator} from "react-router";
 
@@ -50,6 +50,7 @@ import Title from "~/components/controlpanel/title";
 import type {
     IUploadCompleteCallback,
     IUploadFileCallback,
+    IUploadLike,
 } from "~/components/controlpanel/upload_dropbox";
 import UploadDropbox from "~/components/controlpanel/upload_dropbox";
 
@@ -397,10 +398,22 @@ function ContentCard() {
 }
 
 function SettingsCardAttachmentsView() {
-    const {article} = useLoaderData<typeof loader>();
+    const {attachments, article} = useLoaderData<typeof loader>();
     const {revalidate} = useRevalidator();
 
     const {articleID} = article;
+
+    const completeUploads = useMemo<IUploadLike[]>(() => {
+        return attachments.map((attachment) => {
+            const {fileName, fileSize, mimeType} = attachment;
+
+            return {
+                name: fileName,
+                size: fileSize,
+                type: mimeType,
+            };
+        });
+    }, [attachments]);
 
     const onUploadComplete = useCallback(
         (() => {
@@ -428,6 +441,7 @@ function SettingsCardAttachmentsView() {
     return (
         <TabbedSectionCard.View label="Attachments">
             <UploadDropbox
+                completeUploads={completeUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
                 onUploadComplete={onUploadComplete}
                 onUploadFile={onUploadFile}

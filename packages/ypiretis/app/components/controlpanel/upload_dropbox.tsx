@@ -6,7 +6,17 @@ export type IUploadCompleteCallback = () => void;
 
 export type IUploadFileCallback = (xhr: XMLHttpRequest, file: File) => void;
 
+export interface IUploadLike {
+    readonly name: string;
+
+    readonly size: number;
+
+    readonly type: string;
+}
+
 export interface IUploadDropboxProps {
+    readonly completeUploads?: IUploadLike[];
+
     readonly helpText?: string;
 
     readonly onUploadComplete?: IUploadCompleteCallback;
@@ -15,7 +25,7 @@ export interface IUploadDropboxProps {
 }
 
 export default function UploadDropbox(props: IUploadDropboxProps) {
-    const {helpText} = props;
+    const {completeUploads = [], helpText} = props;
 
     return (
         <Box

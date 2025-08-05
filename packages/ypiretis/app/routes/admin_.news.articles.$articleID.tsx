@@ -773,7 +773,7 @@ export default function AdminNewsArticle(_props: Route.ComponentProps) {
         <Layout.FixedContainer>
             <ArticleTitle />
 
-            <HStack gap="inherit" alignItems="stretch">
+            <HStack gap="inherit" alignItems="stretch" blockSize="xs">
                 <OverviewCard />
                 <SettingsCard />
             </HStack>

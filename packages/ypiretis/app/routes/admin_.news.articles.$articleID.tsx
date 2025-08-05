@@ -48,11 +48,11 @@ import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
 import type {
-    IUploadCompleteCallback,
-    IUploadFileCallback,
-    IUploadLike,
-} from "~/components/controlpanel/upload_dropbox";
-import UploadDropbox from "~/components/controlpanel/upload_dropbox";
+    IFileLike,
+    IFileUploadCallback,
+    IFileUploadCompleteCallback,
+} from "~/components/controlpanel/file_upload_dropbox";
+import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 
 import ArticleIcon from "~/components/icons/article_icon";
 import EyeIcon from "~/components/icons/eye_icon";
@@ -403,7 +403,7 @@ function SettingsCardAttachmentsView() {
 
     const {articleID} = article;
 
-    const completeUploads = useMemo<IUploadLike[]>(() => {
+    const completeFileUploads = useMemo<IFileLike[]>(() => {
         return attachments.map((attachment) => {
             const {fileName, fileSize, mimeType} = attachment;
 
@@ -415,15 +415,7 @@ function SettingsCardAttachmentsView() {
         });
     }, [attachments]);
 
-    const onUploadComplete = useCallback(
-        (() => {
-            revalidate();
-        }) satisfies IUploadCompleteCallback,
-
-        [revalidate],
-    );
-
-    const onUploadFile = useCallback(
+    const onFileUpload = useCallback(
         ((xhr, uuid, file) => {
             const uploadURL = `/admin/news/articles/${articleID}/actions/upload`;
             const formData = buildFormData<IUploadActionFormData>({
@@ -433,18 +425,26 @@ function SettingsCardAttachmentsView() {
 
             xhr.open("POST", uploadURL, true);
             xhr.send(formData);
-        }) satisfies IUploadFileCallback,
+        }) satisfies IFileUploadCallback,
 
         [articleID],
     );
 
+    const onFileUploadComplete = useCallback(
+        (() => {
+            revalidate();
+        }) satisfies IFileUploadCompleteCallback,
+
+        [revalidate],
+    );
+
     return (
         <TabbedSectionCard.View label="Attachments">
-            <UploadDropbox
-                completeUploads={completeUploads}
+            <FileUploadDropbox
+                completeFileUploads={completeFileUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
-                onUploadComplete={onUploadComplete}
-                onUploadFile={onUploadFile}
+                onFileUpload={onFileUpload}
+                onFileUploadComplete={onFileUploadComplete}
             />
         </TabbedSectionCard.View>
     );

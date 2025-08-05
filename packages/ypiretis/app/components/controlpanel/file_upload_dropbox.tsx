@@ -7,21 +7,21 @@ import UploadIcon from "~/components/icons/upload_icon";
 import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
-export type IUploadCompleteCallback = (uuid: string) => void;
+export type IFileUploadCompleteCallback = (uuid: string) => void;
 
-export type IUploadFileCallback = (
+export type IFileUploadCallback = (
     xhr: XMLHttpRequest,
     uuid: string,
     file: File,
 ) => void;
 
-interface IUploadingFile {
+interface IPendingUpload {
     readonly file: File;
 
     readonly progress: number;
 }
 
-export interface IUploadLike {
+export interface IFileLike {
     readonly name: string;
 
     readonly size: number;
@@ -30,26 +30,26 @@ export interface IUploadLike {
 }
 
 export interface IUploadDropboxProps {
-    readonly completeUploads?: IUploadLike[];
+    readonly completeFileUploads?: IFileLike[];
 
     readonly helpText?: string;
 
-    readonly onUploadComplete?: IUploadCompleteCallback;
+    readonly onFileUpload: IFileUploadCallback;
 
-    readonly onUploadFile: IUploadFileCallback;
+    readonly onFileUploadComplete?: IFileUploadCompleteCallback;
 }
 
-export default function UploadDropbox(props: IUploadDropboxProps) {
+export default function FileUploadDropbox(props: IUploadDropboxProps) {
     const {
-        completeUploads = [],
+        completeFileUploads = [],
         helpText,
-        onUploadComplete,
-        onUploadFile,
+        onFileUploadComplete,
+        onFileUpload,
     } = props;
 
     const boxRef = useRef<HTMLDivElement | null>(null);
-    const [uploadingFiles, setUploadingFiles] = useState<
-        Map<string, IUploadingFile>
+    const [pendingUploads, setPendingUploads] = useState<
+        Map<string, IPendingUpload>
     >(new Map());
 
     const handleFileInput = useCallback(
@@ -64,21 +64,21 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                     if (event.lengthComputable) {
                         const progress = (event.loaded / event.total) * 100;
 
-                        setUploadingFiles((previousUploadingFiles) => {
+                        setPendingUploads((currentPendingUploads) => {
                             const uploadingFile =
-                                previousUploadingFiles.get(uuid)!;
+                                currentPendingUploads.get(uuid)!;
 
-                            previousUploadingFiles = new Map(
-                                previousUploadingFiles,
+                            currentPendingUploads = new Map(
+                                currentPendingUploads,
                             );
 
-                            previousUploadingFiles.set(uuid, {
+                            currentPendingUploads.set(uuid, {
                                 ...uploadingFile,
 
                                 progress,
                             });
 
-                            return previousUploadingFiles;
+                            return currentPendingUploads;
                         });
                     }
                 }) satisfies OmitThisParameter<
@@ -86,17 +86,15 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                 >;
 
                 const onLoad = ((_event) => {
-                    setUploadingFiles((previousUploadingFiles) => {
-                        previousUploadingFiles = new Map(
-                            previousUploadingFiles,
-                        );
+                    setPendingUploads((currentPendingUploads) => {
+                        currentPendingUploads = new Map(currentPendingUploads);
 
-                        previousUploadingFiles.delete(uuid);
-                        return previousUploadingFiles;
+                        currentPendingUploads.delete(uuid);
+                        return currentPendingUploads;
                     });
 
-                    if (onUploadComplete) {
-                        onUploadComplete(uuid);
+                    if (onFileUploadComplete) {
+                        onFileUploadComplete(uuid);
                     }
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
@@ -110,16 +108,16 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                     Exclude<XMLHttpRequestEventTarget["onerror"], null>
                 >;
 
-                setUploadingFiles((previousUploadingFiles) => {
-                    previousUploadingFiles = new Map(previousUploadingFiles);
+                setPendingUploads((currentPendingUploads) => {
+                    currentPendingUploads = new Map(currentPendingUploads);
 
-                    previousUploadingFiles.set(uuid, {
+                    currentPendingUploads.set(uuid, {
                         file,
 
                         progress: 0,
                     });
 
-                    return previousUploadingFiles;
+                    return currentPendingUploads;
                 });
 
                 upload.onprogress = onProgress;
@@ -127,11 +125,11 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                 xhr.onload = onLoad;
                 xhr.onerror = onError;
 
-                onUploadFile(xhr, uuid, file);
+                onFileUpload(xhr, uuid, file);
             }
         },
 
-        [onUploadComplete, onUploadFile],
+        [onFileUploadComplete, onFileUpload],
     );
 
     const inputElement = useFileDialogClick({

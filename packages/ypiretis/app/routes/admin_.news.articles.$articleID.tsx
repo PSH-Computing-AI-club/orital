@@ -424,7 +424,7 @@ function SettingsCardAttachmentsView() {
     );
 
     const onUploadFile = useCallback(
-        ((xhr, file) => {
+        ((xhr, uuid, file) => {
             const uploadURL = `/admin/news/articles/${articleID}/actions/upload`;
             const formData = buildFormData<IUploadActionFormData>({
                 file,

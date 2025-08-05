@@ -7,9 +7,13 @@ import UploadIcon from "~/components/icons/upload_icon";
 import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
-export type IUploadCompleteCallback = () => void;
+export type IUploadCompleteCallback = (uuid: string) => void;
 
-export type IUploadFileCallback = (xhr: XMLHttpRequest, file: File) => void;
+export type IUploadFileCallback = (
+    xhr: XMLHttpRequest,
+    uuid: string,
+    file: File,
+) => void;
 
 interface IUploadingFile {
     readonly file: File;
@@ -92,7 +96,7 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                     });
 
                     if (onUploadComplete) {
-                        onUploadComplete();
+                        onUploadComplete(uuid);
                     }
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
@@ -123,7 +127,7 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
                 xhr.onload = onLoad;
                 xhr.onerror = onError;
 
-                onUploadFile(xhr, file);
+                onUploadFile(xhr, uuid, file);
             }
         },
 

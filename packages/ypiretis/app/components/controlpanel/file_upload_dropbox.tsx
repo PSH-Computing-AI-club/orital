@@ -35,6 +35,12 @@ interface IEmptyDropboxProps extends IDropboxProps {
     readonly helpText?: string;
 }
 
+interface IFilledDropboxProps extends IDropboxProps {
+    readonly completedFileUploads: IFileLike[];
+
+    readonly inFlightFileUploads: Map<string, IInFlightFileUpload>;
+}
+
 export interface IFileLike {
     readonly name: string;
 
@@ -106,6 +112,28 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
     );
 }
 
+function FilledDropbox(props: IFilledDropboxProps) {
+    const {completedFileUploads, inFlightFileUploads, onHandleFileInput} =
+        props;
+
+    return (
+        <VStack
+            alignItems="stretch"
+            gap="2"
+            padding="3"
+            maxBlockSize="full"
+            bg="bg.muted"
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
+            overflowBlock="auto"
+            overflowInline="hidden"
+        >
+            <span>hello world</span>
+        </VStack>
+    );
+}
+
 export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
     const {
         completedFileUploads = [],
@@ -119,6 +147,9 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
     const [inFlightFileUploads, setInFlightFileUploads] = useState<
         Map<string, IInFlightFileUpload>
     >(new Map());
+
+    const hasExistingFileUploads =
+        completedFileUploads.length > 0 || inFlightFileUploads.size > 0;
 
     const onHandleFileInput = useCallback(
         (async (files) => {
@@ -284,7 +315,13 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
         };
     }, []);
 
-    return (
+    return hasExistingFileUploads ? (
+        <FilledDropbox
+            completedFileUploads={completedFileUploads}
+            inFlightFileUploads={inFlightFileUploads}
+            onHandleFileInput={onHandleFileInput}
+        />
+    ) : (
         <EmptyDropbox
             helpText={helpText}
             onHandleFileInput={onHandleFileInput}

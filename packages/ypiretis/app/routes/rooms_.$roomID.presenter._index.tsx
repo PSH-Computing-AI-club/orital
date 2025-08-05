@@ -330,21 +330,23 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     }
 
     return (
-        <Menu.Root>
+        <>
             <Spacer />
 
-            <Menu.Trigger asChild>
-                <IconButton variant="ghost" size="xs">
-                    <MoreVerticalIcon />
-                </IconButton>
-            </Menu.Trigger>
+            <Menu.Root>
+                <Menu.Trigger asChild>
+                    <IconButton variant="ghost" size="xs">
+                        <MoreVerticalIcon />
+                    </IconButton>
+                </Menu.Trigger>
 
-            <Portal>
-                <Menu.Positioner>
-                    <Menu.Content>{menuItems}</Menu.Content>
-                </Menu.Positioner>
-            </Portal>
-        </Menu.Root>
+                <Portal>
+                    <Menu.Positioner>
+                        <Menu.Content>{menuItems}</Menu.Content>
+                    </Menu.Positioner>
+                </Portal>
+            </Menu.Root>
+        </>
     );
 }
 

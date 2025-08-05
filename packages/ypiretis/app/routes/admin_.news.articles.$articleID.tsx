@@ -446,6 +446,7 @@ function SettingsCardAttachmentsView() {
             <FileUploadDropbox
                 completedFileUploads={completeFileUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
+                blockSize="full"
                 onFileUpload={onFileUpload}
                 onFileUploadComplete={onFileUploadComplete}
             />

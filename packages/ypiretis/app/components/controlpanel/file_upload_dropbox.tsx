@@ -1,4 +1,5 @@
-import {Box, Span} from "@chakra-ui/react";
+import type {BoxProps, StackProps} from "@chakra-ui/react";
+import {Box, Span, VStack} from "@chakra-ui/react";
 
 import {useCallback, useEffect, useRef, useState} from "react";
 
@@ -27,7 +28,7 @@ interface IInFlightFileUpload {
     readonly progress: number | null;
 }
 
-interface IDropboxProps {
+interface IDropboxProps extends Omit<BoxProps, "asChild" | "children"> {
     readonly onHandleFileInput: (files: FileList) => void;
 }
 
@@ -49,7 +50,8 @@ export interface IFileLike {
     readonly type: string;
 }
 
-export interface IFileUploadDropboxProps {
+export interface IFileUploadDropboxProps
+    extends Omit<BoxProps, "asChild" | "children"> {
     readonly completedFileUploads?: IFileLike[];
 
     readonly helpText?: string;
@@ -62,7 +64,7 @@ export interface IFileUploadDropboxProps {
 }
 
 function EmptyDropbox(props: IEmptyDropboxProps) {
-    const {helpText, onHandleFileInput} = props;
+    const {helpText, onHandleFileInput, ...rest} = props;
 
     const boxRef = useRef<HTMLDivElement | null>(null);
 
@@ -83,8 +85,6 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            blockSize="full"
-            inlineSize="full"
             borderWidth="medium"
             borderStyle={isDraggedOver ? "solid" : "dashed"}
             borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
@@ -94,6 +94,7 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
                 bg: "bg.subtle",
                 borderColor: "fg.subtle",
             }}
+            {...rest}
         >
             {inputElement}
 
@@ -113,8 +114,12 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
 }
 
 function FilledDropbox(props: IFilledDropboxProps) {
-    const {completedFileUploads, inFlightFileUploads, onHandleFileInput} =
-        props;
+    const {
+        completedFileUploads,
+        inFlightFileUploads,
+        onHandleFileInput,
+        ...rest
+    } = props;
 
     return (
         <VStack
@@ -128,6 +133,12 @@ function FilledDropbox(props: IFilledDropboxProps) {
             borderWidth="thin"
             overflowBlock="auto"
             overflowInline="hidden"
+            // **HACK:** We are only expecting basic `BoxProps` to be passed onto
+            // `FilledDropbox`... any conflict with `StackProps` sucks but the
+            // consuming code should not be using them anyway. The forward props
+            // is for monkey patching `FileUploadDropbox` to adhere better to any
+            // given layout.
+            {...(rest as unknown as StackProps)}
         >
             <span>hello world</span>
         </VStack>
@@ -141,6 +152,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
         onFileUpload,
         onFileUploadComplete,
         onFileUploadError,
+        ...rest
     } = props;
 
     const inFlightRequests = useRef<Map<string, XMLHttpRequest>>(new Map());
@@ -317,12 +329,14 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
 
     return hasExistingFileUploads ? (
         <FilledDropbox
+            {...rest}
             completedFileUploads={completedFileUploads}
             inFlightFileUploads={inFlightFileUploads}
             onHandleFileInput={onHandleFileInput}
         />
     ) : (
         <EmptyDropbox
+            {...rest}
             helpText={helpText}
             onHandleFileInput={onHandleFileInput}
         />

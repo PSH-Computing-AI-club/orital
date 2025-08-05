@@ -44,21 +44,99 @@ export default function UploadDropbox(props: IUploadDropboxProps) {
     } = props;
 
     const boxRef = useRef<HTMLDivElement | null>(null);
-    const uploadingFiles = useState<Map<string, IUploadingFile>>(new Map());
+    const [uploadingFiles, setUploadingFiles] = useState<
+        Map<string, IUploadingFile>
+    >(new Map());
 
-    const handleFileInput = useCallback((files: FileList) => {
-        for (const file of files) {
-            // **TODO:** Create XHR and call onUploadFile for each file.
-        }
-    }, []);
+    const handleFileInput = useCallback(
+        (files: FileList) => {
+            for (const file of files) {
+                const uuid = crypto.randomUUID();
 
-    const isDraggedOver = useFileDrop({
-        handleFileDrop: handleFileInput,
-        ref: boxRef,
-    });
+                const xhr = new XMLHttpRequest();
+                const {upload} = xhr;
+
+                const onProgress = ((event) => {
+                    if (event.lengthComputable) {
+                        const progress = (event.loaded / event.total) * 100;
+
+                        setUploadingFiles((previousUploadingFiles) => {
+                            const uploadingFile =
+                                previousUploadingFiles.get(uuid)!;
+
+                            previousUploadingFiles = new Map(
+                                previousUploadingFiles,
+                            );
+
+                            previousUploadingFiles.set(uuid, {
+                                ...uploadingFile,
+
+                                progress,
+                            });
+
+                            return previousUploadingFiles;
+                        });
+                    }
+                }) satisfies OmitThisParameter<
+                    Exclude<XMLHttpRequestEventTarget["onprogress"], null>
+                >;
+
+                const onLoad = ((_event) => {
+                    setUploadingFiles((previousUploadingFiles) => {
+                        previousUploadingFiles = new Map(
+                            previousUploadingFiles,
+                        );
+
+                        previousUploadingFiles.delete(uuid);
+                        return previousUploadingFiles;
+                    });
+
+                    if (onUploadComplete) {
+                        onUploadComplete();
+                    }
+                }) satisfies OmitThisParameter<
+                    Exclude<XMLHttpRequestEventTarget["onload"], null>
+                >;
+
+                const onError = ((_event) => {
+                    // **TODO:** Handle error state.
+
+                    onLoad(_event);
+                }) satisfies OmitThisParameter<
+                    Exclude<XMLHttpRequestEventTarget["onerror"], null>
+                >;
+
+                setUploadingFiles((previousUploadingFiles) => {
+                    previousUploadingFiles = new Map(previousUploadingFiles);
+
+                    previousUploadingFiles.set(uuid, {
+                        file,
+
+                        progress: 0,
+                    });
+
+                    return previousUploadingFiles;
+                });
+
+                upload.onprogress = onProgress;
+
+                xhr.onload = onLoad;
+                xhr.onerror = onError;
+
+                onUploadFile(xhr, file);
+            }
+        },
+
+        [onUploadComplete, onUploadFile],
+    );
 
     const inputElement = useFileDialogClick({
         handleFileInput,
+        ref: boxRef,
+    });
+
+    const isDraggedOver = useFileDrop({
+        handleFileDrop: handleFileInput,
         ref: boxRef,
     });
 

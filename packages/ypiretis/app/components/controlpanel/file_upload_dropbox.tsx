@@ -1,6 +1,6 @@
 import {Box, Span} from "@chakra-ui/react";
 
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
 
@@ -115,12 +115,15 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
         onFileUploadError,
     } = props;
 
+    const inFlightRequests = useRef<Map<string, XMLHttpRequest>>(new Map());
     const [inFlightFileUploads, setInFlightFileUploads] = useState<
         Map<string, IInFlightFileUpload>
     >(new Map());
 
     const onHandleFileInput = useCallback(
         (async (files) => {
+            const {current: requests} = inFlightRequests;
+
             for (const file of files) {
                 const uuid = crypto.randomUUID();
 
@@ -175,6 +178,8 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                             onFileUploadError(uuid, file, status);
                         }
                     }
+
+                    requests.delete(uuid);
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
                 >;
@@ -200,6 +205,8 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                             STATUS_CODE_PREFLIGHT_FAILED,
                         );
                     }
+
+                    requests.delete(uuid);
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onerror"], null>
                 >;
@@ -255,6 +262,7 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                 }
 
                 xhr.send(body);
+                requests.set(uuid, xhr);
             }
         }) satisfies IDropboxProps["onHandleFileInput"],
 
@@ -265,6 +273,16 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
             setInFlightFileUploads,
         ],
     );
+
+    useEffect(() => {
+        const {current: requests} = inFlightRequests;
+
+        return () => {
+            for (const request of requests.values()) {
+                request.abort();
+            }
+        };
+    }, []);
 
     return (
         <EmptyDropbox

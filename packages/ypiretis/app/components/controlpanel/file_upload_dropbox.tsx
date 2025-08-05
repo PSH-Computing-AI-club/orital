@@ -1,5 +1,5 @@
-import type {BoxProps, StackProps} from "@chakra-ui/react";
-import {Box, Span, VStack} from "@chakra-ui/react";
+import type {BoxProps} from "@chakra-ui/react";
+import {Box, Span} from "@chakra-ui/react";
 
 import {useCallback, useEffect, useRef, useState} from "react";
 
@@ -9,6 +9,9 @@ import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
 import {getRequestBody} from "~/utils/request";
+
+import type {IScrollableListAreaProps} from "./scrollable_list_area";
+import ScrollableListArea from "./scrollable_list_area";
 
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
@@ -122,26 +125,27 @@ function FilledDropbox(props: IFilledDropboxProps) {
     } = props;
 
     return (
-        <VStack
-            alignItems="stretch"
-            gap="2"
-            padding="3"
-            maxBlockSize="full"
-            bg="bg.muted"
-            borderColor="border"
-            borderStyle="solid"
-            borderWidth="thin"
-            overflowBlock="auto"
-            overflowInline="hidden"
+        <ScrollableListArea
             // **HACK:** We are only expecting basic `BoxProps` to be passed onto
-            // `FilledDropbox`... any conflict with `StackProps` sucks but the
-            // consuming code should not be using them anyway. The forward props
+            // `FilledDropbox`... any conflict with `IScrollableListArea` sucks but
+            // the consuming code should not be using them anyway. The forward props
             // is for monkey patching `FileUploadDropbox` to adhere better to any
             // given layout.
-            {...(rest as unknown as StackProps)}
+            {...(rest as unknown as IScrollableListAreaProps)}
         >
             <span>hello world</span>
-        </VStack>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+            <span>hello world</span>
+        </ScrollableListArea>
     );
 }
 

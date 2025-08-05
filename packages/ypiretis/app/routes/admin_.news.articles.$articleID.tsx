@@ -416,15 +416,18 @@ function SettingsCardAttachmentsView() {
     }, [attachments]);
 
     const onFileUpload = useCallback(
-        ((xhr, uuid, file) => {
-            const uploadURL = `/admin/news/articles/${articleID}/actions/upload`;
-            const formData = buildFormData<IUploadActionFormData>({
-                file,
-                action: "upload.file",
-            });
+        ((_uuid, file) => {
+            return new Request(
+                `/admin/news/articles/${articleID}/actions/upload`,
+                {
+                    method: "POST",
 
-            xhr.open("POST", uploadURL, true);
-            xhr.send(formData);
+                    body: buildFormData<IUploadActionFormData>({
+                        file,
+                        action: "upload.file",
+                    }),
+                },
+            );
         }) satisfies IFileUploadCallback,
 
         [articleID],

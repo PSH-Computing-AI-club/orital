@@ -7,12 +7,18 @@ import UploadIcon from "~/components/icons/upload_icon";
 import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
-export type IFileUploadCompleteCallback = (uuid: string) => void;
+import {getRequestBody} from "~/utils/request";
 
-export type IFileUploadCallback = (
-    xhr: XMLHttpRequest,
+export const STATUS_CODE_PREFLIGHT_FAILED = -1;
+
+export type IFileUploadCallback = (uuid: string, file: File) => Request;
+
+export type IFileUploadCompleteCallback = (uuid: string, file: File) => void;
+
+export type IFileUploadErrorCallback = (
     uuid: string,
     file: File,
+    statusCode: number,
 ) => void;
 
 interface IPendingUpload {
@@ -45,6 +51,8 @@ export interface IUploadDropboxProps {
     readonly onFileUpload: IFileUploadCallback;
 
     readonly onFileUploadComplete?: IFileUploadCompleteCallback;
+
+    readonly onFileUploadError?: IFileUploadErrorCallback;
 }
 
 function EmptyDropbox(props: IEmptyDropboxProps) {
@@ -102,8 +110,9 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
     const {
         completeFileUploads = [],
         helpText,
-        onFileUploadComplete,
         onFileUpload,
+        onFileUploadComplete,
+        onFileUploadError,
     } = props;
 
     const [pendingUploads, setPendingUploads] = useState<
@@ -111,7 +120,8 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
     >(new Map());
 
     const onHandleFileInput = useCallback(
-        ((files) => {
+        (async (files) => {
+            console.log("got files: ", {files});
             for (const file of files) {
                 const uuid = crypto.randomUUID();
 
@@ -151,17 +161,40 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                         return currentPendingUploads;
                     });
 
-                    if (onFileUploadComplete) {
-                        onFileUploadComplete(uuid);
+                    const {status} = xhr;
+
+                    if (status >= 200 && status < 300) {
+                        if (onFileUploadComplete) {
+                            onFileUploadComplete(uuid, file);
+                        }
+                    } else {
+                        if (onFileUploadError) {
+                            onFileUploadError(uuid, file, status);
+                        }
                     }
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
                 >;
 
                 const onError = ((_event) => {
-                    // **TODO:** Handle error state.
+                    setPendingUploads((currentPendingUploads) => {
+                        currentPendingUploads = new Map(currentPendingUploads);
 
-                    onLoad(_event);
+                        currentPendingUploads.delete(uuid);
+                        return currentPendingUploads;
+                    });
+
+                    if (onFileUploadError) {
+                        onFileUploadError(
+                            uuid,
+                            file,
+                            // **NOTE**: When the `onerror` called back that means
+                            // the request was never even sent due to failing a
+                            // browser security check (ex. CORS) or a failure in
+                            // resolving connection to the endpoint (ex. DNS failue).
+                            STATUS_CODE_PREFLIGHT_FAILED,
+                        );
+                    }
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onerror"], null>
                 >;
@@ -178,16 +211,52 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                     return currentPendingUploads;
                 });
 
+                // **NOTE:** We are accepting `Request` objects here even though there
+                // is extra legwork involved with getting its payload. We could have
+                // just had the `onFileUpload` callback return a
+                // `RequestInit & {url: string | URL}` record... but web developers are
+                // probably more familiar with returning a `Request` object wholesale
+                // and its corresponding API.
+                const request = onFileUpload(uuid, file);
+                const body = await getRequestBody(request);
+
+                const {headers, method, url} = request;
+
                 upload.onprogress = onProgress;
 
                 xhr.onload = onLoad;
                 xhr.onerror = onError;
 
-                onFileUpload(xhr, uuid, file);
+                xhr.open(method, url, true);
+
+                for (const entry of headers.entries()) {
+                    const [name, value] = entry;
+
+                    // **NOTE:** For multipart form data the browser automatically
+                    // handles the setting of the `Content-Type` header. This is
+                    // because the browser needs to set a special "boundary" string
+                    // within the header so the web server can properly delimit the
+                    // payload.
+                    if (
+                        name.toLowerCase() === "content-type" &&
+                        value.toLowerCase().includes("multipart/form-data")
+                    ) {
+                        continue;
+                    }
+
+                    xhr.setRequestHeader(name, value);
+                }
+
+                xhr.send(body);
             }
         }) satisfies IDropboxProps["onHandleFileInput"],
 
-        [onFileUploadComplete, onFileUpload],
+        [
+            onFileUpload,
+            onFileUploadComplete,
+            onFileUploadError,
+            setPendingUploads,
+        ],
     );
 
     return (

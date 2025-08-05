@@ -25,6 +25,7 @@ import type {IRoomStates} from "~/.server/services/rooms_service";
 
 import Layout from "~/components/controlpanel/layout";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
+import ScrollableListArea from "~/components/controlpanel/scrollable_list_area";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
 import Title from "~/components/controlpanel/title";
@@ -540,14 +541,14 @@ function AttendeesCard() {
                 <TabbedDataSectionCard.View>
                     {(users: IUser[]) => {
                         return (
-                            <TabbedDataSectionCard.Scrollable>
+                            <ScrollableListArea flexGrow="1">
                                 {users.map((user) => (
                                     <AttendeeListItem
                                         key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
                                         user={user}
                                     />
                                 ))}
-                            </TabbedDataSectionCard.Scrollable>
+                            </ScrollableListArea>
                         );
                     }}
                 </TabbedDataSectionCard.View>

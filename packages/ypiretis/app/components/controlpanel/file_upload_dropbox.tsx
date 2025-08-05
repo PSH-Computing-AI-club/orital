@@ -21,7 +21,7 @@ export type IFileUploadErrorCallback = (
     statusCode: number,
 ) => void;
 
-interface IPendingUpload {
+interface IInFlightFileUpload {
     readonly file: File;
 
     readonly progress: number | null;
@@ -44,7 +44,7 @@ export interface IFileLike {
 }
 
 export interface IUploadDropboxProps {
-    readonly completeFileUploads?: IFileLike[];
+    readonly completedFileUploads?: IFileLike[];
 
     readonly helpText?: string;
 
@@ -108,15 +108,15 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
 
 export default function FileUploadDropbox(props: IUploadDropboxProps) {
     const {
-        completeFileUploads = [],
+        completedFileUploads = [],
         helpText,
         onFileUpload,
         onFileUploadComplete,
         onFileUploadError,
     } = props;
 
-    const [pendingUploads, setPendingUploads] = useState<
-        Map<string, IPendingUpload>
+    const [inFlightFileUploads, setInFlightFileUploads] = useState<
+        Map<string, IInFlightFileUpload>
     >(new Map());
 
     const onHandleFileInput = useCallback(
@@ -133,21 +133,21 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                     if (lengthComputable) {
                         const progress = loaded / total;
 
-                        setPendingUploads((currentPendingUploads) => {
+                        setInFlightFileUploads((currentInFlightFileUploads) => {
                             const uploadingFile =
-                                currentPendingUploads.get(uuid)!;
+                                currentInFlightFileUploads.get(uuid)!;
 
-                            currentPendingUploads = new Map(
-                                currentPendingUploads,
+                            currentInFlightFileUploads = new Map(
+                                currentInFlightFileUploads,
                             );
 
-                            currentPendingUploads.set(uuid, {
+                            currentInFlightFileUploads.set(uuid, {
                                 ...uploadingFile,
 
                                 progress,
                             });
 
-                            return currentPendingUploads;
+                            return currentInFlightFileUploads;
                         });
                     }
                 }) satisfies OmitThisParameter<
@@ -155,11 +155,13 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                 >;
 
                 const onLoad = ((_event) => {
-                    setPendingUploads((currentPendingUploads) => {
-                        currentPendingUploads = new Map(currentPendingUploads);
+                    setInFlightFileUploads((currentInFlightFileUploads) => {
+                        currentInFlightFileUploads = new Map(
+                            currentInFlightFileUploads,
+                        );
 
-                        currentPendingUploads.delete(uuid);
-                        return currentPendingUploads;
+                        currentInFlightFileUploads.delete(uuid);
+                        return currentInFlightFileUploads;
                     });
 
                     const {status} = xhr;
@@ -178,11 +180,13 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                 >;
 
                 const onError = ((_event) => {
-                    setPendingUploads((currentPendingUploads) => {
-                        currentPendingUploads = new Map(currentPendingUploads);
+                    setInFlightFileUploads((currentInFlightFileUploads) => {
+                        currentInFlightFileUploads = new Map(
+                            currentInFlightFileUploads,
+                        );
 
-                        currentPendingUploads.delete(uuid);
-                        return currentPendingUploads;
+                        currentInFlightFileUploads.delete(uuid);
+                        return currentInFlightFileUploads;
                     });
 
                     if (onFileUploadError) {
@@ -200,16 +204,18 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                     Exclude<XMLHttpRequestEventTarget["onerror"], null>
                 >;
 
-                setPendingUploads((currentPendingUploads) => {
-                    currentPendingUploads = new Map(currentPendingUploads);
+                setInFlightFileUploads((currentInFlightFileUploads) => {
+                    currentInFlightFileUploads = new Map(
+                        currentInFlightFileUploads,
+                    );
 
-                    currentPendingUploads.set(uuid, {
+                    currentInFlightFileUploads.set(uuid, {
                         file,
 
                         progress: null,
                     });
 
-                    return currentPendingUploads;
+                    return currentInFlightFileUploads;
                 });
 
                 // **NOTE:** We are accepting `Request` objects here even though there
@@ -256,7 +262,7 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
             onFileUpload,
             onFileUploadComplete,
             onFileUploadError,
-            setPendingUploads,
+            setInFlightFileUploads,
         ],
     );
 

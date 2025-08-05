@@ -444,7 +444,7 @@ function SettingsCardAttachmentsView() {
     return (
         <TabbedSectionCard.View label="Attachments">
             <FileUploadDropbox
-                completeFileUploads={completeFileUploads}
+                completedFileUploads={completeFileUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
                 onFileUpload={onFileUpload}
                 onFileUploadComplete={onFileUploadComplete}

@@ -76,21 +76,25 @@ const UX_TITLE_SCHEMA = v.pipe(
     title,
 );
 
-type IUser = IAttendee | IPublicUser;
+type IUserLike = IAttendee | IPublicUser;
 
 interface IAttendeeListItemActionsProps {
-    readonly user: IUser;
+    readonly user: IUserLike;
 }
 
 interface IAttendeeListItemProps {
-    readonly user: IUser;
+    readonly user: IUserLike;
+}
+
+interface IAttendeeListProps {
+    readonly users: IUserLike[];
 }
 
 function isAttendee(value: unknown): value is IAttendee {
     return value !== null && typeof value === "object" && "state" in value;
 }
 
-function matchUserIcon(user: IUser) {
+function matchUserIcon(user: IUserLike) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -107,7 +111,7 @@ function matchUserIcon(user: IUser) {
     return TeachIcon;
 }
 
-function matchUserTagPalette(user: IUser) {
+function matchUserTagPalette(user: IUserLike) {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -124,7 +128,7 @@ function matchUserTagPalette(user: IUser) {
     return "orange";
 }
 
-function matchUserTagText(user: IUser): string {
+function matchUserTagText(user: IUserLike): string {
     if (isAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
@@ -141,7 +145,7 @@ function matchUserTagText(user: IUser): string {
     return "Presenter";
 }
 
-function sortUsers(attendeeA: IUser, attendeeB: IUser): number {
+function sortUsers(attendeeA: IUserLike, attendeeB: IUserLike): number {
     const fullNameA = `${attendeeA.firstName} ${attendeeA.lastName}`;
     const fullNameB = `${attendeeB.firstName} ${attendeeB.lastName}`;
 
@@ -384,6 +388,21 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
     );
 }
 
+function AttendeeList(props: IAttendeeListProps) {
+    const {users} = props;
+
+    return (
+        <ScrollableListArea flexGrow="1">
+            {users.map((user) => (
+                <AttendeeListItem
+                    key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
+                    user={user}
+                />
+            ))}
+        </ScrollableListArea>
+    );
+}
+
 function AttendeesCardActions() {
     const {room} = usePresenterContext();
 
@@ -459,7 +478,7 @@ function AttendeesCardDisconnectedTab() {
     return (
         <TabbedDataSectionCard.Tab
             label={`Disconnected (${users.length})`}
-            provider={() => users satisfies IUser[]}
+            provider={() => users satisfies IUserLike[]}
         />
     );
 }
@@ -480,7 +499,7 @@ function AttendeesCardPendingTab() {
     return (
         <TabbedDataSectionCard.Tab
             label={`Pending (${users.length})`}
-            provider={() => users satisfies IUser[]}
+            provider={() => users satisfies IUserLike[]}
         />
     );
 }
@@ -514,7 +533,7 @@ function AttendeesCardActiveTab() {
     return (
         <TabbedDataSectionCard.Tab
             label={`Active (${users.length})`}
-            provider={() => users satisfies IUser[]}
+            provider={() => users satisfies IUserLike[]}
         />
     );
 }
@@ -539,18 +558,7 @@ function AttendeesCard() {
                 <AttendeesCardDisconnectedTab />
 
                 <TabbedDataSectionCard.View>
-                    {(users: IUser[]) => {
-                        return (
-                            <ScrollableListArea flexGrow="1">
-                                {users.map((user) => (
-                                    <AttendeeListItem
-                                        key={`${isAttendee(user) ? "attendee" : "presenter"}-${user.accountID}`}
-                                        user={user}
-                                    />
-                                ))}
-                            </ScrollableListArea>
-                        );
-                    }}
+                    {(users: IUserLike[]) => <AttendeeList users={users} />}
                 </TabbedDataSectionCard.View>
             </TabbedDataSectionCard.Body>
 

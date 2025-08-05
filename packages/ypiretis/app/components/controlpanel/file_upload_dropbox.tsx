@@ -24,7 +24,7 @@ export type IFileUploadErrorCallback = (
 interface IPendingUpload {
     readonly file: File;
 
-    readonly progress: number;
+    readonly progress: number | null;
 }
 
 interface IDropboxProps {
@@ -205,7 +205,7 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                     currentPendingUploads.set(uuid, {
                         file,
 
-                        progress: 0,
+                        progress: null,
                     });
 
                     return currentPendingUploads;

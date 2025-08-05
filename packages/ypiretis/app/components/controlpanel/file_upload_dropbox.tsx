@@ -129,8 +129,10 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
                 const {upload} = xhr;
 
                 const onProgress = ((event) => {
-                    if (event.lengthComputable) {
-                        const progress = (event.loaded / event.total) * 100;
+                    const {lengthComputable, loaded, total} = event;
+
+                    if (lengthComputable) {
+                        const progress = loaded / total;
 
                         setPendingUploads((currentPendingUploads) => {
                             const uploadingFile =

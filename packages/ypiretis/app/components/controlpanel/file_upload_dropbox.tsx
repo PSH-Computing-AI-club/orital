@@ -21,6 +21,14 @@ interface IPendingUpload {
     readonly progress: number;
 }
 
+interface IDropboxProps {
+    readonly onHandleFileInput: (files: FileList) => void;
+}
+
+interface IEmptyDropboxProps extends IDropboxProps {
+    readonly helpText?: string;
+}
+
 export interface IFileLike {
     readonly name: string;
 
@@ -39,6 +47,57 @@ export interface IUploadDropboxProps {
     readonly onFileUploadComplete?: IFileUploadCompleteCallback;
 }
 
+function EmptyDropbox(props: IEmptyDropboxProps) {
+    const {helpText, onHandleFileInput} = props;
+
+    const boxRef = useRef<HTMLDivElement | null>(null);
+
+    const inputElement = useFileDialogClick({
+        handleFileInput: onHandleFileInput,
+        ref: boxRef,
+    });
+
+    const isDraggedOver = useFileDrop({
+        handleFileDrop: onHandleFileInput,
+        ref: boxRef,
+    });
+
+    return (
+        <Box
+            ref={boxRef}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            blockSize="full"
+            inlineSize="full"
+            borderWidth="medium"
+            borderStyle={isDraggedOver ? "solid" : "dashed"}
+            borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
+            bg={isDraggedOver ? "cyan.50" : undefined}
+            cursor="pointer"
+            _hover={{
+                bg: "bg.subtle",
+                borderColor: "fg.subtle",
+            }}
+        >
+            {inputElement}
+
+            <UploadIcon marginBlockEnd="2" fontSize="3xl" />
+
+            <Span>Drag and drop files here, or click to select</Span>
+
+            {helpText ? (
+                <Span color="fg.muted" fontSize="smaller">
+                    {helpText}
+                </Span>
+            ) : (
+                <></>
+            )}
+        </Box>
+    );
+}
+
 export default function FileUploadDropbox(props: IUploadDropboxProps) {
     const {
         completeFileUploads = [],
@@ -47,13 +106,12 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
         onFileUpload,
     } = props;
 
-    const boxRef = useRef<HTMLDivElement | null>(null);
     const [pendingUploads, setPendingUploads] = useState<
         Map<string, IPendingUpload>
     >(new Map());
 
-    const handleFileInput = useCallback(
-        (files: FileList) => {
+    const onHandleFileInput = useCallback(
+        ((files) => {
             for (const file of files) {
                 const uuid = crypto.randomUUID();
 
@@ -127,53 +185,15 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
 
                 onFileUpload(xhr, uuid, file);
             }
-        },
+        }) satisfies IDropboxProps["onHandleFileInput"],
 
         [onFileUploadComplete, onFileUpload],
     );
 
-    const inputElement = useFileDialogClick({
-        handleFileInput,
-        ref: boxRef,
-    });
-
-    const isDraggedOver = useFileDrop({
-        handleFileDrop: handleFileInput,
-        ref: boxRef,
-    });
-
     return (
-        <Box
-            ref={boxRef}
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            blockSize="full"
-            inlineSize="full"
-            borderWidth="medium"
-            borderStyle={isDraggedOver ? "solid" : "dashed"}
-            borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
-            bg={isDraggedOver ? "cyan.50" : undefined}
-            cursor="pointer"
-            _hover={{
-                bg: "bg.subtle",
-                borderColor: "fg.subtle",
-            }}
-        >
-            {inputElement}
-
-            <UploadIcon marginBlockEnd="2" fontSize="3xl" />
-
-            <Span>Drag and drop files here, or click to select</Span>
-
-            {helpText ? (
-                <Span color="fg.muted" fontSize="smaller">
-                    {helpText}
-                </Span>
-            ) : (
-                <></>
-            )}
-        </Box>
+        <EmptyDropbox
+            helpText={helpText}
+            onHandleFileInput={onHandleFileInput}
+        />
     );
 }

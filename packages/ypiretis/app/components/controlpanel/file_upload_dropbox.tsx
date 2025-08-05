@@ -43,7 +43,7 @@ export interface IFileLike {
     readonly type: string;
 }
 
-export interface IUploadDropboxProps {
+export interface IFileUploadDropboxProps {
     readonly completedFileUploads?: IFileLike[];
 
     readonly helpText?: string;
@@ -106,7 +106,7 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
     );
 }
 
-export default function FileUploadDropbox(props: IUploadDropboxProps) {
+export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
     const {
         completedFileUploads = [],
         helpText,

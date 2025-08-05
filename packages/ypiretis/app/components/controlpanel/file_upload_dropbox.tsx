@@ -121,7 +121,6 @@ export default function FileUploadDropbox(props: IUploadDropboxProps) {
 
     const onHandleFileInput = useCallback(
         (async (files) => {
-            console.log("got files: ", {files});
             for (const file of files) {
                 const uuid = crypto.randomUUID();
 

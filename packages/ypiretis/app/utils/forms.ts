@@ -6,7 +6,11 @@ export function buildFormData<T extends IFormDataObject>(object: T): FormData {
     for (const key in object) {
         const value = object[key];
 
-        formData.append(key, value.toString());
+        if (value instanceof Blob) {
+            formData.append(key, value);
+        } else {
+            formData.append(key, value.toString());
+        }
     }
 
     return formData;

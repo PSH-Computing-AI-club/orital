@@ -65,11 +65,7 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
         };
     }, [registerTab, label, unregisterTab]);
 
-    return (
-        <Box display={isTabSelected ? undefined : "none"} flexGrow="1">
-            {children}
-        </Box>
-    );
+    return <Box display={isTabSelected ? "contents" : "none"}>{children}</Box>;
 }
 
 function TabbedSectionCardTabs() {

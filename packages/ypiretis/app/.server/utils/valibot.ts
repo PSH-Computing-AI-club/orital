@@ -70,6 +70,11 @@ export const systemPath = v.union([
     v.pipe(v.string(), v.nonEmpty(), systemRelativePathFormat),
 ]);
 
+export const boolean = v.pipe(
+    v.picklist(["true", "false"]),
+    v.transform((value) => value === "true"),
+);
+
 export const bunFile = v.pipe(
     v.file(),
     v.transform<File, Bun.BunFile>((value) => {

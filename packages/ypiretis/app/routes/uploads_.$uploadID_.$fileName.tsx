@@ -6,9 +6,9 @@ import * as v from "valibot";
 
 import ENVIRONMENT from "~/.server/configuration/environment";
 
-import {ulid} from "~/.server/utils/valibot";
+import {boolean, ulid} from "~/.server/utils/valibot";
 
-import {validateParams} from "~/guards/validation";
+import {validateParams, validateSearchParams} from "~/guards/validation";
 
 import {Route} from "./+types/uploads_.$uploadID_.$fileName";
 
@@ -20,9 +20,18 @@ const LOADER_PARAMS_SCHEMA = v.object({
     uploadID: ulid,
 });
 
+const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
+    forceDownload: v.optional(boolean),
+});
+
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {fileName, uploadID} = validateParams(
         LOADER_PARAMS_SCHEMA,
+        loaderArgs,
+    );
+
+    const {forceDownload = false} = validateSearchParams(
+        LOADER_SEARCH_PARAMS_SCHEMA,
         loaderArgs,
     );
 
@@ -35,5 +44,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         });
     }
 
-    return new Response(file);
+    const headers = forceDownload
+        ? ({
+              "Content-Disposition": `attachment; filename="${fileName}"`,
+          } satisfies HeadersInit)
+        : undefined;
+
+    return new Response(file, {
+        headers,
+    });
 }

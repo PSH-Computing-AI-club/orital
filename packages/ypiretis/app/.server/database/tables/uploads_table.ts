@@ -34,7 +34,13 @@ const UPLOADS_TABLE = sqliteTable(
     },
 
     (table) => {
-        return [index("uploads_created_at_idx").on(table.createdAt)];
+        return [
+            index("uploads_created_at_idx").on(table.createdAt),
+            index("uploads_file_name_idx").on(table.fileName),
+            index("uploads_file_size_idx").on(table.fileSize),
+            index("uploads_mime_type_idx").on(table.mimeType),
+            index("uploads_uploader_user_id_idx").on(table.uploaderUserID),
+        ];
     },
 );
 

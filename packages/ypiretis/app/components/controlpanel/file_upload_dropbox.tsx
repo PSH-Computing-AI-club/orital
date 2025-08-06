@@ -10,6 +10,7 @@ import UploadIcon from "~/components/icons/upload_icon";
 import useFileDialogClick from "~/hooks/file_dialog_click";
 import useFileDrop from "~/hooks/file_drop";
 
+import {determineMimeTypeIcon} from "~/utils/mime_types";
 import {getRequestBody} from "~/utils/request";
 
 import ListTile from "./list_tile";
@@ -142,18 +143,21 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 const {file, progress} = fileUpload;
                 const {name, size, type} = file;
 
+                const Icon = determineMimeTypeIcon(type);
+
                 const sizeText = format(size, {
                     unitSeparator: " ",
                 });
 
                 return (
                     <ListTile.Root key={uuid}>
+                        <ListTile.Icon>
+                            <Icon />
+                        </ListTile.Icon>
+
                         <ListTile.Header>
                             <ListTile.Title>{name}</ListTile.Title>
-
-                            <ListTile.SubTitle>
-                                {sizeText} • {type}
-                            </ListTile.SubTitle>
+                            <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
                         </ListTile.Header>
                     </ListTile.Root>
                 );
@@ -163,18 +167,21 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 const {name, size, type} = file;
                 const key = `${name}-${index}`;
 
+                const Icon = determineMimeTypeIcon(type);
+
                 const sizeText = format(size, {
                     unitSeparator: " ",
                 });
 
                 return (
                     <ListTile.Root key={key}>
+                        <ListTile.Icon>
+                            <Icon />
+                        </ListTile.Icon>
+
                         <ListTile.Header>
                             <ListTile.Title>{name}</ListTile.Title>
-
-                            <ListTile.SubTitle>
-                                {sizeText} • {type}
-                            </ListTile.SubTitle>
+                            <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
                         </ListTile.Header>
                     </ListTile.Root>
                 );

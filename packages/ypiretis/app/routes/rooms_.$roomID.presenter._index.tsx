@@ -10,10 +10,7 @@ import {
     Menu,
     Portal,
     Spacer,
-    Span,
     PinInput,
-    Tag,
-    VStack,
 } from "@chakra-ui/react";
 
 import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
@@ -24,6 +21,7 @@ import * as v from "valibot";
 import type {IRoomStates} from "~/.server/services/rooms_service";
 
 import Layout from "~/components/controlpanel/layout";
+import ListTile from "~/components/controlpanel/list_tile";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import ScrollableListArea from "~/components/controlpanel/scrollable_list_area";
 import SectionCard from "~/components/controlpanel/section_card";
@@ -330,23 +328,19 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     }
 
     return (
-        <>
-            <Spacer />
+        <Menu.Root>
+            <Menu.Trigger asChild>
+                <IconButton variant="ghost" size="xs">
+                    <MoreVerticalIcon />
+                </IconButton>
+            </Menu.Trigger>
 
-            <Menu.Root>
-                <Menu.Trigger asChild>
-                    <IconButton variant="ghost" size="xs">
-                        <MoreVerticalIcon />
-                    </IconButton>
-                </Menu.Trigger>
-
-                <Portal>
-                    <Menu.Positioner>
-                        <Menu.Content>{menuItems}</Menu.Content>
-                    </Menu.Positioner>
-                </Portal>
-            </Menu.Root>
-        </>
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>{menuItems}</Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
     );
 }
 
@@ -359,34 +353,26 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
     const userTagText = matchUserTagText(user);
 
     return (
-        <HStack
-            gap="2"
-            bg="bg"
-            padding="3"
-            borderColor="border"
-            borderStyle="solid"
-            borderWidth="thin"
-            fontSize="xs"
-        >
-            <UserIcon fontSize="2xl" />
+        <ListTile.Root>
+            <ListTile.Icon>
+                <UserIcon />
+            </ListTile.Icon>
 
-            <VStack gap="0" alignItems="flex-start" lineHeight="shorter">
-                <HStack>
+            <ListTile.Header>
+                <ListTile.Title>
                     {firstName} {lastName}
-                    <Tag.Root
-                        variant="solid"
-                        colorPalette={userTagPalette}
-                        size="sm"
-                    >
-                        <Tag.Label>{userTagText}</Tag.Label>
-                    </Tag.Root>
-                </HStack>
+                    <ListTile.Tag colorPalette={userTagPalette}>
+                        {userTagText}
+                    </ListTile.Tag>
+                </ListTile.Title>
 
-                <Span color="fg.muted">{accountID}</Span>
-            </VStack>
+                <ListTile.SubTitle>{accountID}</ListTile.SubTitle>
+            </ListTile.Header>
 
-            <AttendeeListItemActions user={user} />
-        </HStack>
+            <ListTile.Footer>
+                <AttendeeListItemActions user={user} />
+            </ListTile.Footer>
+        </ListTile.Root>
     );
 }
 

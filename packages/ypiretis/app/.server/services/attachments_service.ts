@@ -9,7 +9,10 @@ import UPLOADS_TABLE from "../database/tables/uploads_table";
 import {useTransaction} from "../state/transaction";
 
 import type {IUpload} from "./uploads_service";
-import {deleteOneUpload, handleOneUpload} from "./uploads_service";
+import {
+    deleteOne as deleteOneUpload,
+    handleOne as handleOneUpload,
+} from "./uploads_service";
 import type {IUser} from "./users_service";
 
 export type IAttachment = ISelectAttachment;

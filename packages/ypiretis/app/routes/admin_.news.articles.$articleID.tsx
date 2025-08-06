@@ -27,11 +27,14 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
-    findOneWithPoster,
+    findOne as findOneArticle,
+    findOneWithPoster as findOneArticleWithPoster,
     findAllAttachmentsByID,
+    deleteOneAttachment,
     updateOne,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
+import {findOne as findOneUpload} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -82,6 +85,12 @@ const MAX_FILE_SIZE_TEXT = format(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE, {
     unitSeparator: " ",
 });
 
+const ATTACHMENT_DELETE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.literal("attachment.delete"),
+
+    uploadID: ulid,
+});
+
 const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("content.update"),
 
@@ -110,6 +119,7 @@ const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 });
 
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
+    ATTACHMENT_DELETE_ACTION_FORM_DATA_SCHEMA,
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
@@ -146,6 +156,46 @@ export async function action(actionArgs: Route.ActionArgs) {
     await requireAuthenticatedAdminSession(actionArgs);
 
     switch (action) {
+        case "attachment.delete": {
+            // **TODO:** This whole action could be done efficient with more
+            // streamlined interactions with the database. But, this is an
+            // admin panel interaction. We do no need to be _that_ efficient.
+
+            const {uploadID} = actionFormData;
+
+            const [article, upload] = await Promise.all([
+                findOneArticle({
+                    where: eq("articleID", articleID),
+                }),
+                findOneUpload({
+                    where: eq("uploadID", uploadID),
+                }),
+            ]);
+
+            if (article === null || upload === null) {
+                throw data("Not Found", {
+                    status: 404,
+                });
+            }
+
+            const {id: internalArticleID} = article;
+            const {id: internalUploadID} = upload;
+
+            try {
+                await deleteOneAttachment(internalArticleID, internalUploadID);
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
+
+            break;
+        }
+
         case "content.update": {
             const {content} = actionFormData;
 
@@ -256,7 +306,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOneWithPoster({
+    const article = await findOneArticleWithPoster({
         where: eq("articleID", articleID),
     });
 

@@ -7,20 +7,33 @@ import {ulid} from "ulid";
 
 import ENVIRONMENT from "../configuration/environment";
 
-import type {ISelectUpload} from "../database/tables/uploads_table";
+import type {
+    IInsertUpload as _IInsertUpload,
+    ISelectUpload as _ISelectUpload,
+    IUpdateUpload as _IUpdateUpload,
+} from "../database/tables/uploads_table";
 import UPLOADS_TABLE from "../database/tables/uploads_table";
 
 import {useTransaction} from "../state/transaction";
 
 import {moveFile} from "../utils/bun";
 
+import {makeReadableCRUDService} from "./crud_service";
 import type {IUser} from "./users_service";
 
 const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
 
-export type IUpload = ISelectUpload;
+export type IUpload = _ISelectUpload;
 
-export async function deleteOneUpload(internalUploadID: number): Promise<void> {
+export type IUploadInsert = _IInsertUpload;
+
+export type IUploadUpdate = _IUpdateUpload;
+
+export const {findAll, findOne} = makeReadableCRUDService({
+    table: UPLOADS_TABLE,
+});
+
+export async function deleteOne(internalUploadID: number): Promise<void> {
     const transaction = useTransaction();
 
     const upload = await transaction.query.uploads.findFirst({
@@ -46,7 +59,7 @@ export async function deleteOneUpload(internalUploadID: number): Promise<void> {
         .where(eq(UPLOADS_TABLE.id, internalUploadID));
 }
 
-export async function handleOneUpload(
+export async function handleOne(
     uploader: IUser,
     file: Bun.BunFile,
 ): Promise<IUpload> {

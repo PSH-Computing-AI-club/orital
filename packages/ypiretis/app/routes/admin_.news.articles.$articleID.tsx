@@ -42,6 +42,7 @@ import Links from "~/components/common/links";
 import type {IChangeCallback} from "~/components/common/markdown_editor";
 import MarkdownEditor from "~/components/common/markdown_editor";
 
+import ListTile from "~/components/controlpanel/list_tile";
 import Layout from "~/components/controlpanel/layout";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
@@ -56,9 +57,13 @@ import type {
 import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 
 import ArticleIcon from "~/components/icons/article_icon";
+import CloseIcon from "~/components/icons/close_icon";
+import CopyIcon from "~/components/icons/copy_icon";
+import DownloadIcon from "~/components/icons/download_icon";
 import EyeIcon from "~/components/icons/eye_icon";
 import EyeClosedIcon from "~/components/icons/eye_closed_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
+import LinkIcon from "~/components/icons/link_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
@@ -445,7 +450,43 @@ function SettingsCardAttachmentsView() {
 
     const renderCompletedFileUploadActions = useCallback(
         ((file) => {
-            return <span>hello world</span>;
+            const {id, name} = file;
+
+            const downloadURL = `/uploads/${id}/${name}?forceDownload=true`;
+            const embedURL = `/uploads/${id}/${name}`;
+
+            const copyURL = buildAppURL(embedURL);
+
+            const onCopyClick = (async (_event) => {
+                await navigator.clipboard.writeText(copyURL.toString());
+            }) satisfies MouseEventHandler<HTMLButtonElement>;
+
+            return (
+                <>
+                    <ListTile.IconButton
+                        colorPalette="green"
+                        onClick={onCopyClick}
+                    >
+                        <CopyIcon />
+                    </ListTile.IconButton>
+
+                    <ListTile.IconButton colorPalette="cyan" asChild>
+                        <a href={downloadURL} target="_blank">
+                            <DownloadIcon />
+                        </a>
+                    </ListTile.IconButton>
+
+                    <ListTile.IconButton colorPalette="blue" asChild>
+                        <a href={embedURL} target="_blank">
+                            <LinkIcon />
+                        </a>
+                    </ListTile.IconButton>
+
+                    <ListTile.IconButton colorPalette="red">
+                        <CloseIcon />
+                    </ListTile.IconButton>
+                </>
+            );
         }) satisfies IRenderCompletedFileUploadActions,
 
         [],

@@ -71,7 +71,8 @@ export default function makeAttachmentsService<T extends IAttachmentsTable>(
                 .select(getTableColumns(UPLOADS_TABLE))
                 .from(table)
                 .where(eq(table.targetID, internalTargetID))
-                .innerJoin(UPLOADS_TABLE, eq(table.uploadID, UPLOADS_TABLE.id));
+                .innerJoin(UPLOADS_TABLE, eq(table.uploadID, UPLOADS_TABLE.id))
+                .orderBy(UPLOADS_TABLE.fileName);
         },
 
         async handleOneAttachment(internalTargetID, user, file) {

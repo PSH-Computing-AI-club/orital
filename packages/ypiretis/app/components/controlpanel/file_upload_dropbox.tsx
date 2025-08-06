@@ -175,8 +175,17 @@ function FilledDropbox(props: IFilledDropboxProps) {
         ...rest
     } = props;
 
+    const areaRef = useRef<HTMLDivElement | null>(null);
+
+    const isDraggedOver = useFileDrop({
+        handleFileDrop: onHandleFileInput,
+        ref: areaRef,
+    });
+
     return (
         <ScrollableListArea
+            ref={areaRef}
+            position="relative"
             // **HACK:** We are only expecting basic `BoxProps` to be passed onto
             // `FilledDropbox`... any conflict with `IScrollableListArea` sucks but
             // the consuming code should not be using them anyway. The forward props
@@ -216,6 +225,17 @@ function FilledDropbox(props: IFilledDropboxProps) {
                     </MemoizedFilledDropboxItem>
                 );
             })}
+
+            <Box
+                position="absolute"
+                inset="0"
+                bg="color-mix(in lch, var(--chakra-colors-cyan-50), transparent 75%)"
+                borderWidth="medium"
+                borderStyle="solid"
+                borderColor="cyan.solid"
+                visibility={isDraggedOver ? "visible" : "hidden"}
+                pointerEvents="none"
+            />
         </ScrollableListArea>
     );
 }

@@ -1,7 +1,10 @@
 import type {StackProps} from "@chakra-ui/react";
 import {VStack} from "@chakra-ui/react";
 
-export interface IScrollableListAreaProps extends StackProps {}
+import type {RefAttributes} from "react";
+
+export type IScrollableListAreaProps = StackProps &
+    RefAttributes<HTMLDivElement>;
 
 export default function ScrollableListArea(props: IScrollableListAreaProps) {
     const {children, ...rest} = props;

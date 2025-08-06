@@ -19,12 +19,12 @@ import ScrollableListArea from "./scrollable_list_area";
 
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
-export type IFileUploadCallback = (uuid: string, file: File) => Request;
+export type IFileUploadCallback = (id: string, file: File) => Request;
 
-export type IFileUploadCompleteCallback = (uuid: string, file: File) => void;
+export type IFileUploadCompleteCallback = (id: string, file: File) => void;
 
 export type IFileUploadErrorCallback = (
-    uuid: string,
+    id: string,
     file: File,
     statusCode: number,
 ) => void;
@@ -44,12 +44,14 @@ interface IEmptyDropboxProps extends IDropboxProps {
 }
 
 interface IFilledDropboxProps extends IDropboxProps {
-    readonly completedFileUploads: IFileLike[];
+    readonly completedFileUploads: IFileUploadLike[];
 
     readonly inFlightFileUploads: Map<string, IInFlightFileUpload>;
 }
 
-export interface IFileLike {
+export interface IFileUploadLike {
+    readonly id: string;
+
     readonly name: string;
 
     readonly size: number;
@@ -59,7 +61,7 @@ export interface IFileLike {
 
 export interface IFileUploadDropboxProps
     extends Omit<BoxProps, "asChild" | "children"> {
-    readonly completedFileUploads?: IFileLike[];
+    readonly completedFileUploads?: IFileUploadLike[];
 
     readonly helpText?: string;
 
@@ -138,7 +140,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
             {...(rest as unknown as IScrollableListAreaProps)}
         >
             {Array.from(inFlightFileUploads.entries()).map((entry, _index) => {
-                const [uuid, fileUpload] = entry;
+                const [id, fileUpload] = entry;
 
                 const {file, progress} = fileUpload;
                 const {name, size, type} = file;
@@ -150,7 +152,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 });
 
                 return (
-                    <ListTile.Root key={uuid}>
+                    <ListTile.Root key={id}>
                         <ListTile.Icon>
                             <Icon />
                         </ListTile.Icon>
@@ -163,9 +165,8 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 );
             })}
 
-            {completedFileUploads.map((file, index) => {
-                const {name, size, type} = file;
-                const key = `${name}-${index}`;
+            {completedFileUploads.map((file, _index) => {
+                const {id, name, size, type} = file;
 
                 const Icon = determineMimeTypeIcon(type);
 
@@ -174,7 +175,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 });
 
                 return (
-                    <ListTile.Root key={key}>
+                    <ListTile.Root key={id}>
                         <ListTile.Icon>
                             <Icon />
                         </ListTile.Icon>
@@ -213,7 +214,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
             const {current: requests} = inFlightRequests;
 
             for (const file of files) {
-                const uuid = crypto.randomUUID();
+                const id = crypto.randomUUID();
 
                 const xhr = new XMLHttpRequest();
                 const {upload} = xhr;
@@ -226,13 +227,13 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
 
                         setInFlightFileUploads((currentInFlightFileUploads) => {
                             const fileUpload =
-                                currentInFlightFileUploads.get(uuid)!;
+                                currentInFlightFileUploads.get(id)!;
 
                             currentInFlightFileUploads = new Map(
                                 currentInFlightFileUploads,
                             );
 
-                            currentInFlightFileUploads.set(uuid, {
+                            currentInFlightFileUploads.set(id, {
                                 ...fileUpload,
 
                                 progress,
@@ -251,7 +252,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                             currentInFlightFileUploads,
                         );
 
-                        currentInFlightFileUploads.delete(uuid);
+                        currentInFlightFileUploads.delete(id);
                         return currentInFlightFileUploads;
                     });
 
@@ -259,15 +260,15 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
 
                     if (status >= 200 && status < 300) {
                         if (onFileUploadComplete) {
-                            onFileUploadComplete(uuid, file);
+                            onFileUploadComplete(id, file);
                         }
                     } else {
                         if (onFileUploadError) {
-                            onFileUploadError(uuid, file, status);
+                            onFileUploadError(id, file, status);
                         }
                     }
 
-                    requests.delete(uuid);
+                    requests.delete(id);
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
                 >;
@@ -278,13 +279,13 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                             currentInFlightFileUploads,
                         );
 
-                        currentInFlightFileUploads.delete(uuid);
+                        currentInFlightFileUploads.delete(id);
                         return currentInFlightFileUploads;
                     });
 
                     if (onFileUploadError) {
                         onFileUploadError(
-                            uuid,
+                            id,
                             file,
                             // **NOTE**: When the `onerror` called back that means
                             // the request was never even sent due to failing a
@@ -294,7 +295,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                         );
                     }
 
-                    requests.delete(uuid);
+                    requests.delete(id);
                 }) satisfies OmitThisParameter<
                     Exclude<XMLHttpRequestEventTarget["onerror"], null>
                 >;
@@ -304,7 +305,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                         currentInFlightFileUploads,
                     );
 
-                    currentInFlightFileUploads.set(uuid, {
+                    currentInFlightFileUploads.set(id, {
                         file,
 
                         progress: null,
@@ -319,7 +320,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                 // `RequestInit & {url: string | URL}` record... but web developers are
                 // probably more familiar with returning a `Request` object wholesale
                 // and its corresponding API.
-                const request = onFileUpload(uuid, file);
+                const request = onFileUpload(id, file);
                 const body = await getRequestBody(request);
 
                 const {headers, method, url} = request;
@@ -350,7 +351,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                 }
 
                 xhr.send(body);
-                requests.set(uuid, xhr);
+                requests.set(id, xhr);
             }
         }) satisfies IDropboxProps["onHandleFileInput"],
 

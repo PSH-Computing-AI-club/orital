@@ -48,9 +48,9 @@ import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
 import type {
-    IFileLike,
     IFileUploadCallback,
     IFileUploadCompleteCallback,
+    IFileUploadLike,
 } from "~/components/controlpanel/file_upload_dropbox";
 import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 
@@ -403,11 +403,12 @@ function SettingsCardAttachmentsView() {
 
     const {articleID} = article;
 
-    const completeFileUploads = useMemo<IFileLike[]>(() => {
+    const completeFileUploads = useMemo<IFileUploadLike[]>(() => {
         return attachments.map((attachment) => {
-            const {fileName, fileSize, mimeType} = attachment;
+            const {fileName, fileSize, mimeType, uploadID} = attachment;
 
             return {
+                id: uploadID,
                 name: fileName,
                 size: fileSize,
                 type: mimeType,

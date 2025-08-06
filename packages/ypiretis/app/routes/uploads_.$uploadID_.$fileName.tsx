@@ -1,5 +1,7 @@
 import {join} from "node:path";
 
+import {data} from "react-router";
+
 import * as v from "valibot";
 
 import ENVIRONMENT from "~/.server/configuration/environment";
@@ -26,6 +28,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const uploadFilePath = join(UPLOADS_DIRECTORY_PATH, uploadID, fileName);
     const file = Bun.file(uploadFilePath);
+
+    if (!(await file.exists())) {
+        throw data("Not Found", {
+            status: 404,
+        });
+    }
 
     return new Response(file);
 }

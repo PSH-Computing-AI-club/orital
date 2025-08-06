@@ -1,0 +1,9 @@
+import {makeIconComponent} from "./icon";
+
+const MovieIcon = makeIconComponent({
+    icon: (
+        <path d="M3 3h18v18H3V3zm2 2v2h2V5H5zm4 0v6h6V5H9zm8 0v2h2V5h-2zm2 4h-2v2h2V9zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2zm-4 2v-6H9v6h6zm-8 0v-2H5v2h2zm-2-4h2v-2H5v2zm0-4h2V9H5v2z" />
+    ),
+});
+
+export default MovieIcon;

@@ -1,11 +1,26 @@
 import type {
+    ButtonProps,
     GroupProps,
+    IconButtonProps,
     IconProps,
     SpanProps,
     StackProps,
     TagRootProps,
 } from "@chakra-ui/react";
-import {Group, HStack, Icon, VStack, Span, Tag} from "@chakra-ui/react";
+import {
+    Button,
+    Group,
+    HStack,
+    Icon,
+    IconButton,
+    VStack,
+    Span,
+    Tag,
+} from "@chakra-ui/react";
+
+export interface IListTileIconButtonProps extends IconButtonProps {}
+
+export interface IListTileButtonProps extends ButtonProps {}
 
 export interface IListTileFooterProps extends GroupProps {}
 
@@ -20,6 +35,26 @@ export interface IListTileHeaderProps extends StackProps {}
 export interface IListTileIconProps extends Omit<IconProps, "asChild"> {}
 
 export interface IListTileRootProps extends StackProps {}
+
+function ListTileIconButton(props: IListTileIconButtonProps) {
+    const {children, ...rest} = props;
+
+    return (
+        <IconButton size="xs" {...rest}>
+            {children}
+        </IconButton>
+    );
+}
+
+function ListTileButton(props: IListTileButtonProps) {
+    const {children, ...rest} = props;
+
+    return (
+        <Button size="xs" {...rest}>
+            {children}
+        </Button>
+    );
+}
 
 function ListTileFooter(props: IListTileFooterProps) {
     const {children, ...rest} = props;
@@ -97,9 +132,11 @@ function ListTileRoot(props: IListTileRootProps) {
 }
 
 const ListTile = {
+    Button: ListTileButton,
     Footer: ListTileFooter,
     Header: ListTileHeader,
     Icon: ListTileIcon,
+    IconButton: ListTileIconButton,
     Root: ListTileRoot,
     SubTitle: ListTileSubTitle,
     Tag: ListTileTag,

@@ -330,9 +330,9 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     return (
         <Menu.Root>
             <Menu.Trigger asChild>
-                <IconButton variant="ghost" size="xs">
+                <ListTile.IconButton variant="ghost">
                     <MoreVerticalIcon />
-                </IconButton>
+                </ListTile.IconButton>
             </Menu.Trigger>
 
             <Portal>

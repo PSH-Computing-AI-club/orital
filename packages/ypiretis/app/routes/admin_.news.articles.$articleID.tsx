@@ -199,22 +199,18 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "content.update": {
             const {content} = actionFormData;
 
-            try {
-                await updateOne({
-                    where: eq("articleID", articleID),
+            const article = await updateOne({
+                where: eq("articleID", articleID),
 
-                    values: {
-                        content,
-                    },
+                values: {
+                    content,
+                },
+            });
+
+            if (article === null) {
+                throw data("Not Found", {
+                    status: 404,
                 });
-            } catch (error) {
-                if (error instanceof ReferenceError) {
-                    throw data("Not Found", {
-                        status: 404,
-                    });
-                }
-
-                throw error;
             }
 
             break;
@@ -226,22 +222,18 @@ export async function action(actionArgs: Route.ActionArgs) {
             const publishedAt =
                 Temporal.Instant.fromEpochMilliseconds(publishedAtTimestamp);
 
-            try {
-                await updateOne({
-                    where: eq("articleID", articleID),
+            const article = await updateOne({
+                where: eq("articleID", articleID),
 
-                    values: {
-                        publishedAt,
-                    },
+                values: {
+                    publishedAt,
+                },
+            });
+
+            if (article === null) {
+                throw data("Not Found", {
+                    status: 404,
                 });
-            } catch (error) {
-                if (error instanceof ReferenceError) {
-                    throw data("Not Found", {
-                        status: 404,
-                    });
-                }
-
-                throw error;
             }
 
             break;
@@ -250,28 +242,22 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "state.update": {
             const {state} = actionFormData;
 
-            try {
-                const publishedAt =
-                    state === ARTICLE_STATES.draft
-                        ? null
-                        : Temporal.Now.instant();
+            const publishedAt =
+                state === ARTICLE_STATES.draft ? null : Temporal.Now.instant();
 
-                await updateOne({
-                    where: eq("articleID", articleID),
+            const article = await updateOne({
+                where: eq("articleID", articleID),
 
-                    values: {
-                        publishedAt,
-                        state,
-                    },
+                values: {
+                    publishedAt,
+                    state,
+                },
+            });
+
+            if (article === null) {
+                throw data("Not Found", {
+                    status: 404,
                 });
-            } catch (error) {
-                if (error instanceof ReferenceError) {
-                    throw data("Not Found", {
-                        status: 404,
-                    });
-                }
-
-                throw error;
             }
 
             break;
@@ -280,22 +266,18 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "title.update": {
             const {title} = actionFormData;
 
-            try {
-                await updateOne({
-                    where: eq("articleID", articleID),
+            const article = await updateOne({
+                where: eq("articleID", articleID),
 
-                    values: {
-                        title,
-                    },
+                values: {
+                    title,
+                },
+            });
+
+            if (article === null) {
+                throw data("Not Found", {
+                    status: 404,
                 });
-            } catch (error) {
-                if (error instanceof ReferenceError) {
-                    throw data("Not Found", {
-                        status: 404,
-                    });
-                }
-
-                throw error;
             }
 
             break;

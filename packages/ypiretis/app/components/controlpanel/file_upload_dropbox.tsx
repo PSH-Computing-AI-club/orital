@@ -1,6 +1,8 @@
 import type {BoxProps} from "@chakra-ui/react";
 import {Box, Span} from "@chakra-ui/react";
 
+import {format} from "bytes";
+
 import {useCallback, useEffect, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
@@ -10,6 +12,7 @@ import useFileDrop from "~/hooks/file_drop";
 
 import {getRequestBody} from "~/utils/request";
 
+import ListTile from "./list_tile";
 import type {IScrollableListAreaProps} from "./scrollable_list_area";
 import ScrollableListArea from "./scrollable_list_area";
 
@@ -133,18 +136,49 @@ function FilledDropbox(props: IFilledDropboxProps) {
             // given layout.
             {...(rest as unknown as IScrollableListAreaProps)}
         >
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
-            <span>hello world</span>
+            {Array.from(inFlightFileUploads.entries()).map((entry, _index) => {
+                const [uuid, fileUpload] = entry;
+
+                const {file, progress} = fileUpload;
+                const {name, size, type} = file;
+
+                const sizeText = format(size, {
+                    unitSeparator: " ",
+                });
+
+                return (
+                    <ListTile.Root key={uuid}>
+                        <ListTile.Header>
+                            <ListTile.Title>{name}</ListTile.Title>
+
+                            <ListTile.SubTitle>
+                                {sizeText} • {type}
+                            </ListTile.SubTitle>
+                        </ListTile.Header>
+                    </ListTile.Root>
+                );
+            })}
+
+            {completedFileUploads.map((file, index) => {
+                const {name, size, type} = file;
+                const key = `${name}-${index}`;
+
+                const sizeText = format(size, {
+                    unitSeparator: " ",
+                });
+
+                return (
+                    <ListTile.Root key={key}>
+                        <ListTile.Header>
+                            <ListTile.Title>{name}</ListTile.Title>
+
+                            <ListTile.SubTitle>
+                                {sizeText} • {type}
+                            </ListTile.SubTitle>
+                        </ListTile.Header>
+                    </ListTile.Root>
+                );
+            })}
         </ScrollableListArea>
     );
 }
@@ -184,7 +218,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                         const progress = loaded / total;
 
                         setInFlightFileUploads((currentInFlightFileUploads) => {
-                            const uploadingFile =
+                            const fileUpload =
                                 currentInFlightFileUploads.get(uuid)!;
 
                             currentInFlightFileUploads = new Map(
@@ -192,7 +226,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                             );
 
                             currentInFlightFileUploads.set(uuid, {
-                                ...uploadingFile,
+                                ...fileUpload,
 
                                 progress,
                             });

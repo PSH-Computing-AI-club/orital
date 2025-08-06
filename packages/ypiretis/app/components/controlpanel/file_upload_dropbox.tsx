@@ -4,7 +4,7 @@ import {Box, Span} from "@chakra-ui/react";
 import {format} from "bytes";
 
 import type {ReactNode} from "react";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {memo, useCallback, useEffect, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
 
@@ -14,9 +14,12 @@ import useFileDrop from "~/hooks/file_drop";
 import {determineMimeTypeIcon} from "~/utils/mime_types";
 import {getRequestBody} from "~/utils/request";
 
+import type {IListTileRootProps} from "./list_tile";
 import ListTile from "./list_tile";
 import type {IScrollableListAreaProps} from "./scrollable_list_area";
 import ScrollableListArea from "./scrollable_list_area";
+
+const MemoizedFilledDropboxItem = memo(FilledDropboxItem);
 
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
@@ -56,6 +59,14 @@ interface IFilledDropboxProps extends IDropboxProps {
     readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
 }
 
+interface IFilledDropboxItemProps extends IListTileRootProps {
+    readonly name: string;
+
+    readonly size: number;
+
+    readonly type: string;
+}
+
 export interface IFileUploadLike {
     readonly id: string;
 
@@ -79,6 +90,30 @@ export interface IFileUploadDropboxProps
     readonly onFileUploadError?: IFileUploadErrorCallback;
 
     readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
+}
+
+function FilledDropboxItem(props: IFilledDropboxItemProps) {
+    const {children, name, size, type, ...rest} = props;
+
+    const Icon = determineMimeTypeIcon(type);
+    const sizeText = format(size, {
+        unitSeparator: " ",
+    });
+
+    return (
+        <ListTile.Root {...rest}>
+            <ListTile.Icon>
+                <Icon />
+            </ListTile.Icon>
+
+            <ListTile.Header>
+                <ListTile.Title>{name}</ListTile.Title>
+                <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
+            </ListTile.Header>
+
+            {children ? <ListTile.Footer>{children}</ListTile.Footer> : <></>}
+        </ListTile.Root>
+    );
 }
 
 function EmptyDropbox(props: IEmptyDropboxProps) {
@@ -155,51 +190,30 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 const {file, progress} = fileUpload;
                 const {name, size, type} = file;
 
-                const Icon = determineMimeTypeIcon(type);
-
-                const sizeText = format(size, {
-                    unitSeparator: " ",
-                });
-
                 return (
-                    <ListTile.Root key={id}>
-                        <ListTile.Icon>
-                            <Icon />
-                        </ListTile.Icon>
-
-                        <ListTile.Header>
-                            <ListTile.Title>{name}</ListTile.Title>
-                            <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
-                        </ListTile.Header>
-                    </ListTile.Root>
+                    <MemoizedFilledDropboxItem
+                        key={id}
+                        name={name}
+                        size={size}
+                        type={type}
+                    />
                 );
             })}
 
             {completedFileUploads.map((file, _index) => {
                 const {id, name, size, type} = file;
 
-                const Icon = determineMimeTypeIcon(type);
-                const actions = renderCompletedFileUploadActions
-                    ? renderCompletedFileUploadActions(file)
-                    : null;
-
-                const sizeText = format(size, {
-                    unitSeparator: " ",
-                });
-
                 return (
-                    <ListTile.Root key={id}>
-                        <ListTile.Icon>
-                            <Icon />
-                        </ListTile.Icon>
-
-                        <ListTile.Header>
-                            <ListTile.Title>{name}</ListTile.Title>
-                            <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
-                        </ListTile.Header>
-
-                        <ListTile.Footer>{actions}</ListTile.Footer>
-                    </ListTile.Root>
+                    <MemoizedFilledDropboxItem
+                        key={id}
+                        name={name}
+                        size={size}
+                        type={type}
+                    >
+                        {renderCompletedFileUploadActions
+                            ? renderCompletedFileUploadActions(file)
+                            : null}
+                    </MemoizedFilledDropboxItem>
                 );
             })}
         </ScrollableListArea>

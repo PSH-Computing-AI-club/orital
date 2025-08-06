@@ -437,9 +437,14 @@ function ContentCard() {
 
 function SettingsCardAttachmentsView() {
     const {attachments, article} = useLoaderData<typeof loader>();
+
+    const deleteFetcher = useFetcher();
     const {revalidate} = useRevalidator();
 
     const {articleID} = article;
+
+    const isDeleteFetcherIdle = deleteFetcher.state === "idle";
+    const isDeleteDisabled = !isDeleteFetcherIdle;
 
     const completeFileUploads = useMemo<IFileUploadLike[]>(() => {
         return attachments.map((attachment) => {
@@ -482,15 +487,28 @@ function SettingsCardAttachmentsView() {
 
     const renderCompletedFileUploadActions = useCallback(
         ((file) => {
-            const {id, name} = file;
+            const {id: uploadID, name} = file;
 
-            const downloadURL = `/uploads/${id}/${name}?forceDownload=true`;
-            const embedURL = `/uploads/${id}/${name}`;
+            const downloadURL = `/uploads/${uploadID}/${name}?forceDownload=true`;
+            const embedURL = `/uploads/${uploadID}/${name}`;
 
             const copyURL = buildAppURL(embedURL);
 
             const onCopyClick = (async (_event) => {
                 await navigator.clipboard.writeText(copyURL.toString());
+            }) satisfies MouseEventHandler<HTMLButtonElement>;
+
+            const onDeleteClick = (async (_event) => {
+                await deleteFetcher.submit(
+                    {
+                        action: "attachment.delete",
+                        uploadID,
+                    } satisfies IActionFormDataSchema,
+
+                    {
+                        method: "POST",
+                    },
+                );
             }) satisfies MouseEventHandler<HTMLButtonElement>;
 
             return (
@@ -514,14 +532,18 @@ function SettingsCardAttachmentsView() {
                         </a>
                     </ListTile.IconButton>
 
-                    <ListTile.IconButton colorPalette="red">
+                    <ListTile.IconButton
+                        disabled={isDeleteDisabled}
+                        colorPalette="red"
+                        onClick={onDeleteClick}
+                    >
                         <CloseIcon />
                     </ListTile.IconButton>
                 </>
             );
         }) satisfies IRenderCompletedFileUploadActions,
 
-        [],
+        [deleteFetcher, isDeleteDisabled],
     );
 
     return (

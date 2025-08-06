@@ -3,6 +3,7 @@ import {Box, Span} from "@chakra-ui/react";
 
 import {format} from "bytes";
 
+import type {ReactNode} from "react";
 import {useCallback, useEffect, useRef, useState} from "react";
 
 import UploadIcon from "~/components/icons/upload_icon";
@@ -29,6 +30,10 @@ export type IFileUploadErrorCallback = (
     statusCode: number,
 ) => void;
 
+export type IRenderCompletedFileUploadActions = (
+    file: IFileUploadLike,
+) => ReactNode;
+
 interface IInFlightFileUpload {
     readonly file: File;
 
@@ -47,6 +52,8 @@ interface IFilledDropboxProps extends IDropboxProps {
     readonly completedFileUploads: IFileUploadLike[];
 
     readonly inFlightFileUploads: Map<string, IInFlightFileUpload>;
+
+    readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
 }
 
 export interface IFileUploadLike {
@@ -70,6 +77,8 @@ export interface IFileUploadDropboxProps
     readonly onFileUploadComplete?: IFileUploadCompleteCallback;
 
     readonly onFileUploadError?: IFileUploadErrorCallback;
+
+    readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
 }
 
 function EmptyDropbox(props: IEmptyDropboxProps) {
@@ -127,6 +136,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
         completedFileUploads,
         inFlightFileUploads,
         onHandleFileInput,
+        renderCompletedFileUploadActions,
         ...rest
     } = props;
 
@@ -169,6 +179,9 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 const {id, name, size, type} = file;
 
                 const Icon = determineMimeTypeIcon(type);
+                const actions = renderCompletedFileUploadActions
+                    ? renderCompletedFileUploadActions(file)
+                    : null;
 
                 const sizeText = format(size, {
                     unitSeparator: " ",
@@ -184,6 +197,8 @@ function FilledDropbox(props: IFilledDropboxProps) {
                             <ListTile.Title>{name}</ListTile.Title>
                             <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
                         </ListTile.Header>
+
+                        <ListTile.Footer>{actions}</ListTile.Footer>
                     </ListTile.Root>
                 );
             })}
@@ -198,6 +213,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
         onFileUpload,
         onFileUploadComplete,
         onFileUploadError,
+        renderCompletedFileUploadActions,
         ...rest
     } = props;
 
@@ -379,6 +395,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
             completedFileUploads={completedFileUploads}
             inFlightFileUploads={inFlightFileUploads}
             onHandleFileInput={onHandleFileInput}
+            renderCompletedFileUploadActions={renderCompletedFileUploadActions}
         />
     ) : (
         <EmptyDropbox

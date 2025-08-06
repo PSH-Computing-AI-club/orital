@@ -51,6 +51,7 @@ import type {
     IFileUploadCallback,
     IFileUploadCompleteCallback,
     IFileUploadLike,
+    IRenderCompletedFileUploadActions,
 } from "~/components/controlpanel/file_upload_dropbox";
 import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 
@@ -442,6 +443,14 @@ function SettingsCardAttachmentsView() {
         [revalidate],
     );
 
+    const renderCompletedFileUploadActions = useCallback(
+        ((file) => {
+            return <span>hello world</span>;
+        }) satisfies IRenderCompletedFileUploadActions,
+
+        [],
+    );
+
     return (
         <TabbedSectionCard.View label="Attachments">
             <FileUploadDropbox
@@ -450,6 +459,9 @@ function SettingsCardAttachmentsView() {
                 blockSize="full"
                 onFileUpload={onFileUpload}
                 onFileUploadComplete={onFileUploadComplete}
+                renderCompletedFileUploadActions={
+                    renderCompletedFileUploadActions
+                }
             />
         </TabbedSectionCard.View>
     );

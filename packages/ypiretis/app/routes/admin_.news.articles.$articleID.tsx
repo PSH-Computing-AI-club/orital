@@ -371,7 +371,7 @@ function ContentCard() {
 
     const contentUpdateFetcher = useFetcher();
     const [liveContent, setLiveContent] = useState<string>(loaderContent);
-    const {toastUser} = useToastsContext();
+    const {displayToast} = useToastsContext();
 
     const onContentUpdateClick = useCallback(
         (async (_event) => {
@@ -386,13 +386,13 @@ function ContentCard() {
                 },
             );
 
-            toastUser({
+            displayToast({
                 status: TOAST_STATUS.success,
                 title: "Successfully updated article content",
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [contentUpdateFetcher, liveContent, toastUser],
+        [contentUpdateFetcher, liveContent, displayToast],
     );
 
     const onMarkdownChange = useCallback(
@@ -448,7 +448,7 @@ function SettingsCardAttachmentsView() {
 
     const deleteFetcher = useFetcher();
     const {revalidate} = useRevalidator();
-    const {toastUser} = useToastsContext();
+    const {displayToast} = useToastsContext();
 
     const {articleID} = article;
 
@@ -492,21 +492,21 @@ function SettingsCardAttachmentsView() {
 
             await revalidate();
 
-            toastUser({
+            displayToast({
                 status: TOAST_STATUS.success,
                 title: "Successfully uploaded attachment",
                 description: <Code>{name}</Code>,
             });
         }) satisfies IFileUploadCompleteCallback,
 
-        [revalidate, toastUser],
+        [revalidate, displayToast],
     );
 
     const onFileUploadError = useCallback(
         ((_uuid, file, status) => {
             const {name} = file;
 
-            toastUser({
+            displayToast({
                 status: TOAST_STATUS.error,
                 title: (
                     <>
@@ -518,7 +518,7 @@ function SettingsCardAttachmentsView() {
             });
         }) satisfies IFileUploadErrorCallback,
 
-        [toastUser],
+        [displayToast],
     );
 
     const renderCompletedFileUploadActions = useCallback(
@@ -533,7 +533,7 @@ function SettingsCardAttachmentsView() {
             const onCopyClick = (async (_event) => {
                 await navigator.clipboard.writeText(copyURL.toString());
 
-                toastUser({
+                displayToast({
                     status: TOAST_STATUS.success,
                     title: "Copied embeddable URL",
                 });
@@ -551,7 +551,7 @@ function SettingsCardAttachmentsView() {
                     },
                 );
 
-                toastUser({
+                displayToast({
                     status: TOAST_STATUS.success,
                     title: "Successfully deleted attachment",
                     description: <Code>{name}</Code>,
@@ -590,7 +590,7 @@ function SettingsCardAttachmentsView() {
             );
         }) satisfies IRenderCompletedFileUploadActions,
 
-        [deleteFetcher, isDeleteDisabled, toastUser],
+        [deleteFetcher, isDeleteDisabled, displayToast],
     );
 
     return (
@@ -619,7 +619,7 @@ function SettingsCardPublishingView() {
 
     const stateUpdateFetcher = useFetcher();
     const publishedAtUpdateFetcher = useFetcher();
-    const {toastUser} = useToastsContext();
+    const {displayToast} = useToastsContext();
 
     const isDraft = state === "STATE_DRAFT";
     const isPublished = state === "STATE_PUBLISHED";
@@ -664,13 +664,13 @@ function SettingsCardPublishingView() {
                 },
             );
 
-            toastUser({
+            displayToast({
                 status: TOAST_STATUS.success,
                 title: `Successfully updated the article to be ${value === "STATE_PUBLISHED" ? "published" : "hidden"}`,
             });
         }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
-        [stateUpdateFetcher, toastUser],
+        [stateUpdateFetcher, displayToast],
     );
 
     const onPublishedAtChange = useCallback(
@@ -701,13 +701,13 @@ function SettingsCardPublishingView() {
                 },
             );
 
-            toastUser({
+            displayToast({
                 status: TOAST_STATUS.success,
                 title: `Successfully updated the article's publishing timestamp`,
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [liveLocalPublishedAt, publishedAtUpdateFetcher, toastUser],
+        [liveLocalPublishedAt, publishedAtUpdateFetcher, displayToast],
     );
 
     useEffect(() => {

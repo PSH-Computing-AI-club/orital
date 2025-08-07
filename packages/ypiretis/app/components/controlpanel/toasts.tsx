@@ -76,7 +76,7 @@ export interface IToastsRootProps extends PropsWithChildren {}
 export interface IToastsContext {
     dismissToast(id: string): void;
 
-    toastUser(options: IToastUserOptions): string;
+    displayToast(options: IToastUserOptions): string;
 }
 
 function determineToastIcon(status: IToastStatus) {
@@ -317,7 +317,7 @@ function ToastsRoot(props: IToastsRootProps) {
         return {
             dismissToast,
 
-            toastUser(options) {
+            displayToast(options) {
                 const {
                     description,
                     duration = DEFAULT_TOAST_DURATION,

@@ -5,6 +5,7 @@ import {Outlet} from "react-router";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import Separator from "~/components/common/separator";
+import Toasts from "~/components/controlpanel/toasts";
 
 import Layout from "~/components/controlpanel/layout";
 import Sidebar from "~/components/controlpanel/sidebar";
@@ -95,12 +96,16 @@ export default function AdminLayout(props: Route.ComponentProps) {
     const {publicUser} = loaderData;
 
     return (
-        <Layout.Root>
-            <PublicUserContextProvider publicUser={publicUser}>
-                <SidebarView />
+        <Toasts.Root>
+            <Layout.Root>
+                <PublicUserContextProvider publicUser={publicUser}>
+                    <SidebarView />
 
-                <Outlet />
-            </PublicUserContextProvider>
-        </Layout.Root>
+                    <Outlet />
+                </PublicUserContextProvider>
+            </Layout.Root>
+
+            <Toasts.Container />
+        </Toasts.Root>
     );
 }

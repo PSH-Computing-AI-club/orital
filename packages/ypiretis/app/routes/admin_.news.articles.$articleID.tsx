@@ -388,7 +388,7 @@ function ContentCard() {
 
             displayToast({
                 status: TOAST_STATUS.success,
-                title: "Successfully updated article content",
+                title: "Updated article's content",
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
@@ -494,7 +494,7 @@ function SettingsCardAttachmentsView() {
 
             displayToast({
                 status: TOAST_STATUS.success,
-                title: "Successfully uploaded attachment",
+                title: "Uploaded file as an attachment",
                 description: <Code>{name}</Code>,
             });
         }) satisfies IFileUploadCompleteCallback,
@@ -535,7 +535,7 @@ function SettingsCardAttachmentsView() {
 
                 displayToast({
                     status: TOAST_STATUS.success,
-                    title: "Copied embeddable URL",
+                    title: "Copied embeddable URL to clipboard",
                 });
             }) satisfies MouseEventHandler<HTMLButtonElement>;
 
@@ -553,7 +553,7 @@ function SettingsCardAttachmentsView() {
 
                 displayToast({
                     status: TOAST_STATUS.success,
-                    title: "Successfully deleted attachment",
+                    title: "Deleted attachment",
                     description: <Code>{name}</Code>,
                 });
             }) satisfies MouseEventHandler<HTMLButtonElement>;
@@ -666,7 +666,7 @@ function SettingsCardPublishingView() {
 
             displayToast({
                 status: TOAST_STATUS.success,
-                title: `Successfully updated the article to be ${value === "STATE_PUBLISHED" ? "published" : "hidden"}`,
+                title: `Updated the article to be ${value === "STATE_PUBLISHED" ? "published" : "hidden"}`,
             });
         }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
@@ -703,7 +703,7 @@ function SettingsCardPublishingView() {
 
             displayToast({
                 status: TOAST_STATUS.success,
-                title: `Successfully updated the article's publishing timestamp`,
+                title: `Updated the article's publishing timestamp`,
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 

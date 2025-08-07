@@ -24,7 +24,7 @@ export interface IListTileButtonProps extends ButtonProps {}
 
 export interface IListTileFooterProps extends GroupProps {}
 
-export interface IListTileSubTitleProps extends SpanProps {}
+export interface IListTileDescriptionProps extends SpanProps {}
 
 export interface IListTileTagProps extends TagRootProps {}
 
@@ -66,7 +66,7 @@ function ListTileFooter(props: IListTileFooterProps) {
     );
 }
 
-function ListTileSubTitle(props: IListTileSubTitleProps) {
+function ListTileDescription(props: IListTileDescriptionProps) {
     const {children, ...rest} = props;
 
     return (
@@ -133,12 +133,12 @@ function ListTileRoot(props: IListTileRootProps) {
 
 const ListTile = {
     Button: ListTileButton,
+    Description: ListTileDescription,
     Footer: ListTileFooter,
     Header: ListTileHeader,
     Icon: ListTileIcon,
     IconButton: ListTileIconButton,
     Root: ListTileRoot,
-    SubTitle: ListTileSubTitle,
     Tag: ListTileTag,
     Title: ListTileTitle,
 } as const;

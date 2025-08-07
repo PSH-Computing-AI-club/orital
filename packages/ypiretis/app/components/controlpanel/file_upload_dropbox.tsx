@@ -109,7 +109,7 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
 
             <ListTile.Header>
                 <ListTile.Title>{name}</ListTile.Title>
-                <ListTile.SubTitle>{sizeText}</ListTile.SubTitle>
+                <ListTile.Description>{sizeText}</ListTile.Description>
             </ListTile.Header>
 
             {children ? <ListTile.Footer>{children}</ListTile.Footer> : <></>}

@@ -366,7 +366,7 @@ function AttendeeListItem(props: IAttendeeListItemProps) {
                     </ListTile.Tag>
                 </ListTile.Title>
 
-                <ListTile.SubTitle>{accountID}</ListTile.SubTitle>
+                <ListTile.Description>{accountID}</ListTile.Description>
             </ListTile.Header>
 
             <ListTile.Footer>

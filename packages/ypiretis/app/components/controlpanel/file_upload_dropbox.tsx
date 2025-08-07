@@ -1,11 +1,12 @@
 import type {BoxProps} from "@chakra-ui/react";
-import {Box, Span} from "@chakra-ui/react";
+import {Box, Button, Group, Span} from "@chakra-ui/react";
 
 import {format} from "bytes";
 
 import type {ReactNode} from "react";
 import {memo, useCallback, useEffect, useRef, useState} from "react";
 
+import PlusIcon from "~/components/icons/plus_icon";
 import UploadIcon from "~/components/icons/upload_icon";
 
 import useFileDialogClick from "~/hooks/file_dialog_click";
@@ -132,37 +133,39 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
     });
 
     return (
-        <Box
-            ref={boxRef}
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="medium"
-            borderStyle={isDraggedOver ? "solid" : "dashed"}
-            borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
-            bg={isDraggedOver ? "cyan.50" : undefined}
-            cursor="pointer"
-            _hover={{
-                bg: "bg.subtle",
-                borderColor: "fg.subtle",
-            }}
-            {...rest}
-        >
+        <>
             {inputElement}
 
-            <UploadIcon marginBlockEnd="2" fontSize="3xl" />
+            <Box
+                ref={boxRef}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                borderWidth="medium"
+                borderStyle={isDraggedOver ? "solid" : "dashed"}
+                borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
+                bg={isDraggedOver ? "cyan.50" : undefined}
+                cursor="pointer"
+                _hover={{
+                    bg: "bg.subtle",
+                    borderColor: "fg.subtle",
+                }}
+                {...rest}
+            >
+                <UploadIcon marginBlockEnd="2" fontSize="3xl" />
 
-            <Span>Drag and drop files here, or click to select</Span>
+                <Span>Drag and drop files here, or click to select</Span>
 
-            {helpText ? (
-                <Span color="fg.muted" fontSize="smaller">
-                    {helpText}
-                </Span>
-            ) : (
-                <></>
-            )}
-        </Box>
+                {helpText ? (
+                    <Span color="fg.muted" fontSize="smaller">
+                        {helpText}
+                    </Span>
+                ) : (
+                    <></>
+                )}
+            </Box>
+        </>
     );
 }
 
@@ -176,6 +179,12 @@ function FilledDropbox(props: IFilledDropboxProps) {
     } = props;
 
     const areaRef = useRef<HTMLDivElement | null>(null);
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+    const inputElement = useFileDialogClick({
+        handleFileInput: onHandleFileInput,
+        ref: buttonRef,
+    });
 
     const isDraggedOver = useFileDrop({
         handleFileDrop: onHandleFileInput,
@@ -183,60 +192,82 @@ function FilledDropbox(props: IFilledDropboxProps) {
     });
 
     return (
-        <ScrollableListArea
-            ref={areaRef}
-            position="relative"
-            // **HACK:** We are only expecting basic `BoxProps` to be passed onto
-            // `FilledDropbox`... any conflict with `IScrollableListArea` sucks but
-            // the consuming code should not be using them anyway. The forward props
-            // is for monkey patching `FileUploadDropbox` to adhere better to any
-            // given layout.
-            {...(rest as unknown as IScrollableListAreaProps)}
-        >
-            {Array.from(inFlightFileUploads.entries()).map((entry, _index) => {
-                const [id, fileUpload] = entry;
+        <>
+            {inputElement}
 
-                const {file, progress} = fileUpload;
-                const {name, size, type} = file;
+            <Group blockSize="full" overflow="hidden">
+                <ScrollableListArea
+                    ref={areaRef}
+                    position="relative"
+                    flexGrow="1"
+                    // **HACK:** We are only expecting basic `BoxProps` to be passed onto
+                    // `FilledDropbox`... any conflict with `IScrollableListArea` sucks but
+                    // the consuming code should not be using them anyway. The forward props
+                    // is for monkey patching `FileUploadDropbox` to adhere better to any
+                    // given layout.
+                    {...(rest as unknown as IScrollableListAreaProps)}
+                >
+                    {Array.from(inFlightFileUploads.entries()).map(
+                        (entry, _index) => {
+                            const [id, fileUpload] = entry;
 
-                return (
-                    <MemoizedFilledDropboxItem
-                        key={id}
-                        name={name}
-                        size={size}
-                        type={type}
+                            const {file, progress} = fileUpload;
+                            const {name, size, type} = file;
+
+                            return (
+                                <MemoizedFilledDropboxItem
+                                    key={id}
+                                    name={name}
+                                    size={size}
+                                    type={type}
+                                />
+                            );
+                        },
+                    )}
+
+                    {completedFileUploads.map((file, _index) => {
+                        const {id, name, size, type} = file;
+
+                        return (
+                            <MemoizedFilledDropboxItem
+                                key={id}
+                                name={name}
+                                size={size}
+                                type={type}
+                            >
+                                {renderCompletedFileUploadActions
+                                    ? renderCompletedFileUploadActions(file)
+                                    : null}
+                            </MemoizedFilledDropboxItem>
+                        );
+                    })}
+
+                    <Box
+                        position="absolute"
+                        inset="0"
+                        bg="color-mix(in lch, var(--chakra-colors-cyan-50), transparent 75%)"
+                        borderWidth="medium"
+                        borderStyle="solid"
+                        borderColor="cyan.solid"
+                        visibility={isDraggedOver ? "visible" : "hidden"}
+                        pointerEvents="none"
                     />
-                );
-            })}
+                </ScrollableListArea>
 
-            {completedFileUploads.map((file, _index) => {
-                const {id, name, size, type} = file;
-
-                return (
-                    <MemoizedFilledDropboxItem
-                        key={id}
-                        name={name}
-                        size={size}
-                        type={type}
-                    >
-                        {renderCompletedFileUploadActions
-                            ? renderCompletedFileUploadActions(file)
-                            : null}
-                    </MemoizedFilledDropboxItem>
-                );
-            })}
-
-            <Box
-                position="absolute"
-                inset="0"
-                bg="color-mix(in lch, var(--chakra-colors-cyan-50), transparent 75%)"
-                borderWidth="medium"
-                borderStyle="solid"
-                borderColor="cyan.solid"
-                visibility={isDraggedOver ? "visible" : "hidden"}
-                pointerEvents="none"
-            />
-        </ScrollableListArea>
+                <Button
+                    ref={buttonRef}
+                    colorPalette="green"
+                    inlineSize="full"
+                    writingMode="sideways-rl"
+                >
+                    {
+                        // **HACK:** The file plus icon would probably look better here
+                        // but the browser really pixelates the icons when I rotate them.
+                    }
+                    Upload File <PlusIcon />
+                </Button>
+            </Group>
+        </>
     );
 }
 

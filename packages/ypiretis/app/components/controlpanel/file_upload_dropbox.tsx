@@ -44,12 +44,12 @@ interface IInFlightFileUpload {
     readonly progress: number | null;
 }
 
-interface IDropboxProps extends Omit<BoxProps, "asChild" | "children"> {
-    readonly onHandleFileInput: (files: FileList) => void;
-}
+interface IFilledDropboxItemProps extends IListTileRootProps {
+    readonly name: string;
 
-interface IEmptyDropboxProps extends IDropboxProps {
-    readonly helpText?: string;
+    readonly size: number;
+
+    readonly type: string;
 }
 
 interface IFilledDropboxProps extends IDropboxProps {
@@ -60,12 +60,12 @@ interface IFilledDropboxProps extends IDropboxProps {
     readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
 }
 
-interface IFilledDropboxItemProps extends IListTileRootProps {
-    readonly name: string;
+interface IEmptyDropboxProps extends IDropboxProps {
+    readonly helpText?: string;
+}
 
-    readonly size: number;
-
-    readonly type: string;
+interface IDropboxProps extends Omit<BoxProps, "asChild" | "children"> {
+    readonly onHandleFileInput: (files: FileList) => void;
 }
 
 export interface IFileUploadLike {
@@ -114,58 +114,6 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
 
             {children ? <ListTile.Footer>{children}</ListTile.Footer> : <></>}
         </ListTile.Root>
-    );
-}
-
-function EmptyDropbox(props: IEmptyDropboxProps) {
-    const {helpText, onHandleFileInput, ...rest} = props;
-
-    const boxRef = useRef<HTMLDivElement | null>(null);
-
-    const inputElement = useFileDialogClick({
-        handleFileInput: onHandleFileInput,
-        ref: boxRef,
-    });
-
-    const isDraggedOver = useFileDrop({
-        handleFileDrop: onHandleFileInput,
-        ref: boxRef,
-    });
-
-    return (
-        <>
-            {inputElement}
-
-            <Box
-                ref={boxRef}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                borderWidth="medium"
-                borderStyle={isDraggedOver ? "solid" : "dashed"}
-                borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
-                bg={isDraggedOver ? "cyan.50" : undefined}
-                cursor="pointer"
-                _hover={{
-                    bg: "bg.subtle",
-                    borderColor: "fg.subtle",
-                }}
-                {...rest}
-            >
-                <UploadIcon marginBlockEnd="2" fontSize="3xl" />
-
-                <Span>Drag and drop files here, or click to select</Span>
-
-                {helpText ? (
-                    <Span color="fg.muted" fontSize="smaller">
-                        {helpText}
-                    </Span>
-                ) : (
-                    <></>
-                )}
-            </Box>
-        </>
     );
 }
 
@@ -267,6 +215,58 @@ function FilledDropbox(props: IFilledDropboxProps) {
                     Upload File <PlusIcon />
                 </Button>
             </Group>
+        </>
+    );
+}
+
+function EmptyDropbox(props: IEmptyDropboxProps) {
+    const {helpText, onHandleFileInput, ...rest} = props;
+
+    const boxRef = useRef<HTMLDivElement | null>(null);
+
+    const inputElement = useFileDialogClick({
+        handleFileInput: onHandleFileInput,
+        ref: boxRef,
+    });
+
+    const isDraggedOver = useFileDrop({
+        handleFileDrop: onHandleFileInput,
+        ref: boxRef,
+    });
+
+    return (
+        <>
+            {inputElement}
+
+            <Box
+                ref={boxRef}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                borderWidth="medium"
+                borderStyle={isDraggedOver ? "solid" : "dashed"}
+                borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
+                bg={isDraggedOver ? "cyan.50" : undefined}
+                cursor="pointer"
+                _hover={{
+                    bg: "bg.subtle",
+                    borderColor: "fg.subtle",
+                }}
+                {...rest}
+            >
+                <UploadIcon marginBlockEnd="2" fontSize="3xl" />
+
+                <Span>Drag and drop files here, or click to select</Span>
+
+                {helpText ? (
+                    <Span color="fg.muted" fontSize="smaller">
+                        {helpText}
+                    </Span>
+                ) : (
+                    <></>
+                )}
+            </Box>
         </>
     );
 }

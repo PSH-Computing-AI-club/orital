@@ -299,6 +299,11 @@ const Prose = chakra("div", {
             color: "fg",
             fontWeight: "600",
         },
+
+        "& p img": {
+            marginTop: "0",
+            marginBottom: "0",
+        },
     },
 });
 

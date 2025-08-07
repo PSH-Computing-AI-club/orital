@@ -155,6 +155,23 @@ function FilledDropbox(props: IFilledDropboxProps) {
                     // given layout.
                     {...(rest as unknown as IScrollableListAreaProps)}
                 >
+                    {completedFileUploads.map((file, _index) => {
+                        const {id, name, size, type} = file;
+
+                        return (
+                            <MemoizedFilledDropboxItem
+                                key={id}
+                                name={name}
+                                size={size}
+                                type={type}
+                            >
+                                {renderCompletedFileUploadActions
+                                    ? renderCompletedFileUploadActions(file)
+                                    : null}
+                            </MemoizedFilledDropboxItem>
+                        );
+                    })}
+
                     {Array.from(inFlightFileUploads.entries()).map(
                         (entry, _index) => {
                             const [id, fileUpload] = entry;
@@ -172,23 +189,6 @@ function FilledDropbox(props: IFilledDropboxProps) {
                             );
                         },
                     )}
-
-                    {completedFileUploads.map((file, _index) => {
-                        const {id, name, size, type} = file;
-
-                        return (
-                            <MemoizedFilledDropboxItem
-                                key={id}
-                                name={name}
-                                size={size}
-                                type={type}
-                            >
-                                {renderCompletedFileUploadActions
-                                    ? renderCompletedFileUploadActions(file)
-                                    : null}
-                            </MemoizedFilledDropboxItem>
-                        );
-                    })}
 
                     <Box
                         position="absolute"

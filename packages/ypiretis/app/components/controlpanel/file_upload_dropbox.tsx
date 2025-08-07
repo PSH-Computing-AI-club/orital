@@ -241,13 +241,13 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
             <Box
                 ref={boxRef}
                 display="flex"
+                position="relative"
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="center"
                 borderWidth="medium"
                 borderStyle={isDraggedOver ? "solid" : "dashed"}
                 borderColor={isDraggedOver ? "cyan.solid" : "border.emphasized"}
-                bg={isDraggedOver ? "cyan.50" : undefined}
                 cursor="pointer"
                 _hover={{
                     bg: "bg.subtle",
@@ -266,6 +266,14 @@ function EmptyDropbox(props: IEmptyDropboxProps) {
                 ) : (
                     <></>
                 )}
+
+                <Box
+                    position="absolute"
+                    inset="0"
+                    bg="color-mix(in lch, var(--chakra-colors-cyan-50), transparent 75%)"
+                    visibility={isDraggedOver ? "visible" : "hidden"}
+                    pointerEvents="none"
+                />
             </Box>
         </>
     );

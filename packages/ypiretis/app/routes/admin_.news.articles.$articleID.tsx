@@ -886,6 +886,7 @@ function ArticleTitle() {
     const {title} = article;
 
     const titleUpdateFetcher = useFetcher();
+    const {displayToast} = useToastsContext();
 
     const isTitleUpdateFetcherIdle = titleUpdateFetcher.state === "idle";
     const isTitleUpdateDisabled = !isTitleUpdateFetcherIdle;
@@ -908,9 +909,14 @@ function ArticleTitle() {
                     method: "POST",
                 },
             );
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Updated the article's title`,
+            });
         }) satisfies (details: EditableValueChangeDetails) => Promise<void>,
 
-        [title, titleUpdateFetcher],
+        [displayToast, title, titleUpdateFetcher],
     );
 
     const onValidateTitle = useCallback(

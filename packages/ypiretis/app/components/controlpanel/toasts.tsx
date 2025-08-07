@@ -195,7 +195,7 @@ function ToastsItem(props: IToastsItemProps) {
                 pointerEvents="all"
             >
                 <Alert.Content>
-                    <HStack gap="2">
+                    <HStack gap="4">
                         <Alert.Indicator>
                             <Icon />
                         </Alert.Indicator>

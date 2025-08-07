@@ -79,6 +79,8 @@ const Prose = chakra("div", {
             marginBottom: "1.7em",
             borderRadius: "lg",
             boxShadow: "inset",
+            marginLeft: "auto",
+            marginRight: "auto",
         },
 
         "& picture": {

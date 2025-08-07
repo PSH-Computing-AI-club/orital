@@ -1,7 +1,7 @@
 import type {AlertRootProps} from "@chakra-ui/react";
-import {Alert, Presence, VStack} from "@chakra-ui/react";
+import {Alert, CloseButton, HStack, Presence, VStack} from "@chakra-ui/react";
 
-import type {PropsWithChildren, ReactNode} from "react";
+import type {MouseEventHandler, PropsWithChildren, ReactNode} from "react";
 import {
     createContext,
     memo,
@@ -14,6 +14,7 @@ import {
 } from "react";
 
 import CheckBoxIcon from "~/components/icons/check_box_icon";
+import CloseIcon from "~/components/icons/close_icon";
 import CloseBoxIcon from "~/components/icons/close_box_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
 import WarningBoxIcon from "~/components/icons/warning_box_icon";
@@ -150,12 +151,24 @@ function ToastsItem(props: IToastsItemProps) {
         title,
     } = toast;
 
-    const {removeToast} = useInternalToastsContext();
+    const {dismissToast, removeToast} = useInternalToastsContext();
 
     const Icon = determineToastIcon(status);
     const statusColor = determineToastStatusColor(status);
 
     const isPresent = !isDismissed;
+
+    const onDismissClick = useCallback(
+        ((_event) => {
+            if (isDismissed) {
+                return;
+            }
+
+            dismissToast(id);
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [dismissToast, id, isDismissed],
+    );
 
     const onExitComplete = useCallback(
         (() => {
@@ -181,12 +194,27 @@ function ToastsItem(props: IToastsItemProps) {
                 status={statusColor}
                 pointerEvents="all"
             >
-                <Alert.Indicator>
-                    <Icon />
-                </Alert.Indicator>
-
                 <Alert.Content>
-                    <Alert.Title>{title}</Alert.Title>
+                    <HStack gap="2">
+                        <Alert.Indicator>
+                            <Icon />
+                        </Alert.Indicator>
+
+                        <Alert.Title>{title}</Alert.Title>
+
+                        <CloseButton
+                            size="2xs"
+                            marginInlineStart="auto"
+                            css={{
+                                "&:not(:active, :hover)": {
+                                    color: "currentcolor",
+                                },
+                            }}
+                            onClick={onDismissClick}
+                        >
+                            <CloseIcon />
+                        </CloseButton>
+                    </HStack>
 
                     {description ? (
                         <Alert.Description>{description}</Alert.Description>

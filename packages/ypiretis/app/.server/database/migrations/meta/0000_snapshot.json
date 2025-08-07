@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "468b2a43-92dc-43d0-819f-84614d1489a2",
+  "id": "21cf8ec6-b10e-4632-8e10-5ec20ed293eb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "articles": {
@@ -37,7 +37,7 @@
         },
         "title": {
           "name": "title",
-          "type": "text(64)",
+          "type": "text(64) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -372,7 +372,7 @@
         },
         "account_id": {
           "name": "account_id",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -467,7 +467,7 @@
         },
         "account_id": {
           "name": "account_id",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -541,7 +541,7 @@
         },
         "title": {
           "name": "title",
-          "type": "text(32)",
+          "type": "text(32) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -610,7 +610,7 @@
         },
         "file_name": {
           "name": "file_name",
-          "type": "text(256)",
+          "type": "text(256) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -624,7 +624,7 @@
         },
         "mime_type": {
           "name": "mime_type",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -650,6 +650,34 @@
           "name": "uploads_created_at_idx",
           "columns": [
             "created_at"
+          ],
+          "isUnique": false
+        },
+        "uploads_file_name_idx": {
+          "name": "uploads_file_name_idx",
+          "columns": [
+            "file_name"
+          ],
+          "isUnique": false
+        },
+        "uploads_file_size_idx": {
+          "name": "uploads_file_size_idx",
+          "columns": [
+            "file_size"
+          ],
+          "isUnique": false
+        },
+        "uploads_mime_type_idx": {
+          "name": "uploads_mime_type_idx",
+          "columns": [
+            "mime_type"
+          ],
+          "isUnique": false
+        },
+        "uploads_uploader_user_id_idx": {
+          "name": "uploads_uploader_user_id_idx",
+          "columns": [
+            "uploader_user_id"
           ],
           "isUnique": false
         }
@@ -685,21 +713,21 @@
         },
         "account_id": {
           "name": "account_id",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "first_name": {
           "name": "first_name",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "last_name": {
           "name": "last_name",
-          "type": "text",
+          "type": "text COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -761,7 +789,7 @@
         },
         "title": {
           "name": "title",
-          "type": "text(64)",
+          "type": "text(64) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -833,7 +861,7 @@
         },
         "title": {
           "name": "title",
-          "type": "text(64)",
+          "type": "text(64) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -905,7 +933,7 @@
         },
         "title": {
           "name": "title",
-          "type": "text(64)",
+          "type": "text(64) COLLATE NOCASE",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

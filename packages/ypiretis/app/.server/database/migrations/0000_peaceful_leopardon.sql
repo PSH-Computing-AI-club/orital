@@ -3,7 +3,7 @@ CREATE TABLE `articles` (
 	`article_id` text(26) NOT NULL,
 	`poster_user_id` integer NOT NULL,
 	`state` text NOT NULL,
-	`title` text(64) NOT NULL,
+	`title` text(64) COLLATE NOCASE NOT NULL,
 	`content` text NOT NULL,
 	`created_at` integer DEFAULT (UNIXEPOCH('now', 'subsec') * 1000) NOT NULL,
 	`updated_at` integer DEFAULT (UNIXEPOCH('now', 'subsec') * 1000) NOT NULL,
@@ -51,7 +51,7 @@ CREATE INDEX `callback_tokens_idx_expires_at` ON `callback_tokens` (`expires_at`
 CREATE TABLE `consent_tokens` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`hash` text NOT NULL,
-	`account_id` text NOT NULL,
+	`account_id` text COLLATE NOCASE NOT NULL,
 	`callback_token_id` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`expires_at` integer NOT NULL,
@@ -65,7 +65,7 @@ CREATE INDEX `consent_tokens_idx_expires_at` ON `consent_tokens` (`expires_at`);
 CREATE TABLE `grant_tokens` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`hash` text NOT NULL,
-	`account_id` text NOT NULL,
+	`account_id` text COLLATE NOCASE NOT NULL,
 	`created_at` integer NOT NULL,
 	`expires_at` integer NOT NULL
 );
@@ -77,7 +77,7 @@ CREATE TABLE `rooms` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`room_id` text(26) NOT NULL,
 	`presenter_user_id` integer NOT NULL,
-	`title` text(32) DEFAULT 'A Presentation Room' NOT NULL,
+	`title` text(32) COLLATE NOCASE DEFAULT 'A Presentation Room' NOT NULL,
 	`created_at` integer DEFAULT (UNIXEPOCH('now', 'subsec') * 1000) NOT NULL,
 	FOREIGN KEY (`presenter_user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -87,20 +87,24 @@ CREATE TABLE `uploads` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`upload_id` text(26) NOT NULL,
 	`uploader_user_id` integer NOT NULL,
-	`file_name` text(256) NOT NULL,
+	`file_name` text(256) COLLATE NOCASE NOT NULL,
 	`file_size` integer NOT NULL,
-	`mime_type` text NOT NULL,
+	`mime_type` text COLLATE NOCASE NOT NULL,
 	`created_at` integer DEFAULT (UNIXEPOCH('now', 'subsec') * 1000) NOT NULL,
 	FOREIGN KEY (`uploader_user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `uploads_upload_id_unique` ON `uploads` (`upload_id`);--> statement-breakpoint
 CREATE INDEX `uploads_created_at_idx` ON `uploads` (`created_at`);--> statement-breakpoint
+CREATE INDEX `uploads_file_name_idx` ON `uploads` (`file_name`);--> statement-breakpoint
+CREATE INDEX `uploads_file_size_idx` ON `uploads` (`file_size`);--> statement-breakpoint
+CREATE INDEX `uploads_mime_type_idx` ON `uploads` (`mime_type`);--> statement-breakpoint
+CREATE INDEX `uploads_uploader_user_id_idx` ON `uploads` (`uploader_user_id`);--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`account_id` text NOT NULL,
-	`first_name` text NOT NULL,
-	`last_name` text NOT NULL,
+	`account_id` text COLLATE NOCASE NOT NULL,
+	`first_name` text COLLATE NOCASE NOT NULL,
+	`last_name` text COLLATE NOCASE NOT NULL,
 	`created_at` integer DEFAULT (UNIXEPOCH('now', 'subsec') * 1000) NOT NULL
 );
 --> statement-breakpoint

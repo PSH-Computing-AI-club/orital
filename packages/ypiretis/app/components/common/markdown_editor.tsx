@@ -6,6 +6,7 @@ import {
     CodeToggle,
     CreateLink,
     InsertCodeBlock,
+    InsertImage,
     InsertTable,
     InsertThematicBreak,
     ListsToggle,
@@ -16,6 +17,7 @@ import {
     codeBlockPlugin,
     codeMirrorPlugin,
     headingsPlugin,
+    imagePlugin,
     linkDialogPlugin,
     linkPlugin,
     listsPlugin,
@@ -93,6 +95,7 @@ const TOOLBAR_PLUGIN_CONTENTS = (() => {
             <BlockTypeSelect />
             <Separator />
             <CreateLink />
+            <InsertImage />
             <Separator />
             <InsertTable />
             <InsertCodeBlock />
@@ -135,9 +138,15 @@ export default function MarkdownEditor(props: IMarkdownEditorProps) {
                     linkDialogPlugin(),
                     listsPlugin(),
                     quotePlugin(),
+
+                    imagePlugin({
+                        disableImageResize: true,
+                    }),
+
                     tablePlugin(),
                     thematicBreakPlugin(),
                     markdownShortcutPlugin(),
+
                     toolbarPlugin({
                         toolbarClassName: "markdown-editor--toolbar",
                         toolbarContents: TOOLBAR_PLUGIN_CONTENTS,

@@ -4,6 +4,7 @@ import {index, integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
 
+import noCaseText from "../types/no_case_text";
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
@@ -34,7 +35,7 @@ const ARTICLES_TABLE = sqliteTable(
             enum: [ARTICLE_STATES.draft, ARTICLE_STATES.published],
         }).notNull(),
 
-        title: text("title", {length: 64}).notNull(),
+        title: noCaseText("title", {length: 64}).notNull(),
 
         content: text("content").notNull(),
 

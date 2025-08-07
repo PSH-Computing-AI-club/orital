@@ -1,5 +1,6 @@
-import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import {integer, sqliteTable} from "drizzle-orm/sqlite-core";
 
+import noCaseText from "../types/no_case_text";
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
@@ -7,11 +8,11 @@ import temporalInstant, {
 const USERS_TABLE = sqliteTable("users", {
     id: integer("id").primaryKey({autoIncrement: true}),
 
-    accountID: text("account_id").notNull().unique(),
+    accountID: noCaseText("account_id").notNull().unique(),
 
-    firstName: text("first_name").notNull(),
+    firstName: noCaseText("first_name").notNull(),
 
-    lastName: text("last_name").notNull(),
+    lastName: noCaseText("last_name").notNull(),
 
     createdAt: temporalInstant("created_at")
         .notNull()

@@ -2,6 +2,7 @@ import {integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
 
+import noCaseText from "../types/no_case_text";
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
@@ -20,7 +21,9 @@ const ROOMS_TABLE = sqliteTable("rooms", {
         .notNull()
         .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
-    title: text("title", {length: 32}).notNull().default("A Presentation Room"),
+    title: noCaseText("title", {length: 32})
+        .notNull()
+        .default("A Presentation Room"),
 
     createdAt: temporalInstant("created_at")
         .notNull()

@@ -1,5 +1,6 @@
-import {index, integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import {index, integer, sqliteTable} from "drizzle-orm/sqlite-core";
 
+import noCaseText from "../types/no_case_text";
 import secretText from "../types/secret_text";
 import temporalInstant from "../types/temporal_instant";
 
@@ -10,7 +11,7 @@ const GRANT_TOKENS_TABLE = sqliteTable(
 
         hash: secretText("hash").notNull().unique(),
 
-        accountID: text("account_id").notNull(),
+        accountID: noCaseText("account_id").notNull(),
 
         createdAt: temporalInstant("created_at").notNull(),
 

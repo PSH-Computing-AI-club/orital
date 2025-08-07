@@ -2,6 +2,7 @@ import {index, integer, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 import {ulid} from "ulid";
 
+import noCaseText from "../types/no_case_text";
 import temporalInstant, {
     DEFAULT_TEMPORAL_INSTANT,
 } from "../types/temporal_instant";
@@ -22,11 +23,11 @@ const UPLOADS_TABLE = sqliteTable(
             .notNull()
             .references(() => USERS_TABLE.id, {onDelete: "cascade"}),
 
-        fileName: text("file_name", {length: 256}).notNull(),
+        fileName: noCaseText("file_name", {length: 256}).notNull(),
 
         fileSize: integer("file_size").notNull(),
 
-        mimeType: text("mime_type").notNull(),
+        mimeType: noCaseText("mime_type").notNull(),
 
         createdAt: temporalInstant("created_at")
             .notNull()

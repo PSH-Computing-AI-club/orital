@@ -535,7 +535,7 @@ function SettingsCardAttachmentsView() {
 
                 displayToast({
                     status: TOAST_STATUS.success,
-                    title: "Copied embeddable URL to clipboard",
+                    title: "Copied the attachment's embeddable URL to clipboard",
                 });
             }) satisfies MouseEventHandler<HTMLButtonElement>;
 

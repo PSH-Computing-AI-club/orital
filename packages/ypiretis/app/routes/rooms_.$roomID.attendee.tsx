@@ -1,7 +1,6 @@
 import {Spacer, Strong, Text} from "@chakra-ui/react";
 
-import type {MouseEvent} from "react";
-import {useState} from "react";
+import type {MouseEventHandler} from "react";
 
 import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet} from "react-router";
@@ -19,6 +18,10 @@ import Separator from "~/components/common/separator";
 
 import Layout from "~/components/controlpanel/layout";
 import Sidebar from "~/components/controlpanel/sidebar";
+import Toasts, {
+    TOAST_STATUS,
+    useToastsContext,
+} from "~/components/controlpanel/toasts";
 
 import HumanHandsupIcon from "~/components/icons/human_handsup_icon";
 import HumanHandsdownIcon from "~/components/icons/human_handsdown_icon";
@@ -26,6 +29,7 @@ import LogoutIcon from "~/components/icons/logout_icon";
 
 import {validateParams} from "~/guards/validation";
 
+import {useAsyncCallback} from "~/hooks/async_callback";
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendeeContext} from "~/state/attendee";
@@ -97,37 +101,44 @@ export function HydrateFallback() {
 
 function SidebarView() {
     const {room, isRaisingHand, state: attendeeState} = useAttendeeContext();
-    const {state} = room;
+    const {displayToast} = useToastsContext();
 
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const {state: roomState} = room;
 
-    const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
+    const [isFetchingAction, onHandClick] = useAsyncCallback(
+        (async (_event) => {
+            await fetch("./attendee/actions/self", {
+                method: "POST",
+                body: buildFormData<IActionFormData>({
+                    action: isRaisingHand
+                        ? "participation.dismissHand"
+                        : "participation.raiseHand",
+                }),
+            });
 
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: isRaisingHand ? (
+                    <>You lowered your hand</>
+                ) : (
+                    <>You raised your hand</>
+                ),
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [displayToast],
+    );
+
+    const isDisposed = roomState === "STATE_DISPOSED";
     const canUseHand = attendeeState === "STATE_CONNECTED";
 
-    async function onHandClick(
-        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ): Promise<void> {
-        setFetchingAction(true);
-
-        await fetch("./attendee/actions/self", {
-            method: "POST",
-            body: buildFormData<IActionFormData>({
-                action: isRaisingHand
-                    ? "participation.dismissHand"
-                    : "participation.raiseHand",
-            }),
-        });
-
-        setFetchingAction(false);
-    }
+    const isActionDisabled = isDisposed || isFetchingAction || !canUseHand;
 
     return (
         <Sidebar.Root>
             <Sidebar.Container>
                 <Sidebar.Button
-                    disabled={!canFetchAction || !canUseHand}
+                    disabled={isActionDisabled}
                     colorPalette={isRaisingHand ? "cyan" : undefined}
                     onClick={onHandClick}
                 >
@@ -138,6 +149,7 @@ function SidebarView() {
                             <HumanHandsdownIcon />
                         )}
                     </Sidebar.Icon>
+
                     {isRaisingHand ? "Hand Raised" : "Hand Lowered"}
                 </Sidebar.Button>
 
@@ -161,18 +173,22 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {initialContextData, publicUser} = loaderData;
 
     return (
-        <Layout.Root>
-            <WebSocketCacheProvider>
-                <PublicUserContextProvider publicUser={publicUser}>
-                    <AttendeeContextProvider
-                        initialContextData={initialContextData}
-                    >
-                        <SidebarView />
+        <Toasts.Root>
+            <Layout.Root>
+                <WebSocketCacheProvider>
+                    <PublicUserContextProvider publicUser={publicUser}>
+                        <AttendeeContextProvider
+                            initialContextData={initialContextData}
+                        >
+                            <SidebarView />
 
-                        <Outlet />
-                    </AttendeeContextProvider>
-                </PublicUserContextProvider>
-            </WebSocketCacheProvider>
-        </Layout.Root>
+                            <Outlet />
+                        </AttendeeContextProvider>
+                    </PublicUserContextProvider>
+                </WebSocketCacheProvider>
+            </Layout.Root>
+
+            <Toasts.Container />
+        </Toasts.Root>
     );
 }

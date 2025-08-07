@@ -11,6 +11,7 @@ import {
     Portal,
     Spacer,
     PinInput,
+    Code,
 } from "@chakra-ui/react";
 
 import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
@@ -27,6 +28,7 @@ import ScrollableListArea from "~/components/controlpanel/scrollable_list_area";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
 import Title from "~/components/controlpanel/title";
+import {TOAST_STATUS, useToastsContext} from "~/components/controlpanel/toasts";
 
 import AvatarIcon from "~/components/icons/avatar_icon";
 import CheckIcon from "~/components/icons/check_icon";
@@ -559,24 +561,48 @@ function AttendeesCard() {
 
 function StateCard() {
     const {room} = usePresenterContext();
+    const {displayToast} = useToastsContext();
 
     const {state} = room;
 
     const [isFetchingAction, onStateChange] = useAsyncCallback(
         (async (details) => {
-            const {value} = details;
+            const {value} = details as {
+                value: Exclude<IRoomStates, "STATE_DISPOSED">;
+            };
 
             await fetch("./presenter/actions/room", {
                 method: "POST",
 
                 body: buildFormData<IRoomActionFormData>({
                     action: "state.update",
-                    state: value as Exclude<IRoomStates, "STATE_DISPOSED">,
+                    state: value,
                 }),
+            });
+
+            let stateText: string;
+
+            switch (value) {
+                case "STATE_LOCKED":
+                    stateText = "locked";
+                    break;
+
+                case "STATE_PERMISSIVE":
+                    stateText = "permission only";
+                    break;
+
+                case "STATE_UNLOCKED":
+                    stateText = "unlocked";
+                    break;
+            }
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: <>Updated the room's state to be {stateText}</>,
             });
         }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
-        [],
+        [displayToast],
     );
 
     const isDisposed = state === "STATE_DISPOSED";
@@ -644,15 +670,25 @@ function StateCard() {
 
 function PINCard() {
     const {room} = usePresenterContext();
+    const {displayToast} = useToastsContext();
 
     const {pin, roomID, state} = room;
 
     const onCopyClick = useCallback(
         (async (_event) => {
             await navigator.clipboard.writeText(pin);
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: (
+                    <>
+                        Copied the room's PIN <Code>{pin}</Code> to clipboard
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [pin],
+        [displayToast, pin],
     );
 
     const [isFetchingAction, onRegenerateClick] = useAsyncCallback(
@@ -664,9 +700,14 @@ function PINCard() {
                     action: "pin.regenerate",
                 }),
             });
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: "Regenerated the room's PIN",
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [],
+        [displayToast],
     );
 
     const isDisposed = state === "STATE_DISPOSED";
@@ -788,6 +829,7 @@ function PINCard() {
 
 function RoomTitle() {
     const {room} = usePresenterContext();
+    const {displayToast} = useToastsContext();
 
     const {state, title} = room;
 
@@ -806,9 +848,14 @@ function RoomTitle() {
                     title: newTitle,
                 }),
             });
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Updated the room's title`,
+            });
         }) satisfies (details: EditableValueChangeDetails) => Promise<void>,
 
-        [],
+        [displayToast],
     );
 
     const onTitleValidate = useCallback(

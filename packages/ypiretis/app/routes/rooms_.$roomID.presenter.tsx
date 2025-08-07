@@ -19,6 +19,7 @@ import Separator from "~/components/common/separator";
 
 import Layout from "~/components/controlpanel/layout";
 import Sidebar from "~/components/controlpanel/sidebar";
+import Toasts from "~/components/controlpanel/toasts";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
@@ -194,18 +195,22 @@ export default function RoomsPresenterLayout(props: Route.ComponentProps) {
     const {initialContextData, publicUser} = loaderData;
 
     return (
-        <Layout.Root>
-            <WebSocketCacheProvider>
-                <PublicUserContextProvider publicUser={publicUser}>
-                    <PresenterContextProvider
-                        initialContextData={initialContextData}
-                    >
-                        <SidebarView />
+        <Toasts.Root>
+            <Layout.Root>
+                <WebSocketCacheProvider>
+                    <PublicUserContextProvider publicUser={publicUser}>
+                        <PresenterContextProvider
+                            initialContextData={initialContextData}
+                        >
+                            <SidebarView />
 
-                        <Outlet />
-                    </PresenterContextProvider>
-                </PublicUserContextProvider>
-            </WebSocketCacheProvider>
-        </Layout.Root>
+                            <Outlet />
+                        </PresenterContextProvider>
+                    </PublicUserContextProvider>
+                </WebSocketCacheProvider>
+            </Layout.Root>
+
+            <Toasts.Container />
+        </Toasts.Root>
     );
 }

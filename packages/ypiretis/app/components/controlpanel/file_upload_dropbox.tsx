@@ -1,5 +1,5 @@
 import type {BoxProps} from "@chakra-ui/react";
-import {Box, Button, Group, Span} from "@chakra-ui/react";
+import {Box, Button, Group, Progress, Span} from "@chakra-ui/react";
 
 import {format} from "bytes";
 
@@ -46,6 +46,8 @@ interface IInFlightFileUpload {
 
 interface IFilledDropboxItemProps extends IListTileRootProps {
     readonly name: string;
+
+    readonly progress?: number | null;
 
     readonly size: number;
 
@@ -94,15 +96,19 @@ export interface IFileUploadDropboxProps
 }
 
 function FilledDropboxItem(props: IFilledDropboxItemProps) {
-    const {children, name, size, type, ...rest} = props;
+    const {children, name, progress, size, type, ...rest} = props;
 
     const Icon = determineMimeTypeIcon(type);
     const sizeText = format(size, {
         unitSeparator: " ",
     });
 
+    const hasProgress = typeof progress !== "undefined";
+    const progressValue =
+        typeof progress === "number" ? progress * 100 : progress;
+
     return (
-        <ListTile.Root {...rest}>
+        <ListTile.Root position="relative" {...rest}>
             <ListTile.Icon>
                 <Icon />
             </ListTile.Icon>
@@ -113,6 +119,25 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
             </ListTile.Header>
 
             {children ? <ListTile.Footer>{children}</ListTile.Footer> : <></>}
+
+            {hasProgress ? (
+                <Progress.Root
+                    variant="subtle"
+                    colorPalette="green"
+                    size="xs"
+                    position="absolute"
+                    insetBlockEnd="0"
+                    insetInlineStart="0"
+                    inlineSize="full"
+                    value={progressValue}
+                >
+                    <Progress.Track>
+                        <Progress.Range />
+                    </Progress.Track>
+                </Progress.Root>
+            ) : (
+                <></>
+            )}
         </ListTile.Root>
     );
 }
@@ -183,6 +208,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
                                 <MemoizedFilledDropboxItem
                                     key={id}
                                     name={name}
+                                    progress={progress}
                                     size={size}
                                     type={type}
                                 />

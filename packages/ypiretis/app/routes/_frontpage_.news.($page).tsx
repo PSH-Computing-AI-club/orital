@@ -8,7 +8,6 @@ import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
-import {transformTextToSnippet} from "~/.server/utils/string";
 
 import type {IPaginationTemplate} from "~/components/common/pagination";
 import Title from "~/components/common/title";
@@ -20,6 +19,7 @@ import PageHero from "~/components/frontpage/page_hero";
 
 import {validateParams} from "~/guards/validation";
 
+import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/_frontpage_.news.($page)";
@@ -77,9 +77,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
-            const description = transformTextToSnippet(plaintextContent, {
-                limit: ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
-            });
+            const description = normalizeSpacing(
+                truncateTextRight(
+                    plaintextContent,
+                    ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
+                ),
+            );
 
             const {year, month, day} = zonedPublishedAt;
 

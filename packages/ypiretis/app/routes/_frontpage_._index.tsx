@@ -9,7 +9,6 @@ import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
-import {transformTextToSnippet} from "~/.server/utils/string";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 
 import Title from "~/components/common/title";
@@ -26,6 +25,7 @@ import PeopleSection from "~/components/frontpage/people_section";
 import ArrowRightIcon from "~/components/icons/arrow_right_icon";
 
 import {ACCOUNT_PROVIDER_DOMAIN, APP_NAME} from "~/utils/constants";
+import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 
 import type {Route} from "./+types/_frontpage_._index";
 
@@ -91,9 +91,12 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
             });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
-            const description = transformTextToSnippet(plaintextContent, {
-                limit: ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
-            });
+            const description = normalizeSpacing(
+                truncateTextRight(
+                    plaintextContent,
+                    ARTICLE_DESCRIPTION_CHARACTER_LIMIT,
+                ),
+            );
 
             const {year, month, day} = zonedPublishedAt;
 

@@ -1,5 +1,16 @@
 const DEFAULT_TRUNCATION_ELLIPSIS = "...";
 
+const EXPRESSION_CONSECUTIVE_SPACES = /\s\s+/g;
+
+const EXPRESSION_NEWLINE = /\n/g;
+
+export function normalizeSpacing(text: string): string {
+    return text
+        .trim()
+        .replace(EXPRESSION_NEWLINE, " ")
+        .replace(EXPRESSION_CONSECUTIVE_SPACES, " ");
+}
+
 export function truncateTextMiddle(
     text: string,
     maxLength: number,

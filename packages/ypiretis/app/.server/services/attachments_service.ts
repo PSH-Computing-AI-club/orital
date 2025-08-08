@@ -37,9 +37,17 @@ export interface IAttachmentsService {
 
     deleteOneAttachmentByIDs(targetID: string, uploadID: string): Promise<void>;
 
+    findAllAttachmentsByID(targetID: string): Promise<IUpload[]>;
+
     findAllAttachmentsByInternalID(
         internalTargetID: number,
     ): Promise<IUpload[]>;
+
+    handleOneAttachmentByID(
+        targetID: string,
+        user: IUser,
+        file: Bun.BunFile,
+    ): Promise<IAttachment>;
 
     handleOneAttachmentByInternalID(
         internalTargetID: number,
@@ -54,7 +62,34 @@ export default function makeAttachmentsService<
 >(options: IAttachmentsServiceOptions<A, T>): IAttachmentsService {
     const {attachmentsTable, targetIDColumn, targetTable} = options;
 
+    const handleOneAttachmentByInternalID = (async (
+        internalTargetID,
+        user,
+        file,
+    ) => {
+        const {id: internalUploadID} = await handleOneUpload(user, file);
+
+        const transaction = useTransaction();
+
+        const [firstAttachment] = await transaction
+            .insert(
+                // **HACK:** TypeScript cannot handle the complex typing using
+                // the base table as a generic. So, we have to forcibly cast it
+                // here.
+                attachmentsTable as IAttachmentsTable,
+            )
+            .values({
+                uploadID: internalUploadID,
+                targetID: internalTargetID,
+            })
+            .returning();
+
+        return firstAttachment;
+    }) satisfies IAttachmentsService["handleOneAttachmentByInternalID"];
+
     return {
+        handleOneAttachmentByInternalID,
+
         async deleteOneAttachmentByInternalIDs(
             internalTargetID,
             internalUploadID,
@@ -141,25 +176,56 @@ export default function makeAttachmentsService<
                 .orderBy(UPLOADS_TABLE.fileName);
         },
 
-        async handleOneAttachmentByInternalID(internalTargetID, user, file) {
-            const {id: internalUploadID} = await handleOneUpload(user, file);
-
+        async findAllAttachmentsByID(targetID) {
             const transaction = useTransaction();
 
-            const [firstAttachment] = await transaction
-                .insert(
-                    // **HACK:** TypeScript cannot handle the complex typing using
-                    // the base table as a generic. So, we have to forcibly cast it
-                    // here.
-                    attachmentsTable as IAttachmentsTable,
+            return transaction
+                .select(getTableColumns(UPLOADS_TABLE))
+                .from(attachmentsTable)
+                .where(
+                    eq(
+                        attachmentsTable.targetID,
+                        transaction
+                            .select({id: targetTable.id})
+                            .from(targetTable)
+                            .where(
+                                // @ts-expect-error - See note above in `deleteOneAttachmentByIDs`.
+                                eq(targetTable[targetIDColumn], targetID),
+                            ),
+                    ),
                 )
-                .values({
-                    uploadID: internalUploadID,
-                    targetID: internalTargetID,
-                })
-                .returning();
+                .innerJoin(
+                    UPLOADS_TABLE,
+                    eq(attachmentsTable.uploadID, UPLOADS_TABLE.id),
+                )
+                .orderBy(UPLOADS_TABLE.fileName);
+        },
 
-            return firstAttachment;
+        async handleOneAttachmentByID(targetID, user, file) {
+            const transaction = useTransaction();
+
+            const [firstTarget] = await transaction
+                .select({id: targetTable.id})
+                .from(targetTable)
+                .where(
+                    // @ts-expect-error - See note above in `deleteOneAttachmentByIDs`.
+                    eq(targetTable[targetIDColumn], targetID),
+                )
+                .limit(1);
+
+            if (!firstTarget) {
+                throw new ReferenceError(
+                    `bad argument #0 to 'IAttachmentsService.handleOneAttachmentByID' (target ID '${targetID}' was not found)`,
+                );
+            }
+
+            const {id: internalTargetID} = firstTarget;
+
+            return handleOneAttachmentByInternalID(
+                internalTargetID,
+                user,
+                file,
+            );
         },
     };
 }

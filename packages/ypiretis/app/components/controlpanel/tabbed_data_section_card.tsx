@@ -7,6 +7,7 @@ import {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from "react";
 
@@ -189,13 +190,15 @@ function TabbedDataSectionCardRoot<T>(props: ITabbedDataSectionCardRootProps) {
         [setTabs],
     );
 
-    const context = {
-        registerTab,
-        selectedTab,
-        setSelectedTab,
-        tabs,
-        unregisterTab,
-    } satisfies ITabbedDataSectionCardContext<T>;
+    const context = useMemo(() => {
+        return {
+            registerTab,
+            selectedTab,
+            setSelectedTab,
+            tabs,
+            unregisterTab,
+        } satisfies ITabbedDataSectionCardContext<T>;
+    }, [registerTab, selectedTab, tabs, unregisterTab]);
 
     return (
         <TabbedDataSectionCardContext.Provider value={context}>

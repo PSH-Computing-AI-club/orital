@@ -3,7 +3,10 @@ import {Icon} from "@chakra-ui/react";
 
 import type {ReactNode} from "react";
 
-export type IIconRootProps = Omit<IconProps, "as" | "asChild" | "children">;
+export type IIconRootProps = Omit<
+    IconProps,
+    "as" | "asChild" | "children" | "viewBox"
+>;
 
 export interface IMakeIconComponentOptions {
     readonly icon: ReactNode;

@@ -231,6 +231,7 @@ function FilledDropbox(props: IFilledDropboxProps) {
                 <Button
                     ref={buttonRef}
                     colorPalette="green"
+                    size="sm"
                     inlineSize="full"
                     writingMode="sideways-rl"
                 >

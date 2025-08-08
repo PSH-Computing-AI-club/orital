@@ -9,6 +9,7 @@ import {
     Field,
     Group,
     HStack,
+    IconButton,
     Input,
     Spacer,
 } from "@chakra-ui/react";
@@ -41,7 +42,6 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
 
-import Links from "~/components/common/links";
 import type {IChangeCallback} from "~/components/common/markdown_editor";
 import MarkdownEditor from "~/components/common/markdown_editor";
 
@@ -553,12 +553,6 @@ function SettingsCardAttachmentsView() {
                         </a>
                     </ListTile.IconButton>
 
-                    <ListTile.IconButton colorPalette="blue" asChild>
-                        <a href={embedURL} target="_blank">
-                            <LinkIcon />
-                        </a>
-                    </ListTile.IconButton>
-
                     <ListTile.IconButton
                         disabled={isDeleteDisabled}
                         colorPalette="red"
@@ -791,6 +785,7 @@ function SettingsCard() {
 
 function OverviewCard() {
     const {article, poster} = useLoaderData<typeof loader>();
+    const {displayToast} = useToastsContext();
 
     const {articleID, createdAtText, publishedAtText, state, updatedAtText} =
         article;
@@ -799,8 +794,21 @@ function OverviewCard() {
     const href = `/news/articles/${articleID}`;
     const url = buildAppURL(href);
 
+    const onCopyClick = useCallback(
+        (async (_event) => {
+            await navigator.clipboard.writeText(url.toString());
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: "Copied the article's permalink URL to clipboard",
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [displayToast, url],
+    );
+
     return (
-        <SectionCard.Root inlineSize="xl">
+        <SectionCard.Root inlineSize="lg">
             <SectionCard.Body>
                 <SectionCard.Title>
                     Overview
@@ -839,23 +847,23 @@ function OverviewCard() {
                             {publishedAtText ?? "-"}
                         </DataList.ItemValue>
                     </DataList.Item>
-
-                    <DataList.Item>
-                        <DataList.ItemLabel>Permalink</DataList.ItemLabel>
-                        <DataList.ItemValue blockSize="9">
-                            {state === "STATE_PUBLISHED" ? (
-                                <Code>
-                                    <Links.InternalLink to={href}>
-                                        {url.toString()}
-                                    </Links.InternalLink>
-                                </Code>
-                            ) : (
-                                "-"
-                            )}
-                        </DataList.ItemValue>
-                    </DataList.Item>
                 </DataList.Root>
             </SectionCard.Body>
+
+            <SectionCard.Footer
+                visibility={state === "STATE_PUBLISHED" ? "visible" : "hidden"}
+            >
+                <IconButton colorPalette="green" onClick={onCopyClick}>
+                    <CopyIcon />
+                </IconButton>
+
+                <Button colorPalette="blue" flexGrow="1" asChild>
+                    <a href={href}>
+                        Permalink
+                        <LinkIcon />
+                    </a>
+                </Button>
+            </SectionCard.Footer>
         </SectionCard.Root>
     );
 }

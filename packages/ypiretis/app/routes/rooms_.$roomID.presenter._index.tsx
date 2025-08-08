@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 
 import * as v from "valibot";
 
@@ -457,18 +457,28 @@ function AttendeesCardDisconnectedTab() {
 
     const {attendees} = room;
 
-    const users = attendees
-        .filter((attendee) => {
-            const {state} = attendee;
+    const users = useMemo(() => {
+        return attendees
+            .filter((attendee) => {
+                const {state} = attendee;
 
-            return state === "STATE_DISPOSED";
-        })
-        .sort(sortUsers);
+                return state === "STATE_DISPOSED";
+            })
+            .sort(sortUsers) satisfies IUserLike[];
+    }, [attendees]);
+
+    const onProvideUsers = useCallback(
+        (() => {
+            return users;
+        }) satisfies () => IUserLike[],
+
+        [users],
+    );
 
     return (
         <TabbedDataSectionCard.Tab
             label={`Disconnected (${users.length})`}
-            provider={() => users satisfies IUserLike[]}
+            provider={onProvideUsers}
         />
     );
 }
@@ -478,18 +488,28 @@ function AttendeesCardPendingTab() {
 
     const {attendees} = room;
 
-    const users = attendees
-        .filter((attendee) => {
-            const {state} = attendee;
+    const users = useMemo(() => {
+        return attendees
+            .filter((attendee) => {
+                const {state} = attendee;
 
-            return state === "STATE_AWAITING";
-        })
-        .sort(sortUsers);
+                return state === "STATE_AWAITING";
+            })
+            .sort(sortUsers) satisfies IUserLike[];
+    }, [attendees]);
+
+    const onProvideUsers = useCallback(
+        (() => {
+            return users;
+        }) satisfies () => IUserLike[],
+
+        [users],
+    );
 
     return (
         <TabbedDataSectionCard.Tab
             label={`Pending (${users.length})`}
-            provider={() => users satisfies IUserLike[]}
+            provider={onProvideUsers}
         />
     );
 }
@@ -500,30 +520,44 @@ function AttendeesCardActiveTab() {
 
     const {attendees} = room;
 
-    const loweredHandAttendees: IAttendee[] = [];
-    const raisedHandAttendees: IAttendee[] = [];
+    const users = useMemo(() => {
+        const loweredHandAttendees: IAttendee[] = [];
+        const raisedHandAttendees: IAttendee[] = [];
 
-    for (const attendee of attendees) {
-        if (attendee.state !== "STATE_CONNECTED") {
-            continue;
+        for (const attendee of attendees) {
+            if (attendee.state !== "STATE_CONNECTED") {
+                continue;
+            }
+
+            if (attendee.isRaisingHand) {
+                loweredHandAttendees.push(attendee);
+            } else {
+                raisedHandAttendees.push(attendee);
+            }
         }
 
-        if (attendee.isRaisingHand) {
-            loweredHandAttendees.push(attendee);
-        } else {
-            raisedHandAttendees.push(attendee);
-        }
-    }
+        loweredHandAttendees.sort(sortUsers);
+        raisedHandAttendees.sort(sortUsers);
 
-    loweredHandAttendees.sort(sortUsers);
-    raisedHandAttendees.sort(sortUsers);
+        return [
+            session,
+            ...loweredHandAttendees,
+            ...raisedHandAttendees,
+        ] satisfies IUserLike[];
+    }, [attendees, session]);
 
-    const users = [session, ...loweredHandAttendees, ...raisedHandAttendees];
+    const onProvideUsers = useCallback(
+        (() => {
+            return users;
+        }) satisfies () => IUserLike[],
+
+        [users],
+    );
 
     return (
         <TabbedDataSectionCard.Tab
             label={`Active (${users.length})`}
-            provider={() => users satisfies IUserLike[]}
+            provider={onProvideUsers}
         />
     );
 }

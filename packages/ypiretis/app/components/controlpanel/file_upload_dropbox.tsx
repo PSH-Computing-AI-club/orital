@@ -3,9 +3,10 @@ import {Box, Button, Group, Progress, Span} from "@chakra-ui/react";
 
 import {format} from "bytes";
 
-import type {ReactNode} from "react";
+import type {MouseEventHandler, ReactNode} from "react";
 import {memo, useCallback, useEffect, useRef, useState} from "react";
 
+import CloseIcon from "~/components/icons/close_icon";
 import PlusIcon from "~/components/icons/plus_icon";
 import UploadIcon from "~/components/icons/upload_icon";
 
@@ -25,6 +26,8 @@ const MemoizedFilledDropboxItem = memo(FilledDropboxItem);
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
 export type IFileUploadCallback = (id: string, file: File) => Request;
+
+export type IFileUploadAbortCallback = (id: string, file: File) => void;
 
 export type IFileUploadCompleteCallback = (id: string, file: File) => void;
 
@@ -59,6 +62,8 @@ interface IFilledDropboxProps extends IDropboxProps {
 
     readonly inFlightFileUploads: Map<string, IInFlightFileUpload>;
 
+    readonly onHandleFileAbort: (id: string) => void;
+
     readonly renderCompletedFileUploadActions?: IRenderCompletedFileUploadActions;
 }
 
@@ -87,6 +92,8 @@ export interface IFileUploadDropboxProps
     readonly helpText?: string;
 
     readonly onFileUpload: IFileUploadCallback;
+
+    readonly onFileUploadAbort?: IFileUploadAbortCallback;
 
     readonly onFileUploadComplete?: IFileUploadCompleteCallback;
 
@@ -142,10 +149,13 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
     );
 }
 
+const MemoizedFilledDropboxItem = memo(FilledDropboxItem);
+
 function FilledDropbox(props: IFilledDropboxProps) {
     const {
         completedFileUploads,
         inFlightFileUploads,
+        onHandleFileAbort,
         onHandleFileInput,
         renderCompletedFileUploadActions,
         ...rest
@@ -204,6 +214,10 @@ function FilledDropbox(props: IFilledDropboxProps) {
                             const {file, progress} = fileUpload;
                             const {name, size, type} = file;
 
+                            const onAbortClick = ((_event) => {
+                                onHandleFileAbort(id);
+                            }) satisfies MouseEventHandler<HTMLButtonElement>;
+
                             return (
                                 <MemoizedFilledDropboxItem
                                     key={id}
@@ -211,7 +225,14 @@ function FilledDropbox(props: IFilledDropboxProps) {
                                     progress={progress}
                                     size={size}
                                     type={type}
-                                />
+                                >
+                                    <ListTile.IconButton
+                                        colorPalette="red"
+                                        onClick={onAbortClick}
+                                    >
+                                        <CloseIcon />
+                                    </ListTile.IconButton>
+                                </MemoizedFilledDropboxItem>
                             );
                         },
                     )}
@@ -311,6 +332,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
         completedFileUploads = [],
         helpText,
         onFileUpload,
+        onFileUploadAbort,
         onFileUploadComplete,
         onFileUploadError,
         renderCompletedFileUploadActions,
@@ -389,6 +411,25 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
                     Exclude<XMLHttpRequestEventTarget["onload"], null>
                 >;
 
+                const onAbort = ((_event) => {
+                    setInFlightFileUploads((currentInFlightFileUploads) => {
+                        currentInFlightFileUploads = new Map(
+                            currentInFlightFileUploads,
+                        );
+
+                        currentInFlightFileUploads.delete(id);
+                        return currentInFlightFileUploads;
+                    });
+
+                    if (onFileUploadAbort) {
+                        onFileUploadAbort(id, file);
+                    }
+
+                    requests.delete(id);
+                }) satisfies OmitThisParameter<
+                    Exclude<XMLHttpRequestEventTarget["onabort"], null>
+                >;
+
                 const onError = ((_event) => {
                     setInFlightFileUploads((currentInFlightFileUploads) => {
                         currentInFlightFileUploads = new Map(
@@ -441,10 +482,11 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
 
                 const {headers, method, url} = request;
 
-                upload.onprogress = onProgress;
-
+                xhr.onabort = onAbort;
                 xhr.onload = onLoad;
                 xhr.onerror = onError;
+
+                upload.onprogress = onProgress;
 
                 xhr.open(method, url, true);
 
@@ -473,10 +515,22 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
 
         [
             onFileUpload,
+            onFileUploadAbort,
             onFileUploadComplete,
             onFileUploadError,
             setInFlightFileUploads,
         ],
+    );
+
+    const onHandleFileAbort = useCallback(
+        (async (id) => {
+            const {current: requests} = inFlightRequests;
+            const xhr = requests.get(id) ?? null;
+
+            xhr?.abort();
+        }) satisfies IFilledDropboxProps["onHandleFileAbort"],
+
+        [],
     );
 
     useEffect(() => {
@@ -494,6 +548,7 @@ export default function FileUploadDropbox(props: IFileUploadDropboxProps) {
             {...rest}
             completedFileUploads={completedFileUploads}
             inFlightFileUploads={inFlightFileUploads}
+            onHandleFileAbort={onHandleFileAbort}
             onHandleFileInput={onHandleFileInput}
             renderCompletedFileUploadActions={renderCompletedFileUploadActions}
         />

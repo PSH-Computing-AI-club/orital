@@ -46,6 +46,7 @@ import type {IChangeCallback} from "~/components/common/markdown_editor";
 import MarkdownEditor from "~/components/common/markdown_editor";
 
 import type {
+    IFileUploadAbortCallback,
     IFileUploadCallback,
     IFileUploadCompleteCallback,
     IFileUploadErrorCallback,
@@ -466,6 +467,20 @@ function SettingsCardAttachmentsView() {
         [articleID],
     );
 
+    const onFileUploadAbort = useCallback(
+        ((_uuid, file) => {
+            const {name} = file;
+
+            displayToast({
+                status: TOAST_STATUS.warning,
+                title: "Aborted file attachment upload",
+                description: <Code>{name}</Code>,
+            });
+        }) satisfies IFileUploadAbortCallback,
+
+        [displayToast],
+    );
+
     const onFileUploadComplete = useCallback(
         (async (_, file) => {
             const {name} = file;
@@ -490,7 +505,7 @@ function SettingsCardAttachmentsView() {
                 status: TOAST_STATUS.error,
                 title: (
                     <>
-                        Failed to upload attachment, status code:{" "}
+                        Failed to upload file as an attachment, status code:{" "}
                         <Code>{status}</Code>
                     </>
                 ),
@@ -574,6 +589,7 @@ function SettingsCardAttachmentsView() {
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
                 blockSize="full"
                 onFileUpload={onFileUpload}
+                onFileUploadAbort={onFileUploadAbort}
                 onFileUploadComplete={onFileUploadComplete}
                 onFileUploadError={onFileUploadError}
                 renderCompletedFileUploadActions={

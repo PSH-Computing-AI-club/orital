@@ -17,7 +17,7 @@ function LayoutFixedContainer(props: ILayoutFixedContainerProps) {
             display="flex"
             flexDirection="column"
             flexGrow="1"
-            marginInlineStart={{base: "32", lgDown: "0"}}
+            marginInlineStart={{base: "32", xlDown: "0"}}
             maxBlockSize="dvh"
             minBlockSize="dvh"
             overflow="hidden"
@@ -44,7 +44,7 @@ function LayoutFluidContainer(props: ILayoutFluidContainerProps) {
     return (
         <Box
             flexGrow="1"
-            marginInlineStart={{base: "32", lgDown: "0"}}
+            marginInlineStart={{base: "32", xlDown: "0"}}
             overflowX="hidden"
             {...rest}
         >
@@ -71,7 +71,7 @@ function LayoutRoot(props: ILayoutRootProps) {
 
             <Drawer.Trigger asChild>
                 <IconButton
-                    hideFrom="lg"
+                    hideFrom="xl"
                     colorPalette="cyan"
                     position="fixed"
                     insetBlockEnd="2"

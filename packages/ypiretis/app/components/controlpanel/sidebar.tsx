@@ -168,7 +168,7 @@ function SidebarRoot(props: ISidebarRootProps) {
     return (
         <>
             <Box
-                hideBelow="lg"
+                hideBelow="xl"
                 pos="fixed"
                 bg="bg"
                 borderInlineEndColor="border"
@@ -183,9 +183,9 @@ function SidebarRoot(props: ISidebarRootProps) {
             </Box>
 
             <Portal>
-                <Drawer.Backdrop hideFrom="lg" />
+                <Drawer.Backdrop hideFrom="xl" />
 
-                <Drawer.Positioner hideFrom="lg">
+                <Drawer.Positioner hideFrom="xl">
                     <Drawer.CloseTrigger
                         position="fixed"
                         inset="0"

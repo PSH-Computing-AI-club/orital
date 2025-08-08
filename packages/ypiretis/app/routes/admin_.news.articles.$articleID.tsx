@@ -77,12 +77,15 @@ import {validateFormData, validateParams} from "~/guards/validation";
 import {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} from "~/utils/constants";
 import {toLocalISOString} from "~/utils/datetime";
 import {buildFormData} from "~/utils/forms";
+import {truncateTextMiddle} from "~/utils/string";
 import {buildAppURL} from "~/utils/url";
 import {number, title} from "~/utils/valibot";
 
 import type {IActionFormData as IUploadActionFormData} from "./admin_.news_.articles_.$articleID_.actions_.upload";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
+
+const FILE_NAME_MAX_LENGTH = 52;
 
 const MAX_FILE_SIZE_TEXT = format(ARTICLES_ATTACHMENTS_MAX_FILE_SIZE, {
     unitSeparator: " ",
@@ -345,6 +348,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
+function FileNameCode(props: {readonly fileName: string}) {
+    const {fileName} = props;
+
+    return <Code>{truncateTextMiddle(fileName, FILE_NAME_MAX_LENGTH)}</Code>;
+}
+
 function ContentCard() {
     const {article} = useLoaderData<typeof loader>();
 
@@ -474,7 +483,7 @@ function SettingsCardAttachmentsView() {
             displayToast({
                 status: TOAST_STATUS.warning,
                 title: "Aborted file attachment upload",
-                description: <Code>{name}</Code>,
+                description: <FileNameCode fileName={name} />,
             });
         }) satisfies IFileUploadAbortCallback,
 
@@ -490,7 +499,7 @@ function SettingsCardAttachmentsView() {
             displayToast({
                 status: TOAST_STATUS.success,
                 title: "Uploaded file as an attachment",
-                description: <Code>{name}</Code>,
+                description: <FileNameCode fileName={name} />,
             });
         }) satisfies IFileUploadCompleteCallback,
 
@@ -509,7 +518,7 @@ function SettingsCardAttachmentsView() {
                         <Code>{status}</Code>
                     </>
                 ),
-                description: <Code>{name}</Code>,
+                description: <FileNameCode fileName={name} />,
             });
         }) satisfies IFileUploadErrorCallback,
 
@@ -549,7 +558,7 @@ function SettingsCardAttachmentsView() {
                 displayToast({
                     status: TOAST_STATUS.success,
                     title: "Deleted attachment",
-                    description: <Code>{name}</Code>,
+                    description: <FileNameCode fileName={name} />,
                 });
             }) satisfies MouseEventHandler<HTMLButtonElement>;
 

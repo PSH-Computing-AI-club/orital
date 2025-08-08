@@ -22,11 +22,11 @@ import ListTile from "./list_tile";
 import type {IScrollableListAreaProps} from "./scrollable_list_area";
 import ScrollableListArea from "./scrollable_list_area";
 
-const MAX_LENGTH_FILE_NAME_LG = 28;
+const FILE_NAME_MAX_LENGTH_LG = 28;
 
-const MAX_LENGTH_FILE_NAME_XL = 36;
+const FILE_NAME_MAX_LENGTH_XL = 36;
 
-const MAX_LENGTH_FILE_NAME_2XL = 72;
+const FILE_NAME_MAX_LENGTH_2XL = 72;
 
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
@@ -132,15 +132,15 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
                 }
 
                 <ListTile.Title display={{base: "none", xlDown: "flex"}}>
-                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_LG)}
+                    {truncateTextMiddle(name, FILE_NAME_MAX_LENGTH_LG)}
                 </ListTile.Title>
 
                 <ListTile.Title display={{base: "none", xlOnly: "flex"}}>
-                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_XL)}
+                    {truncateTextMiddle(name, FILE_NAME_MAX_LENGTH_XL)}
                 </ListTile.Title>
 
                 <ListTile.Title display={{base: "none", "2xl": "flex"}}>
-                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_2XL)}
+                    {truncateTextMiddle(name, FILE_NAME_MAX_LENGTH_2XL)}
                 </ListTile.Title>
                 <ListTile.Description>{sizeText}</ListTile.Description>
             </ListTile.Header>

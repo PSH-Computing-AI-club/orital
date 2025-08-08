@@ -15,13 +15,18 @@ import useFileDrop from "~/hooks/file_drop";
 
 import {determineMimeTypeIcon} from "~/utils/mime_types";
 import {getRequestBody} from "~/utils/request";
+import {truncateTextMiddle} from "~/utils/string";
 
 import type {IListTileRootProps} from "./list_tile";
 import ListTile from "./list_tile";
 import type {IScrollableListAreaProps} from "./scrollable_list_area";
 import ScrollableListArea from "./scrollable_list_area";
 
-const MemoizedFilledDropboxItem = memo(FilledDropboxItem);
+const MAX_LENGTH_FILE_NAME_LG = 28;
+
+const MAX_LENGTH_FILE_NAME_XL = 36;
+
+const MAX_LENGTH_FILE_NAME_2XL = 72;
 
 export const STATUS_CODE_PREFLIGHT_FAILED = -1;
 
@@ -121,7 +126,22 @@ function FilledDropboxItem(props: IFilledDropboxItemProps) {
             </ListTile.Icon>
 
             <ListTile.Header>
-                <ListTile.Title>{name}</ListTile.Title>
+                {
+                    // **HACK:** This will look weird in non-two-column layouts... We
+                    // should really figure out container queries here.
+                }
+
+                <ListTile.Title display={{base: "none", xlDown: "flex"}}>
+                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_LG)}
+                </ListTile.Title>
+
+                <ListTile.Title display={{base: "none", xlOnly: "flex"}}>
+                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_XL)}
+                </ListTile.Title>
+
+                <ListTile.Title display={{base: "none", "2xl": "flex"}}>
+                    {truncateTextMiddle(name, MAX_LENGTH_FILE_NAME_2XL)}
+                </ListTile.Title>
                 <ListTile.Description>{sizeText}</ListTile.Description>
             </ListTile.Header>
 

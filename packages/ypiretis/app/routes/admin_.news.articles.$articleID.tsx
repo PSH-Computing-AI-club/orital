@@ -35,6 +35,8 @@ import {
 import {eq} from "~/.server/services/crud_service.filters";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
+import {createTransaction} from "~/.server/state/transaction";
+
 import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
@@ -160,7 +162,9 @@ export async function action(actionArgs: Route.ActionArgs) {
             const {uploadID} = actionFormData;
 
             try {
-                await deleteOneArticleAttachmentByIDs(articleID, uploadID);
+                await createTransaction(() => {
+                    return deleteOneArticleAttachmentByIDs(articleID, uploadID);
+                });
             } catch (error) {
                 if (error instanceof ReferenceError) {
                     throw data("Not Found", {

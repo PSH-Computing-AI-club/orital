@@ -8,7 +8,7 @@ import {validateMultipartFormData} from "~/.server/guards/validation";
 
 import {
     findOne,
-    handleOneAttachment,
+    handleOneAttachmentByInternalID,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
@@ -68,6 +68,6 @@ export async function action(actionArgs: Route.ActionArgs) {
     const {id: internalID} = article;
 
     await createTransaction(async () => {
-        await handleOneAttachment(internalID, user, file);
+        await handleOneAttachmentByInternalID(internalID, user, file);
     });
 }

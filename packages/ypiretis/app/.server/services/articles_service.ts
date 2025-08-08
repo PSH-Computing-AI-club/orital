@@ -70,11 +70,14 @@ export type IPublishedArticleWithPoster = _ISelectPublishedArticleWithPoster &
     IArticleMappedPosterData;
 
 export const {
-    deleteOneAttachment,
-    findAllAttachmentsByTargetID: findAllAttachmentsByID,
-    handleOneAttachment,
+    deleteOneAttachmentByInternalIDs,
+    deleteOneAttachmentByIDs,
+    findAllAttachmentsByInternalID,
+    handleOneAttachmentByInternalID,
 } = makeAttachmentsService({
-    table: ARTICLES_ATTACHMENTS_TABLE,
+    attachmentsTable: ARTICLES_ATTACHMENTS_TABLE,
+    targetTable: ARTICLES_TABLE,
+    targetIDColumn: "articleID",
 });
 
 export const {

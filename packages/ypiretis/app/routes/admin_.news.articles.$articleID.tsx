@@ -27,14 +27,12 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
-    findOne as findOneArticle,
     findOneWithPoster as findOneArticleWithPoster,
-    findAllAttachmentsByID,
-    deleteOneAttachment,
+    findAllAttachmentsByInternalID as findAllArticleAttachmentsByInternalID,
+    deleteOneAttachmentByIDs as deleteOneArticleAttachmentByIDs,
     updateOne,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
-import {findOne as findOneUpload} from "~/.server/services/uploads_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {formatZonedDateTime} from "~/.server/utils/locale";
@@ -159,32 +157,10 @@ export async function action(actionArgs: Route.ActionArgs) {
 
     switch (action) {
         case "attachment.delete": {
-            // **TODO:** This whole action could be done efficient with more
-            // streamlined interactions with the database. But, this is an
-            // admin panel interaction. We do no need to be _that_ efficient.
-
             const {uploadID} = actionFormData;
 
-            const [article, upload] = await Promise.all([
-                findOneArticle({
-                    where: eq("articleID", articleID),
-                }),
-                findOneUpload({
-                    where: eq("uploadID", uploadID),
-                }),
-            ]);
-
-            if (article === null || upload === null) {
-                throw data("Not Found", {
-                    status: 404,
-                });
-            }
-
-            const {id: internalArticleID} = article;
-            const {id: internalUploadID} = upload;
-
             try {
-                await deleteOneAttachment(internalArticleID, internalUploadID);
+                await deleteOneArticleAttachmentByIDs(articleID, uploadID);
             } catch (error) {
                 if (error instanceof ReferenceError) {
                     throw data("Not Found", {
@@ -312,18 +288,18 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     } = article;
     const {accountID, firstName, lastName} = poster;
 
-    const attachments = (await findAllAttachmentsByID(internalID)).map(
-        (upload) => {
-            const {fileName, fileSize, mimeType, uploadID} = upload;
+    const attachments = (
+        await findAllArticleAttachmentsByInternalID(internalID)
+    ).map((upload) => {
+        const {fileName, fileSize, mimeType, uploadID} = upload;
 
-            return {
-                fileName,
-                fileSize,
-                mimeType,
-                uploadID,
-            };
-        },
-    );
+        return {
+            fileName,
+            fileSize,
+            mimeType,
+            uploadID,
+        };
+    });
 
     const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
 

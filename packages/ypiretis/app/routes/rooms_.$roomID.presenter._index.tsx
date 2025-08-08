@@ -477,6 +477,7 @@ function AttendeesCardDisconnectedTab() {
 
     return (
         <TabbedDataSectionCard.Tab
+            id="disconnected-users"
             label={`Disconnected (${users.length})`}
             provider={onProvideUsers}
         />
@@ -508,6 +509,7 @@ function AttendeesCardPendingTab() {
 
     return (
         <TabbedDataSectionCard.Tab
+            id="pending-users"
             label={`Pending (${users.length})`}
             provider={onProvideUsers}
         />
@@ -556,6 +558,7 @@ function AttendeesCardActiveTab() {
 
     return (
         <TabbedDataSectionCard.Tab
+            id="active-users"
             label={`Active (${users.length})`}
             provider={onProvideUsers}
         />

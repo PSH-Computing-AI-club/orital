@@ -62,10 +62,16 @@ import type {
 import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 import ListTile from "~/components/controlpanel/list_tile";
 import Layout from "~/components/controlpanel/layout";
-import type {IChangeCallback} from "~/components/controlpanel/markdown_editor";
-import MarkdownEditor from "~/components/controlpanel/markdown_editor";
+import type {
+    IChangeCallback,
+    IEditorMode,
+} from "~/components/controlpanel/markdown_editor";
+import MarkdownEditor, {
+    EDITOR_MODE,
+} from "~/components/controlpanel/markdown_editor";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
+import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";
 import Title from "~/components/controlpanel/title";
 import {TOAST_STATUS, useToastsContext} from "~/components/controlpanel/toasts";
@@ -449,11 +455,12 @@ function ContentCard() {
         !isContentUpdateFetcherIdle || !isLiveContentDirty;
 
     return (
-        <SectionCard.Root flexGrow="1">
-            <SectionCard.Body>
-                <SectionCard.Title>
+        <TabbedDataSectionCard.Root flexGrow="1">
+            <TabbedDataSectionCard.Body>
+                <TabbedDataSectionCard.Title>
                     Content
                     <Spacer />
+                    <TabbedDataSectionCard.Tabs />
                     <Button
                         disabled={isContentUpdateDisabled}
                         colorPalette="green"
@@ -463,18 +470,33 @@ function ContentCard() {
                         Update Content
                     </Button>
                     <ArticleIcon />
-                </SectionCard.Title>
+                </TabbedDataSectionCard.Title>
 
-                <MarkdownEditor
-                    markdown={loaderContent}
-                    flexGrow="1"
-                    height="0"
-                    overflowX="hidden"
-                    overflowY="auto"
-                    onMarkdownChange={onMarkdownChange}
+                <TabbedDataSectionCard.Tab
+                    label="Rich Text"
+                    provider={() => EDITOR_MODE.richText}
                 />
-            </SectionCard.Body>
-        </SectionCard.Root>
+
+                <TabbedDataSectionCard.Tab
+                    label="Source"
+                    provider={() => EDITOR_MODE.source}
+                />
+
+                <TabbedDataSectionCard.View>
+                    {(mode: IEditorMode) => (
+                        <MarkdownEditor
+                            markdown={liveContent}
+                            mode={mode}
+                            flexGrow="1"
+                            height="0"
+                            overflowX="hidden"
+                            overflowY="auto"
+                            onMarkdownChange={onMarkdownChange}
+                        />
+                    )}
+                </TabbedDataSectionCard.View>
+            </TabbedDataSectionCard.Body>
+        </TabbedDataSectionCard.Root>
     );
 }
 

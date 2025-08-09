@@ -21,7 +21,13 @@ import {format} from "bytes";
 import type {FormEventHandler, MouseEventHandler} from "react";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {data, useFetcher, useLoaderData, useRevalidator} from "react-router";
+import {
+    data,
+    redirect,
+    useFetcher,
+    useLoaderData,
+    useRevalidator,
+} from "react-router";
 
 import * as v from "valibot";
 
@@ -71,6 +77,7 @@ import EyeClosedIcon from "~/components/icons/eye_closed_icon";
 import InfoBoxIcon from "~/components/icons/info_box_icon";
 import LinkIcon from "~/components/icons/link_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
+import TrashIcon from "~/components/icons/trash_icon";
 
 import {validateFormData, validateParams} from "~/guards/validation";
 
@@ -109,6 +116,10 @@ const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     publishedAtTimestamp: number,
 });
 
+const SELF_DELETE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.literal("self.delete"),
+});
+
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("state.update"),
 
@@ -128,6 +139,7 @@ const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     ATTACHMENT_DELETE_ACTION_FORM_DATA_SCHEMA,
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    SELF_DELETE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
     TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
@@ -223,6 +235,10 @@ export async function action(actionArgs: Route.ActionArgs) {
             }
 
             break;
+        }
+
+        case "self.delete": {
+            return redirect("/admin/news");
         }
 
         case "state.update": {
@@ -807,8 +823,13 @@ function OverviewCard() {
         article;
     const {accountID, firstName, lastName} = poster;
 
+    const deleteArticleFetcher = useFetcher();
+
     const href = `/news/articles/${articleID}`;
     const url = buildAppURL(href);
+
+    const isDeleteArticleFetcherIdle = deleteArticleFetcher.state === "idle";
+    const isDeleteArticleDisabled = !isDeleteArticleFetcherIdle;
 
     const onCopyClick = useCallback(
         (async (_event) => {
@@ -821,6 +842,44 @@ function OverviewCard() {
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
         [displayToast, url],
+    );
+
+    const onDeleteClick = useCallback(
+        (async (_event) => {
+            const response = prompt(
+                `Confirm that you want to delete this article by typing "DELETE" below`,
+            )?.toLowerCase() as "delete" | string | null;
+
+            switch (response) {
+                case "delete":
+                    await deleteArticleFetcher.submit(
+                        {
+                            action: "self.delete",
+                        } satisfies IActionFormDataSchema,
+
+                        {
+                            method: "POST",
+                        },
+                    );
+
+                    displayToast({
+                        status: TOAST_STATUS.success,
+                        title: "Deleted the article",
+                    });
+
+                    break;
+
+                default:
+                    displayToast({
+                        status: TOAST_STATUS.warning,
+                        title: "Article deletion was canceled",
+                    });
+
+                    break;
+            }
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [deleteArticleFetcher, displayToast],
     );
 
     return (
@@ -878,6 +937,16 @@ function OverviewCard() {
                         Permalink
                         <LinkIcon />
                     </a>
+                </Button>
+
+                <Button
+                    disabled={isDeleteArticleDisabled}
+                    colorPalette="red"
+                    flexGrow="1"
+                    onClick={onDeleteClick}
+                >
+                    Delete
+                    <TrashIcon />
                 </Button>
             </SectionCard.Footer>
         </SectionCard.Root>

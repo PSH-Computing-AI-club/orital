@@ -69,7 +69,6 @@ import Title from "~/components/controlpanel/title";
 import {TOAST_STATUS, useToastsContext} from "~/components/controlpanel/toasts";
 
 import ArticleIcon from "~/components/icons/article_icon";
-import CloseIcon from "~/components/icons/close_icon";
 import CopyIcon from "~/components/icons/copy_icon";
 import DownloadIcon from "~/components/icons/download_icon";
 import EyeIcon from "~/components/icons/eye_icon";
@@ -598,7 +597,7 @@ function SettingsCardAttachmentsView() {
                         colorPalette="red"
                         onClick={onDeleteClick}
                     >
-                        <CloseIcon />
+                        <TrashIcon />
                     </ListTile.IconButton>
                 </>
             );

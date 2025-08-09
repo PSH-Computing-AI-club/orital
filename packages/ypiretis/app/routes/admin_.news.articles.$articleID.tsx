@@ -34,9 +34,11 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
+    deleteOne as deleteOneArticle,
+    deleteAllAttachmentsByID as deleteAllArticleAttachmentsByID,
+    deleteOneAttachmentByIDs as deleteOneArticleAttachmentByIDs,
     findOneWithPoster as findOneArticleWithPoster,
     findAllAttachmentsByInternalID as findAllArticleAttachmentsByInternalID,
-    deleteOneAttachmentByIDs as deleteOneArticleAttachmentByIDs,
     updateOne,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
@@ -237,6 +239,24 @@ export async function action(actionArgs: Route.ActionArgs) {
         }
 
         case "self.delete": {
+            try {
+                await createTransaction(async () => {
+                    await deleteAllArticleAttachmentsByID(articleID);
+
+                    return deleteOneArticle({
+                        where: eq("articleID", articleID),
+                    });
+                });
+            } catch (error) {
+                if (error instanceof ReferenceError) {
+                    throw data("Not Found", {
+                        status: 404,
+                    });
+                }
+
+                throw error;
+            }
+
             return redirect("/admin/news");
         }
 

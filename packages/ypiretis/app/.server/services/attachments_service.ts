@@ -186,19 +186,22 @@ export default function makeAttachmentsService<
                     and(
                         eq(
                             attachmentsTable.targetID,
-                            transaction.select().from(targetTable).where(
-                                eq(
-                                    // @ts-expect-error - See note above in `deleteAllAttachmentsByID`.
-                                    targetTable[targetIDColumn],
-                                    targetID,
+                            transaction
+                                .select({id: targetTable.id})
+                                .from(targetTable)
+                                .where(
+                                    eq(
+                                        // @ts-expect-error - See note above in `deleteAllAttachmentsByID`.
+                                        targetTable[targetIDColumn],
+                                        targetID,
+                                    ),
                                 ),
-                            ),
                         ),
 
                         eq(
                             attachmentsTable.uploadID,
                             transaction
-                                .select()
+                                .select({id: UPLOADS_TABLE.id})
                                 .from(UPLOADS_TABLE)
                                 .where(eq(UPLOADS_TABLE.uploadID, uploadID)),
                         ),

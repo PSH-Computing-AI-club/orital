@@ -70,6 +70,8 @@ export type IPublishedArticleWithPoster = _ISelectPublishedArticleWithPoster &
     IArticleMappedPosterData;
 
 export const {
+    deleteAllAttachmentsByID,
+    deleteAllAttachmentsByInternalID,
     deleteOneAttachmentByIDs,
     deleteOneAttachmentByInternalIDs,
     findAllAttachmentsByID,

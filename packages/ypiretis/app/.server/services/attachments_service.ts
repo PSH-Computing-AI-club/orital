@@ -30,6 +30,10 @@ export interface IAttachmentsServiceOptions<
 }
 
 export interface IAttachmentsService {
+    deleteAllAttachmentsByID(targetID: string): Promise<void>;
+
+    deleteAllAttachmentsByInternalID(internalTargetID: number): Promise<void>;
+
     deleteOneAttachmentByInternalIDs(
         internalTargetID: number,
         internalUploadID: number,
@@ -115,6 +119,64 @@ export default function makeAttachmentsService<
             await deleteOneUpload(internalUploadID);
         },
 
+        async deleteAllAttachmentsByInternalID(
+            internalTargetID: number,
+        ): Promise<void> {
+            const transaction = useTransaction();
+
+            const attachments = await transaction
+                .delete(attachmentsTable)
+                .where(eq(attachmentsTable.targetID, internalTargetID))
+                .returning();
+
+            if (attachments.length === 0) {
+                return;
+            }
+
+            await Promise.all(
+                attachments.map((upload) => {
+                    const {uploadID: internalUploadID} = upload;
+
+                    return deleteOneUpload(internalUploadID);
+                }),
+            );
+        },
+
+        async deleteAllAttachmentsByID(targetID: string): Promise<void> {
+            const transaction = useTransaction();
+
+            const attachments = await transaction
+                .delete(attachmentsTable)
+                .where(
+                    eq(
+                        attachmentsTable.targetID,
+
+                        transaction
+                            .select({id: targetTable.id})
+                            .from(targetTable)
+                            .where(
+                                // @ts-expect-error - **HACK:** This column is
+                                // already statically checked against the table's
+                                // inferred select type.
+                                eq(targetTable[targetIDColumn], targetID),
+                            ),
+                    ),
+                )
+                .returning();
+
+            if (attachments.length === 0) {
+                return;
+            }
+
+            await Promise.all(
+                attachments.map((upload) => {
+                    const {uploadID: internalUploadID} = upload;
+
+                    return deleteOneUpload(internalUploadID);
+                }),
+            );
+        },
+
         async deleteOneAttachmentByIDs(targetID, uploadID) {
             const transaction = useTransaction();
 
@@ -124,24 +186,19 @@ export default function makeAttachmentsService<
                     and(
                         eq(
                             attachmentsTable.targetID,
-                            transaction
-                                .select({id: targetTable.id})
-                                .from(targetTable)
-                                .where(
-                                    eq(
-                                        // @ts-expect-error - **HACK:** This column is
-                                        // already statically checked against the table's
-                                        // inferred select type.
-                                        targetTable[targetIDColumn],
-                                        targetID,
-                                    ),
+                            transaction.select().from(targetTable).where(
+                                eq(
+                                    // @ts-expect-error - See note above in `deleteAllAttachmentsByID`.
+                                    targetTable[targetIDColumn],
+                                    targetID,
                                 ),
+                            ),
                         ),
 
                         eq(
                             attachmentsTable.uploadID,
                             transaction
-                                .select({id: UPLOADS_TABLE.id})
+                                .select()
                                 .from(UPLOADS_TABLE)
                                 .where(eq(UPLOADS_TABLE.uploadID, uploadID)),
                         ),
@@ -185,13 +242,10 @@ export default function makeAttachmentsService<
                 .where(
                     eq(
                         attachmentsTable.targetID,
-                        transaction
-                            .select({id: targetTable.id})
-                            .from(targetTable)
-                            .where(
-                                // @ts-expect-error - See note above in `deleteOneAttachmentByIDs`.
-                                eq(targetTable[targetIDColumn], targetID),
-                            ),
+                        transaction.select().from(targetTable).where(
+                            // @ts-expect-error - See note above in `deleteAllAttachmentsByID`.
+                            eq(targetTable[targetIDColumn], targetID),
+                        ),
                     ),
                 )
                 .innerJoin(
@@ -205,10 +259,10 @@ export default function makeAttachmentsService<
             const transaction = useTransaction();
 
             const [firstTarget] = await transaction
-                .select({id: targetTable.id})
+                .select()
                 .from(targetTable)
                 .where(
-                    // @ts-expect-error - See note above in `deleteOneAttachmentByIDs`.
+                    // @ts-expect-error - See note above in `deleteAllAttachmentsByID`.
                     eq(targetTable[targetIDColumn], targetID),
                 )
                 .limit(1);

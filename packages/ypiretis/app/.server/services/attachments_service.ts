@@ -94,31 +94,6 @@ export default function makeAttachmentsService<
     return {
         handleOneAttachmentByInternalID,
 
-        async deleteOneAttachmentByInternalIDs(
-            internalTargetID,
-            internalUploadID,
-        ) {
-            const transaction = useTransaction();
-
-            const attachments = await transaction
-                .delete(attachmentsTable)
-                .where(
-                    and(
-                        eq(attachmentsTable.targetID, internalTargetID),
-                        eq(attachmentsTable.uploadID, internalUploadID),
-                    ),
-                )
-                .returning();
-
-            if (attachments.length === 0) {
-                throw ReferenceError(
-                    `bad argument #0 or #1 to 'IAttachmentsService.deleteOneAttachmentByInternalIDs' (internal target ID '${internalTargetID}' or internal upload ID '${internalUploadID}' was not found)`,
-                );
-            }
-
-            await deleteOneUpload(internalUploadID);
-        },
-
         async deleteAllAttachmentsByInternalID(
             internalTargetID: number,
         ): Promise<void> {
@@ -175,6 +150,31 @@ export default function makeAttachmentsService<
                     return deleteOneUpload(internalUploadID);
                 }),
             );
+        },
+
+        async deleteOneAttachmentByInternalIDs(
+            internalTargetID,
+            internalUploadID,
+        ) {
+            const transaction = useTransaction();
+
+            const attachments = await transaction
+                .delete(attachmentsTable)
+                .where(
+                    and(
+                        eq(attachmentsTable.targetID, internalTargetID),
+                        eq(attachmentsTable.uploadID, internalUploadID),
+                    ),
+                )
+                .returning();
+
+            if (attachments.length === 0) {
+                throw ReferenceError(
+                    `bad argument #0 or #1 to 'IAttachmentsService.deleteOneAttachmentByInternalIDs' (internal target ID '${internalTargetID}' or internal upload ID '${internalUploadID}' was not found)`,
+                );
+            }
+
+            await deleteOneUpload(internalUploadID);
         },
 
         async deleteOneAttachmentByIDs(targetID, uploadID) {

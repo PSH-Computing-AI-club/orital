@@ -28,8 +28,8 @@ import {
     toolbarPlugin,
 } from "@mdxeditor/editor";
 
-import type {IProseProps} from "./prose";
-import Prose from "./prose";
+import type {IProseProps} from "~/components/common/prose";
+import Prose from "~/components/common/prose";
 
 import "@mdxeditor/editor/style.css";
 import "~/styles/markdown-editor.css";

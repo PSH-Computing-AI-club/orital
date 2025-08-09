@@ -51,9 +51,6 @@ import {formatZonedDateTime} from "~/.server/utils/locale";
 import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
 
-import type {IChangeCallback} from "~/components/common/markdown_editor";
-import MarkdownEditor from "~/components/common/markdown_editor";
-
 import type {
     IFileUploadAbortCallback,
     IFileUploadCallback,
@@ -65,6 +62,8 @@ import type {
 import FileUploadDropbox from "~/components/controlpanel/file_upload_dropbox";
 import ListTile from "~/components/controlpanel/list_tile";
 import Layout from "~/components/controlpanel/layout";
+import type {IChangeCallback} from "~/components/controlpanel/markdown_editor";
+import MarkdownEditor from "~/components/controlpanel/markdown_editor";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedSectionCard from "~/components/controlpanel/tabbed_section_card";

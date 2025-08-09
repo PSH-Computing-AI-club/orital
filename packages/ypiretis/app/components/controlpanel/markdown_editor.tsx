@@ -1,4 +1,10 @@
-import type {MDXEditorProps, ToMarkdownOptions} from "@mdxeditor/editor";
+import {Box} from "@chakra-ui/react";
+
+import type {
+    MDXEditorProps,
+    RealmPlugin,
+    ToMarkdownOptions,
+} from "@mdxeditor/editor";
 import {
     BlockTypeSelect,
     BoldItalicUnderlineToggles,
@@ -16,6 +22,7 @@ import {
     UndoRedo,
     codeBlockPlugin,
     codeMirrorPlugin,
+    diffSourcePlugin,
     headingsPlugin,
     imagePlugin,
     linkDialogPlugin,
@@ -27,6 +34,8 @@ import {
     thematicBreakPlugin,
     toolbarPlugin,
 } from "@mdxeditor/editor";
+
+import {useMemo} from "react";
 
 import type {IProseProps} from "~/components/common/prose";
 import Prose from "~/components/common/prose";
@@ -107,53 +116,117 @@ const TOOLBAR_PLUGIN_CONTENTS = (() => {
     undefined
 >["toolbarContents"];
 
+export const EDITOR_MODE = {
+    richText: "MODE_RICH_TEXT",
+
+    source: "MODE_SOURCE",
+} as const;
+
 export type IChangeCallback = MDXEditorProps["onChange"];
+
+export type IEditorMode = (typeof EDITOR_MODE)[keyof typeof EDITOR_MODE];
 
 export interface IMarkdownEditorProps extends IProseProps {
     readonly markdown?: string;
 
+    readonly mode?: IEditorMode;
+
     readonly onMarkdownChange?: IChangeCallback;
 }
 
-export default function MarkdownEditor(props: IMarkdownEditorProps) {
-    const {markdown = "", onMarkdownChange, ...rest} = props;
+function determineEditorPlugins(mode: IEditorMode): RealmPlugin[] {
+    switch (mode) {
+        case EDITOR_MODE.richText:
+            return [
+                codeBlockPlugin(CODE_BLOCK_PLUGIN_OPTIONS),
+                codeMirrorPlugin(CODE_MIRROR_PLUGIN_OPTIONS),
+                headingsPlugin(HEADINGS_PLUGIN_OPTIONS),
+                linkPlugin(),
+                linkDialogPlugin(),
+                listsPlugin(),
+                quotePlugin(),
 
-    return (
+                imagePlugin({
+                    disableImageResize: true,
+                }),
+
+                tablePlugin(),
+                thematicBreakPlugin(),
+                markdownShortcutPlugin(),
+
+                toolbarPlugin({
+                    toolbarClassName: "markdown-editor--toolbar",
+                    toolbarContents: TOOLBAR_PLUGIN_CONTENTS,
+                }),
+            ];
+
+        case EDITOR_MODE.source:
+            return [
+                diffSourcePlugin({
+                    viewMode: "source",
+                }),
+
+                codeBlockPlugin(CODE_BLOCK_PLUGIN_OPTIONS),
+                codeMirrorPlugin(CODE_MIRROR_PLUGIN_OPTIONS),
+                headingsPlugin(HEADINGS_PLUGIN_OPTIONS),
+                linkPlugin(),
+                linkDialogPlugin(),
+                listsPlugin(),
+                quotePlugin(),
+
+                imagePlugin({
+                    disableImageResize: true,
+                }),
+
+                tablePlugin(),
+                thematicBreakPlugin(),
+                markdownShortcutPlugin(),
+            ];
+    }
+}
+
+export default function MarkdownEditor(props: IMarkdownEditorProps) {
+    const {
+        markdown = "",
+        mode = EDITOR_MODE.richText,
+        onMarkdownChange,
+        ...rest
+    } = props;
+
+    const plugins = useMemo(() => {
+        return determineEditorPlugins(mode);
+    }, [mode]);
+
+    const editor = (
+        <MDXEditor
+            className="markdown-editor"
+            contentEditableClassName="markdown-editor--content-editable"
+            markdown={markdown}
+            toMarkdownOptions={TO_MARKDOWN_OPTIONS}
+            plugins={plugins}
+            onChange={onMarkdownChange}
+        />
+    );
+
+    return mode === EDITOR_MODE.richText ? (
         <Prose
             borderColor="border"
             borderStyle="solid"
             borderWidth="thin"
             {...rest}
         >
-            <MDXEditor
-                className="markdown-editor"
-                contentEditableClassName="markdown-editor--content-editable"
-                markdown={markdown}
-                toMarkdownOptions={TO_MARKDOWN_OPTIONS}
-                plugins={[
-                    codeBlockPlugin(CODE_BLOCK_PLUGIN_OPTIONS),
-                    codeMirrorPlugin(CODE_MIRROR_PLUGIN_OPTIONS),
-                    headingsPlugin(HEADINGS_PLUGIN_OPTIONS),
-                    linkPlugin(),
-                    linkDialogPlugin(),
-                    listsPlugin(),
-                    quotePlugin(),
-
-                    imagePlugin({
-                        disableImageResize: true,
-                    }),
-
-                    tablePlugin(),
-                    thematicBreakPlugin(),
-                    markdownShortcutPlugin(),
-
-                    toolbarPlugin({
-                        toolbarClassName: "markdown-editor--toolbar",
-                        toolbarContents: TOOLBAR_PLUGIN_CONTENTS,
-                    }),
-                ]}
-                onChange={onMarkdownChange}
-            />
+            {editor}
         </Prose>
+    ) : (
+        <Box
+            contain="size"
+            flexGrow="1"
+            borderColor="border"
+            borderStyle="solid"
+            borderWidth="thin"
+            overflow="auto"
+        >
+            {editor}
+        </Box>
     );
 }

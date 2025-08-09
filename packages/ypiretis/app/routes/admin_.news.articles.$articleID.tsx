@@ -42,6 +42,7 @@ import {
     updateOne,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
+import {formatMarkdown} from "~/.server/services/markdown";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import {createTransaction} from "~/.server/state/transaction";
@@ -196,13 +197,15 @@ export async function action(actionArgs: Route.ActionArgs) {
         }
 
         case "content.update": {
-            const {content} = actionFormData;
+            const {content: unformattedContent} = actionFormData;
+
+            const formattedContent = await formatMarkdown(unformattedContent);
 
             const article = await updateOne({
                 where: eq("articleID", articleID),
 
                 values: {
-                    content,
+                    content: formattedContent,
                 },
             });
 

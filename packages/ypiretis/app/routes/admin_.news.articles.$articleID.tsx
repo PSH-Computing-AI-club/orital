@@ -944,14 +944,21 @@ function OverviewCard() {
                 </DataList.Root>
             </SectionCard.Body>
 
-            <SectionCard.Footer
-                visibility={state === "STATE_PUBLISHED" ? "visible" : "hidden"}
-            >
-                <IconButton colorPalette="green" onClick={onCopyClick}>
+            <SectionCard.Footer>
+                <IconButton
+                    colorPalette="green"
+                    display={state === "STATE_PUBLISHED" ? undefined : "none"}
+                    onClick={onCopyClick}
+                >
                     <CopyIcon />
                 </IconButton>
 
-                <Button colorPalette="blue" flexGrow="1" asChild>
+                <Button
+                    colorPalette="blue"
+                    flexGrow="1"
+                    display={state === "STATE_PUBLISHED" ? undefined : "none"}
+                    asChild
+                >
                     <a href={href}>
                         Permalink
                         <LinkIcon />

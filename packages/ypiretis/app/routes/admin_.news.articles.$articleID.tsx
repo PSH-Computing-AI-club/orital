@@ -398,6 +398,8 @@ function ContentCard() {
     const {content: loaderContent} = article;
 
     const contentUpdateFetcher = useFetcher();
+    const [isLiveContentDirty, setIsLiveContentDirty] =
+        useState<boolean>(false);
     const [liveContent, setLiveContent] = useState<string>(loaderContent);
     const {displayToast} = useToastsContext();
 
@@ -414,13 +416,19 @@ function ContentCard() {
                 },
             );
 
+            setIsLiveContentDirty(false);
             displayToast({
                 status: TOAST_STATUS.success,
                 title: "Updated article's content",
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [contentUpdateFetcher, liveContent, displayToast],
+        [
+            contentUpdateFetcher,
+            displayToast,
+            liveContent,
+            setIsLiveContentDirty,
+        ],
     );
 
     const onMarkdownChange = useCallback(
@@ -430,12 +438,12 @@ function ContentCard() {
             }
 
             setLiveContent(markdown);
+            setIsLiveContentDirty(true);
         }) satisfies IChangeCallback,
 
-        [setLiveContent],
+        [setIsLiveContentDirty, setLiveContent],
     );
 
-    const isLiveContentDirty = liveContent !== loaderContent;
     const isContentUpdateFetcherIdle = contentUpdateFetcher.state === "idle";
 
     const isContentUpdateDisabled =

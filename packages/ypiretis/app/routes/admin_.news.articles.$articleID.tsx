@@ -781,14 +781,6 @@ function SettingsCardPublishingView() {
     );
 }
 
-function SettingsCardActionsView() {
-    return (
-        <TabbedSectionCard.View label="Actions">
-            settings card actions view unda construction
-        </TabbedSectionCard.View>
-    );
-}
-
 function SettingsCard() {
     return (
         <TabbedSectionCard.Root flexGrow="1">
@@ -800,7 +792,6 @@ function SettingsCard() {
                     <SlidersIcon />
                 </TabbedSectionCard.Title>
 
-                <SettingsCardActionsView />
                 <SettingsCardPublishingView />
                 <SettingsCardAttachmentsView />
             </TabbedSectionCard.Body>

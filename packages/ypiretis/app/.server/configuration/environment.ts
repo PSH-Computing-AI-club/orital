@@ -20,6 +20,7 @@ import {
     duration,
     hostname,
     filePath,
+    secret,
 } from "../utils/valibot";
 
 export const LOGGING_LEVELS = {
@@ -74,7 +75,7 @@ export const ENVIRONMENT_SCHEMA = v.object({
     SMTP_PORT: number,
 
     SMTP_EMAIL: email,
-    SMTP_PASSWORD: v.string(),
+    SMTP_PASSWORD: v.pipe(v.string(), secret()),
 
     APP_NAME: v.optional(
         v.pipe(v.string(), v.nonEmpty(), v.maxLength(32)),

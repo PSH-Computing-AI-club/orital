@@ -12,7 +12,7 @@ const MAILER = createTransport({
 
     auth: {
         user: SMTP_EMAIL,
-        pass: SMTP_PASSWORD,
+        pass: SMTP_PASSWORD.expose(),
     },
 });
 

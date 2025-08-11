@@ -113,7 +113,6 @@ export const ENVIRONMENT_SCHEMA = v.object({
 
     GITHUB_ORGANIZATION_IDENTIFIER: identifier,
 });
-
 export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;
 
 export type IEnvironmentParsed = v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
@@ -124,24 +123,34 @@ export type ILoggingLevels =
 export type INodeEnvironmentModes =
     (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
 
-let ENVIRONMENT: v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
+const {
+    issues,
+    output: ENVIRONMENT,
+    success,
+} = v.safeParse(ENVIRONMENT_SCHEMA, process.env);
 
-try {
-    ENVIRONMENT = v.parse(ENVIRONMENT_SCHEMA, process.env);
-} catch (error) {
+if (!success) {
     console.error(
         "An error occurred while processing the environment variables:",
     );
 
-    if (error instanceof Error) {
-        const {message} = error;
+    for (const issue of issues) {
+        const {expected, path, message} = issue;
 
-        console.error(message);
-    } else {
-        console.error((error as any).toString());
+        const key = path
+            ? path
+                  .map((pathItem) => {
+                      const {key} = pathItem;
+
+                      return key;
+                  })
+                  .join(".")
+            : expected;
+
+        console.error(`${key}: ${message}`);
     }
 
     exit(1);
 }
 
-export default ENVIRONMENT;
+export default ENVIRONMENT as IEnvironmentParsed;

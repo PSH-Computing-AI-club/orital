@@ -34,6 +34,9 @@ jobs:
             - name: Install Dependencies
               run: bun run deps:cache
 
+            - name: Generate React Router Types
+              run: bun run types:generate:react-router
+
             - name: Check Format
               run: bun run check:format
 

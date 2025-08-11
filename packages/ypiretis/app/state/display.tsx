@@ -67,6 +67,7 @@ function useMessageHandler(
                     break;
             }
         },
+
         [navigate],
     );
 }
@@ -132,9 +133,17 @@ function useMessageReducer(
                     state,
                 };
             }
-        }
 
-        return context;
+            default:
+                // **HACK:** `useMessageReducer` will receive actions that do not mutate
+                // client state. That is, actions that are handled by `useMessageHandler`.
+                // In that case, `useMessageReducer` will no-op those actions.
+                //
+                // This allows `useMessageReducer` to remain a simple switch-case and not
+                // have to worry about maining a constant global to differentiate between
+                // mutation actions and command actions.
+                return context;
+        }
     }, initialContextData);
 }
 

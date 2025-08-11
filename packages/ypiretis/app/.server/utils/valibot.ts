@@ -11,6 +11,7 @@ import {CronPattern} from "croner";
 import * as v from "valibot";
 
 import {IS_WINDOWS} from "./platform";
+import type {ISecret} from "./secret";
 import makeSecret from "./secret";
 
 const PROCESS_CWD = cwd();
@@ -113,13 +114,6 @@ export const cronExpression = v.pipe(
     }, "Invalid cron expression format."),
 );
 
-export const cryptographicKey = v.pipe(
-    v.string(),
-    v.nonEmpty(),
-    v.minBytes(32),
-    v.transform((value) => makeSecret(value)),
-);
-
 export const domain = v.pipe(
     v.string(),
     v.nonEmpty(),
@@ -163,9 +157,19 @@ export const filePath = v.pipe(
 
 export const localhost = v.literal("localhost");
 
+export const secret = <T>() =>
+    v.transform<T, ISecret<T>>((value) => makeSecret(value));
+
 export const slug = v.pipe(v.string(), v.nonEmpty(), v.slug());
 
 export const ulid = v.pipe(v.string(), v.nonEmpty(), v.ulid());
+
+export const cryptographicKey = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.minBytes(32),
+    secret(),
+);
 
 export const hostname = v.union(
     [localhost, domain, ipAddress],

@@ -109,7 +109,7 @@ export const ENVIRONMENT_SCHEMA = v.object({
 
     DISCORD_INVITE_CODE: alphanumerical,
 
-    ENGAGE_ORGANIZATION_IDENTIFIER: identifier,
+    DISCOVER_EAST_ORGANIZATION_IDENTIFIER: identifier,
 
     GITHUB_ORGANIZATION_IDENTIFIER: identifier,
 });

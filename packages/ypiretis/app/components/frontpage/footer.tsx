@@ -30,8 +30,8 @@ function FooterClubLinks() {
     return (
         <>
             <li>
-                <Links.InternalLink to="/engage" isNewTab>
-                    Engage
+                <Links.InternalLink to="/discover-east" isNewTab>
+                    Discover East
                 </Links.InternalLink>
             </li>
 

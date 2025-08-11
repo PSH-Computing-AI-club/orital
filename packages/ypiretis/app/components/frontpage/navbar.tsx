@@ -54,8 +54,8 @@ function NavbarLeftActions() {
 function NavbarRightActions() {
     return (
         <>
-            <Links.InternalLink to="/engage" isNewTab>
-                Engage
+            <Links.InternalLink to="/discover-east" isNewTab>
+                Discover East
             </Links.InternalLink>
 
             <Links.InternalLink to="/discord" isNewTab>

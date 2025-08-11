@@ -2,13 +2,13 @@ import {redirect} from "react-router";
 
 import ENVIRONMENT from "~/.server/configuration/environment";
 
-const {ENGAGE_ORGANIZATION_IDENTIFIER} = ENVIRONMENT;
+const {DISCOVER_EAST_ORGANIZATION_IDENTIFIER} = ENVIRONMENT;
 
-const ENGAGE_ORGANIZATION_URL = new URL(
-    ENGAGE_ORGANIZATION_IDENTIFIER,
-    "https://psuharrisburg.campuslabs.com/engage/organization/",
+const DISCOVER_EAST_ORGANIZATION_URL = new URL(
+    DISCOVER_EAST_ORGANIZATION_IDENTIFIER,
+    "https://discovereast.psu.edu/organization/",
 );
 
 export async function loader() {
-    return redirect(ENGAGE_ORGANIZATION_URL.toString());
+    return redirect(DISCOVER_EAST_ORGANIZATION_URL.toString());
 }

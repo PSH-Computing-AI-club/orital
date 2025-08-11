@@ -22,14 +22,6 @@ import {
     filePath,
 } from "../utils/valibot";
 
-export const NODE_ENVIRONMENT_MODES = {
-    development: "development",
-
-    production: "production",
-
-    test: "test",
-} as const;
-
 export const LOGGING_LEVELS = {
     debug: "debug",
 
@@ -42,6 +34,14 @@ export const LOGGING_LEVELS = {
     trace: "trace",
 
     warn: "warn",
+} as const;
+
+export const NODE_ENVIRONMENT_MODES = {
+    development: "development",
+
+    production: "production",
+
+    test: "test",
 } as const;
 
 export const ENVIRONMENT_SCHEMA = v.object({
@@ -104,6 +104,12 @@ export const ENVIRONMENT_SCHEMA = v.object({
 export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;
 
 export type IEnvironmentParsed = v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
+
+export type ILoggingLevels =
+    (typeof LOGGING_LEVELS)[keyof typeof LOGGING_LEVELS];
+
+export type INodeEnvironmentModes =
+    (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
 
 let ENVIRONMENT: v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
 

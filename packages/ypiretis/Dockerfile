@@ -1,21 +1,26 @@
-FROM node:20-alpine AS development-dependencies-env
-
-COPY . /app
+FROM oven/bun:1.2.20-alpine AS development-dependencies-env
 
 WORKDIR /app
+
+COPY ./bun.lock ./package.json ./
+COPY ./packages/ ./packages/
+
 RUN bun install --frozen-lockfile
 
-FROM node:20-alpine AS production-dependencies-env
-
-COPY ./package.json package-lock.json /app/
+FROM oven/bun:1.2.20-alpine AS production-dependencies-env
 
 WORKDIR /app
+
+COPY ./bun.lock ./package.json ./
+COPY ./packages/ ./packages/
+
 RUN bun install --production --frozen-lockfile
 
-FROM node:20-alpine AS build-env
+FROM oven/bun:1.2.20-alpine AS build-env
 
-COPY . /app/
-COPY --from=development-dependencies-env /app/node_modules /app/node_modules
+WORKDIR /app
+
+COPY --from=development-dependencies-env /app/ .
 
 ARG ACCOUNT_PROVIDER_DOMAIN
 ENV ACCOUNT_PROVIDER_DOMAIN=${ACCOUNT_PROVIDER_DOMAIN}
@@ -47,17 +52,16 @@ ENV SERVER_PORT=${SERVER_PORT}
 ARG UPLOADS_MAX_FILE_SIZE
 ENV UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
 
-WORKDIR /app
-RUN bun run app:build
+RUN bun run --cwd ./packages/ypiretis app:build
 
-FROM node:20-alpine
-
-COPY ./package.json package-lock.json server.js /app/
-COPY --from=production-dependencies-env /app/node_modules /app/node_modules
-COPY --from=build-env /app/build /app/build
-
-ARG SERVER_HOST
+FROM oven/bun:1.2.20-alpine
 
 WORKDIR /app
+
+COPY --from=production-dependencies-env /app/ ./
+COPY --from=build-env /app/packages/ypiretis/build/ ./packages/ypiretis/build/
+
+ARG SERVER_PORT=3333
 EXPOSE ${SERVER_PORT}
-CMD ["bun", "app:run", "start"]
+
+CMD ["bun", "run", "--cwd", "./packages/ypiretis", "app:start"]

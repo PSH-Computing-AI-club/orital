@@ -62,9 +62,9 @@ export const ENVIRONMENT_SCHEMA = v.object({
     SECRET_KEY: cryptographicKey,
     SECRET_SALT: cryptographicKey,
 
-    DATABASE_FILE_PATH: v.optional(filePath, "./tmp/userdata.sqlite"),
+    DATABASE_FILE_PATH: v.optional(filePath, "./data/database/db.sqlite"),
 
-    UPLOADS_DIRECTORY_PATH: v.optional(directoryPath, "./tmp/uploads"),
+    UPLOADS_DIRECTORY_PATH: v.optional(directoryPath, "./data/uploads"),
     UPLOADS_MAX_FILE_SIZE: v.optional(byteSize, "5MB"),
 
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: v.optional(byteSize, "5MB"),

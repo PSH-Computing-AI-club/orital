@@ -9,7 +9,7 @@ import PACKAGE from "./package.json";
 
 import BUILDTIME_ENVIRONMENT from "./app/.server/configuration/buildtime_environment";
 
-import TSCONFIG_VITE from "./tsconfig.json";
+import TSCONFIG from "./tsconfig.json";
 
 const {
     ACCOUNT_PROVIDER_DOMAIN,
@@ -31,7 +31,7 @@ export default defineConfig((config) => {
 
     return {
         build: {
-            target: TSCONFIG_VITE.compilerOptions.target,
+            target: TSCONFIG.compilerOptions.target,
 
             rollupOptions: isSsrBuild
                 ? {

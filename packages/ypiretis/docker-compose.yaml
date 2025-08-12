@@ -4,7 +4,7 @@ volumes:
     data:
 
 services:
-    oritalYpiretis:
+    orital-ypiretis:
         container_name: orital-ypiretis
 
         build:
@@ -67,7 +67,7 @@ services:
             - UPLOADS_DIRECTORY_PATH=./data/uploads
             - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
 
-    caddyProxy:
+    caddy-proxy:
         container_name: caddy-proxy
         image: caddy:2.10.0-alpine
 
@@ -79,8 +79,8 @@ services:
             - ./Caddyfile:/etc/caddy/Caddyfile
 
         depends_on:
-            - oritalYpiretis
+            - orital-ypiretis
 
         environment:
-            - PROXIED_SERVER_HOST=oritalYpiretis
+            - PROXIED_SERVER_HOST=orital-ypiretis
             - PROXIED_SERVER_PORT=${SERVER_PORT}

@@ -7,7 +7,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 import PACKAGE from "./package.json";
 
-import ENVIRONMENT from "./app/.server/configuration/environment";
+import BUILDTIME_ENVIRONMENT from "./app/.server/configuration/buildtime_environment";
 
 import TSCONFIG_VITE from "./tsconfig.json";
 
@@ -22,7 +22,7 @@ const {
     SERVER_HOST,
     SERVER_PORT,
     UPLOADS_MAX_FILE_SIZE,
-} = ENVIRONMENT;
+} = BUILDTIME_ENVIRONMENT;
 
 const {name: PACKAGE_NAME, version: PACKAGE_VERSION} = PACKAGE;
 

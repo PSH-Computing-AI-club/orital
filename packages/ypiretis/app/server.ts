@@ -1,11 +1,11 @@
 import {createHonoServer} from "react-router-hono-server/bun";
 
-import ENVIRONMENT from "~/.server/configuration/environment";
+import BUILDTIME_ENVIRONMENT from "~/.server/configuration/buildtime_environment";
 
 import type {IWSEvents, IWebSocketContext} from "./.server/state/web_socket";
 import {WEBSOCKET_CONTEXT} from "./.server/state/web_socket";
 
-const {SERVER_PORT} = ENVIRONMENT;
+const {SERVER_PORT} = BUILDTIME_ENVIRONMENT;
 
 export default await createHonoServer({
     port: SERVER_PORT,

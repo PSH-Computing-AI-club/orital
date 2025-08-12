@@ -6,15 +6,12 @@ import {
     identifier,
     identifierList,
     number,
-    url,
 } from "../../utils/valibot";
 
 import {parseEnvironment} from "../utils/environment";
 import {
-    byteSize,
     cronExpression,
     cryptographicKey,
-    domain,
     directoryPath,
     duration,
     hostname,
@@ -36,27 +33,11 @@ export const LOGGING_LEVELS = {
     warn: "warn",
 } as const;
 
-export const NODE_ENVIRONMENT_MODES = {
-    development: "development",
-
-    production: "production",
-
-    test: "test",
-} as const;
-
-export const ENVIRONMENT_SCHEMA = v.object({
-    NODE_ENV: v.optional(
-        v.enum(NODE_ENVIRONMENT_MODES),
-        NODE_ENVIRONMENT_MODES.development,
-    ),
-
+export const RUNTIME_ENVIRONMENT_SCHEMA = v.object({
     SERVER_LOGGING_LEVEL: v.optional(
         v.enum(LOGGING_LEVELS),
         LOGGING_LEVELS.info,
     ),
-
-    SERVER_HOST: v.optional(hostname, "localhost"),
-    SERVER_PORT: v.optional(number, "3333"),
 
     SECRET_KEY: cryptographicKey,
     SECRET_SALT: cryptographicKey,
@@ -64,26 +45,12 @@ export const ENVIRONMENT_SCHEMA = v.object({
     DATABASE_FILE_PATH: v.optional(filePath, "./data/database/db.sqlite"),
 
     UPLOADS_DIRECTORY_PATH: v.optional(directoryPath, "./data/uploads"),
-    UPLOADS_MAX_FILE_SIZE: v.optional(byteSize, "5MB"),
-
-    ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: v.optional(byteSize, "5MB"),
-
-    EVENTS_ATTACHMENTS_MAX_FILE_SIZE: v.optional(byteSize, "5MB"),
 
     SMTP_HOST: hostname,
     SMTP_PORT: number,
 
     SMTP_EMAIL: email,
     SMTP_PASSWORD: v.pipe(v.string(), secret()),
-
-    APP_NAME: v.optional(
-        v.pipe(v.string(), v.nonEmpty(), v.maxLength(32)),
-        "Orital Ypiretis",
-    ),
-    APP_URL: v.optional(url, "http://localhost:3333"),
-
-    ACCOUNT_PROVIDER_DOMAIN: domain,
-    ACCOUNT_PROVIDER_NAME: v.pipe(v.string(), v.nonEmpty(), v.maxLength(64)),
 
     ACCOUNT_ADMIN_IDENTIFIERS: identifierList,
 
@@ -112,15 +79,16 @@ export const ENVIRONMENT_SCHEMA = v.object({
 
     GITHUB_ORGANIZATION_IDENTIFIER: identifier,
 });
-export type IEnvironmentSchema = v.InferInput<typeof ENVIRONMENT_SCHEMA>;
+export type IRuntimeEnvironmentSchema = v.InferInput<
+    typeof RUNTIME_ENVIRONMENT_SCHEMA
+>;
 
-export type IEnvironmentParsed = v.InferOutput<typeof ENVIRONMENT_SCHEMA>;
+export type IRuntimeEnvironmentParsed = v.InferOutput<
+    typeof RUNTIME_ENVIRONMENT_SCHEMA
+>;
 
 export type ILoggingLevels =
     (typeof LOGGING_LEVELS)[keyof typeof LOGGING_LEVELS];
 
-export type INodeEnvironmentModes =
-    (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
-
-const ENVIRONMENT = parseEnvironment(ENVIRONMENT_SCHEMA);
-export default ENVIRONMENT;
+const RUNTIME_ENVIRONMENT = parseEnvironment(RUNTIME_ENVIRONMENT_SCHEMA);
+export default RUNTIME_ENVIRONMENT;

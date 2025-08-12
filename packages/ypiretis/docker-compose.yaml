@@ -1,10 +1,16 @@
 version: "3"
+
+volumes:
+    data:
+
 services:
     oritalYpiretis:
         container_name: orital-ypiretis
+
         build:
             context: ../..
             dockerfile: ./packages/ypiretis/Dockerfile
+
             args:
                 # **NOTE:** All environment variables below are passed to the underlying
                 # `Dockerfile` as arguments for the image build step. These environment
@@ -21,6 +27,10 @@ services:
                 - SERVER_HOST=0.0.0.0
                 - SERVER_PORT=${SERVER_PORT}
                 - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
+
+        volumes:
+            - data:/app/packages/ypiretis/data
+
         environment:
             - ACCOUNT_ADMIN_IDENTIFIERS=${ACCOUNT_ADMIN_IDENTIFIERS}
             - ACCOUNT_PROVIDER_DOMAIN=${ACCOUNT_PROVIDER_DOMAIN}
@@ -31,7 +41,7 @@ services:
             - CRONJOB_ROOMS_DISCONNECT_CLEANUP=${CRONJOB_ROOMS_DISCONNECT_CLEANUP}
             - CRONJOB_ROOMS_LIFETIME_CLEANUP=${CRONJOB_ROOMS_LIFETIME_CLEANUP}
             - CRONJOB_TOKENS_CLEANUP=${CRONJOB_TOKENS_CLEANUP}
-            - DATABASE_FILE_PATH=${DATABASE_FILE_PATH}
+            - DATABASE_FILE_PATH=./data/database/db.sqlite
             - DISCORD_INVITE_CODE=${DISCORD_INVITE_CODE}
             - DISCOVER_EAST_ORGANIZATION_IDENTIFIER=${DISCOVER_EAST_ORGANIZATION_IDENTIFIER}
             - EVENTS_ATTACHMENTS_MAX_FILE_SIZE=${EVENTS_ATTACHMENTS_MAX_FILE_SIZE}
@@ -54,19 +64,23 @@ services:
             - TOKEN_CALLBACK_TTL=${TOKEN_CALLBACK_TTL}
             - TOKEN_CONSENT_TTL=${TOKEN_CONSENT_TTL}
             - TOKEN_GRANT_TTL=${TOKEN_GRANT_TTL}
-            - UPLOADS_DIRECTORY_PATH=${UPLOADS_DIRECTORY_PATH}
+            - UPLOADS_DIRECTORY_PATH=./data/uploads
             - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
 
     caddyProxy:
         container_name: caddy-proxy
         image: caddy:2.10.0-alpine
+
         ports:
             - "80:80"
             - "443:443"
+
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
+
         depends_on:
             - oritalYpiretis
+
         environment:
             - PROXIED_SERVER_HOST=oritalYpiretis
             - PROXIED_SERVER_PORT=${SERVER_PORT}

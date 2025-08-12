@@ -1,5 +1,3 @@
-import {exit} from "node:process";
-
 import * as v from "valibot";
 
 import {
@@ -11,6 +9,7 @@ import {
     url,
 } from "../../utils/valibot";
 
+import {parseEnvironment} from "../utils/environment";
 import {
     byteSize,
     cronExpression,
@@ -123,34 +122,5 @@ export type ILoggingLevels =
 export type INodeEnvironmentModes =
     (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
 
-const {
-    issues,
-    output: ENVIRONMENT,
-    success,
-} = v.safeParse(ENVIRONMENT_SCHEMA, process.env);
-
-if (!success) {
-    console.error(
-        "An error occurred while processing the environment variables:",
-    );
-
-    for (const issue of issues) {
-        const {expected, path, message} = issue;
-
-        const key = path
-            ? path
-                  .map((pathItem) => {
-                      const {key} = pathItem;
-
-                      return key;
-                  })
-                  .join(".")
-            : expected;
-
-        console.error(`${key}: ${message}`);
-    }
-
-    exit(1);
-}
-
-export default ENVIRONMENT as IEnvironmentParsed;
+const ENVIRONMENT = parseEnvironment(ENVIRONMENT_SCHEMA);
+export default ENVIRONMENT;

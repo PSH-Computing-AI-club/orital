@@ -1,3 +1,3 @@
-http://{$CADDY_HOST} {
+http://:{$SERVER_PORT} {
     reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT}
 }

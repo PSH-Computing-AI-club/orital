@@ -3,7 +3,8 @@ services:
     oritalYpiretis:
         container_name: orital-ypiretis
         build:
-            context: .
+            context: ../..
+            dockerfile: ./packages/ypiretis/Dockerfile
             args:
                 # **NOTE:** All environment variables below are passed to the underlying
                 # `Dockerfile` as arguments for the image build step. These environment

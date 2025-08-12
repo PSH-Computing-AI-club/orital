@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.20-alpine AS development-dependencies-env
+FROM oven/bun:1.2.20-alpine AS development-dependencies-environment
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY ./packages/ ./packages/
 
 RUN bun install --frozen-lockfile
 
-FROM oven/bun:1.2.20-alpine AS production-dependencies-env
+FROM oven/bun:1.2.20-alpine AS production-dependencies-environment
 
 WORKDIR /app
 
@@ -16,11 +16,11 @@ COPY ./packages/ ./packages/
 
 RUN bun install --production --frozen-lockfile
 
-FROM oven/bun:1.2.20-alpine AS build-env
+FROM oven/bun:1.2.20-alpine AS build-environment
 
 WORKDIR /app
 
-COPY --from=development-dependencies-env /app/ .
+COPY --from=development-dependencies-environment /app/ .
 
 ARG ACCOUNT_PROVIDER_DOMAIN
 ENV ACCOUNT_PROVIDER_DOMAIN=${ACCOUNT_PROVIDER_DOMAIN}
@@ -58,8 +58,8 @@ FROM oven/bun:1.2.20-alpine
 
 WORKDIR /app
 
-COPY --from=production-dependencies-env /app/ ./
-COPY --from=build-env /app/packages/ypiretis/build/ ./packages/ypiretis/build/
+COPY --from=production-dependencies-environment /app/ ./
+COPY --from=build-environment /app/packages/ypiretis/build/ ./packages/ypiretis/build/
 
 ARG SERVER_PORT=3333
 EXPOSE ${SERVER_PORT}

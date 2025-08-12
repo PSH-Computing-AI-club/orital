@@ -1,5 +1,57 @@
 version: "3"
 
+x-build-environment: &build-environment
+    # **NOTE:** All of the environment variables below are passed to the
+    # underlying `Dockerfile` as arguments for the image build step. These
+    # environment variables are baked into the built source code as importable
+    # constants.
+    #
+    # See `vite.config.ts` for the environment variables used this way.
+    ACCOUNT_PROVIDER_DOMAIN: psu.edu
+    ACCOUNT_PROVIDER_NAME: "Penn State"
+    APP_NAME: "PSH Computing & AI Club"
+    APP_URL: https://computingai.club
+    ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: 5MB
+    EVENTS_ATTACHMENTS_MAX_FILE_SIZE: 5MB
+    UPLOADS_MAX_FILE_SIZE: 5MB
+
+x-runtime-environment: &runtime-environment
+    # **NOTE:** All of the environment variables below are consumed as regular
+    # environment variables when the final built image is ran. Nothing special
+    # happens with these variables.
+    ACCOUNT_ADMIN_IDENTIFIERS: "aop5448,gkb5393,osa5177,don5092"
+    CRONJOB_ROOMS_DISCONNECT_CLEANUP: "*/25 * * * *"
+    CRONJOB_ROOMS_LIFETIME_CLEANUP: "0 */6 * * *"
+    CRONJOB_TOKENS_CLEANUP: "*/10 * * * *"
+    DATABASE_FILE_PATH: ./data/database/db.sqlite
+    DISCORD_INVITE_CODE: HmFuyxHYbh
+    DISCOVER_EAST_ORGANIZATION_IDENTIFIER: cai
+    GITHUB_ORGANIZATION_IDENTIFIER: PSH-Computing-AI-Club
+    QUEUE_EMAILS_MAX: 10
+    ROOMS_DISCONNECT_TTL: PT1H
+    ROOMS_LIFETIME_TTL: PT24H
+    SERVER_LOGGING_LEVEL: info
+    SESSION_EPHEMERAL_TTL: PT2H
+    SESSION_PERSISTENT_TTL: P30D
+    SMTP_EMAIL: caai.noreply@gmail.com
+    SMTP_HOST: smtp.gmail.com
+    SMTP_PORT: 465
+    TOKEN_CALLBACK_TTL: PT5M
+    TOKEN_CONSENT_TTL: PT5M
+    TOKEN_GRANT_TTL: PT5M
+    UPLOADS_DIRECTORY_PATH: ./data/uploads
+
+x-secrets-environment: &secrets-environment
+    # **NOTE:** All of the environment variables below are consumed as regular
+    # environment variables when the final built image is ran. Nothing special
+    # happens with these variables.
+    #
+    # However, these environment variables are pulled from the control plane's
+    # secret manager at runtime. So, we only define them here are glue.
+    SECRET_KEY: ${SECRET_KEY}
+    SECRET_SALT: ${SECRET_SALT}
+    SMTP_PASSWORD: ${SMTP_PASSWORD}
+
 volumes:
     data:
 
@@ -12,60 +64,27 @@ services:
             dockerfile: ./packages/ypiretis/Dockerfile
 
             args:
-                # **NOTE:** All environment variables below are passed to the underlying
-                # `Dockerfile` as arguments for the image build step. These environment
-                # variables are baked into the built source code as importable constants.
-                #
-                # See `vite.config.ts` for the environment variables used this way.
-                - ACCOUNT_PROVIDER_DOMAIN=${ACCOUNT_PROVIDER_DOMAIN}
-                - ACCOUNT_PROVIDER_NAME=${ACCOUNT_PROVIDER_NAME}
-                - APP_NAME=${APP_NAME}
-                - APP_URL=${APP_URL}
-                - ARTICLES_ATTACHMENTS_MAX_FILE_SIZE=${ARTICLES_ATTACHMENTS_MAX_FILE_SIZE}
-                - EVENTS_ATTACHMENTS_MAX_FILE_SIZE=${EVENTS_ATTACHMENTS_MAX_FILE_SIZE}
-                - NODE_ENV=${NODE_ENV}
-                - SERVER_HOST=0.0.0.0
-                - SERVER_PORT=${SERVER_PORT}
-                - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
+                <<: *build-environment
+                # **NOTE:** The server needs to listen on all network interfaces
+                # so that it can listen to the address that virtual network that
+                # Docker provides. Otherwise, the server cannot receive requests
+                # from users on the internet.
+                SERVER_HOST: 0.0.0.0
+                # **NOTE:** The port is hardcoded since the Caddy proxy service is
+                # our user-facing HTTP server. The proxy service provides various
+                # things out of the box like compression and IP-based rate limiting.
+                # This allows our web application server to offload complexity to
+                # already existing tooling without custom programming work.
+                SERVER_PORT: 3333
 
         volumes:
             - data:/app/packages/ypiretis/data
 
         environment:
-            - ACCOUNT_ADMIN_IDENTIFIERS=${ACCOUNT_ADMIN_IDENTIFIERS}
-            - ACCOUNT_PROVIDER_DOMAIN=${ACCOUNT_PROVIDER_DOMAIN}
-            - ACCOUNT_PROVIDER_NAME=${ACCOUNT_PROVIDER_NAME}
-            - APP_NAME=${APP_NAME}
-            - APP_URL=${APP_URL}
-            - ARTICLES_ATTACHMENTS_MAX_FILE_SIZE=${ARTICLES_ATTACHMENTS_MAX_FILE_SIZE}
-            - CRONJOB_ROOMS_DISCONNECT_CLEANUP=${CRONJOB_ROOMS_DISCONNECT_CLEANUP}
-            - CRONJOB_ROOMS_LIFETIME_CLEANUP=${CRONJOB_ROOMS_LIFETIME_CLEANUP}
-            - CRONJOB_TOKENS_CLEANUP=${CRONJOB_TOKENS_CLEANUP}
-            - DATABASE_FILE_PATH=./data/database/db.sqlite
-            - DISCORD_INVITE_CODE=${DISCORD_INVITE_CODE}
-            - DISCOVER_EAST_ORGANIZATION_IDENTIFIER=${DISCOVER_EAST_ORGANIZATION_IDENTIFIER}
-            - EVENTS_ATTACHMENTS_MAX_FILE_SIZE=${EVENTS_ATTACHMENTS_MAX_FILE_SIZE}
-            - GITHUB_ORGANIZATION_IDENTIFIER=${GITHUB_ORGANIZATION_IDENTIFIER}
-            - NODE_ENV=${NODE_ENV}
-            - QUEUE_EMAILS_MAX=${QUEUE_EMAILS_MAX}
-            - ROOMS_DISCONNECT_TTL=${ROOMS_DISCONNECT_TTL}
-            - ROOMS_LIFETIME_TTL=${ROOMS_LIFETIME_TTL}
-            - SECRET_KEY=${SECRET_KEY}
-            - SECRET_SALT=${SECRET_SALT}
-            - SERVER_HOST=0.0.0.0
-            - SERVER_LOGGING_LEVEL=${SERVER_LOGGING_LEVEL}
-            - SERVER_PORT=${SERVER_PORT}
-            - SESSION_EPHEMERAL_TTL=${SESSION_EPHEMERAL_TTL}
-            - SESSION_PERSISTENT_TTL=${SESSION_PERSISTENT_TTL}
-            - SMTP_EMAIL=${SMTP_EMAIL}
-            - SMTP_HOST=${SMTP_HOST}
-            - SMTP_PASSWORD=${SMTP_PASSWORD}
-            - SMTP_PORT=${SMTP_PORT}
-            - TOKEN_CALLBACK_TTL=${TOKEN_CALLBACK_TTL}
-            - TOKEN_CONSENT_TTL=${TOKEN_CONSENT_TTL}
-            - TOKEN_GRANT_TTL=${TOKEN_GRANT_TTL}
-            - UPLOADS_DIRECTORY_PATH=./data/uploads
-            - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
+            <<: [*build-environment, *runtime-environment, *secrets-environment]
+            # **NOTE:** See above comments regarding `SERVER_HOST` / `SERVER_PORT`.
+            SERVER_HOST: 0.0.0.0
+            SERVER_PORT: 3333
 
     caddy-proxy:
         container_name: caddy-proxy
@@ -82,5 +101,6 @@ services:
             - orital-ypiretis
 
         environment:
-            - PROXIED_SERVER_HOST=orital-ypiretis
-            - PROXIED_SERVER_PORT=${SERVER_PORT}
+            # **NOTE:** See above comments regarding `SERVER_HOST` / `SERVER_PORT`.
+            PROXIED_SERVER_HOST: orital-ypiretis
+            PROXIED_SERVER_PORT: 3333

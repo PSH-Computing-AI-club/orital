@@ -2,7 +2,7 @@ FROM oven/bun:1.2.20-alpine AS development-dependencies-env
 
 WORKDIR /app
 
-COPY ./bun.lock ./package.json ./
+COPY ./bun.lock ./package.json ./tsconfig.json ./
 COPY ./packages/ ./packages/
 
 RUN bun install --frozen-lockfile
@@ -11,7 +11,7 @@ FROM oven/bun:1.2.20-alpine AS production-dependencies-env
 
 WORKDIR /app
 
-COPY ./bun.lock ./package.json ./
+COPY ./bun.lock ./package.json ./tsconfig.json ./
 COPY ./packages/ ./packages/
 
 RUN bun install --production --frozen-lockfile

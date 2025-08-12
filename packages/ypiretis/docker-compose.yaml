@@ -10,7 +10,10 @@ x-build-environment: &build-environment
     ACCOUNT_PROVIDER_DOMAIN: psu.edu
     ACCOUNT_PROVIDER_NAME: "Penn State"
     APP_NAME: "PSH Computing & AI Club"
-    APP_URL: https://computingai.club
+    # **NOTE:** The control plane will have the proper `APP_URL` environment
+    # variable set in its control panel for the project. This allows for this
+    # `docker-compose.yaml` file to be easily used for local debugging.
+    APP_URL: ${APP_URL:-http://localhost:8080}
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: 5MB
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE: 5MB
     NODE_ENV: production
@@ -102,7 +105,8 @@ services:
             - orital-ypiretis
 
         environment:
-            CADDY_HOST: ${CADDY_HOST}
+            # **NOTE:** See above comment regarding `APP_URL`.
+            CADDY_HOST: ${CADDY_HOST:-localhost}
             # **NOTE:** See above comments regarding `SERVER_HOST` / `SERVER_PORT`.
             PROXIED_SERVER_HOST: orital-ypiretis
             PROXIED_SERVER_PORT: 3333

@@ -64,4 +64,4 @@ COPY --from=build-env /app/packages/ypiretis/build/ ./packages/ypiretis/build/
 ARG SERVER_PORT=3333
 EXPOSE ${SERVER_PORT}
 
-CMD ["bun", "run", "--cwd", "./packages/ypiretis", "app:start"]
+CMD ["bun", "run", "--cwd", "./packages/ypiretis", "serve:app"]

@@ -13,7 +13,8 @@
         "deps:cache": "bun install --frozen-lockfile",
         "db:migrations:generate": "NODE_ENV=development bunx --bun drizzle-kit generate",
         "db:migrations:run": "NODE_ENV=development bun run ./scripts/db.migrations.run.ts",
-        "types:generate:react-router": "bunx --bun react-router typegen"
+        "types:generate:react-router": "bunx --bun react-router typegen",
+        "serve:app": "bun run db:migrations:run && exec bun run app:start"
     },
     "dependencies": {
         "@chakra-ui/react": "^3.19.1",

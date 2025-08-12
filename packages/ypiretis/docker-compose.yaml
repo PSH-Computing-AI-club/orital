@@ -13,6 +13,7 @@ x-build-environment: &build-environment
     APP_URL: https://computingai.club
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: 5MB
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE: 5MB
+    NODE_ENV: production
     UPLOADS_MAX_FILE_SIZE: 5MB
 
 x-runtime-environment: &runtime-environment

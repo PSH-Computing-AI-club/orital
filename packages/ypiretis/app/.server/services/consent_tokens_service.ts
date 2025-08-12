@@ -2,7 +2,7 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import makeEvent from "../../utils/event";
 
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import type {IConsentTokensTable} from "../database/tables/consent_tokens_table";
 import CONSENT_TOKENS_TABLE from "../database/tables/consent_tokens_table";
@@ -12,7 +12,7 @@ import makeTokenBearerGuard from "../guards/token_bearer_guard";
 import type {IToken, ITokenSecret} from "./tokens_service";
 import makeTokensService from "./tokens_service";
 
-const {TOKEN_CONSENT_TTL} = ENVIRONMENT;
+const {TOKEN_CONSENT_TTL} = RUNTIME_ENVIRONMENT;
 
 export const EVENT_CONSENT_AUTHORIZED = makeEvent<IConsentAuthorizedEvent>();
 

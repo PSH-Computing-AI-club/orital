@@ -4,7 +4,7 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import ENVIRONMENT from "~/.server/configuration/environment";
+import RUNTIME_ENVIRONMENT from "~/.server/configuration/runtime_environment";
 
 import {boolean, ulid} from "~/.server/utils/valibot";
 
@@ -12,7 +12,7 @@ import {validateParams, validateSearchParams} from "~/guards/validation";
 
 import {Route} from "./+types/uploads_.$uploadID_.$fileName";
 
-const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
+const {UPLOADS_DIRECTORY_PATH} = RUNTIME_ENVIRONMENT;
 
 const LOADER_PARAMS_SCHEMA = v.object({
     fileName: v.string(),

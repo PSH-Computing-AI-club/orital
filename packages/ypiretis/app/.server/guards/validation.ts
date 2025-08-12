@@ -18,11 +18,11 @@ import * as v from "valibot";
 
 import type {IObjectSchema} from "../../guards/validation";
 
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import {handleFileUpload} from "../services/temporary_service";
 
-const {UPLOADS_MAX_FILE_SIZE} = ENVIRONMENT;
+const {UPLOADS_MAX_FILE_SIZE} = RUNTIME_ENVIRONMENT;
 
 export async function validateMultipartFormData<T extends IObjectSchema>(
     schema: T,

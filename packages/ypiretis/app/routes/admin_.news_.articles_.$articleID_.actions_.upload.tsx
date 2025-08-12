@@ -2,7 +2,7 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import ENVIRONMENT from "~/.server/configuration/environment";
+import RUNTIME_ENVIRONMENT from "~/.server/configuration/runtime_environment";
 
 import {validateMultipartFormData} from "~/.server/guards/validation";
 
@@ -21,7 +21,7 @@ import {validateParams} from "~/guards/validation";
 
 import {Route} from "./+types/admin_.news_.articles_.$articleID_.actions_.upload";
 
-const {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} = ENVIRONMENT;
+const {ARTICLES_ATTACHMENTS_MAX_FILE_SIZE} = RUNTIME_ENVIRONMENT;
 
 const ACTION_PARAMS_SCHEMA = v.object({
     articleID: ulid,

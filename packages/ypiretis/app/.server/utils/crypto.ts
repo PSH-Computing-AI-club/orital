@@ -1,8 +1,8 @@
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 const {CryptoHasher} = Bun;
 
-const {SECRET_KEY, SECRET_SALT} = ENVIRONMENT;
+const {SECRET_KEY, SECRET_SALT} = RUNTIME_ENVIRONMENT;
 
 const PIN_ALPHABET = [
     "A",

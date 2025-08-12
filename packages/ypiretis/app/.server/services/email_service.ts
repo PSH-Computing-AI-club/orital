@@ -9,11 +9,11 @@ import type {FunctionComponent} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 
 import MAILER from "../configuration/email";
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import {RequiredFields} from "../utils/types";
 
-const {QUEUE_EMAILS_MAX, SMTP_EMAIL} = ENVIRONMENT;
+const {QUEUE_EMAILS_MAX, SMTP_EMAIL} = RUNTIME_ENVIRONMENT;
 
 const QUEUE = promise(processEmail, QUEUE_EMAILS_MAX);
 

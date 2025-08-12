@@ -3,13 +3,14 @@
 
 import {Temporal} from "@js-temporal/polyfill";
 
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import {findAllLive} from "../services/rooms_service";
 
-const LIFETIME_TTL = ENVIRONMENT.ROOMS_LIFETIME_TTL;
+const LIFETIME_TTL = RUNTIME_ENVIRONMENT.ROOMS_LIFETIME_TTL;
 
-export const CRONJOB_SCHEDULE = ENVIRONMENT.CRONJOB_ROOMS_LIFETIME_CLEANUP;
+export const CRONJOB_SCHEDULE =
+    RUNTIME_ENVIRONMENT.CRONJOB_ROOMS_LIFETIME_CLEANUP;
 
 export default async function CronjobRoomsLifetimeCleanup() {
     const rooms = findAllLive();

@@ -1,4 +1,4 @@
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import type {IGrantTokensTable} from "../database/tables/grant_tokens_table";
 import GRANT_TOKENS_TABLE from "../database/tables/grant_tokens_table";
@@ -8,7 +8,7 @@ import makeTokenBearerGuard from "../guards/token_bearer_guard";
 import type {IToken} from "./tokens_service";
 import makeTokensService from "./tokens_service";
 
-const {TOKEN_GRANT_TTL} = ENVIRONMENT;
+const {TOKEN_GRANT_TTL} = RUNTIME_ENVIRONMENT;
 
 export type IGrantToken = IToken<IGrantTokensTable>;
 

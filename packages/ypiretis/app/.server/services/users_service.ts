@@ -7,7 +7,7 @@ import type {
 } from "react-router";
 import {data} from "react-router";
 
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 import * as persistentSession from "../configuration/persistent_session";
 
 import type {
@@ -23,7 +23,7 @@ import makeSessionGuard from "../guards/session_guard";
 import {makeWritableCRUDService} from "./crud_service";
 
 const ACCOUNT_ADMIN_IDENTIFIERS = new Set(
-    ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
+    RUNTIME_ENVIRONMENT.ACCOUNT_ADMIN_IDENTIFIERS,
 );
 
 export type IUser = _ISelectUser & {

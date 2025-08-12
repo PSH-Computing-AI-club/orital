@@ -1,8 +1,8 @@
 import {redirect} from "react-router";
 
-import ENVIRONMENT from "~/.server/configuration/environment";
+import RUNTIME_ENVIRONMENT from "~/.server/configuration/runtime_environment";
 
-const {DISCORD_INVITE_CODE} = ENVIRONMENT;
+const {DISCORD_INVITE_CODE} = RUNTIME_ENVIRONMENT;
 
 const DISCORD_INVITE_URL = new URL(DISCORD_INVITE_CODE, "https://discord.gg/");
 

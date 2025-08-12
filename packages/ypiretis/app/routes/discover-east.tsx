@@ -1,8 +1,8 @@
 import {redirect} from "react-router";
 
-import ENVIRONMENT from "~/.server/configuration/environment";
+import RUNTIME_ENVIRONMENT from "~/.server/configuration/runtime_environment";
 
-const {DISCOVER_EAST_ORGANIZATION_IDENTIFIER} = ENVIRONMENT;
+const {DISCOVER_EAST_ORGANIZATION_IDENTIFIER} = RUNTIME_ENVIRONMENT;
 
 const DISCOVER_EAST_ORGANIZATION_URL = new URL(
     DISCOVER_EAST_ORGANIZATION_IDENTIFIER,

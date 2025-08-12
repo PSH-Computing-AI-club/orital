@@ -4,9 +4,9 @@ import {drizzle} from "drizzle-orm/bun-sqlite";
 
 import * as SCHEMA from "../database/schema";
 
-import ENVIRONMENT from "./environment";
+import RUNTIME_ENVIRONMENT from "./runtime_environment";
 
-const {DATABASE_FILE_PATH} = ENVIRONMENT;
+const {DATABASE_FILE_PATH} = RUNTIME_ENVIRONMENT;
 
 const CLIENT = new Database(DATABASE_FILE_PATH, {
     create: true,

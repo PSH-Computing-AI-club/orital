@@ -1,11 +1,11 @@
 import type {SessionData} from "react-router";
 import {createCookieSessionStorage} from "react-router";
 
-import ENVIRONMENT from "./environment";
+import RUNTIME_ENVIRONMENT from "./runtime_environment";
 
 import {UNIX_EPOCH} from "../utils/temporal";
 
-const {APP_URL, SECRET_KEY, SESSION_PERSISTENT_TTL} = ENVIRONMENT;
+const {APP_URL, SECRET_KEY, SESSION_PERSISTENT_TTL} = RUNTIME_ENVIRONMENT;
 
 const {
     getSession: _getSession,

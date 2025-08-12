@@ -1,8 +1,8 @@
 import {createTransport} from "nodemailer";
 
-import ENVIRONMENT from "./environment";
+import RUNTIME_ENVIRONMENT from "./runtime_environment";
 
-const {SMTP_HOST, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD} = ENVIRONMENT;
+const {SMTP_HOST, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD} = RUNTIME_ENVIRONMENT;
 
 const MAILER = createTransport({
     secure: true,

@@ -6,14 +6,14 @@ import {Temporal} from "@js-temporal/polyfill";
 import {lt} from "drizzle-orm";
 
 import DATABASE from "../configuration/database";
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import CALLBACK_TOKENS_TABLE from "../database/tables/callback_tokens_table";
 import CONSENT_TOKENS_TABLE from "../database/tables/consent_tokens_table";
 import GRANT_TOKENS_TABLE from "../database/tables/grant_tokens_table";
 import type {ITokensTable} from "../database/tables/tokens_table";
 
-export const CRONJOB_SCHEDULE = ENVIRONMENT.CRONJOB_TOKENS_CLEANUP;
+export const CRONJOB_SCHEDULE = RUNTIME_ENVIRONMENT.CRONJOB_TOKENS_CLEANUP;
 
 export default async function CronjobTokensCleanup() {
     const now = Temporal.Now.instant();

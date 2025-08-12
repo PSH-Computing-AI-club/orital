@@ -5,7 +5,7 @@ import {eq} from "drizzle-orm";
 
 import {ulid} from "ulid";
 
-import ENVIRONMENT from "../configuration/environment";
+import RUNTIME_ENVIRONMENT from "../configuration/runtime_environment";
 
 import type {
     IInsertUpload as _IInsertUpload,
@@ -21,7 +21,7 @@ import {moveFile} from "../utils/bun";
 import {makeReadableCRUDService} from "./crud_service";
 import type {IUser} from "./users_service";
 
-const {UPLOADS_DIRECTORY_PATH} = ENVIRONMENT;
+const {UPLOADS_DIRECTORY_PATH} = RUNTIME_ENVIRONMENT;
 
 export type IUpload = _ISelectUpload;
 

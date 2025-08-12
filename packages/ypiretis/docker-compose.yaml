@@ -55,3 +55,17 @@ services:
             - TOKEN_GRANT_TTL=${TOKEN_GRANT_TTL}
             - UPLOADS_DIRECTORY_PATH=${UPLOADS_DIRECTORY_PATH}
             - UPLOADS_MAX_FILE_SIZE=${UPLOADS_MAX_FILE_SIZE}
+
+    caddyProxy:
+        container_name: caddy-proxy
+        image: caddy:2.10.0-alpine
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+        depends_on:
+            - oritalYpiretis
+        environment:
+            - PROXIED_SERVER_HOST=oritalYpiretis
+            - PROXIED_SERVER_PORT=${SERVER_PORT}

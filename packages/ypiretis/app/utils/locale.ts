@@ -40,12 +40,16 @@ export function formatTimestamp(
                 minute: "numeric",
             });
 
+            break;
+
         case FORMAT_DETAIL.short:
             formatter = new Intl.DateTimeFormat(locale, {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
             });
+
+            break;
     }
 
     return formatter.format(timestamp);

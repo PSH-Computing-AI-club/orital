@@ -80,7 +80,11 @@ function ContentSectionTitle(props: IContentSectionTitleProps) {
     const {children} = props;
 
     return (
-        <Heading as="h1" fontSize={{base: "4xl", lgDown: "3xl"}}>
+        <Heading
+            as="h1"
+            fontSize={{base: "4xl", lgDown: "3xl"}}
+            lineHeight="normal"
+        >
             {children}
         </Heading>
     );

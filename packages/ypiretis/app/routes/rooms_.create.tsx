@@ -12,7 +12,7 @@ import {
     insertOneLive,
 } from "~/.server/services/rooms_service";
 
-import {requireAuthenticatedSession} from "~/.server/services/users_service";
+import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
@@ -46,7 +46,8 @@ interface IActionError {
 }
 
 export async function action(actionArgs: Route.ActionArgs) {
-    const {identifiable: user} = await requireAuthenticatedSession(actionArgs);
+    const {identifiable: user} =
+        await requireAuthenticatedAdminSession(actionArgs);
 
     const {title} = await validateFormData(ACTION_FORM_DATA_SCHEMA, actionArgs);
 
@@ -74,7 +75,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
-    await requireAuthenticatedSession(loaderArgs);
+    await requireAuthenticatedAdminSession(loaderArgs);
 }
 
 function ErrorText() {

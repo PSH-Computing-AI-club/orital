@@ -85,15 +85,19 @@ function NavbarAuthenticatedSessionLinks() {
         <>
             <Links.InternalLink to="/rooms/join">Join Room</Links.InternalLink>
 
-            <Links.InternalLink to="/rooms/create">
-                Create Room
-            </Links.InternalLink>
-
-            <Separator.Horizontal />
-
             {isAdmin ? (
-                <Links.InternalLink to="/admin">Admin</Links.InternalLink>
-            ) : undefined}
+                <>
+                    <Links.InternalLink to="/rooms/create">
+                        Create Room
+                    </Links.InternalLink>
+
+                    <Separator.Horizontal />
+
+                    <Links.InternalLink to="/admin">Admin</Links.InternalLink>
+                </>
+            ) : (
+                <></>
+            )}
 
             <Links.InternalLink to="/authentication/log-out">
                 Log Out

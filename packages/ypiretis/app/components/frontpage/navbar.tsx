@@ -95,10 +95,6 @@ function NavbarAuthenticatedSessionLinks() {
                 <Links.InternalLink to="/admin">Admin</Links.InternalLink>
             ) : undefined}
 
-            <Links.InternalLink to="/user/settings">
-                Settings
-            </Links.InternalLink>
-
             <Links.InternalLink to="/authentication/log-out">
                 Log Out
             </Links.InternalLink>

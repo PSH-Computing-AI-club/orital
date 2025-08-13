@@ -82,9 +82,16 @@
         transparent var(--backgrounds--3d-grid--animation--shimmer-end)
     );
 
-    translate: -50% -75%;
     transform: rotate3D(1, 0, 0, 90deg);
     transform-origin: bottom center 128px;
+
+    translate: -50% -75%
+        /* 
+            **HACK:** The `!important` modifier prevents LightningCSS via rolldown-vite
+            from merging the `translate` rule into the `transform` rule at production.
+            Which would then make `translate` be affected by `transform-origin`. That
+            would make the shimmer effect look "zoomed out."
+        */ !important;
 
     animation: backgrounds--3d-grid--animation 1.5s infinite
         /* **SOURCE:** https://easings.net/#easeOutCirc */

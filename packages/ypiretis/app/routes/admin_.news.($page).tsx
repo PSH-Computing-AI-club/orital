@@ -18,9 +18,7 @@ import {
 import {SORT_MODES} from "~/.server/services/crud_service";
 import {requireAuthenticatedAdminSession} from "~/.server/services/users_service";
 
-import {formatZonedDateTime} from "~/.server/utils/locale";
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
-
+import DatetimeText from "~/components/common/datetime_text";
 import type {IPaginationTemplate} from "~/components/common/pagination";
 import Pagination from "~/components/common/pagination";
 
@@ -117,37 +115,27 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
             const {accountID, firstName, lastName} = poster;
 
-            const zonedCreatedAt =
-                createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-            const zonedPublishedAt = publishedAt
-                ? publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE)
+            const {epochMilliseconds: createdAtTimestamp} = createdAt;
+            const {epochMilliseconds: updatedAtTimestamp} = updatedAt;
+            const publishedAtTimestamp = publishedAt
+                ? publishedAt.epochMilliseconds
                 : null;
-
-            const zonedUpdatedAt =
-                updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-            const createdAtText = formatZonedDateTime(zonedCreatedAt);
-
-            const publishedAtText = zonedPublishedAt
-                ? formatZonedDateTime(zonedPublishedAt)
-                : null;
-
-            const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
             return {
                 articleID,
-                createdAtText,
+                createdAtTimestamp,
+
                 poster: {
                     accountID,
                     firstName,
                     lastName,
                 },
-                publishedAtText,
+
+                publishedAtTimestamp,
                 slug,
                 state,
                 title,
-                updatedAtText,
+                updatedAtTimestamp,
             };
         }),
     );
@@ -246,12 +234,12 @@ export default function AdminNews(props: Route.ComponentProps) {
                         {articles.map((article, _index) => {
                             const {
                                 articleID,
-                                createdAtText,
+                                createdAtTimestamp,
                                 poster,
-                                publishedAtText,
+                                publishedAtTimestamp,
                                 state,
                                 title,
-                                updatedAtText,
+                                updatedAtTimestamp,
                             } = article;
 
                             const {accountID, firstName, lastName} = poster;
@@ -291,11 +279,29 @@ export default function AdminNews(props: Route.ComponentProps) {
                                     </Table.Cell>
 
                                     <Table.Cell>
-                                        {publishedAtText ?? "-"}
+                                        {publishedAtTimestamp ? (
+                                            <DatetimeText
+                                                detail="long"
+                                                timestamp={publishedAtTimestamp}
+                                            />
+                                        ) : (
+                                            "-"
+                                        )}
                                     </Table.Cell>
 
-                                    <Table.Cell>{createdAtText}</Table.Cell>
-                                    <Table.Cell>{updatedAtText}</Table.Cell>
+                                    <Table.Cell>
+                                        <DatetimeText
+                                            detail="long"
+                                            timestamp={createdAtTimestamp}
+                                        />
+                                    </Table.Cell>
+
+                                    <Table.Cell>
+                                        <DatetimeText
+                                            detail="long"
+                                            timestamp={updatedAtTimestamp}
+                                        />
+                                    </Table.Cell>
                                 </Table.Row>
                             );
                         })}

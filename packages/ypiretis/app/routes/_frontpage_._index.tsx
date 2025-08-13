@@ -8,9 +8,7 @@ import {findAllPublished} from "~/.server/services/articles_service";
 import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
-import {FORMAT_DETAIL, formatZonedDateTime} from "~/.server/utils/locale";
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
-
+import DatetimeText from "~/components/common/datetime_text";
 import Title from "~/components/common/title";
 
 import ActionCard from "~/components/frontpage/action_card";
@@ -25,6 +23,7 @@ import PeopleSection from "~/components/frontpage/people_section";
 import ArrowRightIcon from "~/components/icons/arrow_right_icon";
 
 import {ACCOUNT_PROVIDER_DOMAIN, APP_NAME} from "~/utils/constants";
+import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 
 import type {Route} from "./+types/_frontpage_._index";
@@ -80,15 +79,7 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
             const {articleID, content, slug, publishedAt, title} = article;
 
             const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-            const publishedAtText = formatZonedDateTime(zonedPublishedAt, {
-                detail: FORMAT_DETAIL.short,
-            });
-
-            const publishedAtTimestamp = zonedPublishedAt.toString({
-                timeZoneName: "never",
-            });
+                publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(
@@ -98,6 +89,7 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
                 ),
             );
 
+            const {epochMilliseconds: publishedAtTimestamp} = publishedAt;
             const {year, month, day} = zonedPublishedAt;
 
             return {
@@ -105,7 +97,6 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
                 day,
                 description,
                 month,
-                publishedAtText,
                 publishedAtTimestamp,
                 slug,
                 title,
@@ -346,7 +337,6 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                     day,
                                     description,
                                     month,
-                                    publishedAtText,
                                     publishedAtTimestamp,
                                     title,
                                     slug,
@@ -364,13 +354,12 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                 </FeedCard.Title>
 
                                                 <FeedCard.Description>
-                                                    <time
-                                                        dateTime={
+                                                    <DatetimeText
+                                                        detail="short"
+                                                        timestamp={
                                                             publishedAtTimestamp
                                                         }
-                                                    >
-                                                        {publishedAtText}
-                                                    </time>
+                                                    />
                                                 </FeedCard.Description>
 
                                                 <FeedCard.Text>

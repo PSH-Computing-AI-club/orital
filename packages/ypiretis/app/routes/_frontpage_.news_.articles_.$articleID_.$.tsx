@@ -5,10 +5,11 @@ import * as v from "valibot";
 import {findOnePublished} from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
 
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
 
 import {validateParams} from "~/guards/validation";
+
+import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 
 import {Route} from "./+types/_frontpage_.news_.articles_.$articleID_.$";
 
@@ -30,7 +31,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     }
 
     const {publishedAt, slug} = article;
-    const {day, month, year} = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+    const {day, month, year} =
+        publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
 
     return redirect(
         `/news/articles/${articleID}/${year}/${month}/${day}/${slug}`,

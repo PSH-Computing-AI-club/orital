@@ -8,10 +8,9 @@ import {findOnePublishedWithPoster} from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
 import {renderMarkdownForWeb} from "~/.server/services/markdown";
 
-import {formatZonedDateTime} from "~/.server/utils/locale";
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {slug, ulid} from "~/.server/utils/valibot";
 
+import DatetimeText from "~/components/common/datetime_text";
 import Links from "~/components/common/links";
 import Title from "~/components/common/title";
 
@@ -21,6 +20,7 @@ import PageHero from "~/components/frontpage/page_hero";
 import {validateParams} from "~/guards/validation";
 
 import {ACCOUNT_PROVIDER_DOMAIN} from "~/utils/constants";
+import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/_frontpage_.news.articles.$articleID.$year.$month.$day.$slug";
@@ -40,10 +40,10 @@ const LOADER_PARAMS_SCHEMA = v.object({
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {
         articleID,
-        day: userDay,
-        month: userMonth,
-        slug: userSlug,
-        year: userYear,
+        day: inputDay,
+        month: inputMonth,
+        slug: inputSlug,
+        year: inputYear,
     } = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
     const article = await findOnePublishedWithPoster({
@@ -67,7 +67,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     } = article;
     const {accountID, firstName, lastName} = poster;
 
-    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
+    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
 
     const {
         day: publishedDay,
@@ -76,10 +76,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     } = zonedPublishedAt;
 
     if (
-        articleSlug !== userSlug ||
-        publishedDay !== userDay ||
-        publishedMonth !== userMonth ||
-        publishedYear !== userYear
+        articleSlug !== inputSlug ||
+        publishedDay !== inputDay ||
+        publishedMonth !== inputMonth ||
+        publishedYear !== inputYear
     ) {
         return redirect(
             `/news/articles/${articleID}/${publishedYear}/${publishedMonth}/${publishedDay}/${articleSlug}`,
@@ -89,21 +89,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         );
     }
 
-    const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-    const publishedAtTimestamp = zonedPublishedAt.toString({
-        timeZoneName: "never",
-    });
-
+    const {epochMilliseconds: publishedAtTimestamp} = publishedAt;
     const updatedAtTimestamp = hasBeenEdited
-        ? zonedUpdatedAt.toString({
-              timeZoneName: "never",
-          })
-        : null;
-
-    const publishedAtText = formatZonedDateTime(zonedPublishedAt);
-    const updatedAtText = hasBeenEdited
-        ? formatZonedDateTime(zonedUpdatedAt)
+        ? updatedAt.epochMilliseconds
         : null;
 
     const renderedContent = await renderMarkdownForWeb(content);
@@ -111,12 +99,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         article: {
             articleID,
-            publishedAtText,
             publishedAtTimestamp,
             renderedContent,
             slug: articleSlug,
             title,
-            updatedAtText,
             updatedAtTimestamp,
         },
 
@@ -132,14 +118,8 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {article, poster} = loaderData;
 
-    const {
-        publishedAtText,
-        publishedAtTimestamp,
-        renderedContent,
-        title,
-        updatedAtText,
-        updatedAtTimestamp,
-    } = article;
+    const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
+        article;
 
     const {accountID, firstName, lastName} = poster;
 
@@ -182,18 +162,22 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                                 </Links.MailToLink>
                             </address>
                             &nbsp;
-                            <Span whiteSpace="pre" asChild>
-                                <time dateTime={publishedAtTimestamp}>
-                                    • Published {publishedAtText}
-                                </time>
+                            <Span whiteSpace="pre">
+                                • Published{" "}
+                                <DatetimeText
+                                    detail="long"
+                                    timestamp={publishedAtTimestamp}
+                                />
                             </Span>
-                            {updatedAtText && updatedAtTimestamp ? (
+                            {updatedAtTimestamp ? (
                                 <>
                                     &nbsp;
-                                    <Span whiteSpace="pre" asChild>
-                                        <time dateTime={updatedAtTimestamp}>
-                                            • Updated {updatedAtText}
-                                        </time>
+                                    <Span whiteSpace="pre">
+                                        • Updated{" "}
+                                        <DatetimeText
+                                            detail="long"
+                                            timestamp={updatedAtTimestamp}
+                                        />
                                     </Span>
                                 </>
                             ) : undefined}

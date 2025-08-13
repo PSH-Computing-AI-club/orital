@@ -47,9 +47,9 @@ import {requireAuthenticatedAdminSession} from "~/.server/services/users_service
 
 import {createTransaction} from "~/.server/state/transaction";
 
-import {formatZonedDateTime} from "~/.server/utils/locale";
-import {SYSTEM_TIMEZONE} from "~/.server/utils/temporal";
 import {ulid} from "~/.server/utils/valibot";
+
+import DatetimeText from "~/components/common/datetime_text";
 
 import type {
     IFileUploadAbortCallback,
@@ -353,22 +353,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         };
     });
 
-    const zonedCreatedAt = createdAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-    const zonedPublishedAt =
-        publishedAt?.toZonedDateTimeISO(SYSTEM_TIMEZONE) ?? null;
-
-    const zonedUpdatedAt = updatedAt.toZonedDateTimeISO(SYSTEM_TIMEZONE);
-
-    const createdAtText = formatZonedDateTime(zonedCreatedAt);
-
-    const publishedAtText = zonedPublishedAt
-        ? formatZonedDateTime(zonedPublishedAt)
+    const {epochMilliseconds: createdAtTimestamp} = createdAt;
+    const {epochMilliseconds: updatedAtTimestamp} = updatedAt;
+    const publishedAtTimestamp = publishedAt
+        ? publishedAt.epochMilliseconds
         : null;
-
-    const publishedAtTimestamp = publishedAt?.epochMilliseconds ?? null;
-
-    const updatedAtText = formatZonedDateTime(zonedUpdatedAt);
 
     return {
         attachments,
@@ -376,12 +365,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         article: {
             articleID,
             content,
-            createdAtText,
-            publishedAtText,
+            createdAtTimestamp,
             publishedAtTimestamp,
             state,
             title,
-            updatedAtText,
+            updatedAtTimestamp,
         },
 
         poster: {
@@ -871,8 +859,13 @@ function OverviewCard() {
     const {article, poster} = useLoaderData<typeof loader>();
     const {displayToast} = useToastsContext();
 
-    const {articleID, createdAtText, publishedAtText, state, updatedAtText} =
-        article;
+    const {
+        articleID,
+        createdAtTimestamp,
+        publishedAtTimestamp,
+        state,
+        updatedAtTimestamp,
+    } = article;
     const {accountID, firstName, lastName} = poster;
 
     const deleteArticleFetcher = useFetcher();
@@ -960,18 +953,35 @@ function OverviewCard() {
 
                     <DataList.Item>
                         <DataList.ItemLabel>Created At</DataList.ItemLabel>
-                        <DataList.ItemValue>{createdAtText}</DataList.ItemValue>
+                        <DataList.ItemValue>
+                            <DatetimeText
+                                detail="long"
+                                timestamp={createdAtTimestamp}
+                            />
+                        </DataList.ItemValue>
                     </DataList.Item>
 
                     <DataList.Item>
                         <DataList.ItemLabel>Updated At</DataList.ItemLabel>
-                        <DataList.ItemValue>{updatedAtText}</DataList.ItemValue>
+                        <DataList.ItemValue>
+                            <DatetimeText
+                                detail="long"
+                                timestamp={updatedAtTimestamp}
+                            />
+                        </DataList.ItemValue>
                     </DataList.Item>
 
                     <DataList.Item>
                         <DataList.ItemLabel>Published At</DataList.ItemLabel>
                         <DataList.ItemValue>
-                            {publishedAtText ?? "-"}
+                            {publishedAtTimestamp ? (
+                                <DatetimeText
+                                    detail="long"
+                                    timestamp={publishedAtTimestamp}
+                                />
+                            ) : (
+                                "-"
+                            )}
                         </DataList.ItemValue>
                     </DataList.Item>
                 </DataList.Root>

@@ -28,13 +28,11 @@ import {
     linkDialogPlugin,
     linkPlugin,
     listsPlugin,
-    markdownShortcutPlugin,
     quotePlugin,
     tablePlugin,
     thematicBreakPlugin,
     toolbarPlugin,
 } from "@mdxeditor/editor";
-
 import {useMemo} from "react";
 
 import type {IProseProps} from "~/components/common/prose";
@@ -152,7 +150,6 @@ function determineEditorPlugins(mode: IEditorMode): RealmPlugin[] {
 
                 tablePlugin(),
                 thematicBreakPlugin(),
-                markdownShortcutPlugin(),
 
                 toolbarPlugin({
                     toolbarClassName: "markdown-editor--toolbar",
@@ -180,7 +177,6 @@ function determineEditorPlugins(mode: IEditorMode): RealmPlugin[] {
 
                 tablePlugin(),
                 thematicBreakPlugin(),
-                markdownShortcutPlugin(),
             ];
     }
 }

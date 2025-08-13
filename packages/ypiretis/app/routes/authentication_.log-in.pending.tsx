@@ -71,7 +71,6 @@ export async function action(actionArgs: Route.ActionArgs) {
     const headers = await getGrantHeaders(actionArgs, session);
 
     await deleteOneGrantToken(grantTokenID);
-
     return data("", {
         headers,
     });
@@ -185,6 +184,7 @@ function AuthenticationLogInPendingView(props: {
                     break;
             }
         },
+
         [navigate, pathname],
     );
 
@@ -208,6 +208,7 @@ function AuthenticationLogInPendingView(props: {
             onTimeout,
             duration: callbackTokenExpiresAt - Date.now(),
         }),
+
         [callbackTokenExpiresAt, onTimeout],
     );
 
@@ -217,7 +218,6 @@ function AuthenticationLogInPendingView(props: {
     );
 
     useTimeout(useTimeoutOptions);
-
     useWebSocket(connectionURL, useWebSocketOptions);
 
     return (

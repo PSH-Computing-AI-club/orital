@@ -16,8 +16,9 @@ export default function AuthenticationLogInUnauthorized() {
             <PromptShell.Body>
                 <Text>
                     The login you are trying to handle has{" "}
-                    <Strong color="red.solid">already expired</Strong> or{" "}
-                    <Strong color="red.solid">does not exist</Strong>.
+                    <Strong color="red.solid">already expired</Strong>,{" "}
+                    <Strong color="red.solid">does not exist</Strong>, or is{" "}
+                    <Strong color="red.solid">pending in another tab</Strong>.
                 </Text>
 
                 <Text>

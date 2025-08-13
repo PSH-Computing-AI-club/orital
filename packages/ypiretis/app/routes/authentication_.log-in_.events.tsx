@@ -1,3 +1,5 @@
+import {data} from "react-router";
+
 import {BEARER_TYPES} from "~/.server/guards/guard";
 
 import {requireTokenBearer} from "~/.server/services/callback_tokens_service";
@@ -10,6 +12,8 @@ import {requireGuestSession} from "~/.server/services/users_service";
 import {useWebSocket} from "~/.server/state/web_socket";
 
 import type {Route} from "./+types/authentication_.log-in_.events";
+
+const CONNECTED_IDS = new Set<number>();
 
 export type ILoginEvents = ILoginAuthorizedEvent | ILoginRevokedEvent;
 
@@ -34,13 +38,23 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         bearerType: BEARER_TYPES.cookie,
     });
 
+    if (CONNECTED_IDS.has(id)) {
+        throw data("Conflict", {
+            status: 409,
+        });
+    }
+
     let destructor: (() => void) | null = null;
+
+    CONNECTED_IDS.add(id);
 
     useWebSocket({
         onClose(_event, _connection) {
             if (destructor) {
                 destructor();
             }
+
+            CONNECTED_IDS.delete(id);
         },
 
         onOpen(_event, connection) {

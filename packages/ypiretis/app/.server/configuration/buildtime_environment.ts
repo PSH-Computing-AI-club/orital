@@ -1,5 +1,6 @@
 import * as v from "valibot";
 
+import {NAVIGATOR_TIMEZONE} from "../../utils/navigator";
 import {number, url} from "../../utils/valibot";
 
 import {parseEnvironment} from "../utils/environment";
@@ -18,6 +19,8 @@ export const BUILDTIME_ENVIRONMENT_SCHEMA = v.object({
         v.enum(NODE_ENVIRONMENT_MODES),
         NODE_ENVIRONMENT_MODES.development,
     ),
+
+    SERVER_TIMEZONE: v.optional(v.string(), NAVIGATOR_TIMEZONE),
 
     SERVER_HOST: v.optional(hostname, "localhost"),
     SERVER_PORT: v.optional(number, "3333"),

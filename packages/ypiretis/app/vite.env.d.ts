@@ -18,4 +18,6 @@ declare const __PACKAGE_NAME__: string;
 
 declare const __PACKAGE_VERSION__: string;
 
+declare const __SERVER_TIMEZONE__: string;
+
 declare const __UPLOADS_MAX_FILE_SIZE__: number;

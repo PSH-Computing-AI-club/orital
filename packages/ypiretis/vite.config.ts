@@ -21,6 +21,7 @@ const {
     NODE_ENV,
     SERVER_HOST,
     SERVER_PORT,
+    SERVER_TIMEZONE,
     UPLOADS_MAX_FILE_SIZE,
 } = BUILDTIME_ENVIRONMENT;
 
@@ -56,6 +57,7 @@ export default defineConfig((config) => {
             ),
             __PACKAGE_NAME__: JSON.stringify(PACKAGE_NAME),
             __PACKAGE_VERSION__: JSON.stringify(PACKAGE_VERSION),
+            __SERVER_TIMEZONE__: JSON.stringify(SERVER_TIMEZONE),
             __UPLOADS_MAX_FILE_SIZE__: JSON.stringify(UPLOADS_MAX_FILE_SIZE),
         },
 

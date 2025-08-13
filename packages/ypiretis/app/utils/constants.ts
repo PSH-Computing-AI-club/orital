@@ -28,3 +28,5 @@ export const IS_SERVER = !IS_CLIENT;
 export const PACKAGE_NAME = __PACKAGE_NAME__;
 
 export const PACKAGE_VERSION = __PACKAGE_VERSION__;
+
+export const SERVER_TIMEZONE = __SERVER_TIMEZONE__;

@@ -19,7 +19,7 @@ import {Temporal} from "@js-temporal/polyfill";
 import {format} from "bytes";
 
 import type {FormEventHandler, MouseEventHandler} from "react";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {lazy, useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {
     data,
@@ -66,9 +66,6 @@ import type {
     IChangeCallback,
     IEditorMode,
 } from "~/components/controlpanel/markdown_editor";
-import MarkdownEditor, {
-    EDITOR_MODE,
-} from "~/components/controlpanel/markdown_editor";
 import RadioCardGroup from "~/components/controlpanel/radio_card_group";
 import SectionCard from "~/components/controlpanel/section_card";
 import TabbedDataSectionCard from "~/components/controlpanel/tabbed_data_section_card";
@@ -98,6 +95,10 @@ import {number, title} from "~/utils/valibot";
 import type {IActionFormData as IUploadActionFormData} from "./admin_.news_.articles_.$articleID_.actions_.upload";
 
 import {Route} from "./+types/admin_.news.articles.$articleID";
+
+const MarkdownEditor = lazy(
+    () => import("~/components/controlpanel/markdown_editor"),
+);
 
 const FILE_NAME_MAX_LENGTH = 52;
 
@@ -474,12 +475,12 @@ function ContentCard() {
 
                 <TabbedDataSectionCard.Tab
                     label="Rich Text"
-                    provider={() => EDITOR_MODE.richText}
+                    provider={() => "MODE_RICH_TEXT" satisfies IEditorMode}
                 />
 
                 <TabbedDataSectionCard.Tab
                     label="Source"
-                    provider={() => EDITOR_MODE.source}
+                    provider={() => "MODE_SOURCE" satisfies IEditorMode}
                 />
 
                 <TabbedDataSectionCard.View>

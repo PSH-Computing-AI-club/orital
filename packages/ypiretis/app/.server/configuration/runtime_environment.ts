@@ -33,7 +33,20 @@ export const LOGGING_LEVELS = {
     warn: "warn",
 } as const;
 
+export const NODE_ENVIRONMENT_MODES = {
+    development: "development",
+
+    production: "production",
+
+    test: "test",
+} as const;
+
 export const RUNTIME_ENVIRONMENT_SCHEMA = v.object({
+    NODE_ENV: v.optional(
+        v.enum(NODE_ENVIRONMENT_MODES),
+        NODE_ENVIRONMENT_MODES.development,
+    ),
+
     SERVER_LOGGING_LEVEL: v.optional(
         v.enum(LOGGING_LEVELS),
         LOGGING_LEVELS.info,
@@ -79,6 +92,7 @@ export const RUNTIME_ENVIRONMENT_SCHEMA = v.object({
 
     GITHUB_ORGANIZATION_IDENTIFIER: identifier,
 });
+
 export type IRuntimeEnvironmentSchema = v.InferInput<
     typeof RUNTIME_ENVIRONMENT_SCHEMA
 >;
@@ -89,6 +103,9 @@ export type IRuntimeEnvironmentParsed = v.InferOutput<
 
 export type ILoggingLevels =
     (typeof LOGGING_LEVELS)[keyof typeof LOGGING_LEVELS];
+
+export type INodeEnvironmentModes =
+    (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
 
 const RUNTIME_ENVIRONMENT = parseEnvironment(RUNTIME_ENVIRONMENT_SCHEMA);
 export default RUNTIME_ENVIRONMENT;

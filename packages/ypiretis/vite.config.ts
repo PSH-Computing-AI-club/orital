@@ -18,7 +18,6 @@ const {
     APP_URL,
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE,
-    NODE_ENV,
     SERVER_HOST,
     SERVER_PORT,
     SERVER_TIMEZONE,
@@ -48,7 +47,6 @@ export default defineConfig((config) => {
             __ACCOUNT_PROVIDER_NAME__: JSON.stringify(ACCOUNT_PROVIDER_NAME),
             __APP_NAME__: JSON.stringify(APP_NAME),
             __APP_URL__: JSON.stringify(APP_URL),
-            __APP_IS_PRODUCTION__: JSON.stringify(NODE_ENV === "production"),
             __ARTICLES_ATTACHMENTS_MAX_FILE_SIZE__: JSON.stringify(
                 ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,
             ),

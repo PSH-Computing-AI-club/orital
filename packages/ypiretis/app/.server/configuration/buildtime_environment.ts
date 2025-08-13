@@ -6,20 +6,7 @@ import {number, url} from "../../utils/valibot";
 import {parseEnvironment} from "../utils/environment";
 import {byteSize, cryptographicKey, domain, hostname} from "../utils/valibot";
 
-export const NODE_ENVIRONMENT_MODES = {
-    development: "development",
-
-    production: "production",
-
-    test: "test",
-} as const;
-
 export const BUILDTIME_ENVIRONMENT_SCHEMA = v.object({
-    NODE_ENV: v.optional(
-        v.enum(NODE_ENVIRONMENT_MODES),
-        NODE_ENVIRONMENT_MODES.development,
-    ),
-
     SERVER_TIMEZONE: v.optional(v.string(), NAVIGATOR_TIMEZONE),
 
     SERVER_HOST: v.optional(hostname, "localhost"),
@@ -43,6 +30,7 @@ export const BUILDTIME_ENVIRONMENT_SCHEMA = v.object({
     ACCOUNT_PROVIDER_DOMAIN: domain,
     ACCOUNT_PROVIDER_NAME: v.pipe(v.string(), v.nonEmpty(), v.maxLength(64)),
 });
+
 export type IBuildtimeEnvironmentSchema = v.InferInput<
     typeof BUILDTIME_ENVIRONMENT_SCHEMA
 >;
@@ -50,9 +38,6 @@ export type IBuildtimeEnvironmentSchema = v.InferInput<
 export type IBuildtimeEnvironmentParsed = v.InferOutput<
     typeof BUILDTIME_ENVIRONMENT_SCHEMA
 >;
-
-export type INodeEnvironmentModes =
-    (typeof NODE_ENVIRONMENT_MODES)[keyof typeof NODE_ENVIRONMENT_MODES];
 
 const BUILDTIME_ENVIRONMENT = parseEnvironment(BUILDTIME_ENVIRONMENT_SCHEMA);
 export default BUILDTIME_ENVIRONMENT;

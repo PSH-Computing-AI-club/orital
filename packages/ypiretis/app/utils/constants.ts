@@ -21,7 +21,7 @@ export const EVENTS_ATTACHMENTS_MAX_FILE_SIZE = Math.min(
     __UPLOADS_MAX_FILE_SIZE__,
 );
 
-export const IS_CLIENT = typeof window === "object";
+export const IS_CLIENT = !import.meta.env.SSR;
 
 export const IS_SERVER = !IS_CLIENT;
 

@@ -16,6 +16,7 @@ x-build-environment: &build-environment
     APP_URL: ${APP_URL:-http://localhost:8080}
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE: 5MB
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE: 5MB
+    SERVER_TIMEZONE: America/New_York
     UPLOADS_MAX_FILE_SIZE: 5MB
 
 x-runtime-environment: &runtime-environment

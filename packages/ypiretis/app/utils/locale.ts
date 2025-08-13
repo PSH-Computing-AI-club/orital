@@ -32,6 +32,7 @@ export function formatTimestamp(
         case FORMAT_DETAIL.long:
             formatter = new Intl.DateTimeFormat(locale, {
                 timeZone: timezone,
+                timeZoneName: "short",
 
                 day: "numeric",
                 month: "long",

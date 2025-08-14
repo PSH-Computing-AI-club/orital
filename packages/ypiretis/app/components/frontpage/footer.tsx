@@ -12,7 +12,7 @@ import {
 import type {PropsWithChildren} from "react";
 
 import Links from "~/components/common/links";
-import VersionText from "~/components/common/version_text";
+import Version from "~/components/common/version";
 
 interface IFooterLinksContainerProps extends PropsWithChildren {}
 
@@ -78,7 +78,7 @@ function FooterLogo() {
                 blockSize={{base: "3xs", mdDown: "48"}}
             />
 
-            <VersionText />
+            <Version.Link />
         </VStack>
     );
 }

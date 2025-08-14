@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 import Title from "~/components/common/title";
-import VersionText from "~/components/common/version_text";
+import Version from "~/components/common/version";
 
 import type {PropsWithChildren} from "react";
 
@@ -91,7 +91,7 @@ function PromptShellContainer(props: IPromptShellContainerProps) {
             <Spacer />
 
             <Text hideFrom="lg" marginBlockEnd={{lgTo2xl: "-10", mdOnly: "-5"}}>
-                <VersionText />
+                <Version.Link />
             </Text>
         </VStack>
     );
@@ -125,7 +125,7 @@ function PromptShellSidebar(_props: IPromptShellSidebarProps) {
 
             <Bleed blockEnd="10" asChild>
                 <Text>
-                    <VersionText />
+                    <Version.Link />
                 </Text>
             </Bleed>
         </VStack>

@@ -10,6 +10,7 @@ x-build-environment: &build-environment
     ACCOUNT_PROVIDER_DOMAIN: psu.edu
     ACCOUNT_PROVIDER_NAME: "Penn State"
     APP_NAME: "PSH Computing & AI Club"
+    APP_REPOSITORY_URL: https://github.com/PSH-Computing-AI-Club/orital
     # **NOTE:** The control plane will have the proper `APP_URL` environment
     # variable set in its control panel for the project. This allows for this
     # `docker-compose.yaml` file to be easily used for local debugging.

@@ -69,7 +69,7 @@ services:
 
         build:
             context: ../..
-            dockerfile: ./packages/ypiretis/Dockerfile
+            dockerfile: ./packages/ypiretis/Dockerfile.ypiretis
 
             args:
                 <<: *build-environment
@@ -96,8 +96,11 @@ services:
 
     caddy-proxy:
         container_name: caddy-proxy
-        image: caddy:2.10.0-alpine
         restart: unless-stopped
+
+        build:
+            context: ./
+            dockerfile: Dockerfile.caddy
 
         ports:
             - "3333:80"

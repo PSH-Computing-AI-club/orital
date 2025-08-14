@@ -23,7 +23,6 @@ import Toasts from "~/components/controlpanel/toasts";
 
 import CloseIcon from "~/components/icons/close_icon";
 import DashboardIcon from "~/components/icons/dashboard_icon";
-import ChartIcon from "~/components/icons/chart_icon";
 import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateParams} from "~/guards/validation";
@@ -155,13 +154,6 @@ function SidebarView() {
                         <DashboardIcon />
                     </Sidebar.Icon>
                     Dashboard
-                </Sidebar.Link>
-
-                <Sidebar.Link to={`/rooms/${roomID}/presenter/polls`}>
-                    <Sidebar.Icon>
-                        <ChartIcon />
-                    </Sidebar.Icon>
-                    Polls
                 </Sidebar.Link>
 
                 <Spacer />

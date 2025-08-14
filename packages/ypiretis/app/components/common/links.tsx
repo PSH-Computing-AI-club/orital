@@ -23,7 +23,7 @@ export interface ILinksLinkProps extends Omit<LinkProps, "to" | "variant"> {
 }
 
 export interface ILinksExternalLinkProps extends ILinksLinkProps {
-    readonly to: string;
+    readonly to: string | URL;
 }
 
 export interface ILinksInternalLinkProps extends ILinksLinkProps {
@@ -112,7 +112,12 @@ function LinksExternalLink(props: ILinksExternalLinkProps) {
 
     return (
         <Variant>
-            <Link href={to} target="_blank" rel="noopener noreferrer" {...rest}>
+            <Link
+                href={to.toString()}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...rest}
+            >
                 {children}
             </Link>
         </Variant>

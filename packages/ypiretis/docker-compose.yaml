@@ -58,7 +58,9 @@ x-secrets-environment: &secrets-environment
     SMTP_PASSWORD: ${SMTP_PASSWORD}
 
 volumes:
-    data:
+    caddy-data:
+    caddy-config:
+    ypiretis-data:
 
 services:
     orital-ypiretis:
@@ -84,7 +86,7 @@ services:
                 SERVER_PORT: 3333
 
         volumes:
-            - data:/app/packages/ypiretis/data
+            - ypiretis-data:/app/packages/ypiretis/data
 
         environment:
             <<: [*build-environment, *runtime-environment, *secrets-environment]
@@ -102,6 +104,8 @@ services:
 
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy-config:/config
+            - caddy-data:/data
 
         depends_on:
             - orital-ypiretis

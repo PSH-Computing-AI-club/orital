@@ -1,3 +1,9 @@
+{
+    servers {
+        trusted_proxies static private_ranges
+    }
+}
+
 http://:{$SERVER_PORT} {
     handle /blah* {
         rate_limit {
@@ -41,7 +47,5 @@ http://:{$SERVER_PORT} {
         }
     }
 
-    reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT} {
-        trusted_proxies private_ranges
-    }
+    reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT}
 }

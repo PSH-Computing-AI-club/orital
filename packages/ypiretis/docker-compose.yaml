@@ -37,7 +37,7 @@ x-runtime-environment: &runtime-environment
     SERVER_LOGGING_LEVEL: info
     SESSION_EPHEMERAL_TTL: PT2H
     SESSION_PERSISTENT_TTL: P30D
-    SMTP_EMAIL: caai.noreply@gmail.com
+    SMTP_EMAIL: computingaiclub@gmail.com
     SMTP_HOST: smtp.gmail.com
     SMTP_PORT: 465
     TOKEN_CALLBACK_TTL: PT5M

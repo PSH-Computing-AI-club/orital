@@ -1,3 +1,47 @@
 http://:{$SERVER_PORT} {
-    reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT}
+    handle /blah* {
+        rate_limit {
+            zone severe_impact {
+                key {remote_host}
+
+                events 5
+                window 60s
+            }
+        }
+    }
+
+    handle /blap* {
+        rate_limit {
+            zone moderate_impact {
+                key {remote_host}
+
+                events 24
+                window 60s
+            }
+        }
+    }
+
+    handle /blup* {
+        rate_limit {
+            zone low_impact {
+                key {remote_host}
+
+                events 64
+                window 60s
+            }
+        }
+    }
+
+    rate_limit {
+        zone no_operations {
+            key {remote_host}
+
+            events 512
+            window 60s
+        }
+    }
+
+    reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT} {
+        trusted_proxies private_ranges
+    }
 }

@@ -63,6 +63,7 @@ volumes:
 services:
     orital-ypiretis:
         container_name: orital-ypiretis
+        restart: unless-stopped
 
         build:
             context: ../..
@@ -94,6 +95,7 @@ services:
     caddy-proxy:
         container_name: caddy-proxy
         image: caddy:2.10.0-alpine
+        restart: unless-stopped
 
         ports:
             - "3333:80"

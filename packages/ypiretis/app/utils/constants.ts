@@ -5,6 +5,8 @@ export const APP_IS_PRODUCTION = import.meta.env.PROD;
 
 export const APP_NAME = __APP_NAME__;
 
+export const APP_REPOSITORY_URL = new URL(__APP_REPOSITORY_URL__);
+
 export const APP_URL = new URL(__APP_URL__);
 
 export const ACCOUNT_PROVIDER_DOMAIN = __ACCOUNT_PROVIDER_DOMAIN__;

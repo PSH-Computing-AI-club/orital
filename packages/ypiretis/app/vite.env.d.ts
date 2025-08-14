@@ -2,6 +2,8 @@
 
 declare const __APP_NAME__: string;
 
+declare const __APP_REPOSITORY_URL__: string;
+
 declare const __APP_URL__: string;
 
 declare const __ACCOUNT_PROVIDER_DOMAIN__: string;

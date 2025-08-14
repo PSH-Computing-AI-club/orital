@@ -15,6 +15,7 @@ const {
     ACCOUNT_PROVIDER_DOMAIN,
     ACCOUNT_PROVIDER_NAME,
     APP_NAME,
+    APP_REPOSITORY_URL,
     APP_URL,
     ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,
     EVENTS_ATTACHMENTS_MAX_FILE_SIZE,
@@ -46,6 +47,7 @@ export default defineConfig((config) => {
             ),
             __ACCOUNT_PROVIDER_NAME__: JSON.stringify(ACCOUNT_PROVIDER_NAME),
             __APP_NAME__: JSON.stringify(APP_NAME),
+            __APP_REPOSITORY_URL__: JSON.stringify(APP_REPOSITORY_URL),
             __APP_URL__: JSON.stringify(APP_URL),
             __ARTICLES_ATTACHMENTS_MAX_FILE_SIZE__: JSON.stringify(
                 ARTICLES_ATTACHMENTS_MAX_FILE_SIZE,

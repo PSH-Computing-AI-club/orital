@@ -25,6 +25,7 @@ export const BUILDTIME_ENVIRONMENT_SCHEMA = v.object({
         v.pipe(v.string(), v.nonEmpty(), v.maxLength(32)),
         "Orital Ypiretis",
     ),
+    APP_REPOSITORY_URL: url,
     APP_URL: v.optional(url, "http://localhost:3333"),
 
     ACCOUNT_PROVIDER_DOMAIN: domain,

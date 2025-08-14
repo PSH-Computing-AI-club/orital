@@ -1,7 +1,6 @@
 import {Spacer, Strong, Text} from "@chakra-ui/react";
 
-import type {MouseEvent} from "react";
-import {useState} from "react";
+import type {MouseEventHandler} from "react";
 
 import type {ShouldRevalidateFunction} from "react-router";
 import {Outlet} from "react-router";
@@ -27,6 +26,7 @@ import SlidersIcon from "~/components/icons/sliders_icon";
 
 import {validateParams} from "~/guards/validation";
 
+import {useAsyncCallback} from "~/hooks/async_callback";
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
 import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
@@ -124,27 +124,24 @@ export function HydrateFallback() {
 
 function SidebarView() {
     const {room} = usePresenterContext();
+
     const {roomID, state} = room;
 
-    const [fetchingAction, setFetchingAction] = useState<boolean>(false);
+    const [isFetchingAction, onDisposeClick] = useAsyncCallback(
+        (async (_event) => {
+            await fetch("./presenter/actions/room", {
+                method: "POST",
+                body: buildFormData<IActionFormData>({
+                    action: "state.dispose",
+                }),
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [],
+    );
 
     const isDisposed = state === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || fetchingAction);
-
-    async function onDisposeClick(
-        _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    ): Promise<void> {
-        setFetchingAction(true);
-
-        await fetch("./presenter/actions/room", {
-            method: "POST",
-            body: buildFormData<IActionFormData>({
-                action: "state.dispose",
-            }),
-        });
-
-        setFetchingAction(false);
-    }
+    const isActionDisabled = isDisposed || isFetchingAction;
 
     return (
         <Sidebar.Root>
@@ -168,7 +165,7 @@ function SidebarView() {
                 </Sidebar.Link>
 
                 <Sidebar.Button
-                    disabled={!canFetchAction}
+                    disabled={!isActionDisabled}
                     colorPalette="red"
                     onClick={onDisposeClick}
                 >

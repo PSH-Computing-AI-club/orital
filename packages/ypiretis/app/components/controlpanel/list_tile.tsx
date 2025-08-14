@@ -2,7 +2,6 @@ import type {
     ButtonProps,
     GroupProps,
     IconButtonProps,
-    IconProps,
     SpanProps,
     StackProps,
     TagRootProps,
@@ -11,7 +10,6 @@ import {
     Button,
     Group,
     HStack,
-    Icon,
     IconButton,
     VStack,
     Span,
@@ -32,7 +30,7 @@ export interface IListTileTitleProps extends StackProps {}
 
 export interface IListTileHeaderProps extends StackProps {}
 
-export interface IListTileIconProps extends Omit<IconProps, "asChild"> {}
+export interface IListTileIconProps extends Omit<SpanProps, "asChild"> {}
 
 export interface IListTileRootProps extends StackProps {}
 
@@ -106,9 +104,9 @@ function ListTileIcon(props: IListTileIconProps) {
     const {children, ...rest} = props;
 
     return (
-        <Icon fontSize="2xl" {...rest}>
+        <Span fontSize="2xl" {...rest} asChild>
             {children}
-        </Icon>
+        </Span>
     );
 }
 

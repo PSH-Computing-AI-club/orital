@@ -165,7 +165,7 @@ function SidebarView() {
                 </Sidebar.Link>
 
                 <Sidebar.Button
-                    disabled={!isActionDisabled}
+                    disabled={isActionDisabled}
                     colorPalette="red"
                     onClick={onDisposeClick}
                 >

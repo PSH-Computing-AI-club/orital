@@ -1,22 +1,25 @@
+import {extend} from "../../utils/prototypes";
+
 import {isAttendeeUser} from "./attendee_user";
 import {isDisplayEntity} from "./display_entity";
 import type {IPresenterUserMessages} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
 import type {IPresenterUserStates} from "./states";
-import {PRESENTER_USER_STATES} from "./states";
 import {SYMBOL_ENTITY_ON_DISPOSE, SYMBOL_PRESENTER_USER_BRAND} from "./symbols";
 import type {IUserEntity, IUserEntityOptions} from "./user_entity";
 import makeUserEntity from "./user_entity";
 
 export const PRESENTER_ENTITY_ID = 1;
 
+export type IPresenterUser = IUserEntity<
+    IPresenterUserMessages,
+    IPresenterUserStates
+> & {
+    [SYMBOL_PRESENTER_USER_BRAND]: true;
+};
+
 export interface IPresenterUserOptions
     extends IUserEntityOptions<IPresenterUserStates> {}
-
-export interface IPresenterUser
-    extends IUserEntity<IPresenterUserMessages, IPresenterUserStates> {
-    [SYMBOL_PRESENTER_USER_BRAND]: true;
-}
 
 export function isPresenterUser(value: unknown): value is IPresenterUser {
     return (
@@ -35,9 +38,7 @@ export default function makePresenterUser(
         options,
     );
 
-    const presenter = {
-        ...user,
-
+    const presenter = extend(user)({
         get [SYMBOL_PRESENTER_USER_BRAND]() {
             return true as const;
         },
@@ -53,7 +54,7 @@ export default function makePresenterUser(
 
             pinUpdateSubscription.dispose();
         },
-    } satisfies IPresenterUser;
+    }) satisfies IPresenterUser;
 
     const attendeeHandUpdate = room.EVENT_ATTENDEE_HAND_UPDATE.subscribe(
         (event) => {

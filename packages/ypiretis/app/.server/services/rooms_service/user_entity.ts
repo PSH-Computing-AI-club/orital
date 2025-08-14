@@ -1,3 +1,5 @@
+import {extend} from "../../utils/prototypes";
+
 import type {IUser} from "../users_service";
 
 import type {IEntity, IEntityOptions} from "./entity";
@@ -8,15 +10,17 @@ import {SYMBOL_USER_BRAND} from "./symbols";
 
 export type IGenericUserEntity = IUserEntity<IUserMessages, IUserStates>;
 
-export interface IUserEntityOptions<S extends string>
-    extends IEntityOptions<S> {
-    readonly user: IUser;
-}
-
-export interface IUserEntity<E extends IMessage, S extends string>
-    extends IEntity<E, S> {
+export type IUserEntity<E extends IMessage, S extends string> = IEntity<
+    E,
+    S
+> & {
     [SYMBOL_USER_BRAND]: true;
 
+    readonly user: IUser;
+};
+
+export interface IUserEntityOptions<S extends string>
+    extends IEntityOptions<S> {
     readonly user: IUser;
 }
 
@@ -35,15 +39,13 @@ export default function makeUserEntity<E extends IMessage, S extends string>(
 
     const entity = makeEntity<E, S>(options);
 
-    const userEntity = {
-        ...entity,
-
+    const userEntity = extend(entity)({
         get [SYMBOL_USER_BRAND]() {
             return true as const;
         },
 
         user,
-    } satisfies IUserEntity<E, S>;
+    }) satisfies IUserEntity<E, S>;
 
     return userEntity;
 }

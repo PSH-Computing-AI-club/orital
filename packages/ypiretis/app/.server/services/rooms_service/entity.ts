@@ -153,7 +153,6 @@ export default function makeEntity<E extends IMessage, S extends string>(
 
         _updateState(value) {
             const oldState = state;
-
             state = value;
 
             this[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, value);

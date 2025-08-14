@@ -1,3 +1,5 @@
+import {extend} from "../../utils/prototypes";
+
 import {EntityStateError} from "./errors";
 import type {IAttendeeUserMessages} from "./messages";
 import {MESSAGE_EVENTS} from "./messages";
@@ -14,11 +16,10 @@ import {
 import type {IUserEntity, IUserEntityOptions} from "./user_entity";
 import makeUserEntity from "./user_entity";
 
-export interface IAttendeeUserOptions
-    extends IUserEntityOptions<IAttendeeUserStates> {}
-
-export interface IAttendeeUser
-    extends IUserEntity<IAttendeeUserMessages, IAttendeeUserStates> {
+export type IAttendeeUser = IUserEntity<
+    IAttendeeUserMessages,
+    IAttendeeUserStates
+> & {
     [SYMBOL_ATTENDEE_USER_BRAND]: true;
 
     readonly isRaisingHand: boolean;
@@ -34,7 +35,10 @@ export interface IAttendeeUser
     raiseHand(): void;
 
     reject(): void;
-}
+};
+
+export interface IAttendeeUserOptions
+    extends IUserEntityOptions<IAttendeeUserStates> {}
 
 export function isAttendeeUser(value: unknown): value is IAttendeeUser {
     return (
@@ -69,14 +73,15 @@ export default function makeAttendeeUser(
 
     let isRaisingHand: boolean = false;
 
-    const attendee = {
-        ...userEntity,
-
+    const attendee = extend(userEntity)({
         get [SYMBOL_ATTENDEE_USER_BRAND]() {
             return true as const;
         },
 
-        [SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState) {
+        [SYMBOL_ENTITY_ON_STATE_UPDATE](
+            oldState: IAttendeeUserStates,
+            newState: IAttendeeUserStates,
+        ) {
             userEntity[SYMBOL_ENTITY_ON_STATE_UPDATE](oldState, newState);
 
             if (
@@ -193,7 +198,7 @@ export default function makeAttendeeUser(
                 this._disconnect();
             }, 0);
         },
-    } satisfies IAttendeeUser;
+    }) satisfies IAttendeeUser;
 
     if (initialState === ATTENDEE_USER_STATES.connected) {
         attendee._dispatch({

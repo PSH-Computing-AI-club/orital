@@ -1,11 +1,28 @@
+import EmptyState from "~/components/controlpanel/empty_state";
 import Layout from "~/components/controlpanel/layout";
+
+import DownasaurIcon from "~/components/icons/downasaur_icon";
 
 import {Route} from "./+types/rooms_.$roomID.presenter.settings";
 
 export default function RoomsPresenterSettings(_props: Route.ComponentProps) {
     return (
         <Layout.FixedContainer>
-            Stuff will happun here at da settings!
+            <EmptyState.Root>
+                <EmptyState.Container>
+                    <EmptyState.Icon>
+                        <DownasaurIcon />
+                    </EmptyState.Icon>
+
+                    <EmptyState.Body>
+                        <EmptyState.Title>To be implemented</EmptyState.Title>
+
+                        <EmptyState.Description>
+                            This feature has not yet been implemented.
+                        </EmptyState.Description>
+                    </EmptyState.Body>
+                </EmptyState.Container>
+            </EmptyState.Root>
         </Layout.FixedContainer>
     );
 }

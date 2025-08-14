@@ -170,6 +170,7 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
             handleMessage(message);
             reduceMessage(message);
         },
+
         [handleMessage, reduceMessage],
     );
 
@@ -177,6 +178,8 @@ export function AttendeeContextProvider(props: IAttendeeContextProviderProps) {
         () => ({
             onError,
             onMessage,
+
+            maxRetries: 0,
         }),
 
         [onError, onMessage],

@@ -198,6 +198,8 @@ function AuthenticationLogInPendingView(props: {
         () => ({
             onClose,
             onMessage,
+
+            maxRetries: 0,
         }),
 
         [onClose, onMessage],

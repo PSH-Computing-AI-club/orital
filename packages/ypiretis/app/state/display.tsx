@@ -169,6 +169,7 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
             handleMessage(message);
             reduceMessage(message);
         },
+
         [handleMessage, reduceMessage],
     );
 
@@ -176,6 +177,8 @@ export function DisplayContextProvider(props: IDisplayContextProviderProps) {
         () => ({
             onError,
             onMessage,
+
+            maxRetries: 0,
         }),
 
         [onError, onMessage],

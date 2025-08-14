@@ -372,6 +372,7 @@ export function PresenterContextProvider(
             handleMessage(message);
             reduceMessage(message);
         },
+
         [handleMessage, reduceMessage],
     );
 
@@ -379,6 +380,8 @@ export function PresenterContextProvider(
         () => ({
             onError,
             onMessage,
+
+            maxRetries: 0,
         }),
 
         [onError, onMessage],

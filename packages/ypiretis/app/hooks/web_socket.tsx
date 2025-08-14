@@ -8,6 +8,10 @@ import {
     useSyncExternalStore,
 } from "react";
 
+const DEFAULT_RETRY_MAX_DELAY = 1000 * 30; // 1000 milliseconds * 30 = 30 seconds
+
+const DEFAULT_RETRY_MIN_DELAY = 1000; // 1000 milliseconds = 1 second
+
 const CONTEXT_WEB_SOCKET_CACHE = createContext<IWebSocketCache | null>(null);
 
 type IReadyStateCallback = () => void;
@@ -16,6 +20,10 @@ type IWebSocketCache = Map<string, IWebSocketCacheEntry>;
 
 interface IWebSocketCacheEntry {
     refCount: number;
+
+    retryCount: number;
+
+    retryTimeoutID: number | null;
 
     readonly readyStateSubscribers: Set<IReadyStateCallback>;
 
@@ -44,8 +52,20 @@ export type IUseWebSocketMessageCallback = (
 
 export type IUseWebSocketOpenCallback = (event: Event) => Promise<void> | void;
 
+export type IUseWebSocketRetryCallback = (
+    retry: number,
+) => Promise<void> | void;
+
 export interface IUseWebSocketOptions {
     readonly enabled?: boolean;
+
+    readonly maxRetries?: number;
+
+    readonly maxRetryDelay?: number;
+
+    readonly minRetryDelay?: number;
+
+    readonly protocols?: string;
 
     readonly onClose?: IUseWebSocketCloseCallback;
 
@@ -55,7 +75,7 @@ export interface IUseWebSocketOptions {
 
     readonly onOpen?: IUseWebSocketOpenCallback;
 
-    readonly protocols?: string;
+    readonly onRetry?: IUseWebSocketRetryCallback;
 }
 
 export interface IUseWebSocket {
@@ -106,17 +126,22 @@ export default function useWebSocket(
 ): IUseWebSocket {
     const {
         enabled = true,
-        protocols,
+        maxRetries = null,
+        maxRetryDelay = DEFAULT_RETRY_MAX_DELAY,
+        minRetryDelay = DEFAULT_RETRY_MIN_DELAY,
         onClose,
         onError,
         onMessage,
         onOpen,
+        onRetry,
+        protocols,
     } = options;
 
     const websocketCache = useWebSocketCache();
 
     const cacheKey = useMemo(
         () => generateCacheKey(url, protocols),
+
         [protocols, url],
     );
 
@@ -156,37 +181,76 @@ export default function useWebSocket(
                 );
             }
         },
+
         [cacheKey, websocketCache],
     );
 
     useEffect(() => {
         if (!enabled) {
-            return undefined;
+            const entry = websocketCache.get(cacheKey) ?? null;
+
+            if (entry?.retryTimeoutID) {
+                clearTimeout(entry.retryTimeoutID);
+
+                entry.retryTimeoutID = null;
+            }
+
+            return;
         }
 
-        let entry = websocketCache.get(cacheKey) ?? null;
+        const reconnect = () => {
+            const entry = websocketCache.get(cacheKey) ?? null;
 
-        if (
-            !entry ||
-            // **HACK:** See comment in the deconstructor about how much I
-            // hate React's `<StrictMode>`.
-            entry.refCount === 0
-        ) {
+            if (
+                !entry ||
+                maxRetries === null ||
+                (maxRetries > 0 && entry.retryCount >= maxRetries) ||
+                !enabled
+            ) {
+                websocketCache.delete(cacheKey);
+                return;
+            }
+
+            const retryCount = entry.retryCount + 1;
+            const delayWithBackoff = Math.min(
+                minRetryDelay * 2 ** entry.retryCount,
+                maxRetryDelay,
+            );
+
+            const delayWithJitter = Math.random() * delayWithBackoff;
+
+            entry.retryCount = retryCount;
+            entry.retryTimeoutID = setTimeout(
+                connect,
+                delayWithJitter,
+            ) as unknown as number; // **HACK:** Node JS typings override the proper return
+            // type typings for the browser `setTimeout`.
+
+            if (onRetry) {
+                onRetry(retryCount);
+            }
+        };
+
+        const connect = () => {
             const webSocket = new WebSocket(url, protocols);
 
-            entry = {
-                refCount: 0,
-                readyStateSubscribers: new Set(),
+            const oldEntry = websocketCache.get(cacheKey);
+            const newEntry: IWebSocketCacheEntry = {
                 webSocket,
+
+                refCount: oldEntry?.refCount ?? 0,
+                retryCount: oldEntry?.retryCount ?? 0,
+                retryTimeoutID: null,
+                readyStateSubscribers: new Set(),
             };
 
             const notifyReadyStateSubscribers = () => {
-                for (const callback of entry!.readyStateSubscribers) {
+                for (const callback of newEntry.readyStateSubscribers) {
                     callback();
                 }
             };
 
-            const internalOnClose = ((event) => {
+            const internalOnClose = ((event: CloseEvent) => {
                 webSocket.removeEventListener("close", internalOnClose);
                 webSocket.removeEventListener("error", internalOnError);
                 webSocket.removeEventListener("open", internalOnOpen);
@@ -195,10 +259,12 @@ export default function useWebSocket(
 
                 if (event.code === 1000) {
                     websocketCache.delete(cacheKey);
+                } else {
+                    reconnect();
                 }
             }) satisfies IUseWebSocketCloseCallback;
 
-            const internalOnError = ((_event) => {
+            const internalOnError = ((_event: Event) => {
                 webSocket.removeEventListener("close", internalOnClose);
                 webSocket.removeEventListener("error", internalOnError);
                 webSocket.removeEventListener("open", internalOnOpen);
@@ -206,17 +272,31 @@ export default function useWebSocket(
                 notifyReadyStateSubscribers();
             }) satisfies IUseWebSocketErrorCallback;
 
-            const internalOnOpen = ((_event) => {
+            const internalOnOpen = ((_event: Event) => {
+                const entry = websocketCache.get(cacheKey);
+
+                if (entry) {
+                    entry.retryCount = 0;
+                }
+
                 notifyReadyStateSubscribers();
             }) satisfies IUseWebSocketOpenCallback;
-
-            websocketCache.set(cacheKey, entry);
 
             webSocket.addEventListener("close", internalOnClose);
             webSocket.addEventListener("error", internalOnError);
             webSocket.addEventListener("open", internalOnOpen);
 
+            websocketCache.set(cacheKey, newEntry);
+
             notifyReadyStateSubscribers();
+        };
+
+        let entry = websocketCache.get(cacheKey);
+
+        if (!entry || entry.refCount === 0) {
+            connect();
+
+            entry = websocketCache.get(cacheKey)!;
         }
 
         const {webSocket} = entry;
@@ -310,10 +390,14 @@ export default function useWebSocket(
     }, [
         enabled,
         cacheKey,
+        maxRetries,
+        maxRetryDelay,
+        minRetryDelay,
         onClose,
         onError,
         onMessage,
         onOpen,
+        onRetry,
         protocols,
         url,
         websocketCache,

@@ -1,5 +1,6 @@
 {
     "recommendations": [
+        "docker.docker",
         "esbenp.prettier-vscode",
         "matthewpi.caddyfile-support",
         "oxc.oxc-vscode"

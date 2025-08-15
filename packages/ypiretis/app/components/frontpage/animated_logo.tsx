@@ -251,12 +251,13 @@ function AnimatedLogoLights() {
 function AnimatedLogoEffects() {
     const qualityMode = useQualityMode();
 
-    const {bloomKernelSize, multisampling, showExpensiveEffects} =
+    const {bloomKernelSize, depthBuffer, multisampling, showExpensiveEffects} =
         useMemo(() => {
             switch (qualityMode) {
                 case QUALITY_MODES.ultra:
                     return {
                         bloomKernelSize: KernelSize.LARGE,
+                        depthBuffer: true,
                         multisampling: 8,
                         showExpensiveEffects: true,
                     };
@@ -264,6 +265,7 @@ function AnimatedLogoEffects() {
                 case QUALITY_MODES.high:
                     return {
                         bloomKernelSize: KernelSize.MEDIUM,
+                        depthBuffer: true,
                         multisampling: 4,
                         showExpensiveEffects: true,
                     };
@@ -271,13 +273,23 @@ function AnimatedLogoEffects() {
                 case QUALITY_MODES.medium:
                     return {
                         bloomKernelSize: KernelSize.SMALL,
+                        depthBuffer: true,
                         multisampling: 2,
                         showExpensiveEffects: false,
                     };
 
-                default:
+                case QUALITY_MODES.low:
                     return {
                         bloomKernelSize: KernelSize.VERY_SMALL,
+                        depthBuffer: true,
+                        multisampling: 0,
+                        showExpensiveEffects: false,
+                    };
+
+                case QUALITY_MODES.potato:
+                    return {
+                        bloomKernelSize: KernelSize.VERY_SMALL,
+                        depthBuffer: false,
                         multisampling: 0,
                         showExpensiveEffects: false,
                     };
@@ -286,7 +298,7 @@ function AnimatedLogoEffects() {
 
     return (
         <EffectComposer
-            depthBuffer={showExpensiveEffects}
+            depthBuffer={depthBuffer}
             enableNormalPass={showExpensiveEffects}
             multisampling={multisampling}
             stencilBuffer={false}

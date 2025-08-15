@@ -4,7 +4,7 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 import {APP_NAME} from "~/utils/constants";
 
-export default function AuthenticationConsentRevoked() {
+export default function MessagesAuthenticationConsentRevoked() {
     return (
         <>
             <PromptShell.Title

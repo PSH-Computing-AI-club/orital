@@ -4,19 +4,21 @@ import Links from "~/components/common/links";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-export default function AuthenticationLogInExpired() {
+export default function MessagesAuthenticationLogInUnauthorized() {
     return (
         <>
             <PromptShell.Title
-                title="Login Revoked."
-                query="Revoked"
+                title="Login Unauthorized."
+                query="Unauthorized"
                 color="red.solid"
             />
 
             <PromptShell.Body>
                 <Text>
-                    The login you were trying to handle was{" "}
-                    <Strong color="red.solid">revoked</Strong>.
+                    The login you are trying to handle has{" "}
+                    <Strong color="red.solid">already expired</Strong>,{" "}
+                    <Strong color="red.solid">does not exist</Strong>, or is{" "}
+                    <Strong color="red.solid">pending in another tab</Strong>.
                 </Text>
 
                 <Text>

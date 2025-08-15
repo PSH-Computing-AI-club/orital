@@ -17,7 +17,9 @@ import {KernelSize, ToneMappingMode} from "postprocessing";
 import type {PropsWithChildren} from "react";
 import {
     Suspense,
+    createContext,
     useCallback,
+    useContext,
     useEffect,
     useMemo,
     useRef,
@@ -61,6 +63,42 @@ const MESH_SCALE_MD = 1.5;
 
 const MESH_SCALE_SM = 1.25;
 
+const QUALITY_MODES = {
+    potato: "MODE_POTATO",
+
+    low: "MODE_LOW",
+
+    medium: "MODE_MEDIUM",
+
+    high: "MODE_HIGH",
+
+    ultra: "MODE_ULTRA",
+} as const;
+
+const QUALITY_DOWN_THRESHOLDS = {
+    low: 0.4,
+
+    medium: 0.6,
+
+    high: 0.75,
+
+    ultra: 0.85,
+} as const;
+
+const QUALITY_UP_THRESHOLDS = {
+    potato: 0.6,
+
+    low: 0.75,
+
+    medium: 0.85,
+
+    high: 0.95,
+} as const;
+
+const CONTEXT_QUALITY_MODE = createContext<IQualityModes>(QUALITY_MODES.medium);
+
+type IQualityModes = (typeof QUALITY_MODES)[keyof typeof QUALITY_MODES];
+
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
 function easeOutQuad(x: number): number {
@@ -82,6 +120,10 @@ function useResponsiveMeshScale(): number {
         default:
             return MESH_SCALE_DEFAULT;
     }
+}
+
+function useQualityMode(): IQualityModes {
+    return useContext(CONTEXT_QUALITY_MODE);
 }
 
 function AnimatedLogoLoader() {
@@ -191,6 +233,7 @@ function AnimatedLogoLights() {
                 penumbra={1}
                 decay={0}
                 intensity={2.5}
+                distance={100}
                 castShadow={false}
             />
 
@@ -198,7 +241,7 @@ function AnimatedLogoLights() {
                 position={[0, -30, 12]}
                 decay={0.3}
                 intensity={6}
-                distance={-2}
+                distance={100}
                 castShadow={false}
             />
         </>
@@ -206,59 +249,76 @@ function AnimatedLogoLights() {
 }
 
 function AnimatedLogoEffects() {
-    const [hasDegradedPerformance, setHasDegradedPerformance] =
-        useState<boolean>(false);
+    const qualityMode = useQualityMode();
 
-    function onPerformanceDecline(_api: PerformanceMonitorApi): void {
-        setHasDegradedPerformance(true);
-    }
+    const {bloomKernelSize, multisampling, showExpensiveEffects} =
+        useMemo(() => {
+            switch (qualityMode) {
+                case QUALITY_MODES.ultra:
+                    return {
+                        bloomKernelSize: KernelSize.LARGE,
+                        multisampling: 8,
+                        showExpensiveEffects: true,
+                    };
 
-    function onPerformanceIncline(_api: PerformanceMonitorApi): void {
-        setHasDegradedPerformance(false);
-    }
+                case QUALITY_MODES.high:
+                    return {
+                        bloomKernelSize: KernelSize.MEDIUM,
+                        multisampling: 4,
+                        showExpensiveEffects: true,
+                    };
+
+                case QUALITY_MODES.medium:
+                    return {
+                        bloomKernelSize: KernelSize.SMALL,
+                        multisampling: 2,
+                        showExpensiveEffects: false,
+                    };
+
+                default:
+                    return {
+                        bloomKernelSize: KernelSize.VERY_SMALL,
+                        multisampling: 0,
+                        showExpensiveEffects: false,
+                    };
+            }
+        }, [qualityMode]);
 
     return (
-        <>
-            <PerformanceMonitor
-                onDecline={onPerformanceDecline}
-                onIncline={onPerformanceIncline}
+        <EffectComposer
+            depthBuffer={showExpensiveEffects}
+            enableNormalPass={showExpensiveEffects}
+            multisampling={multisampling}
+            stencilBuffer={false}
+            enabled
+        >
+            <ToneMapping
+                mode={ToneMappingMode.OPTIMIZED_CINEON}
+                resolution={512}
             />
 
-            <EffectComposer
-                depthBuffer={true}
-                enableNormalPass={true}
-                multisampling={hasDegradedPerformance ? 0 : 8}
-                stencilBuffer={false}
-                enabled
-            >
-                <ToneMapping
-                    mode={ToneMappingMode.OPTIMIZED_CINEON}
-                    resolution={512}
-                />
+            {showExpensiveEffects ? (
+                <>
+                    <N8AO
+                        quality="performance"
+                        aoRadius={10}
+                        intensity={2}
+                        color={GRID_COLOR}
+                        screenSpaceRadius
+                    />
 
-                {!hasDegradedPerformance ? (
-                    <>
-                        <N8AO
-                            quality="performance"
-                            aoRadius={10}
-                            intensity={2}
-                            color={GRID_COLOR}
-                            screenSpaceRadius
-                        />
-
-                        <Bloom
-                            luminanceThreshold={0.3}
-                            luminanceSmoothing={0.9}
-                            height={512}
-                            kernelSize={KernelSize.LARGE}
-                            mipmapBlur
-                        />
-                    </>
-                ) : (
-                    <></>
-                )}
-            </EffectComposer>
-        </>
+                    <Bloom
+                        luminanceThreshold={0.3}
+                        luminanceSmoothing={0.9}
+                        height={512}
+                        kernelSize={bloomKernelSize}
+                        mipmapBlur
+                    />
+                </>
+            ) : (
+                <></>
+            )}
+        </EffectComposer>
     );
 }
 
@@ -281,6 +341,77 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
 
     const boxElementRef = useRef<HTMLDivElement>(null);
     const [isInView, setIsInView] = useState<boolean>(false);
+    const [qualityMode, setQualityMode] = useState<IQualityModes>(
+        QUALITY_MODES.medium,
+    );
+
+    const onPerformanceChange = useCallback((api: PerformanceMonitorApi) => {
+        const {factor} = api;
+
+        setQualityMode((previousMode) => {
+            switch (previousMode) {
+                case QUALITY_MODES.low:
+                    if (factor < QUALITY_DOWN_THRESHOLDS.low) {
+                        return QUALITY_MODES.potato;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.medium:
+                    if (factor < QUALITY_DOWN_THRESHOLDS.medium) {
+                        return QUALITY_MODES.low;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.high:
+                    if (factor < QUALITY_DOWN_THRESHOLDS.high) {
+                        return QUALITY_MODES.medium;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.ultra:
+                    if (factor < QUALITY_DOWN_THRESHOLDS.ultra) {
+                        return QUALITY_MODES.high;
+                    }
+
+                    break;
+            }
+
+            switch (previousMode) {
+                case QUALITY_MODES.potato:
+                    if (factor > QUALITY_UP_THRESHOLDS.potato) {
+                        return QUALITY_MODES.low;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.low:
+                    if (factor > QUALITY_UP_THRESHOLDS.low) {
+                        return QUALITY_MODES.medium;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.medium:
+                    if (factor > QUALITY_UP_THRESHOLDS.medium) {
+                        return QUALITY_MODES.high;
+                    }
+
+                    break;
+
+                case QUALITY_MODES.high:
+                    if (factor > QUALITY_UP_THRESHOLDS.high) {
+                        return QUALITY_MODES.ultra;
+                    }
+
+                    break;
+            }
+
+            return previousMode;
+        });
+    }, []);
 
     const onIntersectionObserverEntry = useCallback(
         ((entries) => {
@@ -299,6 +430,35 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
         [],
     );
 
+    const {dpr} = useMemo(() => {
+        switch (qualityMode) {
+            case QUALITY_MODES.ultra:
+                return {
+                    dpr: [1, 2] satisfies [number, number],
+                };
+
+            case QUALITY_MODES.high:
+                return {
+                    dpr: [1, 1.5] satisfies [number, number],
+                };
+
+            case QUALITY_MODES.medium:
+                return {
+                    dpr: [0.75, 1] satisfies [number, number],
+                };
+
+            case QUALITY_MODES.low:
+                return {
+                    dpr: [0.5, 0.75] satisfies [number, number],
+                };
+
+            default:
+                return {
+                    dpr: [0.25, 0.5] satisfies [number, number],
+                };
+        }
+    }, [qualityMode]);
+
     useIntersectionObserver(
         boxElementRef,
         onIntersectionObserverEntry,
@@ -316,6 +476,7 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
             translate="-50% -50%"
         >
             <Canvas
+                dpr={dpr}
                 fallback="Hero animated 3D voxel logo and shimmer effect."
                 frameloop={isInView ? "always" : "demand"}
                 camera={{
@@ -328,7 +489,14 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
                     zoom: 1,
                 }}
             >
-                {children}
+                <PerformanceMonitor
+                    flipflops={6}
+                    onChange={onPerformanceChange}
+                />
+
+                <CONTEXT_QUALITY_MODE.Provider value={qualityMode}>
+                    {children}
+                </CONTEXT_QUALITY_MODE.Provider>
             </Canvas>
         </Box>
     );

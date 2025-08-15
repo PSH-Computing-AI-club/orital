@@ -28,13 +28,12 @@ import type {Mesh} from "three";
 
 import Logo3DModel from "~/components/models/logo_3d_model";
 
+import {useBreakpoint} from "~/hooks/breakpoint";
 import type {
     IUseIntersectionObserverCallback,
     IUseIntersectionObserverOptions,
 } from "~/hooks/intersection_observer";
 import useIntersectionObserver from "~/hooks/intersection_observer";
-
-export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
 const ANIMATION_BOUNCE_START_X = 0;
 
@@ -54,10 +53,6 @@ const ANIMATION_SMEAR_STRENGTH_Y = 0.2;
 
 const ANIMATION_SMEAR_STRENGTH_Z = 0.8;
 
-const BREAKPOINT_WIDTH_MD = 768;
-
-const BREAKPOINT_WIDTH_SM = 480;
-
 const GRID_COLOR = "#0c5c72";
 
 const MESH_SCALE_DEFAULT = 1.75;
@@ -66,15 +61,11 @@ const MESH_SCALE_MD = 1.5;
 
 const MESH_SCALE_SM = 1.25;
 
-function determineMeshScale(): number {
-    if (isBreakpoint(BREAKPOINT_WIDTH_SM)) {
-        return MESH_SCALE_SM;
-    } else if (isBreakpoint(BREAKPOINT_WIDTH_MD)) {
-        return MESH_SCALE_MD;
-    }
-
-    return MESH_SCALE_DEFAULT;
+interface IAnimatedLogoProps {
+    readonly scale: number;
 }
+
+export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
 function easeOutQuad(x: number): number {
     // **SOURCE:** https://easings.net/#easeOutQuad
@@ -82,8 +73,21 @@ function easeOutQuad(x: number): number {
     return 1 - (1 - x) * (1 - x);
 }
 
-function isBreakpoint(breakpoint: number): boolean {
-    return window.innerWidth <= breakpoint;
+function useResponsiveMeshScale(): number {
+    const breakpoint = useBreakpoint();
+
+    console.log({breakpoint});
+
+    switch (breakpoint) {
+        case "sm":
+            return MESH_SCALE_SM;
+
+        case "md":
+            return MESH_SCALE_MD;
+
+        default:
+            return MESH_SCALE_DEFAULT;
+    }
 }
 
 function AnimatedLogoLoader() {
@@ -96,7 +100,9 @@ function AnimatedLogoLoader() {
     );
 }
 
-function AnimatedLogoModel() {
+function AnimatedLogoModel(props: IAnimatedLogoProps) {
+    const {scale} = props;
+
     const animationEffectRef = useRef<AnimationEffect>(null);
     const meshRef = useRef<Mesh>(null);
 
@@ -149,8 +155,6 @@ function AnimatedLogoModel() {
         const bounceMultiplier = 1 - 2 * Math.abs(progress - 0.5);
         const bounceEasing = easeOutQuad(bounceMultiplier);
 
-        const meshScale = determineMeshScale();
-
         mesh.position.x =
             ANIMATION_BOUNCE_START_X -
             ANIMATION_BOUNCE_STRENGTH_X *
@@ -176,9 +180,9 @@ function AnimatedLogoModel() {
             ANIMATION_PIVOT_START +
             ANIMATION_PIVOT_STRENGTH * bounceEasing * firstPassPivotMultiplier;
 
-        mesh.scale.x = meshScale;
-        mesh.scale.y = meshScale + ANIMATION_SMEAR_STRENGTH_Y * bounceEasing;
-        mesh.scale.z = meshScale + ANIMATION_SMEAR_STRENGTH_Z;
+        mesh.scale.x = scale;
+        mesh.scale.y = scale + ANIMATION_SMEAR_STRENGTH_Y * bounceEasing;
+        mesh.scale.z = scale + ANIMATION_SMEAR_STRENGTH_Z;
     });
 
     return <Logo3DModel ref={meshRef} position={[0, 0, 0]} />;
@@ -265,12 +269,14 @@ function AnimatedLogoEffects() {
 }
 
 function AnimatedLogoScene() {
+    const scale = useResponsiveMeshScale();
+
     return (
         <>
             <AnimatedLogoLights />
 
             <Suspense fallback={<AnimatedLogoLoader />}>
-                <AnimatedLogoModel />
+                <AnimatedLogoModel scale={scale} />
             </Suspense>
 
             <AnimatedLogoEffects />

@@ -122,14 +122,14 @@ export async function action(actionArgs: Route.ActionArgs) {
                 grantTokenExpiresAt,
             });
 
-            return redirect("/authentication/consent/authorized");
+            return redirect("/messages/authentication/consent/authorized");
 
         case "revoke":
             EVENT_CONSENT_REVOKED.dispatch({
                 callbackTokenID,
             });
 
-            return redirect("/authentication/consent/revoked");
+            return redirect("/messages/authentication/consent/revoked");
     }
 }
 
@@ -158,7 +158,7 @@ export default function AuthenticationConsent() {
     const navigation = useNavigation();
 
     const onTimeout = useCallback(() => {
-        navigate("/authentication/consent/expired", {
+        navigate("/messages/authentication/consent/expired", {
             replace: true,
         });
     }, [navigate]);

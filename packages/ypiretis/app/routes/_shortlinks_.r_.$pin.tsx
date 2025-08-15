@@ -23,13 +23,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const room = findOneLiveByPIN(pin);
 
     if (room === null) {
-        return redirect("/rooms/not-found");
+        return redirect("/messages/rooms/not-found");
     }
 
     const {roomID, state} = room;
 
     if (state === ROOM_STATES.disposed) {
-        return redirect("/rooms/disposed");
+        return redirect("/messages/rooms/disposed");
     }
 
     return redirect(`/rooms/${roomID}/attendee`);

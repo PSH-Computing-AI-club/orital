@@ -61,23 +61,23 @@ function useMessageHandler(
             switch (event) {
                 case "room.stateUpdate":
                     if (data.state === "STATE_DISPOSED") {
-                        navigate("/rooms/closed");
+                        navigate("/messages/rooms/closed");
                     }
 
                     break;
 
                 case "self.banned":
-                    navigate("/rooms/banned");
+                    navigate("/messages/rooms/banned");
 
                     break;
 
                 case "self.kicked":
-                    navigate("/rooms/kicked");
+                    navigate("/messages/rooms/kicked");
 
                     break;
 
                 case "self.rejected":
-                    navigate("/rooms/rejected");
+                    navigate("/messages/rooms/rejected");
 
                     break;
             }

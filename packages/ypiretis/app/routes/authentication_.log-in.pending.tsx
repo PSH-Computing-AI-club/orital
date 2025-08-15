@@ -132,9 +132,12 @@ function AuthenticationLogInPendingView(props: {
                 setTimeout(async () => {
                     // **TODO:** Can we force navigation to a route error boundary?
                     // Also, we want to differentiate between status 401 and others.
-                    await navigate("/authentication/log-in/unauthorized", {
-                        replace: true,
-                    });
+                    await navigate(
+                        "/messages/authentication/log-in/unauthorized",
+                        {
+                            replace: true,
+                        },
+                    );
                 }, 0);
             }
         },
@@ -168,16 +171,20 @@ function AuthenticationLogInPendingView(props: {
                     } else {
                         // **TODO:** Can we force navigation to a route error boundary?
                         // Also, we want to differentiate between status 401 and others.
-                        await navigate("/authentication/log-in/unauthorized", {
-                            replace: true,
-                        });
+                        await navigate(
+                            "/messages/authentication/log-in/unauthorized",
+
+                            {
+                                replace: true,
+                            },
+                        );
                     }
 
                     break;
                 }
 
                 case "revoked":
-                    await navigate("/authentication/log-in/revoked", {
+                    await navigate("/messages/authentication/log-in/revoked", {
                         replace: true,
                     });
 
@@ -189,7 +196,7 @@ function AuthenticationLogInPendingView(props: {
     );
 
     const onTimeout = useCallback(() => {
-        navigate("/authentication/log-in/expired", {
+        navigate("/messages/authentication/log-in/expired", {
             replace: true,
         });
     }, [navigate]);

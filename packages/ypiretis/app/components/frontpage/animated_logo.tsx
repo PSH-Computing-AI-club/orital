@@ -90,9 +90,9 @@ const QUALITY_UP_THRESHOLDS = {
 
     low: 0.75,
 
-    medium: 0.85,
+    medium: 0.9,
 
-    high: 0.95,
+    high: 0.98,
 } as const;
 
 const CONTEXT_QUALITY_MODE = createContext<IQualityModes>(QUALITY_MODES.medium);

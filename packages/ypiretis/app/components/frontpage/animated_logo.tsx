@@ -61,10 +61,6 @@ const MESH_SCALE_MD = 1.5;
 
 const MESH_SCALE_SM = 1.25;
 
-interface IAnimatedLogoProps {
-    readonly scale: number;
-}
-
 export interface IAnimatedLogoRootProps extends PropsWithChildren {}
 
 function easeOutQuad(x: number): number {
@@ -75,8 +71,6 @@ function easeOutQuad(x: number): number {
 
 function useResponsiveMeshScale(): number {
     const breakpoint = useBreakpoint();
-
-    console.log({breakpoint});
 
     switch (breakpoint) {
         case "sm":
@@ -100,8 +94,8 @@ function AnimatedLogoLoader() {
     );
 }
 
-function AnimatedLogoModel(props: IAnimatedLogoProps) {
-    const {scale} = props;
+function AnimatedLogoModel() {
+    const scale = useResponsiveMeshScale();
 
     const animationEffectRef = useRef<AnimationEffect>(null);
     const meshRef = useRef<Mesh>(null);
@@ -269,14 +263,12 @@ function AnimatedLogoEffects() {
 }
 
 function AnimatedLogoScene() {
-    const scale = useResponsiveMeshScale();
-
     return (
         <>
             <AnimatedLogoLights />
 
             <Suspense fallback={<AnimatedLogoLoader />}>
-                <AnimatedLogoModel scale={scale} />
+                <AnimatedLogoModel />
             </Suspense>
 
             <AnimatedLogoEffects />

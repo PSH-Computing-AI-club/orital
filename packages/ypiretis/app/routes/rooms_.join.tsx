@@ -15,7 +15,7 @@ import PromptShell from "~/components/shell/prompt_shell";
 
 import {validateFormData} from "~/guards/validation";
 
-import {EXPRESSION_PIN, pin} from "~/utils/valibot";
+import {EXPRESSION_PIN, pinDigit} from "~/utils/valibot";
 
 import type {Route} from "./+types/rooms_.join";
 
@@ -28,12 +28,12 @@ const ACTION_ERROR_TYPES = {
 const ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.pipe(v.string(), v.picklist(["join"])),
 
-    pinDigit0: v.pipe(v.string(), v.length(1), pin),
-    pinDigit1: v.pipe(v.string(), v.length(1), pin),
-    pinDigit2: v.pipe(v.string(), v.length(1), pin),
-    pinDigit3: v.pipe(v.string(), v.length(1), pin),
-    pinDigit4: v.pipe(v.string(), v.length(1), pin),
-    pinDigit5: v.pipe(v.string(), v.length(1), pin),
+    pinDigit0: pinDigit,
+    pinDigit1: pinDigit,
+    pinDigit2: pinDigit,
+    pinDigit3: pinDigit,
+    pinDigit4: pinDigit,
+    pinDigit5: pinDigit,
 });
 
 const MASK_OPTIONS = {

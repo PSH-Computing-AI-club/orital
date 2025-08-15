@@ -63,6 +63,13 @@ export const pin = v.pipe(
     v.regex(EXPRESSION_PIN, "Invalid PIN format."),
 );
 
+export const pinDigit = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.length(1),
+    v.regex(EXPRESSION_PIN, "Invalid PIN format."),
+);
+
 export const title = v.pipe(
     v.string(),
     v.nonEmpty(),

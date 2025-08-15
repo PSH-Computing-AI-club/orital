@@ -501,10 +501,7 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
                     zoom: 1,
                 }}
             >
-                <PerformanceMonitor
-                    flipflops={6}
-                    onChange={onPerformanceChange}
-                />
+                <PerformanceMonitor onChange={onPerformanceChange} />
 
                 <CONTEXT_QUALITY_MODE.Provider value={qualityMode}>
                     {children}

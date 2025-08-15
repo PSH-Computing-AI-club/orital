@@ -55,7 +55,7 @@ http://:{$SERVER_PORT} {
 	}
 
 	rate_limit {
-		zone no_operations {
+		zone global_impact {
 			key {remote_host}
 
 			events 512

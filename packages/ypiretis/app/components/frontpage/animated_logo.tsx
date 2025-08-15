@@ -446,12 +446,12 @@ function AnimatedLogoRoot(props: IAnimatedLogoRootProps) {
         switch (qualityMode) {
             case QUALITY_MODES.ultra:
                 return {
-                    dpr: [1, 2] satisfies [number, number],
+                    dpr: [1, 1.5] satisfies [number, number],
                 };
 
             case QUALITY_MODES.high:
                 return {
-                    dpr: [1, 1.5] satisfies [number, number],
+                    dpr: [1, 1] satisfies [number, number],
                 };
 
             case QUALITY_MODES.medium:

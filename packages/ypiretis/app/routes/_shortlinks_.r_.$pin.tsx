@@ -9,7 +9,7 @@ import {validateParams} from "~/guards/validation";
 
 import {pin as pinValidator} from "~/utils/valibot";
 
-import {Route} from "./+types/r_.$pin";
+import {Route} from "./+types/_shortlinks_.r_.$pin";
 
 const LOADER_PARAMS_SCHEMA = v.object({
     pin: pinValidator,

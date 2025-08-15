@@ -17,7 +17,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     }
 }
 
-export default function AuthenticationLayout(_props: Route.ErrorBoundaryProps) {
+export default function AuthenticationLayout() {
     return (
         <PromptShell.Root>
             <PromptShell.Sidebar />

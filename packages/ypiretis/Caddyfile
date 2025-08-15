@@ -5,6 +5,10 @@
 }
 
 http://:{$SERVER_PORT} {
+	@static_files {
+		path /assets/* /fonts/* /images/* /models/* /uploads/* /apple-touch-icon.png /favicon.ico /favicon.svg /favicon-96x96.png /site.webmanifest /web-app-manifest-192x192.png /web-app-manifest-512x512.png
+	}
+
 	@severe_impact_routes {
 		method DELETE PATCH POST PUT
 
@@ -19,6 +23,10 @@ http://:{$SERVER_PORT} {
 
 	@low_impact_routes {
 		path / /authentication/* /calendar/* /news/* /r/* /rooms/*
+	}
+
+	handle @static_files {
+		reverse_proxy {$PROXIED_SERVER_HOST}:{$PROXIED_SERVER_PORT}
 	}
 
 	handle @severe_impact_routes {

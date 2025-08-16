@@ -36,7 +36,7 @@ export function buildAppURL(url: string | Location | To | URL): URL {
 }
 
 export function buildURLComponents(
-    urlComponents: IURLComponents | string,
+    urlComponents: string | IURLComponents,
 ): string {
     urlComponents =
         typeof urlComponents === "string"

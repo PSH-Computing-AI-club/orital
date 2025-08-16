@@ -16,7 +16,7 @@ import {useTransaction} from "../state/transaction";
 
 import {IGuardRequisiteFunc, IGuardHeadersFunc} from "./guard";
 
-export interface ISessionGuards<
+export interface ISessionGuard<
     T extends IIdentifiablesTable,
     I extends InferSelectModel<T> = InferSelectModel<T>,
     D extends SessionData = SessionData,
@@ -40,6 +40,24 @@ export interface ISessionGuards<
     readonly requireGuestSession: IGuardRequisiteFunc<{session: N}>;
 }
 
+export interface ISessionGuardOptions<
+    T extends IIdentifiablesTable,
+    I extends InferSelectModel<T> = InferSelectModel<T>,
+    D extends SessionData = SessionData,
+    F extends SessionData = D,
+    S extends SessionStorage<D, F> = SessionStorage<D, F>,
+    K extends keyof D | keyof F = keyof D | keyof F,
+    R extends I = I,
+> {
+    identifiableMapper?: (identifiable: InferSelectModel<T>) => R;
+
+    idKey: K;
+
+    sessionStorage: S;
+
+    table: T;
+}
+
 export default function makeSessionGuard<
     T extends IIdentifiablesTable,
     I extends InferSelectModel<T> = InferSelectModel<T>,
@@ -49,11 +67,10 @@ export default function makeSessionGuard<
     K extends keyof D | keyof F = keyof D | keyof F,
     R extends I = I,
 >(
-    table: T,
-    sessionStorage: S,
-    idKey: K,
-    identifiableMapper?: (identifiable: InferSelectModel<T>) => R,
-): ISessionGuards<T, R, D, F> {
+    options: ISessionGuardOptions<T, I, D, F, S, K, R>,
+): ISessionGuard<T, R, D, F> {
+    const {identifiableMapper, idKey, sessionStorage, table} = options;
+
     const {commitSession, destroySession, getSession} = sessionStorage;
 
     async function getGrantHeaders(

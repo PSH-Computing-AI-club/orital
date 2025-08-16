@@ -38,12 +38,12 @@ export interface IUserSessionData extends SessionData {
     readonly userID: number;
 }
 
-const sessionGuard = makeSessionGuard(
-    USERS_TABLE,
-    persistentSession,
-    "userID",
-    mapUser,
-);
+const sessionGuard = makeSessionGuard({
+    table: USERS_TABLE,
+    idKey: "userID",
+    sessionStorage: persistentSession,
+    identifiableMapper: mapUser,
+});
 
 export const getGrantHeaders = sessionGuard.getGrantHeaders;
 

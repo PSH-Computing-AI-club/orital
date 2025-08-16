@@ -25,10 +25,8 @@ export type IURLComponents =
           readonly searchParams?: URLSearchParams;
       };
 
-export function buildAppURL(url: Location | To | URL | string): URL {
-    if (url instanceof URL) {
-        return url;
-    } else if (typeof url === "object") {
+export function buildAppURL(url: string | Location | To | URL): URL {
+    if (typeof url === "object") {
         const {hash = "", pathname = "", search = ""} = url;
 
         return new URL(`${pathname}${search}${hash}`, APP_URL);

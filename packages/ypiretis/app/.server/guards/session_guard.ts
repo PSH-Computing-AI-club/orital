@@ -8,7 +8,9 @@ import type {
     SessionData,
     SessionStorage,
 } from "react-router";
-import {data} from "react-router";
+import {data, redirect} from "react-router";
+
+import {buildAppURL, buildURLComponents} from "../../utils/url";
 
 import type {IIdentifiablesTable} from "../database/tables/identifiables_table";
 
@@ -53,6 +55,8 @@ export interface ISessionGuardOptions<
 
     idKey: K;
 
+    redirectURL?: string | URL;
+
     sessionStorage: S;
 
     table: T;
@@ -69,7 +73,8 @@ export default function makeSessionGuard<
 >(
     options: ISessionGuardOptions<T, I, D, F, S, K, R>,
 ): ISessionGuard<T, R, D, F> {
-    const {identifiableMapper, idKey, sessionStorage, table} = options;
+    const {identifiableMapper, idKey, redirectURL, sessionStorage, table} =
+        options;
 
     const {commitSession, destroySession, getSession} = sessionStorage;
 
@@ -152,9 +157,25 @@ export default function makeSessionGuard<
     async function requireAuthenticatedSession(
         requestArgs: ActionFunctionArgs | LoaderFunctionArgs,
     ) {
+        const {url} = requestArgs.request;
+        const callbackURL = buildURLComponents(url);
+
         const session = await getOptionalSession(requestArgs);
 
         if (!session) {
+            if (redirectURL) {
+                const normalizedURL =
+                    typeof redirectURL === "string"
+                        ? buildAppURL(redirectURL)
+                        : // **HACK:** We are going to be mutating the input URL. So,
+                          // we need a fresh copy to preserve immutability.
+                          new URL(redirectURL);
+
+                normalizedURL.searchParams.set("callbackURL", callbackURL);
+
+                throw redirect(normalizedURL.toString());
+            }
+
             throw data("Unauthorized", {
                 status: 401,
             });

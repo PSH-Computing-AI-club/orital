@@ -65,6 +65,12 @@ export function buildURLComponents(
     return `${pathname}${search}${hash}`;
 }
 
-export function buildWebSocketURL(url: string): URL {
+export function buildWebSocketURL(url: string | Location | To | URL): URL {
+    if (typeof url === "object") {
+        const {hash = "", pathname = "", search = ""} = url;
+
+        return new URL(`${pathname}${search}${hash}`, WEB_SOCKET_URL);
+    }
+
     return new URL(url, WEB_SOCKET_URL);
 }

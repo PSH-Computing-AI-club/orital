@@ -37,7 +37,14 @@ export function buildAppURL(url: Location | To | URL | string): URL {
     return new URL(url, APP_URL);
 }
 
-export function buildURLComponents(urlComponents: IURLComponents): string {
+export function buildURLComponents(
+    urlComponents: IURLComponents | string,
+): string {
+    urlComponents =
+        typeof urlComponents === "string"
+            ? new URL(urlComponents)
+            : urlComponents;
+
     let search =
         "search" in urlComponents
             ? (urlComponents.search ?? "")

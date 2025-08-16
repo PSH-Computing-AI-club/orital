@@ -37,7 +37,7 @@ x-runtime-environment: &runtime-environment
     ROOMS_LIFETIME_TTL: PT24H
     SERVER_LOGGING_LEVEL: info
     SESSION_EPHEMERAL_TTL: PT2H
-    SESSION_PERSISTENT_TTL: P30D
+    SESSION_PERSISTENT_TTL: P112D
     SMTP_EMAIL: computingaiclub@gmail.com
     SMTP_HOST: smtp.gmail.com
     SMTP_PORT: 465
@@ -52,7 +52,7 @@ x-secrets-environment: &secrets-environment
     # happens with these variables.
     #
     # However, these environment variables are pulled from the control plane's
-    # secret manager at runtime. So, we only define them here are glue.
+    # secrets manager at runtime. So, we only define them here are glue.
     SECRET_KEY: ${SECRET_KEY}
     SECRET_SALT: ${SECRET_SALT}
     SMTP_PASSWORD: ${SMTP_PASSWORD}

@@ -102,3 +102,27 @@ export const url = v.pipe(
     v.url(),
     v.transform((value) => new URL(value)),
 );
+
+export const urlComponents = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.check((value) => {
+        return value.startsWith("./") || value.startsWith("/");
+    }),
+    v.transform((value) => {
+        const {hash, pathname, searchParams} = new URL(
+            value,
+            // **HACK:** By passing a pre-defined domain we can just pass values like
+            // `/path/to/some/where` and the `URL` constructor can handle the parsing
+            // for us. Also, the `.invalid` gTLD is a reserved gTLD that browsers
+            // refuse to evaluate and also that cannot be registered.
+            "http://fake.invalid",
+        );
+
+        return {
+            hash,
+            pathname,
+            searchParams,
+        };
+    }),
+);

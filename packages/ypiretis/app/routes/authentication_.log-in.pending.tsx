@@ -3,7 +3,7 @@ import {Strong, Text} from "@chakra-ui/react";
 import {useCallback, useMemo} from "react";
 
 import type {ShouldRevalidateFunction} from "react-router";
-import {data, useLocation, useNavigate} from "react-router";
+import {data, useLocation, useLoaderData, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
@@ -30,16 +30,17 @@ import useWebSocket, {WebSocketCacheProvider} from "~/hooks/web_socket";
 import type {IUseTimeoutOptions} from "~/hooks/timeout";
 import useTimeout from "~/hooks/timeout";
 
-import {buildWebSocketURL} from "~/utils/url";
+import {buildURLComponents, buildWebSocketURL} from "~/utils/url";
+import {number, urlComponents} from "~/utils/valibot";
 
 import type {ILoginEvents} from "./authentication_.log-in_.events";
-
-import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/authentication_.log-in.pending";
 
 const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
     callbackTokenExpiresAt: number,
+
+    callbackURL: v.optional(urlComponents),
 });
 
 export const shouldRevalidate = ((_revalidateArgs) => {
@@ -77,13 +78,15 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export function clientLoader(loaderArgs: Route.ClientLoaderArgs) {
-    const {callbackTokenExpiresAt} = validateSearchParams(
+    const {callbackTokenExpiresAt, callbackURL} = validateSearchParams(
         LOADER_SEARCH_PARAMS_SCHEMA,
         loaderArgs,
     );
 
     return {
         callbackTokenExpiresAt,
+
+        callbackURL: callbackURL ? buildURLComponents(callbackURL) : null,
     };
 }
 
@@ -113,10 +116,9 @@ export function HydrateFallback() {
     );
 }
 
-function AuthenticationLogInPendingView(props: {
-    callbackTokenExpiresAt: number;
-}) {
-    const {callbackTokenExpiresAt} = props;
+function AuthenticationLogInPendingView() {
+    const {callbackTokenExpiresAt, callbackURL} =
+        useLoaderData<typeof clientLoader>();
 
     const {pathname} = useLocation();
     const navigate = useNavigate();
@@ -141,6 +143,7 @@ function AuthenticationLogInPendingView(props: {
                 }, 0);
             }
         },
+
         [navigate],
     );
 
@@ -165,7 +168,7 @@ function AuthenticationLogInPendingView(props: {
                     });
 
                     if (response.ok) {
-                        await navigate("/", {
+                        await navigate(callbackURL ?? "/", {
                             replace: true,
                         });
                     } else {
@@ -192,7 +195,7 @@ function AuthenticationLogInPendingView(props: {
             }
         },
 
-        [navigate, pathname],
+        [callbackURL, navigate, pathname],
     );
 
     const onTimeout = useCallback(() => {
@@ -250,17 +253,10 @@ function AuthenticationLogInPendingView(props: {
     );
 }
 
-export default function AuthenticationLogInPending(
-    props: Route.ComponentProps,
-) {
-    const {loaderData} = props;
-    const {callbackTokenExpiresAt} = loaderData;
-
+export default function AuthenticationLogInPending() {
     return (
         <WebSocketCacheProvider>
-            <AuthenticationLogInPendingView
-                callbackTokenExpiresAt={callbackTokenExpiresAt}
-            />
+            <AuthenticationLogInPendingView />
         </WebSocketCacheProvider>
     );
 }

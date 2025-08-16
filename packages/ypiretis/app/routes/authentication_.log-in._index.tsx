@@ -25,13 +25,18 @@ import {requireGuestSession} from "~/.server/services/users_service";
 
 import PromptShell from "~/components/shell/prompt_shell";
 
-import {validateFormData} from "~/guards/validation";
+import {validateFormData, validateSearchParams} from "~/guards/validation";
 
 import {
     ACCOUNT_PROVIDER_DOMAIN,
     ACCOUNT_PROVIDER_NAME,
 } from "~/utils/constants";
-import {EXPRESSION_ALPHANUMERICAL, alphanumerical} from "~/utils/valibot";
+import {buildURLComponents} from "~/utils/url";
+import {
+    EXPRESSION_ALPHANUMERICAL,
+    alphanumerical,
+    urlComponents,
+} from "~/utils/valibot";
 
 import type {Route} from "./+types/authentication_.log-in._index";
 
@@ -39,6 +44,12 @@ const ACTION_FORM_DATA_SCHEMA = v.object({
     accountID: alphanumerical,
 
     action: v.pipe(v.string(), v.picklist(["log-in"])),
+
+    callbackURL: v.optional(urlComponents),
+});
+
+const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
+    callbackURL: v.optional(urlComponents),
 });
 
 const MASK_OPTIONS = {
@@ -48,7 +59,7 @@ const MASK_OPTIONS = {
 export async function action(actionArgs: Route.ActionArgs) {
     await requireGuestSession(actionArgs);
 
-    const {accountID} = await validateFormData(
+    const {accountID, callbackURL} = await validateFormData(
         ACTION_FORM_DATA_SCHEMA,
         actionArgs,
     );
@@ -85,6 +96,10 @@ export async function action(actionArgs: Route.ActionArgs) {
         `/authentication/log-in/pending/?${new URLSearchParams({
             callbackTokenExpiresAt:
                 callbackTokenExpiresAt.epochMilliseconds.toString(),
+
+            ...(callbackURL
+                ? {callbackURL: buildURLComponents(callbackURL)}
+                : {}),
         })}`,
 
         {
@@ -94,10 +109,22 @@ export async function action(actionArgs: Route.ActionArgs) {
 }
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
+    const {callbackURL} = validateSearchParams(
+        LOADER_SEARCH_PARAMS_SCHEMA,
+        loaderArgs,
+    );
+
     await requireGuestSession(loaderArgs);
+
+    return {
+        callbackURL: callbackURL ? buildURLComponents(callbackURL) : null,
+    };
 }
 
-export default function AuthenticationLogIn(_props: Route.ComponentProps) {
+export default function AuthenticationLogIn(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {callbackURL} = loaderData;
+
     const navigation = useNavigation();
 
     const {ref: maskRef} = useIMask(MASK_OPTIONS);
@@ -120,6 +147,16 @@ export default function AuthenticationLogIn(_props: Route.ComponentProps) {
                 </noscript>
 
                 <Form method="POST">
+                    {callbackURL ? (
+                        <input
+                            type="hidden"
+                            name="callbackURL"
+                            value={callbackURL}
+                        />
+                    ) : (
+                        <></>
+                    )}
+
                     <VStack gap="4">
                         <Field.Root required>
                             <Field.Label>

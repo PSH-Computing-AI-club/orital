@@ -43,6 +43,7 @@ const sessionGuard = makeSessionGuard({
     idKey: "userID",
     sessionStorage: persistentSession,
     identifiableMapper: mapUser,
+    redirectURL: "/authentication/log-in",
 });
 
 export const getGrantHeaders = sessionGuard.getGrantHeaders;

@@ -65,11 +65,13 @@ function TabbedSectionCardView(props: ITabbedSectionCardViewProps) {
 
     useEffect(() => {
         registerTab(id, label);
+    }, [id, label, registerTab]);
 
+    useEffect(() => {
         return () => {
             unregisterTab(id);
         };
-    }, [id, label, registerTab, unregisterTab]);
+    }, [id, unregisterTab]);
 
     return <Box display={isTabSelected ? "contents" : "none"}>{children}</Box>;
 }

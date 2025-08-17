@@ -92,11 +92,13 @@ function TabbedDataSectionCardTab<T>(props: ITabbedDataSectionCardTabProps<T>) {
 
     useEffect(() => {
         registerTab(id, label, provider);
+    }, [id, label, provider, registerTab]);
 
+    useEffect(() => {
         return () => {
             unregisterTab(id);
         };
-    }, [id, label, provider, registerTab, unregisterTab]);
+    }, [id, unregisterTab]);
 
     return <></>;
 }

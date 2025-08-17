@@ -34,8 +34,8 @@ export default function RoomsAttendeeIndex(_props: Route.ComponentProps) {
                         <EmptyState.Body>
                             <EmptyState.Title>
                                 {isAwaitingApproval
-                                    ? "Awaiting approval"
-                                    : "Waiting on presenter"}
+                                    ? "Awaiting approval."
+                                    : "Waiting on presenter."}
                             </EmptyState.Title>
 
                             <EmptyState.Description>

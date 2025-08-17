@@ -15,7 +15,7 @@ export default function RoomsPresenterSettings(_props: Route.ComponentProps) {
                     </EmptyState.Icon>
 
                     <EmptyState.Body>
-                        <EmptyState.Title>To be implemented</EmptyState.Title>
+                        <EmptyState.Title>To be implemented.</EmptyState.Title>
 
                         <EmptyState.Description>
                             This feature has not yet been implemented.

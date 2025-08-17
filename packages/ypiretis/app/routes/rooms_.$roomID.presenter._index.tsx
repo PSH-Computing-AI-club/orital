@@ -5,24 +5,22 @@ import type {
 import {
     Box,
     Button,
+    Code,
     HStack,
     IconButton,
     Menu,
-    Portal,
-    Spacer,
     PinInput,
-    Code,
+    Portal,
+    Strong,
+    Spacer,
 } from "@chakra-ui/react";
 
-import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
+import type {MouseEvent, MouseEventHandler} from "react";
 import {useCallback, useMemo} from "react";
 
 import * as v from "valibot";
 
-import type {
-    IRoomStates,
-    ATTENDEE_USER_STATES,
-} from "~/.server/services/rooms_service";
+import type {IRoomStates} from "~/.server/services/rooms_service";
 
 import Layout from "~/components/controlpanel/layout";
 import ListTile from "~/components/controlpanel/list_tile";
@@ -187,10 +185,12 @@ function AttendeeListItemConnectedActions(
     props: IAttendeeListItemConnectedActionsProps,
 ) {
     const {user} = props;
-    const {entityID, isRaisingHand} = user;
 
     const {room} = usePresenterContext();
+    const {displayToast} = useToastsContext();
+
     const {state} = room;
+    const {entityID, firstName, lastName, isRaisingHand} = user;
 
     const [isFetchingAction, onAttendeeAction] = useAsyncCallback(
         async (
@@ -215,25 +215,64 @@ function AttendeeListItemConnectedActions(
     const onBanClick = useCallback(
         (async (_event: MouseEvent) => {
             await onAttendeeAction(_event, "moderate.ban");
+
+            displayToast({
+                status: TOAST_STATUS.error,
+                title: (
+                    <>
+                        Banned{" "}
+                        <Strong>
+                            {lastName}, {firstName}
+                        </Strong>{" "}
+                        from the room.
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [onAttendeeAction],
+        [displayToast, firstName, lastName, onAttendeeAction],
     );
 
     const onDismissHandClick = useCallback(
         (async (_event: MouseEvent) => {
             await onAttendeeAction(_event, "participation.dismissHand");
+
+            displayToast({
+                status: TOAST_STATUS.info,
+                title: (
+                    <>
+                        Dismissed{" "}
+                        <Strong>
+                            {lastName}, {firstName}'s
+                        </Strong>{" "}
+                        raised hand.
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [onAttendeeAction],
+        [displayToast, firstName, lastName, onAttendeeAction],
     );
 
     const onKickClick = useCallback(
         (async (_event: MouseEvent) => {
             await onAttendeeAction(_event, "moderate.kick");
+
+            displayToast({
+                status: TOAST_STATUS.error,
+                title: (
+                    <>
+                        Kicked{" "}
+                        <Strong>
+                            {lastName}, {firstName}
+                        </Strong>{" "}
+                        from the room.
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [onAttendeeAction],
+        [displayToast, firstName, lastName, onAttendeeAction],
     );
 
     return (
@@ -284,10 +323,12 @@ function AttendeeListItemAwaitingActions(
     props: IAttendeeListItemAwaitingActionsProps,
 ) {
     const {user} = props;
-    const {entityID} = user;
 
     const {room} = usePresenterContext();
+    const {displayToast} = useToastsContext();
+
     const {state} = room;
+    const {entityID, firstName, lastName} = user;
 
     const [isFetchingAction, onAttendeeAction] = useAsyncCallback(
         async (
@@ -312,17 +353,43 @@ function AttendeeListItemAwaitingActions(
     const onApproveClick = useCallback(
         (async (_event: MouseEvent) => {
             await onAttendeeAction(_event, "moderate.approve");
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: (
+                    <>
+                        Approved{" "}
+                        <Strong>
+                            {lastName}, {firstName}
+                        </Strong>{" "}
+                        joining the room.
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [onAttendeeAction],
+        [displayToast, firstName, lastName, onAttendeeAction],
     );
 
     const onRejectClick = useCallback(
         (async (_event: MouseEvent) => {
             await onAttendeeAction(_event, "moderate.reject");
+
+            displayToast({
+                status: TOAST_STATUS.error,
+                title: (
+                    <>
+                        Rejected{" "}
+                        <Strong>
+                            {lastName}, {firstName}
+                        </Strong>{" "}
+                        from joining the room.
+                    </>
+                ),
+            });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [onAttendeeAction],
+        [displayToast, firstName, lastName, onAttendeeAction],
     );
 
     return (

@@ -91,11 +91,27 @@ interface IAttendeeListProps {
 }
 
 function isAttendee(value: unknown): value is IAttendee {
-    return value !== null && typeof value === "object" && "state" in value;
+    return (
+        value !== null &&
+        typeof value === "object" &&
+        "state" in value &&
+        (value.state === "STATE_CONNECTED" || value.state === "STATE_AWAITING")
+    );
+}
+
+function isDisconnectedAttendee(
+    value: unknown,
+): value is IDisconnectedAttendee {
+    return (
+        value !== null &&
+        typeof value === "object" &&
+        "state" in value &&
+        value.state === "STATE_DISPOSED"
+    );
 }
 
 function matchUserIcon(user: IUserLike) {
-    if (isAttendee(user)) {
+    if (isAttendee(user) || isDisconnectedAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return NotificationIcon;
@@ -112,7 +128,7 @@ function matchUserIcon(user: IUserLike) {
 }
 
 function matchUserTagPalette(user: IUserLike) {
-    if (isAttendee(user)) {
+    if (isAttendee(user) || isDisconnectedAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "yellow";
@@ -129,7 +145,7 @@ function matchUserTagPalette(user: IUserLike) {
 }
 
 function matchUserTagText(user: IUserLike): string {
-    if (isAttendee(user)) {
+    if (isAttendee(user) || isDisconnectedAttendee(user)) {
         switch (user.state) {
             case "STATE_AWAITING":
                 return "Awaiting Approval";

@@ -408,7 +408,7 @@ function AttendeeListItemGenericActions(
 function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {user} = props;
 
-    if (!isAttendee(user)) {
+    if (!(isAttendee(user) || isDisconnectedAttendee(user))) {
         return <></>;
     }
 

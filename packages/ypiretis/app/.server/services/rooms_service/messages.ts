@@ -7,6 +7,10 @@ import type {
 } from "./states";
 
 export const MESSAGE_EVENTS = {
+    attendeeUserApproved: "attendeeUser.approved",
+
+    attendeeUserRejected: "attendeeUser.rejected",
+
     attendeeUserHandUpdate: "attendeeUser.handUpdate",
 
     attendeeUserStateUpdate: "attendeeUser.stateUpdate",
@@ -59,6 +63,8 @@ export type IAttendeeUserMessages =
     | Exclude<IUserMessages, ISelfStateUpdateMessage>;
 
 export type IPresenterUserMessages =
+    | IAttendeeUserApprovedMessage
+    | IAttendeeUserRejectedMessage
     | IAttendeeUserHandUpdateMessage
     | IAttendeeUserStateUpdateMessage
     | IDisplayEntityStateUpdateMessage
@@ -82,6 +88,22 @@ export interface IMessage {
     readonly event: string;
 
     readonly data: IMessageData;
+}
+
+export interface IAttendeeUserApprovedMessage extends IMessage {
+    readonly event: typeof MESSAGE_EVENTS.attendeeUserApproved;
+
+    readonly data: {
+        readonly accountID: string;
+    };
+}
+
+export interface IAttendeeUserRejectedMessage extends IMessage {
+    readonly event: typeof MESSAGE_EVENTS.attendeeUserRejected;
+
+    readonly data: {
+        readonly accountID: string;
+    };
 }
 
 export interface IAttendeeUserHandUpdateMessage extends IMessage {

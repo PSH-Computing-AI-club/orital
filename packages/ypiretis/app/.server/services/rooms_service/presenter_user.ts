@@ -46,7 +46,10 @@ export default function makePresenterUser(
         [SYMBOL_ENTITY_ON_DISPOSE]() {
             user[SYMBOL_ENTITY_ON_DISPOSE]();
 
+            attendeeApproved.dispose();
+            attendeeBanned.dispose();
             attendeeHandUpdate.dispose();
+            attendeeKicked.dispose();
 
             entityAddedSubscription.dispose();
             entityDisposedSubscription.dispose();
@@ -55,6 +58,34 @@ export default function makePresenterUser(
             pinUpdateSubscription.dispose();
         },
     }) satisfies IPresenterUser;
+
+    const attendeeApproved = room.EVENT_ATTENDEE_APPROVED.subscribe((event) => {
+        const {attendee} = event;
+        const {user} = attendee;
+        const {accountID} = user;
+
+        presenter._dispatch({
+            event: MESSAGE_EVENTS.attendeeUserApproved,
+
+            data: {
+                accountID,
+            },
+        });
+    });
+
+    const attendeeBanned = room.EVENT_ATTENDEE_BANNED.subscribe((event) => {
+        const {attendee} = event;
+        const {user} = attendee;
+        const {accountID} = user;
+
+        presenter._dispatch({
+            event: MESSAGE_EVENTS.attendeeUserRejected,
+
+            data: {
+                accountID,
+            },
+        });
+    });
 
     const attendeeHandUpdate = room.EVENT_ATTENDEE_HAND_UPDATE.subscribe(
         (event) => {
@@ -71,6 +102,20 @@ export default function makePresenterUser(
             });
         },
     );
+
+    const attendeeKicked = room.EVENT_ATTENDEE_KICKED.subscribe((event) => {
+        const {attendee} = event;
+        const {user} = attendee;
+        const {accountID} = user;
+
+        presenter._dispatch({
+            event: MESSAGE_EVENTS.attendeeUserRejected,
+
+            data: {
+                accountID,
+            },
+        });
+    });
 
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         (event) => {

@@ -376,7 +376,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 attendeePool.releaseID(id);
                 attendees.delete(id);
 
-                if (approvedAccountIDs.has(accountID)) {
+                if (
+                    state === ROOM_STATES.unlocked ||
+                    approvedAccountIDs.has(accountID)
+                ) {
                     disconnectedAttendees.set(accountID, {
                         accountID,
                         firstName,

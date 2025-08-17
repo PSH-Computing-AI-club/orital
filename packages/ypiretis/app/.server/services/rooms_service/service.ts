@@ -147,42 +147,6 @@ export async function insertOneLive(
         },
     );
 
-    const attendeeBannedSubscription = room.EVENT_ATTENDEE_BANNED.subscribe(
-        async (event) => {
-            const {attendee} = event;
-            const {id: userID} = attendee;
-
-            const transaction = useTransaction();
-
-            await transaction
-                .delete(ATTENDEES_TABLE)
-                .where(
-                    and(
-                        eq(ATTENDEES_TABLE.userID, userID),
-                        eq(ATTENDEES_TABLE.roomID, internalRoomID),
-                    ),
-                );
-        },
-    );
-
-    const attendeeKickedSubscription = room.EVENT_ATTENDEE_KICKED.subscribe(
-        async (event) => {
-            const {attendee} = event;
-            const {id: userID} = attendee;
-
-            const transaction = useTransaction();
-
-            await transaction
-                .delete(ATTENDEES_TABLE)
-                .where(
-                    and(
-                        eq(ATTENDEES_TABLE.userID, userID),
-                        eq(ATTENDEES_TABLE.roomID, internalRoomID),
-                    ),
-                );
-        },
-    );
-
     const entityAddedSubscription = room.EVENT_ENTITY_ADDED.subscribe(
         async (event) => {
             const {entity} = event;
@@ -224,8 +188,6 @@ export async function insertOneLive(
                 const {pin} = room;
 
                 attendeeApprovedSubscription.dispose();
-                attendeeBannedSubscription.dispose();
-                attendeeKickedSubscription.dispose();
                 entityAddedSubscription.dispose();
                 pinUpdateSubscription.dispose();
                 stateUpdateSubscription.dispose();

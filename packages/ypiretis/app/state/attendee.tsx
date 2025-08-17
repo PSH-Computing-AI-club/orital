@@ -82,6 +82,7 @@ function useMessageHandler(
                     break;
             }
         },
+
         [navigate],
     );
 }

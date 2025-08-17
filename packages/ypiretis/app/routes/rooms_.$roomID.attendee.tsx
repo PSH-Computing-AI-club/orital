@@ -157,7 +157,7 @@ function SidebarView() {
 
                 <Separator.Horizontal />
 
-                <Sidebar.Link to="/rooms/left" colorPalette="red">
+                <Sidebar.Link to="/messages/rooms/left" colorPalette="red">
                     <Sidebar.Icon>
                         <LogoutIcon />
                     </Sidebar.Icon>

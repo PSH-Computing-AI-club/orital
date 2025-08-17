@@ -412,9 +412,9 @@ function AttendeeList(props: IAttendeeListProps) {
 function AttendeesCardActions() {
     const {room} = usePresenterContext();
 
-    const {attendees} = room;
+    const {attendees, disconnectedAttendees} = room;
 
-    const accountEmailAddresses = attendees
+    const accountEmailAddresses = [...attendees, ...disconnectedAttendees]
         .filter((attendee) => {
             const {state} = attendee;
 

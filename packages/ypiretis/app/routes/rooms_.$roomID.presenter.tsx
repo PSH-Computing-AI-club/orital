@@ -8,6 +8,7 @@ import {Outlet} from "react-router";
 import * as v from "valibot";
 
 import {
+    ATTENDEE_USER_STATES,
     PRESENTER_USER_STATES,
     requireAuthenticatedPresenterConnection,
 } from "~/.server/services/rooms_service";
@@ -29,7 +30,12 @@ import {validateParams} from "~/guards/validation";
 import {useAsyncCallback} from "~/hooks/async_callback";
 import {WebSocketCacheProvider} from "~/hooks/web_socket";
 
-import type {IAttendee, IDisplay, IPresenterContext} from "~/state/presenter";
+import type {
+    IAttendee,
+    IDisconnectedAttendee,
+    IDisplay,
+    IPresenterContext,
+} from "~/state/presenter";
 import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
 
 import {PublicUserContextProvider, mapPublicUser} from "~/state/public_user";
@@ -89,8 +95,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             accountID,
             firstName,
             lastName,
+            state: ATTENDEE_USER_STATES.disposed,
         };
-    });
+    }) satisfies IDisconnectedAttendee[];
 
     const initialDisplays = Array.from(displays.values()).map((display) => {
         const {id: entityID, state} = display;

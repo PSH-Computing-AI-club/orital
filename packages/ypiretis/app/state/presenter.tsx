@@ -17,6 +17,7 @@ import type {
     IPresenterUserMessages,
     IPresenterUserStates,
     IRoomStates,
+    ATTENDEE_USER_STATES,
 } from "~/.server/services/rooms_service";
 
 import type {IUseWebSocketOptions} from "~/hooks/web_socket";
@@ -28,7 +29,9 @@ const CONTEXT_PRESENTER = createContext<IPresenterContext | null>(null);
 
 export type IUser = IBaseUser & IEntity;
 
-export type IDisconnectedAttendee = IBaseUser;
+export type IDisconnectedAttendee = IBaseUser & {
+    readonly state: (typeof ATTENDEE_USER_STATES)["disposed"];
+};
 
 export interface IBaseUser {
     readonly accountID: string;
@@ -215,7 +218,13 @@ function useMessageReducer(
 
                 const disconnectedAttendees = [
                     ...room.disconnectedAttendees,
-                    {accountID, firstName, lastName},
+
+                    {
+                        accountID,
+                        firstName,
+                        lastName,
+                        state: "STATE_DISPOSED",
+                    } satisfies IDisconnectedAttendee,
                 ];
 
                 attendees.splice(removedAtteendeeIndex, 1);

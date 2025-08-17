@@ -21,7 +21,7 @@ import makePresenterUser, {
     isPresenterUser,
 } from "./presenter_user";
 import type {IEntityStates, IRoomStates} from "./states";
-import {ENTITY_STATES, ROOM_STATES} from "./states";
+import {ATTENDEE_USER_STATES, ENTITY_STATES, ROOM_STATES} from "./states";
 import {
     SYMBOL_ATTENDEE_USER_ON_APPROVED,
     SYMBOL_ATTENDEE_USER_ON_BANNED,
@@ -228,6 +228,34 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             oldState,
             newState: value,
         });
+
+        switch (value) {
+            case ROOM_STATES.permissive: {
+                for (const attendee of attendees.values()) {
+                    const {state, user} = attendee;
+
+                    if (state === ATTENDEE_USER_STATES.connected) {
+                        const {accountID} = user;
+
+                        approvedAccountIDs.add(accountID);
+
+                        EVENT_ATTENDEE_APPROVED.dispatch({
+                            attendee,
+                        });
+                    }
+                }
+            }
+
+            case ROOM_STATES.unlocked: {
+                for (const attendee of attendees.values()) {
+                    const {state} = attendee;
+
+                    if (state === ATTENDEE_USER_STATES.awaiting) {
+                        attendee._updateState(ATTENDEE_USER_STATES.connected);
+                    }
+                }
+            }
+        }
     }
 
     return {

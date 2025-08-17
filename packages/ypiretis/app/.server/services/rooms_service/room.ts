@@ -376,11 +376,13 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 attendeePool.releaseID(id);
                 attendees.delete(id);
 
-                disconnectedAttendees.set(accountID, {
-                    accountID,
-                    firstName,
-                    lastName,
-                });
+                if (approvedAccountIDs.has(accountID)) {
+                    disconnectedAttendees.set(accountID, {
+                        accountID,
+                        firstName,
+                        lastName,
+                    });
+                }
 
                 EVENT_ENTITY_DISPOSED.dispatch({
                     entity,
@@ -434,7 +436,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             });
 
             attendees.set(id, attendee);
-            disconnectedAttendees.delete(accountID);
+
+            if (approvedAccountIDs.has(accountID)) {
+                disconnectedAttendees.delete(accountID);
+            }
 
             EVENT_ENTITY_ADDED.dispatch({
                 entity: attendee as unknown as IGenericEntity,

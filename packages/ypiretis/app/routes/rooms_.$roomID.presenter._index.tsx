@@ -15,11 +15,14 @@ import {
 } from "@chakra-ui/react";
 
 import type {MouseEvent, MouseEventHandler, ReactElement} from "react";
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useMemo} from "react";
 
 import * as v from "valibot";
 
-import type {IRoomStates} from "~/.server/services/rooms_service";
+import type {
+    IRoomStates,
+    ATTENDEE_USER_STATES,
+} from "~/.server/services/rooms_service";
 
 import Layout from "~/components/controlpanel/layout";
 import ListTile from "~/components/controlpanel/list_tile";
@@ -77,6 +80,18 @@ const UX_TITLE_SCHEMA = v.pipe(
 );
 
 type IUserLike = IAttendee | IDisconnectedAttendee | IPublicUser;
+
+interface IAttendeeListItemConnectedActionsProps {
+    readonly user: IAttendee;
+}
+
+interface IAttendeeListItemAwaitingActionsProps {
+    readonly user: IAttendee;
+}
+
+interface IAttendeeListItemGenericActionsProps {
+    readonly user: IUserLike;
+}
 
 interface IAttendeeListItemActionsProps {
     readonly user: IUserLike;
@@ -168,52 +183,191 @@ function sortUsers(attendeeA: IUserLike, attendeeB: IUserLike): number {
     return fullNameA >= fullNameB ? 1 : 0;
 }
 
-function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
+function AttendeeListItemConnectedActions(
+    props: IAttendeeListItemConnectedActionsProps,
+) {
     const {user} = props;
-
-    if (!isAttendee(user)) {
-        return <></>;
-    }
+    const {entityID, isRaisingHand} = user;
 
     const {room} = usePresenterContext();
+    const {state} = room;
 
-    const {state: roomState} = room;
-    const {accountID, entityID, isRaisingHand, state: userState} = user;
-
-    const [isFetchingAction, setIsFetchingAction] = useState<boolean>(false);
-
-    const isDisposed = roomState === "STATE_DISPOSED";
-    const canFetchAction = !(isDisposed || isFetchingAction);
-
-    const makeActionEventHandler = useCallback(
-        ((action) => {
-            return async (_event) => {
-                setIsFetchingAction(true);
-
-                await fetch(`./presenter/actions/attendees/${entityID}`, {
-                    method: "POST",
-
-                    body: buildFormData<IAttendeeActionFormData>({
-                        action,
-                    }),
-                });
-
-                setIsFetchingAction(false);
-            };
-        }) satisfies (
+    const [isFetchingAction, onAttendeeAction] = useAsyncCallback(
+        async (
+            _event: MouseEvent,
             action: IAttendeeActionFormData["action"],
-        ) => (
-            event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        ) => Promise<void>,
+        ) => {
+            await fetch(`./presenter/actions/attendees/${entityID}`, {
+                method: "POST",
 
-        [entityID, setIsFetchingAction],
+                body: buildFormData<IAttendeeActionFormData>({
+                    action,
+                }),
+            });
+        },
+
+        [entityID],
     );
 
-    const menuItems: ReactElement[] = [];
+    const isDisposed = state === "STATE_DISPOSED";
+    const isActionDisabled = isDisposed || isFetchingAction;
+
+    const onBanClick = useCallback(
+        (async (_event: MouseEvent) => {
+            await onAttendeeAction(_event, "moderate.ban");
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [onAttendeeAction],
+    );
+
+    const onDismissHandClick = useCallback(
+        (async (_event: MouseEvent) => {
+            await onAttendeeAction(_event, "participation.dismissHand");
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [onAttendeeAction],
+    );
+
+    const onKickClick = useCallback(
+        (async (_event: MouseEvent) => {
+            await onAttendeeAction(_event, "moderate.kick");
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [onAttendeeAction],
+    );
+
+    return (
+        <>
+            <Menu.Item
+                key="dismiss-hand"
+                disabled={isActionDisabled || !isRaisingHand}
+                value="dismiss-hand"
+                onClick={onDismissHandClick}
+            >
+                <HumanHandsdownIcon />
+
+                <Box flexGrow="1">Dismiss Hand</Box>
+            </Menu.Item>
+
+            <Menu.Separator />
+
+            <Menu.Item
+                key="kick-attendee"
+                disabled={isActionDisabled}
+                value="kick-attendee"
+                color="fg.error"
+                _hover={{bg: "bg.error", color: "fg.error"}}
+                onClick={onKickClick}
+            >
+                <UserXIcon />
+
+                <Box flexGrow="1">Kick Attendee</Box>
+            </Menu.Item>
+
+            <Menu.Item
+                key="ban-attendee"
+                disabled={isActionDisabled}
+                value="ban-attendee"
+                color="fg.error"
+                _hover={{bg: "bg.error", color: "fg.error"}}
+                onClick={onBanClick}
+            >
+                <ShieldIcon />
+
+                <Box flexGrow="1">Ban Attendee</Box>
+            </Menu.Item>
+        </>
+    );
+}
+
+function AttendeeListItemAwaitingActions(
+    props: IAttendeeListItemAwaitingActionsProps,
+) {
+    const {user} = props;
+    const {entityID} = user;
+
+    const {room} = usePresenterContext();
+    const {state} = room;
+
+    const [isFetchingAction, onAttendeeAction] = useAsyncCallback(
+        async (
+            _event: MouseEvent,
+            action: IAttendeeActionFormData["action"],
+        ) => {
+            await fetch(`./presenter/actions/attendees/${entityID}`, {
+                method: "POST",
+
+                body: buildFormData<IAttendeeActionFormData>({
+                    action,
+                }),
+            });
+        },
+
+        [entityID],
+    );
+
+    const isDisposed = state === "STATE_DISPOSED";
+    const isActionDisabled = isDisposed || isFetchingAction;
+
+    const onApproveClick = useCallback(
+        (async (_event: MouseEvent) => {
+            await onAttendeeAction(_event, "moderate.approve");
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [onAttendeeAction],
+    );
+
+    const onRejectClick = useCallback(
+        (async (_event: MouseEvent) => {
+            await onAttendeeAction(_event, "moderate.reject");
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [onAttendeeAction],
+    );
+
+    return (
+        <>
+            <Menu.Item
+                key="approve-join"
+                disabled={isActionDisabled}
+                value="approve-join"
+                color="fg.success"
+                _hover={{
+                    bg: "bg.success",
+                    color: "fg.success",
+                }}
+                onClick={onApproveClick}
+            >
+                <CheckIcon />
+
+                <Box flexGrow="1">Approve Join</Box>
+            </Menu.Item>
+
+            <Menu.Item
+                key="reject-join"
+                disabled={isActionDisabled}
+                value="reject-join"
+                color="fg.error"
+                _hover={{bg: "bg.error", color: "fg.error"}}
+                onClick={onRejectClick}
+            >
+                <CloseIcon />
+
+                <Box flexGrow="1">Reject Join</Box>
+            </Menu.Item>
+        </>
+    );
+}
+
+function AttendeeListItemGenericActions(
+    props: IAttendeeListItemGenericActionsProps,
+) {
+    const {user} = props;
+    const {accountID} = user;
 
     const accountEmailAddress = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
 
-    menuItems.push(
+    return (
         <Menu.Root
             key="email-user"
             positioning={{placement: "left-start", gutter: 2}}
@@ -247,101 +401,38 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>
-        </Menu.Root>,
+        </Menu.Root>
     );
+}
 
-    switch (userState) {
-        case "STATE_AWAITING": {
-            const onApproveClick = makeActionEventHandler("moderate.approve");
-            const onRejectClick = makeActionEventHandler("moderate.reject");
+function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
+    const {user} = props;
 
-            menuItems.push(
-                <Menu.Separator />,
+    const menuItems: ReactElement[] = [];
 
-                <Menu.Item
-                    key="approve-join"
-                    disabled={!canFetchAction}
-                    value="approve-join"
-                    color="fg.success"
-                    _hover={{
-                        bg: "bg.success",
-                        color: "fg.success",
-                    }}
-                    onClick={onApproveClick}
-                >
-                    <CheckIcon />
+    menuItems.push(<AttendeeListItemGenericActions user={user} />);
 
-                    <Box flexGrow="1">Approve Join</Box>
-                </Menu.Item>,
+    if (isAttendee(user)) {
+        const {state} = user;
 
-                <Menu.Item
-                    key="reject-join"
-                    disabled={!canFetchAction}
-                    value="reject-join"
-                    color="fg.error"
-                    _hover={{bg: "bg.error", color: "fg.error"}}
-                    onClick={onRejectClick}
-                >
-                    <CloseIcon />
+        switch (state) {
+            case "STATE_AWAITING": {
+                menuItems.push(
+                    <Menu.Separator />,
+                    <AttendeeListItemAwaitingActions user={user} />,
+                );
 
-                    <Box flexGrow="1">Reject Join</Box>
-                </Menu.Item>,
-            );
+                break;
+            }
 
-            break;
-        }
+            case "STATE_CONNECTED": {
+                menuItems.push(
+                    <Menu.Separator />,
+                    <AttendeeListItemConnectedActions user={user} />,
+                );
 
-        case "STATE_CONNECTED": {
-            const onBanClick = makeActionEventHandler("moderate.ban");
-            const onDismissHandClick = makeActionEventHandler(
-                "participation.dismissHand",
-            );
-            const onKickClick = makeActionEventHandler("moderate.kick");
-
-            menuItems.push(
-                <Menu.Separator />,
-
-                <Menu.Item
-                    key="dismiss-hand"
-                    disabled={!canFetchAction || !isRaisingHand}
-                    value="dismiss-hand"
-                    onClick={onDismissHandClick}
-                >
-                    <HumanHandsdownIcon />
-
-                    <Box flexGrow="1">Dismiss Hand</Box>
-                </Menu.Item>,
-
-                <Menu.Separator />,
-
-                <Menu.Item
-                    key="kick-attendee"
-                    disabled={!canFetchAction}
-                    value="kick-attendee"
-                    color="fg.error"
-                    _hover={{bg: "bg.error", color: "fg.error"}}
-                    onClick={onKickClick}
-                >
-                    <UserXIcon />
-
-                    <Box flexGrow="1">Kick Attendee</Box>
-                </Menu.Item>,
-
-                <Menu.Item
-                    key="ban-attendee"
-                    disabled={!canFetchAction}
-                    value="ban-attendee"
-                    color="fg.error"
-                    _hover={{bg: "bg.error", color: "fg.error"}}
-                    onClick={onBanClick}
-                >
-                    <ShieldIcon />
-
-                    <Box flexGrow="1">Ban Attendee</Box>
-                </Menu.Item>,
-            );
-
-            break;
+                break;
+            }
         }
     }
 

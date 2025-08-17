@@ -258,6 +258,7 @@ function useMessageReducer(
                 const {entityID} = data;
 
                 const {room} = context;
+                const {approvedAccountIDs, state} = room;
                 const attendees = [...room.attendees];
 
                 const removedAtteendeeIndex = attendees.findIndex(
@@ -267,15 +268,24 @@ function useMessageReducer(
                 const {accountID, firstName, lastName} =
                     attendees[removedAtteendeeIndex];
 
+                const wasAttendeeApproved =
+                    state === "STATE_PERMISSIVE"
+                        ? approvedAccountIDs.has(accountID)
+                        : true;
+
                 const disconnectedAttendees = [
                     ...room.disconnectedAttendees,
 
-                    {
-                        accountID,
-                        firstName,
-                        lastName,
-                        state: "STATE_DISPOSED",
-                    } satisfies IDisconnectedAttendee,
+                    ...(wasAttendeeApproved
+                        ? [
+                              {
+                                  accountID,
+                                  firstName,
+                                  lastName,
+                                  state: "STATE_DISPOSED",
+                              } satisfies IDisconnectedAttendee,
+                          ]
+                        : []),
                 ];
 
                 attendees.splice(removedAtteendeeIndex, 1);

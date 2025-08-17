@@ -28,7 +28,7 @@ const CONTEXT_PRESENTER = createContext<IPresenterContext | null>(null);
 
 export type IUser = IBaseUser & IEntity;
 
-export type IDisconnectedUser = IBaseUser;
+export type IDisconnectedAttendee = IBaseUser;
 
 export interface IBaseUser {
     readonly accountID: string;
@@ -55,7 +55,7 @@ export interface IAttendee extends IUser {
 export interface IRoom {
     readonly attendees: IAttendee[];
 
-    readonly disconnectedAttendees: IDisconnectedUser[];
+    readonly disconnectedAttendees: IDisconnectedAttendee[];
 
     readonly displays: IDisplay[];
 
@@ -171,7 +171,7 @@ function useMessageReducer(
                 const {accountID, entityID, firstName, lastName, state} = data;
 
                 const {room} = context;
-                const {attendees} = room;
+                const {attendees, disconnectedAttendees} = room;
 
                 return {
                     ...context,
@@ -191,6 +191,11 @@ function useMessageReducer(
                                 state,
                             },
                         ],
+
+                        disconnectedAttendees: disconnectedAttendees.filter(
+                            (disconnectedAttendee) =>
+                                disconnectedAttendee.accountID !== accountID,
+                        ),
                     },
                 };
             }
@@ -199,7 +204,21 @@ function useMessageReducer(
                 const {entityID} = data;
 
                 const {room} = context;
-                const {attendees} = room;
+                const attendees = [...room.attendees];
+
+                const removedAtteendeeIndex = attendees.findIndex(
+                    (attendee) => attendee.entityID === entityID,
+                );
+
+                const {accountID, firstName, lastName} =
+                    attendees[removedAtteendeeIndex];
+
+                const disconnectedAttendees = [
+                    ...room.disconnectedAttendees,
+                    {accountID, firstName, lastName},
+                ];
+
+                attendees.splice(removedAtteendeeIndex, 1);
 
                 return {
                     ...context,
@@ -207,9 +226,8 @@ function useMessageReducer(
                     room: {
                         ...room,
 
-                        attendees: attendees.filter(
-                            (attendee) => attendee.entityID !== entityID,
-                        ),
+                        attendees,
+                        disconnectedAttendees,
                     },
                 };
             }

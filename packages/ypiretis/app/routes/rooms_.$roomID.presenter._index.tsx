@@ -55,7 +55,7 @@ import UsersIcon from "~/components/icons/users_icon";
 
 import {useAsyncCallback} from "~/hooks/async_callback";
 
-import type {IAttendee} from "~/state/presenter";
+import type {IAttendee, IDisconnectedAttendee} from "~/state/presenter";
 import {usePresenterContext} from "~/state/presenter";
 import type {IPublicUser} from "~/state/public_user";
 import {useAuthenticatedPublicUserContext} from "~/state/public_user";
@@ -76,7 +76,7 @@ const UX_TITLE_SCHEMA = v.pipe(
     title,
 );
 
-type IUserLike = IAttendee | IPublicUser;
+type IUserLike = IAttendee | IDisconnectedAttendee | IPublicUser;
 
 interface IAttendeeListItemActionsProps {
     readonly user: IUserLike;
@@ -455,17 +455,11 @@ function AttendeesCardActions() {
 function AttendeesCardDisconnectedTab() {
     const {room} = usePresenterContext();
 
-    const {attendees} = room;
+    const {disconnectedAttendees} = room;
 
     const users = useMemo(() => {
-        return attendees
-            .filter((attendee) => {
-                const {state} = attendee;
-
-                return state === "STATE_DISPOSED";
-            })
-            .sort(sortUsers) satisfies IUserLike[];
-    }, [attendees]);
+        return disconnectedAttendees.toSorted(sortUsers) satisfies IUserLike[];
+    }, [disconnectedAttendees]);
 
     const onProvideUsers = useCallback(
         (() => {

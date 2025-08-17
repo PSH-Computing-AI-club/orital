@@ -20,11 +20,11 @@
 
         "noEmit": true,
 
-        "target": "es2022",
+        "target": "es2023",
         "module": "es2022",
         "moduleResolution": "Bundler",
 
-        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "lib": ["DOM", "DOM.Iterable", "ES2023"],
         "types": ["bun-types", "@react-router/node", "vite/client"],
 
         "isolatedModules": true,

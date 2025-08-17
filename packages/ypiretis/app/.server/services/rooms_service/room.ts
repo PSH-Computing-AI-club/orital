@@ -436,10 +436,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             });
 
             attendees.set(id, attendee);
-
-            if (approvedAccountIDs.has(accountID)) {
-                disconnectedAttendees.delete(accountID);
-            }
+            disconnectedAttendees.delete(accountID);
 
             EVENT_ENTITY_ADDED.dispatch({
                 entity: attendee as unknown as IGenericEntity,

@@ -10,6 +10,7 @@ import {IUser} from "../users_service";
 
 import type {IAttendeeUser} from "./attendee_user";
 import makeAttendeeUser, {isAttendeeUser} from "./attendee_user";
+import type {IDisconnectedAttendeeUser} from "./disconnected_attendee_user";
 import type {IDisplayEntity} from "./display_entity";
 import makeDisplayEntity, {isDisplayEntity} from "./display_entity";
 import type {IGenericEntity} from "./entity";
@@ -146,6 +147,11 @@ export interface IRoom {
 
     readonly createdAt: Temporal.Instant;
 
+    readonly disconnectedAttendees: ReadonlyMap<
+        string,
+        IDisconnectedAttendeeUser
+    >;
+
     readonly displays: ReadonlyMap<number, IDisplayEntity>;
 
     readonly id: number;
@@ -203,6 +209,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
     const attendees = new Map<number, IAttendeeUser>();
     const attendeePool = makeIDPool();
+    const disconnectedAttendees = new Map<string, IDisconnectedAttendeeUser>();
 
     const displays = new Map<number, IDisplayEntity>();
     const displayPool = makeIDPool();
@@ -278,6 +285,10 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         get createdAt() {
             return createdAt;
+        },
+
+        get disconnectedAttendees() {
+            return disconnectedAttendees;
         },
 
         get displays() {
@@ -359,10 +370,17 @@ export default function makeRoom(options: IRoomOptions): IRoom {
 
         [SYMBOL_ENTITY_ON_DISPOSE](entity) {
             if (isAttendeeUser(entity)) {
-                const {id} = entity;
+                const {id, user} = entity;
+                const {accountID, firstName, lastName} = user;
 
                 attendeePool.releaseID(id);
                 attendees.delete(id);
+
+                disconnectedAttendees.set(accountID, {
+                    accountID,
+                    firstName,
+                    lastName,
+                });
 
                 EVENT_ENTITY_DISPOSED.dispatch({
                     entity,
@@ -404,8 +422,9 @@ export default function makeRoom(options: IRoomOptions): IRoom {
                 );
             }
 
-            const id = attendeePool.generateID();
+            const {accountID} = user;
 
+            const id = attendeePool.generateID();
             const attendee = makeAttendeeUser({
                 connection,
                 id,
@@ -415,6 +434,7 @@ export default function makeRoom(options: IRoomOptions): IRoom {
             });
 
             attendees.set(id, attendee);
+            disconnectedAttendees.delete(accountID);
 
             EVENT_ENTITY_ADDED.dispatch({
                 entity: attendee as unknown as IGenericEntity,

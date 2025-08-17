@@ -108,8 +108,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         };
     }) satisfies IDisplay[];
 
-    console.log({initialDisconnectAttendees});
-
     return {
         initialContextData: {
             room: {

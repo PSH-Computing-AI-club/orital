@@ -229,8 +229,6 @@ export async function requireAuthenticatedAttendeeAction(
     const {attendee} = session;
 
     if (attendee.state !== ATTENDEE_USER_STATES.connected) {
-        console.log("welp", {state: attendee.state});
-
         throw data("Conflict", {
             status: 409,
         });

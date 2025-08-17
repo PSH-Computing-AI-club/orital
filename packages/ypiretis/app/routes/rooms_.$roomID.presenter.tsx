@@ -62,7 +62,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         roomID,
     );
 
-    const {attendees, displays, pin, state, title} = room;
+    const {attendees, disconnectedAttendees, displays, pin, state, title} =
+        room;
     const publicUser = mapPublicUser(user);
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
@@ -79,6 +80,18 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         };
     }) satisfies IAttendee[];
 
+    const initialDisconnectAttendees = Array.from(
+        disconnectedAttendees.values(),
+    ).map((disconnectedAttendee) => {
+        const {accountID, firstName, lastName} = disconnectedAttendee;
+
+        return {
+            accountID,
+            firstName,
+            lastName,
+        };
+    });
+
     const initialDisplays = Array.from(displays.values()).map((display) => {
         const {id: entityID, state} = display;
 
@@ -88,10 +101,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         };
     }) satisfies IDisplay[];
 
+    console.log({initialDisconnectAttendees});
+
     return {
         initialContextData: {
             room: {
                 attendees: initialAttendees,
+                disconnectedAttendees: initialDisconnectAttendees,
                 displays: initialDisplays,
 
                 pin,

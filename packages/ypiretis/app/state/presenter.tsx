@@ -26,18 +26,20 @@ import {buildWebSocketURL} from "~/utils/url";
 
 const CONTEXT_PRESENTER = createContext<IPresenterContext | null>(null);
 
-export interface IEntity {
-    readonly entityID: number;
-}
+export type IUser = IBaseUser & IEntity;
 
-export interface IUser extends IEntity {
+export type IDisconnectedUser = IBaseUser;
+
+export interface IBaseUser {
     readonly accountID: string;
-
-    readonly entityID: number;
 
     readonly firstName: string;
 
     readonly lastName: string;
+}
+
+export interface IEntity {
+    readonly entityID: number;
 }
 
 export interface IDisplay extends IEntity {
@@ -52,6 +54,8 @@ export interface IAttendee extends IUser {
 
 export interface IRoom {
     readonly attendees: IAttendee[];
+
+    readonly disconnectedAttendees: IDisconnectedUser[];
 
     readonly displays: IDisplay[];
 

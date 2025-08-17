@@ -56,6 +56,8 @@ export interface IAttendee extends IUser {
 }
 
 export interface IRoom {
+    readonly approvedAccountIDs: ReadonlySet<string>;
+
     readonly attendees: IAttendee[];
 
     readonly disconnectedAttendees: IDisconnectedAttendee[];
@@ -77,8 +79,19 @@ export interface IPresenterContext {
     readonly state: IPresenterUserStates;
 }
 
+export interface IInitialRoom extends Omit<IRoom, "approvedAccountIDs"> {
+    readonly approvedAccountIDs: string[] | ReadonlySet<string>;
+}
+
+export interface IInitialPresenterContext
+    extends Omit<IPresenterContext, "room"> {
+    readonly room: IInitialRoom;
+
+    readonly state: IPresenterUserStates;
+}
+
 export interface IPresenterContextProviderProps extends PropsWithChildren {
-    readonly initialContextData: IPresenterContext;
+    readonly initialContextData: IInitialPresenterContext;
 }
 
 function useMessageHandler(
@@ -116,6 +129,44 @@ function useMessageReducer(
         const {data, event} = message;
 
         switch (event) {
+            case "attendeeUser.approved": {
+                const {accountID} = data;
+
+                const {room} = context;
+                const approvedAccountIDs = new Set(room.approvedAccountIDs);
+
+                approvedAccountIDs.add(accountID);
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        approvedAccountIDs,
+                    },
+                };
+            }
+
+            case "attendeeUser.rejected": {
+                const {accountID} = data;
+
+                const {room} = context;
+                const approvedAccountIDs = new Set(room.approvedAccountIDs);
+
+                approvedAccountIDs.delete(accountID);
+
+                return {
+                    ...context,
+
+                    room: {
+                        ...room,
+
+                        approvedAccountIDs,
+                    },
+                };
+            }
+
             case "attendeeUser.stateUpdate": {
                 const {entityID, state} = data;
 
@@ -384,11 +435,20 @@ export function PresenterContextProvider(
 ) {
     const {children, initialContextData} = props;
 
-    const [context, reduceMessage] = useMessageReducer(initialContextData);
-    const handleMessage = useMessageHandler(context);
-
     const {room} = initialContextData;
-    const {roomID} = room;
+    const {approvedAccountIDs, roomID} = room;
+
+    const [context, reduceMessage] = useMessageReducer({
+        ...initialContextData,
+
+        room: {
+            ...room,
+
+            approvedAccountIDs: new Set(approvedAccountIDs),
+        },
+    });
+
+    const handleMessage = useMessageHandler(context);
 
     const onError = useCallback((event: Event) => {
         // **TODO:** handle error here somehow

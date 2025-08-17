@@ -34,7 +34,7 @@ import type {
     IAttendee,
     IDisconnectedAttendee,
     IDisplay,
-    IPresenterContext,
+    IInitialPresenterContext,
 } from "~/state/presenter";
 import {PresenterContextProvider, usePresenterContext} from "~/state/presenter";
 
@@ -68,9 +68,18 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         roomID,
     );
 
-    const {attendees, disconnectedAttendees, displays, pin, state, title} =
-        room;
+    const {
+        approvedAccountIDs,
+        attendees,
+        disconnectedAttendees,
+        displays,
+        pin,
+        state,
+        title,
+    } = room;
     const publicUser = mapPublicUser(user);
+
+    const initialApprovedAccountIDs = Array.from(approvedAccountIDs);
 
     const initialAttendees = Array.from(attendees.values()).map((attendee) => {
         const {id: entityID, isRaisingHand, state, user} = attendee;
@@ -111,6 +120,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         initialContextData: {
             room: {
+                approvedAccountIDs: initialApprovedAccountIDs,
                 attendees: initialAttendees,
                 disconnectedAttendees: initialDisconnectAttendees,
                 displays: initialDisplays,
@@ -122,7 +132,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             },
 
             state: PRESENTER_USER_STATES.disposed,
-        } satisfies IPresenterContext,
+        } satisfies IInitialPresenterContext,
 
         publicUser,
     };

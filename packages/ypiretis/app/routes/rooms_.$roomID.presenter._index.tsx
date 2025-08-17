@@ -408,32 +408,8 @@ function AttendeeListItemGenericActions(
 function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
     const {user} = props;
 
-    const menuItems: ReactElement[] = [];
-
-    menuItems.push(<AttendeeListItemGenericActions user={user} />);
-
-    if (isAttendee(user)) {
-        const {state} = user;
-
-        switch (state) {
-            case "STATE_AWAITING": {
-                menuItems.push(
-                    <Menu.Separator />,
-                    <AttendeeListItemAwaitingActions user={user} />,
-                );
-
-                break;
-            }
-
-            case "STATE_CONNECTED": {
-                menuItems.push(
-                    <Menu.Separator />,
-                    <AttendeeListItemConnectedActions user={user} />,
-                );
-
-                break;
-            }
-        }
+    if (!isAttendee(user)) {
+        return <></>;
     }
 
     return (
@@ -446,7 +422,27 @@ function AttendeeListItemActions(props: IAttendeeListItemActionsProps) {
 
             <Portal>
                 <Menu.Positioner>
-                    <Menu.Content>{menuItems}</Menu.Content>
+                    <Menu.Content>
+                        <AttendeeListItemGenericActions user={user} />
+
+                        {user.state === "STATE_AWAITING" ? (
+                            <>
+                                <Menu.Separator />
+                                <AttendeeListItemAwaitingActions user={user} />
+                            </>
+                        ) : (
+                            <></>
+                        )}
+
+                        {user.state === "STATE_CONNECTED" ? (
+                            <>
+                                <Menu.Separator />
+                                <AttendeeListItemConnectedActions user={user} />
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </Menu.Content>
                 </Menu.Positioner>
             </Portal>
         </Menu.Root>

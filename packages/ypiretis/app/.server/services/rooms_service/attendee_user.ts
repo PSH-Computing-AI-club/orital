@@ -62,13 +62,15 @@ export default function makeAttendeeUser(
             ? ATTENDEE_USER_STATES.awaiting
             : ATTENDEE_USER_STATES.connected;
 
+    const constructedState = initialState ?? preferredState;
+
     const userEntity = makeUserEntity<
         IAttendeeUserMessages,
         IAttendeeUserStates
     >({
         ...options,
 
-        state: initialState ?? preferredState,
+        state: constructedState,
     });
 
     let isRaisingHand: boolean = false;
@@ -200,7 +202,7 @@ export default function makeAttendeeUser(
         },
     }) satisfies IAttendeeUser;
 
-    if (initialState === ATTENDEE_USER_STATES.connected) {
+    if (constructedState === ATTENDEE_USER_STATES.connected) {
         attendee._dispatch({
             event: MESSAGE_EVENTS.roomTitleUpdate,
 

@@ -1,27 +1,41 @@
 import EmptyState from "~/components/controlpanel/empty_state";
 import Layout from "~/components/controlpanel/layout";
 
+import ClipboardIcon from "~/components/icons/clipboard_icon";
 import MessageClockIcon from "~/components/icons/message_clock_icon";
+
+import {useAttendeeContext} from "~/state/attendee";
 
 import {Route} from "./+types/rooms_.$roomID.presenter.settings";
 
 export default function RoomsAttendeeIndex(_props: Route.ComponentProps) {
+    const {state} = useAttendeeContext();
+
+    const isAwaitingApproval = state === "STATE_AWAITING";
+
     return (
         <Layout.FixedContainer>
             <EmptyState.Root>
                 <EmptyState.Container>
                     <EmptyState.Icon>
-                        <MessageClockIcon />
+                        {isAwaitingApproval ? (
+                            <ClipboardIcon />
+                        ) : (
+                            <MessageClockIcon />
+                        )}
                     </EmptyState.Icon>
 
                     <EmptyState.Body>
                         <EmptyState.Title>
-                            Waiting on presenter
+                            {isAwaitingApproval
+                                ? "Awaiting approval"
+                                : "Waiting on presenter"}
                         </EmptyState.Title>
 
                         <EmptyState.Description>
-                            The presenter has not given you any actions to do
-                            yet.
+                            {isAwaitingApproval
+                                ? "The presenter needs to approval you joining the room."
+                                : "The presenter has not given you any actions to do yet."}
                         </EmptyState.Description>
                     </EmptyState.Body>
                 </EmptyState.Container>

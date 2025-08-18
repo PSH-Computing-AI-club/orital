@@ -78,7 +78,7 @@ export const {
 export const {
     deleteAll,
     deleteOne,
-    findAll,
+    findPaginatedAll,
     findOne,
     insertAll,
     insertOne,
@@ -95,25 +95,31 @@ export const {
     mapValue: mapEvent,
 });
 
-export const {findOne: findOneWithPoster, findAll: findAllWithPoster} =
-    makeReadableCRUDService<
-        IEventsWithPosterView,
-        _ISelectEventWithPoster,
-        IEventWithPoster
-    >({
-        table: EVENTS_WITH_POSTER_VIEW,
-        mapValue: mapEventWithPoster,
-    });
+export const {
+    findOne: findOneWithPoster,
+    findAll: findAllWithPoster,
+    findPaginatedAll: findPaginatedAllWithPoster,
+} = makeReadableCRUDService<
+    IEventsWithPosterView,
+    _ISelectEventWithPoster,
+    IEventWithPoster
+>({
+    table: EVENTS_WITH_POSTER_VIEW,
+    mapValue: mapEventWithPoster,
+});
 
-export const {findOne: findOnePublished, findAll: findAllPublished} =
-    makeReadableCRUDService<
-        IPublishedEventsView,
-        _ISelectPublishedEvent,
-        IPublishedEvent
-    >({
-        table: PUBLISHED_EVENTS_VIEW,
-        mapValue: mapEvent,
-    });
+export const {
+    findOne: findOnePublished,
+    findAll: findAllPublished,
+    findPaginatedAll: findPaginatedAllPublished,
+} = makeReadableCRUDService<
+    IPublishedEventsView,
+    _ISelectPublishedEvent,
+    IPublishedEvent
+>({
+    table: PUBLISHED_EVENTS_VIEW,
+    mapValue: mapEvent,
+});
 
 export function mapEvent<T extends _ISelectEvent, R extends IEvent>(
     event: T,

@@ -69,11 +69,11 @@ function SidebarView() {
                     News
                 </Sidebar.Link>
 
-                <Sidebar.Link to={`/admin/events`} comparator="startsWith">
+                <Sidebar.Link to={`/admin/calendar`} comparator="startsWith">
                     <Sidebar.Icon>
                         <CalendarMultipleIcon />
                     </Sidebar.Icon>
-                    Events
+                    Calendar
                 </Sidebar.Link>
 
                 <Spacer />

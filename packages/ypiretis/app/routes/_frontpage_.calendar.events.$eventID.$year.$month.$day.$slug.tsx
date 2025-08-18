@@ -24,9 +24,9 @@ import {number} from "~/utils/valibot";
 import {Route} from "./+types/_frontpage_.calendar.events.$eventID.$year.$month.$day.$slug";
 
 const LOADER_PARAMS_SCHEMA = v.object({
-    eventID: ulid,
-
     day: number,
+
+    eventID: ulid,
 
     month: number,
 

@@ -68,6 +68,16 @@ export interface IFindOneOptions<T extends Table | View> {
 }
 
 export interface IFindAllOptions<T extends Table | View> {
+    readonly limit?: number;
+
+    readonly offset?: number;
+
+    readonly sort?: ISortOptions<T>;
+
+    readonly where?: IOptionalFilter<T>;
+}
+
+export interface IFindPaginatedAllOptions<T extends Table | View> {
     readonly pagination: IPaginationOptions;
 
     readonly sort?: ISortOptions<T>;
@@ -75,7 +85,7 @@ export interface IFindAllOptions<T extends Table | View> {
     readonly where?: IOptionalFilter<T>;
 }
 
-export interface IFindAllResults<
+export interface IFindPaginatedAllResults<
     T extends Table | View,
     S extends InferSelectModel<T> = InferSelectModel<T>,
 > {
@@ -139,7 +149,11 @@ export interface IReadableCRUDService<
 > {
     findOne(options: IFindOneOptions<T>): Promise<M | null>;
 
-    findAll(options: IFindAllOptions<T>): Promise<IFindAllResults<T, M>>;
+    findAll(options?: IFindAllOptions<T>): Promise<M[]>;
+
+    findPaginatedAll(
+        options: IFindPaginatedAllOptions<T>,
+    ): Promise<IFindPaginatedAllResults<T, M>>;
 }
 
 export interface IWritableCRUDService<
@@ -217,7 +231,50 @@ export function makeReadableCRUDService<
             return mapValue ? mapValue(row) : (row as M);
         },
 
-        async findAll(options) {
+        async findAll(options = {}) {
+            const {limit = null, offset = null, sort, where} = options;
+
+            const transaction = useTransaction();
+
+            let query = transaction
+                .select()
+                // **HACK:** See the above comment about `View` typing.
+                .from(table as Table)
+                .$dynamic();
+
+            if (limit !== null) {
+                query.limit(limit);
+            }
+
+            if (offset !== null) {
+                query.offset(offset);
+            }
+
+            if (where) {
+                query = query.where(where(table));
+            }
+
+            if (sort) {
+                const {by, mode = SORT_MODES.ascending} = sort;
+
+                // @ts-expect-error - HACK: If we were given a table, then it is
+                // indexable. We just cannot know the type here.
+                const column = table[by];
+                const sorting = matchSortMode(mode);
+
+                query = query.orderBy(sorting(column));
+            }
+
+            const rows = (await query) as unknown as S[]; // **HACK:** See the above comment about type narrowing.
+
+            return mapValue
+                ? rows.map((row) => {
+                      return mapValue(row);
+                  })
+                : (rows as M[]);
+        },
+
+        async findPaginatedAll(options) {
             const {pagination, sort, where} = options;
             const {limit, page} = pagination;
 

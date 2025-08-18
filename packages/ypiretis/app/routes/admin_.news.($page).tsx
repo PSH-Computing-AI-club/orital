@@ -12,7 +12,7 @@ import * as v from "valibot";
 
 import {
     ARTICLE_STATES,
-    findAllWithPoster,
+    findPaginatedAllWithPoster,
     insertOne,
 } from "~/.server/services/articles_service";
 import {SORT_MODES} from "~/.server/services/crud_service";
@@ -79,7 +79,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const {pagination, values: articles} = await findAllWithPoster({
+    const {pagination, values: articles} = await findPaginatedAllWithPoster({
         pagination: {
             page,
 

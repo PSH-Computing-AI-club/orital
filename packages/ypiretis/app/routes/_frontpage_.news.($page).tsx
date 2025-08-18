@@ -2,7 +2,7 @@ import {data} from "react-router";
 
 import * as v from "valibot";
 
-import {findAllPublished} from "~/.server/services/articles_service";
+import {findPaginatedAllPublished} from "~/.server/services/articles_service";
 import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
@@ -39,7 +39,7 @@ const LOADER_PARAMS_SCHEMA = v.object({
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {page = 1} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const {pagination, values: articles} = await findAllPublished({
+    const {pagination, values: articles} = await findPaginatedAllPublished({
         pagination: {
             page,
 

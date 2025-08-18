@@ -4,7 +4,7 @@ import {Suspense, lazy} from "react";
 
 import {ClientOnly} from "remix-utils/client-only";
 
-import {findAllPublished} from "~/.server/services/articles_service";
+import {findAllPublished as findAllArticlesPublished} from "~/.server/services/articles_service";
 import {SORT_MODES} from "~/.server/services/crud_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
@@ -61,12 +61,8 @@ const PEOPLE_TO_DISPLAY = [
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
 export async function loader(_loaderArgs: Route.LoaderArgs) {
-    const {values: articles} = await findAllPublished({
-        pagination: {
-            page: 1,
-
-            limit: ARTICLES_TO_DISPLAY,
-        },
+    const articles = await findAllArticlesPublished({
+        limit: ARTICLES_TO_DISPLAY,
 
         sort: {
             by: "publishedAt",

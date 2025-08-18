@@ -88,6 +88,7 @@ export const {
     deleteAll,
     deleteOne,
     findAll,
+    findPaginatedAll,
     findOne,
     insertAll,
     insertOne,
@@ -104,29 +105,36 @@ export const {
     mapValue: mapArticle,
 });
 
-export const {findOne: findOneWithPoster, findAll: findAllWithPoster} =
-    makeReadableCRUDService<
-        IArticlesWithPosterView,
-        _ISelectArticleWithPoster,
-        IArticleWithPoster
-    >({
-        table: ARTICLES_WITH_POSTER_VIEW,
-        mapValue: mapArticleWithPoster,
-    });
+export const {
+    findOne: findOneWithPoster,
+    findAll: findAllWithPoster,
+    findPaginatedAll: findPaginatedAllWithPoster,
+} = makeReadableCRUDService<
+    IArticlesWithPosterView,
+    _ISelectArticleWithPoster,
+    IArticleWithPoster
+>({
+    table: ARTICLES_WITH_POSTER_VIEW,
+    mapValue: mapArticleWithPoster,
+});
 
-export const {findOne: findOnePublished, findAll: findAllPublished} =
-    makeReadableCRUDService<
-        IPublishedArticlesView,
-        _ISelectPublishedArticle,
-        IPublishedArticle
-    >({
-        table: PUBLISHED_ARTICLES_VIEW,
-        mapValue: mapArticle,
-    });
+export const {
+    findOne: findOnePublished,
+    findAll: findAllPublished,
+    findPaginatedAll: findPaginatedAllPublished,
+} = makeReadableCRUDService<
+    IPublishedArticlesView,
+    _ISelectPublishedArticle,
+    IPublishedArticle
+>({
+    table: PUBLISHED_ARTICLES_VIEW,
+    mapValue: mapArticle,
+});
 
 export const {
     findOne: findOnePublishedWithPoster,
-    findAll: findAllPublishedWithPoster,
+    findAll: findAllPublishedwithPoster,
+    findPaginatedAll: findPaginatedAllPublishedWithPoster,
 } = makeReadableCRUDService<
     IPublishedArticlesWithPosterView,
     _ISelectPublishedArticleWithPoster,

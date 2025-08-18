@@ -29,7 +29,7 @@ export type IUploadInsert = _IInsertUpload;
 
 export type IUploadUpdate = _IUpdateUpload;
 
-export const {findAll, findOne} = makeReadableCRUDService({
+export const {findPaginatedAll, findOne} = makeReadableCRUDService({
     table: UPLOADS_TABLE,
 });
 

@@ -60,7 +60,7 @@ export const requireGuestSession = sessionGuard.requireGuestSession;
 export const {
     deleteAll,
     deleteOne,
-    findAll,
+    findPaginatedAll,
     findOne,
     insertAll,
     insertOne,

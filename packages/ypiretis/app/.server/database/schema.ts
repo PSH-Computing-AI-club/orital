@@ -10,11 +10,15 @@ export {default as articles_attachments} from "./tables/articles_attachments_tab
 export {default as attendees} from "./tables/attendees_table";
 export {default as callbackTokens} from "./tables/callback_tokens_table";
 export {default as consentTokens} from "./tables/consent_tokens_table";
+export {default as events} from "./tables/events_table";
+export {default as events_attachments} from "./tables/events_attachments_table";
 export {default as grantTokens} from "./tables/grant_tokens_table";
 export {default as rooms} from "./tables/rooms_table";
 export {default as uploads} from "./tables/uploads_table";
 export {default as users} from "./tables/users_table";
 
 export {default as articles_with_poster} from "./views/articles_with_poster_view";
+export {default as events_with_poster} from "./views/events_with_poster_view";
 export {default as published_articles} from "./views/published_articles_view";
+export {default as published_events} from "./views/published_events_view";
 export {default as published_articles_with_poster} from "./views/published_articles_with_poster_view";

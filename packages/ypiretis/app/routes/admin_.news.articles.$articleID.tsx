@@ -34,11 +34,11 @@ import * as v from "valibot";
 import type {IArticleStates} from "~/.server/services/articles_service";
 import {
     ARTICLE_STATES,
-    deleteOne as deleteOneArticle,
-    deleteAllAttachmentsByID as deleteAllArticleAttachmentsByID,
-    deleteOneAttachmentByIDs as deleteOneArticleAttachmentByIDs,
-    findOneWithPoster as findOneArticleWithPoster,
-    findAllAttachmentsByInternalID as findAllArticleAttachmentsByInternalID,
+    deleteOne,
+    deleteAllAttachmentsByID,
+    deleteOneAttachmentByIDs,
+    findOneWithPoster,
+    findAllAttachmentsByInternalID,
     updateOne,
 } from "~/.server/services/articles_service";
 import {eq} from "~/.server/services/crud_service.filters";
@@ -187,7 +187,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 
             try {
                 await createTransaction(() => {
-                    return deleteOneArticleAttachmentByIDs(articleID, uploadID);
+                    return deleteOneAttachmentByIDs(articleID, uploadID);
                 });
             } catch (error) {
                 if (error instanceof ReferenceError) {
@@ -250,9 +250,9 @@ export async function action(actionArgs: Route.ActionArgs) {
         case "self.delete": {
             try {
                 await createTransaction(async () => {
-                    await deleteAllArticleAttachmentsByID(articleID);
+                    await deleteAllAttachmentsByID(articleID);
 
-                    return deleteOneArticle({
+                    return deleteOne({
                         where: eq("articleID", articleID),
                     });
                 });
@@ -318,7 +318,7 @@ export async function action(actionArgs: Route.ActionArgs) {
 export async function loader(loaderArgs: Route.LoaderArgs) {
     const {articleID} = validateParams(LOADER_PARAMS_SCHEMA, loaderArgs);
 
-    const article = await findOneArticleWithPoster({
+    const article = await findOneWithPoster({
         where: eq("articleID", articleID),
     });
 
@@ -340,18 +340,18 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     } = article;
     const {accountID, firstName, lastName} = poster;
 
-    const attachments = (
-        await findAllArticleAttachmentsByInternalID(internalID)
-    ).map((upload) => {
-        const {fileName, fileSize, mimeType, uploadID} = upload;
+    const attachments = (await findAllAttachmentsByInternalID(internalID)).map(
+        (upload) => {
+            const {fileName, fileSize, mimeType, uploadID} = upload;
 
-        return {
-            fileName,
-            fileSize,
-            mimeType,
-            uploadID,
-        };
-    });
+            return {
+                fileName,
+                fileSize,
+                mimeType,
+                uploadID,
+            };
+        },
+    );
 
     const {epochMilliseconds: createdAtTimestamp} = createdAt;
     const {epochMilliseconds: updatedAtTimestamp} = updatedAt;

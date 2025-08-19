@@ -22,8 +22,11 @@ import PeopleSection from "~/components/frontpage/people_section";
 
 import ArrowRightIcon from "~/components/icons/arrow_right_icon";
 
-import {ACCOUNT_PROVIDER_DOMAIN, APP_NAME} from "~/utils/constants";
-import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
+import {
+    ACCOUNT_PROVIDER_DOMAIN,
+    APP_NAME,
+    SERVER_TIMEZONE,
+} from "~/utils/constants";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 
 import type {Route} from "./+types/_frontpage_._index";
@@ -75,7 +78,7 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
             const {articleID, content, slug, publishedAt, title} = article;
 
             const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
+                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(

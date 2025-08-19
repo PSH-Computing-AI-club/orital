@@ -18,7 +18,7 @@ import PageHero from "~/components/frontpage/page_hero";
 
 import {validateParams} from "~/guards/validation";
 
-import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
+import {SERVER_TIMEZONE} from "~/utils/constants";
 import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/_frontpage_.calendar.events.$eventID.($year).($month).($day).($slug)";
@@ -63,7 +63,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         updatedAt,
     } = event;
 
-    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
+    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
     const {
         day: publishedDay,

@@ -23,7 +23,6 @@ import {validateParams} from "~/guards/validation";
 
 import {SERVER_TIMEZONE} from "~/utils/constants";
 import {useFormattedCalendarTimestamp} from "~/utils/locale";
-import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import {number} from "~/utils/valibot";
 
@@ -83,7 +82,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {content, eventID, slug, publishedAt, title} = event;
 
             const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
+                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(

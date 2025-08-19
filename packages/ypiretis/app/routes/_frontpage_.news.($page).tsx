@@ -17,7 +17,7 @@ import PageHero from "~/components/frontpage/page_hero";
 
 import {validateParams} from "~/guards/validation";
 
-import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
+import {SERVER_TIMEZONE} from "~/utils/constants";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import {number} from "~/utils/valibot";
 
@@ -65,7 +65,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {articleID, content, slug, publishedAt, title} = article;
 
             const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(NAVIGATOR_TIMEZONE);
+                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(

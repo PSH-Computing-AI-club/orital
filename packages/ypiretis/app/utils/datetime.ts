@@ -83,14 +83,8 @@ export function toLocalISOString(timestamp: Date | number) {
 export function toISOCalendarDayString(timestamp: number | Date): string {
     // **NOTE:** We are constructing a new `Date` instance here to preserve
     // immutability.
-    const date = new Date(timestamp);
 
-    date.setUTCHours(0);
-    date.setUTCMinutes(0);
-    date.setUTCSeconds(0);
-    date.setUTCMilliseconds(0);
-
-    return date.toISOString();
+    return zeroDay(timestamp).toISOString();
 }
 
 export function useDate(timestamp: number | Date): Date {
@@ -109,4 +103,15 @@ export function useGeneratedCalendarGrid(
 
 export function useTimezone(): string {
     return useHydrated() ? NAVIGATOR_TIMEZONE : SERVER_TIMEZONE;
+}
+
+export function zeroDay(timestamp: number | Date): Date {
+    const date = new Date(timestamp);
+
+    date.setUTCHours(0);
+    date.setUTCMinutes(0);
+    date.setUTCSeconds(0);
+    date.setUTCMilliseconds(0);
+
+    return date;
 }

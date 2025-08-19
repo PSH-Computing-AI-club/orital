@@ -1,6 +1,8 @@
 import {Temporal} from "@js-temporal/polyfill";
 
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
+
+import {useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
@@ -19,11 +21,13 @@ import {CalendarGrid} from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
 
-import {validateParams} from "~/guards/validation";
+import {validateParams, validateSearchParams} from "~/guards/validation";
 
 import {SERVER_TIMEZONE} from "~/utils/constants";
 import {useFormattedCalendarTimestamp} from "~/utils/locale";
+import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
+import {buildAppURL} from "~/utils/url";
 import {number} from "~/utils/valibot";
 
 import {Route} from "./+types/_frontpage_.calendar.($year).($month)";
@@ -36,15 +40,24 @@ const LOADER_PARAMS_SCHEMA = v.object({
     year: v.optional(number),
 });
 
+const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
+    timezone: v.optional(v.string()),
+});
+
 export async function loader(loaderArgs: Route.LoaderArgs) {
     let {month = null, year = null} = validateParams(
         LOADER_PARAMS_SCHEMA,
         loaderArgs,
     );
 
+    const {timezone = SERVER_TIMEZONE} = validateSearchParams(
+        LOADER_SEARCH_PARAMS_SCHEMA,
+        loaderArgs,
+    );
+
     if (month === null || year === null) {
         const {month: currentMonth, year: currentYear} =
-            Temporal.Now.zonedDateTimeISO(SERVER_TIMEZONE);
+            Temporal.Now.zonedDateTimeISO(timezone);
 
         month ??= currentMonth;
         year ??= currentYear;
@@ -55,13 +68,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const zonedStartDate = startDate
         .toZonedDateTime({
-            timeZone: SERVER_TIMEZONE,
+            timeZone: timezone,
         })
         .toInstant();
 
     const zonedEndDate = endDate
         .toZonedDateTime({
-            timeZone: SERVER_TIMEZONE,
+            timeZone: timezone,
         })
         .toInstant();
 
@@ -81,8 +94,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         events.map(async (event) => {
             const {content, eventID, slug, publishedAt, title} = event;
 
-            const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+            const zonedPublishedAt = publishedAt.toZonedDateTimeISO(timezone);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(
@@ -114,7 +126,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         calendar: {
             month,
             timestamp,
-            timezone: SERVER_TIMEZONE,
+            timezone,
             year,
         },
 
@@ -124,9 +136,13 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
 export default function FrontpageNews(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {calendar, events} = loaderData;
 
+    const {calendar, events} = loaderData;
     const {month, timestamp, year, timezone} = calendar;
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
         timestamp,
         {timezone},
@@ -158,6 +174,33 @@ export default function FrontpageNews(props: Route.ComponentProps) {
             } satisfies ICalendarGridEvent;
         });
     }, [events]);
+
+    useEffect(() => {
+        const url = buildAppURL(location);
+        const {searchParams} = url;
+
+        if (timezone !== NAVIGATOR_TIMEZONE) {
+            searchParams.set("timezone", NAVIGATOR_TIMEZONE);
+            const {hash, pathname, search} = url;
+
+            navigate(
+                {hash, pathname, search},
+
+                {
+                    replace: true,
+                },
+            );
+        } else if (
+            timezone === NAVIGATOR_TIMEZONE &&
+            timezone === SERVER_TIMEZONE
+        ) {
+            if (searchParams.has("timezone")) {
+                searchParams.delete("timezone");
+
+                history.replaceState(history.state, "", url);
+            }
+        }
+    }, [location, navigate, timezone]);
 
     return (
         <>

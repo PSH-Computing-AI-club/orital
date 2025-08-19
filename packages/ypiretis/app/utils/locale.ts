@@ -70,7 +70,7 @@ export function formatCalendarTimestamp(
 
     const formatter = new Intl.DateTimeFormat(locale, {
         timeZone: timezone,
-        timeZoneName: "short",
+        timeZoneName: "longGeneric",
 
         month: "long",
         year: "numeric",

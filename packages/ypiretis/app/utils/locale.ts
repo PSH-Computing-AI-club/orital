@@ -146,32 +146,29 @@ export function makeFormattedCalendarGrid(
 }
 
 export function useFormattedCalendarGrid(
-    timestamp: number | Date,
-    options: Omit<IFormatOptions, "timezone"> = {},
+    options: IMakeFormattedCalendarGridOptions,
 ): IFormattedCalendarMonth {
-    const {locale} = options;
-
-    const date = useDate(timestamp);
-    const timezone = useTimezone();
+    const {month, locale, timezone = useTimezone(), year} = options;
 
     const calendarGrid = useMemo(() => {
-        return makeFormattedCalendarGrid(date, {
+        return makeFormattedCalendarGrid({
             locale,
+            month,
             timezone,
+            year,
         });
-    }, [date, locale, timezone]);
+    }, [locale, month, timezone, year]);
 
     return calendarGrid;
 }
 
 export function useFormattedCalendarTimestamp(
     timestamp: number | Date,
-    options: Omit<IFormatOptions, "timezone"> = {},
+    options: IFormatOptions = {},
 ): IUseFormatted {
-    const {locale} = options;
+    const {locale, timezone = useTimezone()} = options;
 
     const date = useDate(timestamp);
-    const timezone = useTimezone();
 
     const isoTimestamp = useMemo(() => {
         return toISOCalendarDayString(date);
@@ -192,12 +189,11 @@ export function useFormattedCalendarTimestamp(
 
 export function useFormattedTimestamp(
     timestamp: number | Date,
-    options: Omit<IFormatTimestampOptions, "timezone"> = {},
+    options: IFormatTimestampOptions = {},
 ): IUseFormatted {
-    const {detail, locale} = options;
+    const {detail, locale, timezone = useTimezone()} = options;
 
     const date = useDate(timestamp);
-    const timezone = useTimezone();
 
     const isoTimestamp = useMemo(() => {
         return date.toISOString();

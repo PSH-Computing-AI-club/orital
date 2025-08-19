@@ -14,6 +14,10 @@ export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
 
+interface ICalenderGridItemDayProps {
+    readonly calendarDay: IFormattedCalendarDay;
+}
+
 interface ICalenderGridItemProps {
     readonly calendarDay: IFormattedCalendarDay;
 
@@ -85,10 +89,28 @@ function CalendarGridWeekdayHeaders() {
     });
 }
 
+function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
+    const {calendarDay} = props;
+    const {isoTimestamp, textualTimestamp} = calendarDay;
+
+    return (
+        <Span
+            padding="2"
+            marginInlineStart="auto"
+            marginInlineEnd="-2"
+            marginBlockStart="-2"
+            bg="bg.inverted"
+            color="fg.inverted"
+            asChild
+        >
+            <time dateTime={isoTimestamp}>{textualTimestamp}</time>
+        </Span>
+    );
+}
+
 function CalendarGridItem(props: ICalenderGridItemProps) {
     const {calendarDay, dayLookup, month} = props;
-
-    const {isoTimestamp, textualTimestamp, zonedDateTime} = calendarDay;
+    const {zonedDateTime} = calendarDay;
 
     const {dayOfWeek, month: dayMonth} = zonedDateTime;
     const {epochMilliseconds} = zonedDateTime.withTimeZone("UTC").startOfDay();
@@ -102,7 +124,6 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
 
     return (
         <VStack
-            key={isoTimestamp}
             fontSize="sm"
             fontWeight="bold"
             padding="2"
@@ -115,9 +136,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             borderStyle="solid"
             opacity={isInMonth ? "1" : "0.5"}
         >
-            <Span marginLeft="auto" asChild>
-                <time dateTime={isoTimestamp}>{textualTimestamp}</time>
-            </Span>
+            <CalenderGridItemDay calendarDay={calendarDay} />
         </VStack>
     );
 }

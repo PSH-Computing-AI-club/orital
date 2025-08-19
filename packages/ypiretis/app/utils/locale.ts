@@ -8,12 +8,32 @@ export const FORMAT_DETAIL = {
 
 export type IFormatDetail = (typeof FORMAT_DETAIL)[keyof typeof FORMAT_DETAIL];
 
-export interface IFormatTimestampOptions {
-    readonly detail?: IFormatDetail;
-
+export interface IFormatOptions {
     readonly locale?: string;
 
     readonly timezone?: string;
+}
+
+export interface IFormatTimestampOptions extends IFormatOptions {
+    readonly detail?: IFormatDetail;
+}
+
+export function formatCalendarTimestamp(
+    timestamp: Date | number,
+    options: IFormatOptions = {},
+): string {
+    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
+        options;
+
+    const formatter = new Intl.DateTimeFormat(locale, {
+        timeZone: timezone,
+        timeZoneName: "short",
+
+        month: "long",
+        year: "numeric",
+    });
+
+    return formatter.format(timestamp);
 }
 
 export function formatTimestamp(

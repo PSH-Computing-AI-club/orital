@@ -18,6 +18,7 @@ import PageHero from "~/components/frontpage/page_hero";
 import {validateParams} from "~/guards/validation";
 
 import {SERVER_TIMEZONE} from "~/utils/constants";
+import {formatCalendarTimestamp} from "~/utils/locale";
 import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import {number} from "~/utils/valibot";
@@ -106,8 +107,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     return {
         calendar: {
-            month,
-            year,
+            timestamp: zonedStartDate.epochMilliseconds,
         },
 
         events: mappedEvents,
@@ -118,11 +118,13 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {calendar, events} = loaderData;
 
-    const {month, year} = calendar;
+    const {timestamp} = calendar;
+
+    const timestampText = formatCalendarTimestamp(timestamp);
 
     return (
         <>
-            <Title title={`${month} ${year} :: /calendar`} />
+            <Title title={`${timestampText} :: /calendar`} />
 
             <PageHero.Root>
                 <PageHero.Container>
@@ -134,7 +136,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                 <ContentSection.Container>
                     <ContentSection.Header>
                         <ContentSection.Title>
-                            {month} {year}
+                            {timestampText}
                         </ContentSection.Title>
                     </ContentSection.Header>
 

@@ -31,9 +31,9 @@ export interface ICalendarGridProps extends SimpleGridProps {
 
     readonly month: number;
 
-    readonly year: number;
-
     readonly timezone?: string;
+
+    readonly year: number;
 }
 
 function makeEventDayLookup(

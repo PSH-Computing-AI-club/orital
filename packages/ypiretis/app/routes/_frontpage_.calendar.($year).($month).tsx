@@ -150,15 +150,22 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const navigate = useNavigate();
 
     const currentURL = buildAppURL(location);
+    const calendarZonedDateTime = Temporal.ZonedDateTime.from({
+        year,
+        month,
 
-    const nextMonth = (month % 12) + 1;
-    const previousMonth = ((month - 2 + 12) % 12) + 1;
+        day: 1,
+        timeZone: timezone,
+    });
 
-    const isNextYear = nextMonth < month;
-    const isPreviousYear = previousMonth > month;
+    const {month: nextMonth, year: nextYear} = calendarZonedDateTime.add({
+        months: 1,
+    });
 
-    const nextYear = isNextYear ? year + 1 : year;
-    const previousYear = isPreviousYear ? year - 1 : year;
+    const {month: previousMonth, year: previousYear} =
+        calendarZonedDateTime.subtract({
+            months: 1,
+        });
 
     const nextMonthURL = new URL(currentURL);
     const previousMonthURL = new URL(currentURL);

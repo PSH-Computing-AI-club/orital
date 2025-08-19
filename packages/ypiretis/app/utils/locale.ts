@@ -1,3 +1,10 @@
+import {useMemo} from "react";
+
+import {
+    toLocalISOString,
+    useDate,
+    useTimezone,
+} from "./datetime";
 import {NAVIGATOR_LANGUAGE, NAVIGATOR_TIMEZONE} from "./navigator";
 
 export const FORMAT_DETAIL = {
@@ -16,6 +23,12 @@ export interface IFormatOptions {
 
 export interface IFormatTimestampOptions extends IFormatOptions {
     readonly detail?: IFormatDetail;
+}
+
+export interface IUseFormatted {
+    readonly isoTimestamp: string;
+
+    readonly textualTimestamp: string;
 }
 
 export function formatCalendarTimestamp(
@@ -76,4 +89,57 @@ export function formatTimestamp(
     }
 
     return formatter.format(timestamp);
+}
+
+export function useFormattedCalendarTimestamp(
+    timestamp: Date | number,
+    options: Omit<IFormatOptions, "timezone"> = {},
+): IUseFormatted {
+    const {locale} = options;
+
+    const date = useDate(timestamp);
+    const timezone = useTimezone();
+
+    const isoTimestamp = useMemo(() => {
+        return toLocalISOCalendarString(date);
+    }, [date]);
+
+    const textualTimestamp = useMemo(() => {
+        return formatCalendarTimestamp(date, {
+            locale,
+            timezone,
+        });
+    }, [date, locale, timezone]);
+
+    return {
+        isoTimestamp,
+        textualTimestamp,
+    };
+}
+
+export function useFormattedTimestamp(
+    timestamp: Date | number,
+    options: Omit<IFormatTimestampOptions, "timezone"> = {},
+): IUseFormatted {
+    const {detail, locale} = options;
+
+    const date = useDate(timestamp);
+    const timezone = useTimezone();
+
+    const isoTimestamp = useMemo(() => {
+        return toLocalISOString(date);
+    }, [date]);
+
+    const textualTimestamp = useMemo(() => {
+        return formatTimestamp(date, {
+            detail,
+            locale,
+            timezone,
+        });
+    }, [date, detail, locale, timezone]);
+
+    return {
+        isoTimestamp,
+        textualTimestamp,
+    };
 }

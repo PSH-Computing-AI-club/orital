@@ -1,3 +1,10 @@
+import {useMemo} from "react";
+
+import {useHydrated} from "remix-utils/use-hydrated";
+
+import {SERVER_TIMEZONE} from "./constants";
+import {NAVIGATOR_TIMEZONE} from "./navigator";
+
 export function toLocalISOString(timestamp: Date | number) {
     timestamp = typeof timestamp === "number" ? new Date(timestamp) : timestamp;
 
@@ -9,4 +16,14 @@ export function toLocalISOString(timestamp: Date | number) {
     const minutes = timestamp.getMinutes().toString().padStart(2, "0");
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function useDate(timestamp: number | Date): Date {
+    return useMemo(() => {
+        return typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+    }, [timestamp]);
+}
+
+export function useTimezone(): string {
+    return useHydrated() ? NAVIGATOR_TIMEZONE : SERVER_TIMEZONE;
 }

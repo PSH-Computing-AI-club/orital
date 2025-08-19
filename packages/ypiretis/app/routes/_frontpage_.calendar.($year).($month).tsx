@@ -19,7 +19,7 @@ import type {
     ICalendarGridEvent,
     ICalenderGridEventTemplate,
 } from "~/components/frontpage/calendar_grid";
-import {CalendarGrid} from "~/components/frontpage/calendar_grid";
+import CalendarGrid from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
 

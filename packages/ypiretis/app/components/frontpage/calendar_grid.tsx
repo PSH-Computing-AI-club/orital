@@ -1,14 +1,23 @@
 import type {SimpleGridProps} from "@chakra-ui/react";
 import {SimpleGrid, Span, VStack} from "@chakra-ui/react";
 
-import {useMemo} from "react";
+import {memo, useMemo} from "react";
 
 import {useTimezone, zeroDay} from "~/utils/datetime";
+import type {IFormattedCalendarDay} from "~/utils/locale";
 import {useFormattedCalendarGrid} from "~/utils/locale";
 
 export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
+
+interface ICalenderGridItemProps {
+    readonly calendarDay: IFormattedCalendarDay;
+
+    readonly dayLookup: Map<number, ICalendarGridEvent[]>;
+
+    readonly month: number;
+}
 
 export interface ICalendarGridEvent {
     readonly id: string;
@@ -55,7 +64,59 @@ function makeEventDayLookup(
     return dayLookup;
 }
 
-export function CalendarGrid(props: ICalendarGridProps) {
+function CalendarGridItem(props: ICalenderGridItemProps) {
+    const {calendarDay, dayLookup, month} = props;
+
+    const {isoTimestamp, textualTimestamp, zonedDateTime} = calendarDay;
+
+    const {dayOfWeek, month: dayMonth} = zonedDateTime;
+    const {epochMilliseconds} = zonedDateTime.withTimeZone("UTC").startOfDay();
+
+    const isInMonth = dayMonth === month;
+    const isWeekend = dayOfWeek > 5;
+
+    const events = isInMonth
+        ? (dayLookup.get(epochMilliseconds) ?? null)
+        : null;
+
+    let backgroundColor: string;
+    let textColor: string;
+
+    if (!isInMonth) {
+        backgroundColor = "bg.subtle";
+        textColor = "fg.subtle";
+    } else if (isWeekend) {
+        backgroundColor = "bg.emphasized";
+        textColor = "fg.emphasized";
+    } else {
+        backgroundColor = "bg.panel";
+        textColor = "fg.panel";
+    }
+
+    return (
+        <VStack
+            key={isoTimestamp}
+            fontSize="sm"
+            fontWeight="bold"
+            padding="2"
+            height="2xs"
+            alignItems="start"
+            bg={backgroundColor}
+            color={textColor}
+            borderColor="border"
+            borderWidth="thin"
+            borderStyle="solid"
+        >
+            <Span marginLeft="auto" asChild>
+                <time dateTime={isoTimestamp}>{textualTimestamp}</time>
+            </Span>
+        </VStack>
+    );
+}
+
+const MemoizedCalenderGridItem = memo(CalendarGridItem);
+
+export default function CalendarGrid(props: ICalendarGridProps) {
     const {events, month, year, timezone = useTimezone()} = props;
 
     const calendarGrid = useFormattedCalendarGrid({
@@ -72,55 +133,15 @@ export function CalendarGrid(props: ICalendarGridProps) {
         <SimpleGrid columns={7} gap="2">
             {calendarGrid.flatMap((calendarWeek, _index) => {
                 return calendarWeek.map((calendarDay, _index) => {
-                    const {isoTimestamp, textualTimestamp, zonedDateTime} =
-                        calendarDay;
-
-                    const {dayOfWeek, month: dayMonth} = zonedDateTime;
-                    const {epochMilliseconds} = zonedDateTime
-                        .withTimeZone("UTC")
-                        .startOfDay();
-
-                    const isInMonth = dayMonth === month;
-                    const isWeekend = dayOfWeek > 5;
-
-                    const events = isInMonth
-                        ? (dayLookup.get(epochMilliseconds) ?? null)
-                        : null;
-
-                    let backgroundColor: string;
-                    let textColor: string;
-
-                    if (!isInMonth) {
-                        backgroundColor = "bg.subtle";
-                        textColor = "fg.subtle";
-                    } else if (isWeekend) {
-                        backgroundColor = "bg.emphasized";
-                        textColor = "fg.emphasized";
-                    } else {
-                        backgroundColor = "bg.panel";
-                        textColor = "fg.panel";
-                    }
+                    const {isoTimestamp} = calendarDay;
 
                     return (
-                        <VStack
+                        <MemoizedCalenderGridItem
                             key={isoTimestamp}
-                            fontSize="sm"
-                            fontWeight="bold"
-                            padding="2"
-                            height="2xs"
-                            alignItems="start"
-                            bg={backgroundColor}
-                            color={textColor}
-                            borderColor="border"
-                            borderWidth="thin"
-                            borderStyle="solid"
-                        >
-                            <Span marginLeft="auto" asChild>
-                                <time dateTime={isoTimestamp}>
-                                    {textualTimestamp}
-                                </time>
-                            </Span>
-                        </VStack>
+                            calendarDay={calendarDay}
+                            dayLookup={dayLookup}
+                            month={month}
+                        />
                     );
                 });
             })}

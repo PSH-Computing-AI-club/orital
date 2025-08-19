@@ -5,6 +5,15 @@ import {useHydrated} from "remix-utils/use-hydrated";
 import {SERVER_TIMEZONE} from "./constants";
 import {NAVIGATOR_TIMEZONE} from "./navigator";
 
+export function toLocalISOCalendarString(timestamp: Date | number) {
+    timestamp = typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+
+    const year = timestamp.getFullYear();
+    const month = (timestamp.getMonth() + 1).toString().padStart(2, "0");
+
+    return `${year}-${month}`;
+}
+
 export function toLocalISOString(timestamp: Date | number) {
     timestamp = typeof timestamp === "number" ? new Date(timestamp) : timestamp;
 

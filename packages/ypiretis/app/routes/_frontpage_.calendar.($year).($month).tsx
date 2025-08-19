@@ -18,7 +18,7 @@ import PageHero from "~/components/frontpage/page_hero";
 import {validateParams} from "~/guards/validation";
 
 import {SERVER_TIMEZONE} from "~/utils/constants";
-import {formatCalendarTimestamp} from "~/utils/locale";
+import {useFormattedCalendarTimestamp} from "~/utils/locale";
 import {NAVIGATOR_TIMEZONE} from "~/utils/navigator";
 import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import {number} from "~/utils/valibot";
@@ -120,11 +120,12 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
     const {timestamp} = calendar;
 
-    const timestampText = formatCalendarTimestamp(timestamp);
+    const {isoTimestamp, textualTimestamp} =
+        useFormattedCalendarTimestamp(timestamp);
 
     return (
         <>
-            <Title title={`${timestampText} :: /calendar`} />
+            <Title title={`${textualTimestamp} :: /calendar`} />
 
             <PageHero.Root>
                 <PageHero.Container>
@@ -136,7 +137,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                 <ContentSection.Container>
                     <ContentSection.Header>
                         <ContentSection.Title>
-                            {timestampText}
+                            <time dateTime={isoTimestamp}>
+                                {textualTimestamp}
+                            </time>
                         </ContentSection.Title>
                     </ContentSection.Header>
 

@@ -100,20 +100,6 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
         ? (dayLookup.get(epochMilliseconds) ?? null)
         : null;
 
-    let backgroundColor: string;
-    let textColor: string;
-
-    if (!isInMonth) {
-        backgroundColor = "bg.subtle";
-        textColor = "fg.subtle";
-    } else if (isWeekend) {
-        backgroundColor = "bg.emphasized";
-        textColor = "fg.emphasized";
-    } else {
-        backgroundColor = "bg.panel";
-        textColor = "fg.panel";
-    }
-
     return (
         <VStack
             key={isoTimestamp}
@@ -122,11 +108,12 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             padding="2"
             height="2xs"
             alignItems="start"
-            bg={backgroundColor}
-            color={textColor}
+            bg={isWeekend ? "bg.emphasized" : "bg.panel"}
+            color={isWeekend ? "fg.emphasized" : "fg.panel"}
             borderColor="border"
             borderWidth="thin"
             borderStyle="solid"
+            opacity={isInMonth ? "1" : "0.5"}
         >
             <Span marginLeft="auto" asChild>
                 <time dateTime={isoTimestamp}>{textualTimestamp}</time>

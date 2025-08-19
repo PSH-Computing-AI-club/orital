@@ -79,6 +79,22 @@ export function formatCalendarTimestamp(
     return formatter.format(timestamp);
 }
 
+export function formatCalendarWeekdays(
+    options: Omit<IFormatOptions, "timezone">,
+): [string, string, string, string, string, string, string] {
+    const {locale = NAVIGATOR_LANGUAGE} = options;
+
+    const formatter = new Intl.DateTimeFormat(locale, {
+        weekday: "long",
+    });
+
+    return Array.from({length: 7}, (_, dayIndex) => {
+        const date = new Date(Date.UTC(2017, 0, 1 + dayIndex));
+
+        return formatter.format(date);
+    }) as [string, string, string, string, string, string, string];
+}
+
 export function formatTimestamp(
     timestamp: number | Date,
     options: IFormatTimestampOptions = {},
@@ -160,6 +176,18 @@ export function useFormattedCalendarGrid(
     }, [locale, month, timezone, year]);
 
     return calendarGrid;
+}
+
+export function useFormattedCalendarWeekdays(
+    options: Omit<IFormatOptions, "timezone"> = {},
+): [string, string, string, string, string, string, string] {
+    const {locale} = options;
+
+    return useMemo(() => {
+        return formatCalendarWeekdays({
+            locale,
+        });
+    }, [locale]);
 }
 
 export function useFormattedCalendarTimestamp(

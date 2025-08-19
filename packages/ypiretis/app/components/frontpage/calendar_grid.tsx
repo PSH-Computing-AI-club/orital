@@ -1,11 +1,14 @@
 import type {SimpleGridProps} from "@chakra-ui/react";
-import {SimpleGrid, Span, VStack} from "@chakra-ui/react";
+import {Box, SimpleGrid, Span, VStack} from "@chakra-ui/react";
 
 import {memo, useMemo} from "react";
 
 import {useTimezone, zeroDay} from "~/utils/datetime";
 import type {IFormattedCalendarDay} from "~/utils/locale";
-import {useFormattedCalendarGrid} from "~/utils/locale";
+import {
+    useFormattedCalendarGrid,
+    useFormattedCalendarWeekdays,
+} from "~/utils/locale";
 
 export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
@@ -62,6 +65,24 @@ function makeEventDayLookup(
     }
 
     return dayLookup;
+}
+
+function CalendarGridWeekdayHeaders() {
+    const weekdays = useFormattedCalendarWeekdays();
+
+    return weekdays.map((weekday, index) => {
+        return (
+            <Box
+                key={index}
+                padding="2"
+                bg="bg.inverted"
+                color="fg.inverted"
+                textAlign="center"
+            >
+                {weekday}
+            </Box>
+        );
+    });
 }
 
 function CalendarGridItem(props: ICalenderGridItemProps) {
@@ -131,6 +152,8 @@ export default function CalendarGrid(props: ICalendarGridProps) {
 
     return (
         <SimpleGrid columns={7} gap="2">
+            <CalendarGridWeekdayHeaders />
+
             {calendarGrid.flatMap((calendarWeek, _index) => {
                 return calendarWeek.map((calendarDay, _index) => {
                     const {isoTimestamp} = calendarDay;

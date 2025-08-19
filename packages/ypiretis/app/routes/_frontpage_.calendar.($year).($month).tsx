@@ -99,7 +99,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         events.map(async (event) => {
             const {content, eventID, slug, publishedAt, title} = event;
 
-            const zonedPublishedAt = publishedAt.toZonedDateTimeISO(timezone);
+            const zonedPublishedAt =
+                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(

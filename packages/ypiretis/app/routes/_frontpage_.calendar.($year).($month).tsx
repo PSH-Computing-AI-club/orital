@@ -251,7 +251,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                             <Group>
                                 <IconButton
                                     colorPalette="cyan"
-                                    size="lg"
+                                    size={{base: "lg", lgDown: "md"}}
                                     asChild
                                 >
                                     <Link to={previousMonthURL.toString()}>
@@ -261,7 +261,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
                                 <IconButton
                                     colorPalette="cyan"
-                                    size="lg"
+                                    size={{base: "lg", lgDown: "md"}}
                                     asChild
                                 >
                                     <Link to={nextMonthURL.toString()}>

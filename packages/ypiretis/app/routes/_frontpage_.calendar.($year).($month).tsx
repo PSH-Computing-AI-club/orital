@@ -1,5 +1,7 @@
 import {Temporal} from "@js-temporal/polyfill";
 
+import {useMemo} from "react";
+
 import * as v from "valibot";
 
 import {findAllPublished} from "~/.server/services/events_service";
@@ -7,12 +9,14 @@ import {SORT_MODES} from "~/.server/services/crud_service";
 import {and, gte, lt} from "~/.server/services/crud_service.filters";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
-import DatetimeText from "~/components/common/datetime_text";
 import Title from "~/components/common/title";
 
+import type {
+    ICalendarGridEvent,
+    ICalenderGridEventTemplate,
+} from "~/components/frontpage/calendar_grid";
+import {CalendarGrid} from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
-import FeedCard from "~/components/frontpage/feed_card";
-import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
 
 import {validateParams} from "~/guards/validation";
@@ -119,9 +123,35 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const {calendar, events} = loaderData;
 
     const {timestamp} = calendar;
-
     const {isoTimestamp, textualTimestamp} =
         useFormattedCalendarTimestamp(timestamp);
+
+    const calenderGridEvents = useMemo(() => {
+        return events.map((event) => {
+            const {
+                description,
+                eventID,
+                month,
+                publishedAtTimestamp,
+                slug,
+                title,
+                year,
+            } = event;
+
+            const template = ((_context) => {
+                return `/calendar/events/${eventID}/${year}/${month}/${slug}`;
+            }) satisfies ICalenderGridEventTemplate;
+
+            return {
+                description,
+                template,
+                title,
+
+                id: eventID,
+                timestamp: publishedAtTimestamp,
+            } satisfies ICalendarGridEvent;
+        });
+    }, [events]);
 
     return (
         <>
@@ -143,47 +173,10 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                         </ContentSection.Title>
                     </ContentSection.Header>
 
-                    <FeedStack.Root>
-                        {events.map((event) => {
-                            const {
-                                day,
-                                description,
-                                eventID,
-                                month,
-                                publishedAtTimestamp,
-                                title,
-                                slug,
-                                year,
-                            } = event;
-
-                            return (
-                                <FeedStack.Item key={eventID}>
-                                    <FeedCard.Root>
-                                        <FeedCard.Body>
-                                            <FeedCard.Title
-                                                to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
-                                            >
-                                                {title}
-                                            </FeedCard.Title>
-
-                                            <FeedCard.Description>
-                                                <DatetimeText
-                                                    detail="short"
-                                                    timestamp={
-                                                        publishedAtTimestamp
-                                                    }
-                                                />
-                                            </FeedCard.Description>
-
-                                            <FeedCard.Text>
-                                                {description}
-                                            </FeedCard.Text>
-                                        </FeedCard.Body>
-                                    </FeedCard.Root>
-                                </FeedStack.Item>
-                            );
-                        })}
-                    </FeedStack.Root>
+                    <CalendarGrid
+                        events={calenderGridEvents}
+                        timestamp={timestamp}
+                    />
                 </ContentSection.Container>
             </ContentSection.Root>
         </>

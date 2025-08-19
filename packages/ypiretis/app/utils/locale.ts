@@ -1,6 +1,11 @@
 import {useMemo} from "react";
 
-import {toISOCalendarDayString, useDate, useTimezone} from "./datetime";
+import {
+    makeCalendarGrid,
+    toISOCalendarDayString,
+    useDate,
+    useTimezone,
+} from "./datetime";
 import {NAVIGATOR_LANGUAGE, NAVIGATOR_TIMEZONE} from "./navigator";
 
 export const FORMAT_DETAIL = {
@@ -10,6 +15,33 @@ export const FORMAT_DETAIL = {
 } as const;
 
 export type IFormatDetail = (typeof FORMAT_DETAIL)[keyof typeof FORMAT_DETAIL];
+
+export type IFormattedCalendarMonth = [
+    IFormattedCalendarWeek,
+    IFormattedCalendarWeek,
+    IFormattedCalendarWeek,
+    IFormattedCalendarWeek,
+    IFormattedCalendarWeek,
+    IFormattedCalendarWeek,
+];
+
+export type IFormattedCalendarWeek = [
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+    IFormattedCalendarDay,
+];
+
+export interface IFormattedCalendarDay {
+    readonly date: Date;
+
+    readonly isoTimestamp: string;
+
+    readonly textualTimestamp: string;
+}
 
 export interface IFormatOptions {
     readonly locale?: string;
@@ -28,7 +60,7 @@ export interface IUseFormatted {
 }
 
 export function formatCalendarTimestamp(
-    timestamp: Date | number,
+    timestamp: number | Date,
     options: IFormatOptions = {},
 ): string {
     const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
@@ -46,7 +78,7 @@ export function formatCalendarTimestamp(
 }
 
 export function formatTimestamp(
-    timestamp: Date | number,
+    timestamp: number | Date,
     options: IFormatTimestampOptions = {},
 ): string {
     const {
@@ -87,8 +119,56 @@ export function formatTimestamp(
     return formatter.format(timestamp);
 }
 
+export function makeFormattedCalendarGrid(
+    timestamp: number | Date,
+    options: IFormatOptions,
+): IFormattedCalendarMonth {
+    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
+        options;
+
+    const formatter = new Intl.DateTimeFormat(locale, {
+        timeZone: timezone,
+
+        day: "2-digit",
+    });
+
+    const calendarGrid = makeCalendarGrid(timestamp);
+
+    return calendarGrid.map((calendarWeek, _index) => {
+        return calendarWeek.map((calendarDay, _index) => {
+            const isoTimestamp = calendarDay.toISOString();
+            const textualTimestamp = formatter.format(calendarDay);
+
+            return {
+                date: calendarDay,
+                isoTimestamp,
+                textualTimestamp,
+            } satisfies IFormattedCalendarDay;
+        }) as IFormattedCalendarWeek;
+    }) as IFormattedCalendarMonth;
+}
+
+export function useFormattedCalendarGrid(
+    timestamp: number | Date,
+    options: Omit<IFormatOptions, "timezone"> = {},
+): IFormattedCalendarMonth {
+    const {locale} = options;
+
+    const date = useDate(timestamp);
+    const timezone = useTimezone();
+
+    const calendarGrid = useMemo(() => {
+        return makeFormattedCalendarGrid(date, {
+            locale,
+            timezone,
+        });
+    }, [date, locale, timezone]);
+
+    return calendarGrid;
+}
+
 export function useFormattedCalendarTimestamp(
-    timestamp: Date | number,
+    timestamp: number | Date,
     options: Omit<IFormatOptions, "timezone"> = {},
 ): IUseFormatted {
     const {locale} = options;
@@ -114,7 +194,7 @@ export function useFormattedCalendarTimestamp(
 }
 
 export function useFormattedTimestamp(
-    timestamp: Date | number,
+    timestamp: number | Date,
     options: Omit<IFormatTimestampOptions, "timezone"> = {},
 ): IUseFormatted {
     const {detail, locale} = options;

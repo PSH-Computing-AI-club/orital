@@ -1,13 +1,16 @@
 import type {SimpleGridProps} from "@chakra-ui/react";
-import {Box, SimpleGrid} from "@chakra-ui/react";
+import {SimpleGrid, Span, VStack} from "@chakra-ui/react";
 
 import {useMemo} from "react";
 
-import {useCalendarGrid, zeroDay} from "~/utils/datetime";
+import {useDate, zeroDay} from "~/utils/datetime";
+import {useFormattedCalendarGrid} from "~/utils/locale";
 
-export type IEventTemplate = (context: IEventTemplateContext) => string | URL;
+export type ICalenderGridEventTemplate = (
+    context: IEventTemplateContext,
+) => string | URL;
 
-export interface IEvent {
+export interface ICalendarGridEvent {
     readonly id: string;
 
     readonly description: string;
@@ -15,50 +18,99 @@ export interface IEvent {
     readonly timestamp: number | Date;
 
     readonly title: string;
+
+    readonly template: ICalenderGridEventTemplate;
 }
 
 export interface IEventTemplateContext {
-    readonly event: IEvent;
+    readonly event: ICalendarGridEvent;
 }
 
 export interface ICalendarGridProps extends SimpleGridProps {
-    readonly events: IEvent[];
+    readonly events: ICalendarGridEvent[];
 
     readonly timestamp: number | Date;
-
-    readonly template: IEventTemplate;
 }
 
-function makeEventDayLookup(events: IEvent[]): Map<number, IEvent[]> {
-    const dayLookup = new Map<number, IEvent[]>();
+function makeEventDayLookup(
+    events: ICalendarGridEvent[],
+): Map<number, ICalendarGridEvent[]> {
+    const dayLookup = new Map<number, ICalendarGridEvent[]>();
 
     for (const event of events) {
         const {timestamp} = event;
         const date = zeroDay(timestamp);
 
         const epochMilliseconds = date.getTime();
-        const lookup = dayLookup.get(epochMilliseconds) ?? [];
+        const events = dayLookup.get(epochMilliseconds) ?? [];
 
-        lookup.push(event);
-        dayLookup.set(epochMilliseconds, lookup);
+        events.push(event);
+        dayLookup.set(epochMilliseconds, events);
     }
 
     return dayLookup;
 }
 
 export function CalendarGrid(props: ICalendarGridProps) {
-    const {events, template, timestamp} = props;
+    const {events, timestamp} = props;
 
-    const calendarGrid = useCalendarGrid(timestamp);
+    const timestampDate = useDate(timestamp);
+    const calendarGrid = useFormattedCalendarGrid(timestamp);
+
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
     }, [events]);
 
     return (
-        <SimpleGrid columns={7}>
+        <SimpleGrid columns={7} gap="2">
             {calendarGrid.flatMap((calendarWeek, _index) => {
                 return calendarWeek.map((calendarDay, _index) => {
-                    return <Box>{calendarDay.getDay()}</Box>;
+                    const {date, isoTimestamp, textualTimestamp} = calendarDay;
+
+                    const isInMonth =
+                        date.getUTCMonth() === timestampDate.getUTCMonth();
+
+                    const isWeekend =
+                        date.getUTCDay() === 0 || date.getUTCDay() === 6;
+
+                    const epochMilliseconds = date.getUTCMilliseconds();
+                    const events = dayLookup.get(epochMilliseconds) ?? null;
+
+                    let backgroundColor: string;
+                    let textColor: string;
+
+                    if (!isInMonth) {
+                        backgroundColor = "bg.subtle";
+                        textColor = "fg.subtle";
+                    } else if (isWeekend) {
+                        backgroundColor = "bg.emphasized";
+                        textColor = "fg.emphasized";
+                    } else {
+                        backgroundColor = "bg.panel";
+                        textColor = "fg.panel";
+                    }
+
+                    return (
+                        <VStack
+                            key={isoTimestamp}
+                            fontSize="sm"
+                            fontWeight="bold"
+                            padding="2"
+                            height="2xs"
+                            alignItems="start"
+                            bg={backgroundColor}
+                            color={textColor}
+                            borderColor="border"
+                            borderWidth="thin"
+                            borderStyle="solid"
+                        >
+                            <Span marginLeft="auto" asChild>
+                                <time dateTime={isoTimestamp}>
+                                    {textualTimestamp}
+                                </time>
+                            </Span>
+                        </VStack>
+                    );
                 });
             })}
         </SimpleGrid>

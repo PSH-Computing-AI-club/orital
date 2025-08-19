@@ -58,9 +58,7 @@ export function CalendarGrid(props: ICalendarGridProps) {
         <SimpleGrid columns={7}>
             {calendarGrid.flatMap((calendarWeek, _index) => {
                 return calendarWeek.map((calendarDay, _index) => {
-                    const {date} = calendarDay;
-
-                    return <Box>{date.getDay()}</Box>;
+                    return <Box>{calendarDay.getDay()}</Box>;
                 });
             })}
         </SimpleGrid>

@@ -24,9 +24,7 @@ export type ICalendarWeek = [
     ICalendarDay,
 ];
 
-export interface ICalendarDay {
-    readonly date: Date;
-}
+export type ICalendarDay = Date;
 
 export function generateCalendarGrid(timestamp: number | Date): ICalendarMonth {
     const anchorDate = new Date(timestamp);
@@ -49,14 +47,11 @@ export function generateCalendarGrid(timestamp: number | Date): ICalendarMonth {
                 {length: 7},
 
                 (_value, dayIndex) => {
-                    const date = new Date(anchorDate);
+                    const calendarDay = new Date(anchorDate);
                     const dayOffset = weekIndex * 7 + dayIndex;
 
-                    date.setUTCDate(anchorDate.getUTCDate() + dayOffset);
-
-                    return {
-                        date,
-                    } satisfies ICalendarDay;
+                    calendarDay.setUTCDate(anchorDate.getUTCDate() + dayOffset);
+                    return calendarDay satisfies ICalendarDay;
                 },
             ) as ICalendarWeek;
         },

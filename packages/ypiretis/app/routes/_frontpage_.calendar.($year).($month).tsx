@@ -209,7 +209,12 @@ export default function FrontpageNews(props: Route.ComponentProps) {
         const {searchParams} = currentURL;
 
         if (timezone !== NAVIGATOR_TIMEZONE) {
+            const {month: localizedMonth, year: localizedYear} =
+                calendarZonedDateTime.withTimeZone(NAVIGATOR_TIMEZONE);
+
+            currentURL.pathname = `/calendar/${localizedMonth}/${localizedYear}`;
             searchParams.set("timezone", NAVIGATOR_TIMEZONE);
+
             const {hash, pathname, search} = currentURL;
 
             navigate(
@@ -229,7 +234,7 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                 history.replaceState(history.state, "", currentURL);
             }
         }
-    }, [currentURL, navigate, timezone]);
+    }, [calendarZonedDateTime, currentURL, navigate, timezone]);
 
     return (
         <>

@@ -1002,7 +1002,7 @@ function OverviewCard() {
                     display={state === "STATE_PUBLISHED" ? undefined : "none"}
                     asChild
                 >
-                    <a href={href}>
+                    <a href={href} target="_blank">
                         Permalink
                         <LinkIcon />
                     </a>

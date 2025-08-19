@@ -62,7 +62,7 @@ function FooterSiteLinks() {
             </li>
 
             <li>
-                <Links.InternalLink to="/events">Events</Links.InternalLink>
+                <Links.InternalLink to="/calendar">Events</Links.InternalLink>
             </li>
         </>
     );

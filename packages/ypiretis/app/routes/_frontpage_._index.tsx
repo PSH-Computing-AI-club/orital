@@ -285,7 +285,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                         <ArrowRightIcon />
                                     </ActionCard.Icon>
 
-                                    <ActionCard.Link to="/events">
+                                    <ActionCard.Link to="/calendar">
                                         View More
                                     </ActionCard.Link>
                                 </ActionCard.Root>

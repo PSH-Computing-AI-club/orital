@@ -46,7 +46,7 @@ function NavbarLeftActions() {
         <>
             <Links.InternalLink to="/news">News</Links.InternalLink>
 
-            <Links.InternalLink to="/events">Events</Links.InternalLink>
+            <Links.InternalLink to="/calendar">Events</Links.InternalLink>
         </>
     );
 }

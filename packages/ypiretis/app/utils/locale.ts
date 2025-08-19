@@ -1,12 +1,11 @@
+import {Temporal} from "@js-temporal/polyfill";
+
 import {useMemo} from "react";
 
-import {
-    makeCalendarGrid,
-    toISOCalendarDayString,
-    useDate,
-    useTimezone,
-} from "./datetime";
+import {toISOCalendarDayString, useDate, useTimezone} from "./datetime";
 import {NAVIGATOR_LANGUAGE, NAVIGATOR_TIMEZONE} from "./navigator";
+import type {IMakeCalendarGridOptions} from "./temporal";
+import {makeCalendarGrid} from "./temporal";
 
 export const FORMAT_DETAIL = {
     long: "long",
@@ -15,6 +14,9 @@ export const FORMAT_DETAIL = {
 } as const;
 
 export type IFormatDetail = (typeof FORMAT_DETAIL)[keyof typeof FORMAT_DETAIL];
+
+export type IMakeFormattedCalendarGridOptions = IMakeCalendarGridOptions &
+    IFormatOptions;
 
 export type IFormattedCalendarMonth = [
     IFormattedCalendarWeek,
@@ -36,11 +38,11 @@ export type IFormattedCalendarWeek = [
 ];
 
 export interface IFormattedCalendarDay {
-    readonly date: Date;
-
     readonly isoTimestamp: string;
 
     readonly textualTimestamp: string;
+
+    readonly zonedDateTime: Temporal.ZonedDateTime;
 }
 
 export interface IFormatOptions {
@@ -120,29 +122,24 @@ export function formatTimestamp(
 }
 
 export function makeFormattedCalendarGrid(
-    timestamp: number | Date,
-    options: IFormatOptions,
+    options: IMakeFormattedCalendarGridOptions,
 ): IFormattedCalendarMonth {
-    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
+    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_LANGUAGE} =
         options;
 
-    const formatter = new Intl.DateTimeFormat(locale, {
-        timeZone: timezone,
-
-        day: "2-digit",
-    });
-
-    const calendarGrid = makeCalendarGrid(timestamp);
-
-    return calendarGrid.map((calendarWeek, _index) => {
+    return makeCalendarGrid(options).map((calendarWeek, _index) => {
         return calendarWeek.map((calendarDay, _index) => {
-            const isoTimestamp = calendarDay.toISOString();
-            const textualTimestamp = formatter.format(calendarDay);
+            const zonedDateTime = calendarDay.toZonedDateTime(timezone);
+
+            const isoTimestamp = zonedDateTime.toInstant().toString();
+            const textualTimestamp = zonedDateTime.toLocaleString(locale, {
+                day: "2-digit",
+            });
 
             return {
-                date: calendarDay,
                 isoTimestamp,
                 textualTimestamp,
+                zonedDateTime,
             } satisfies IFormattedCalendarDay;
         }) as IFormattedCalendarWeek;
     }) as IFormattedCalendarMonth;

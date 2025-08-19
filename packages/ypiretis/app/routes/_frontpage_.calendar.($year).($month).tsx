@@ -108,9 +108,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         }),
     );
 
+    const {epochMilliseconds: timestamp} = zonedStartDate;
+
     return {
         calendar: {
-            timestamp: zonedStartDate.epochMilliseconds,
+            month,
+            timestamp,
+            timezone: SERVER_TIMEZONE,
+            year,
         },
 
         events: mappedEvents,
@@ -121,9 +126,11 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {calendar, events} = loaderData;
 
-    const {timestamp} = calendar;
-    const {isoTimestamp, textualTimestamp} =
-        useFormattedCalendarTimestamp(timestamp);
+    const {month, timestamp, year, timezone} = calendar;
+    const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
+        timestamp,
+        {timezone},
+    );
 
     const calenderGridEvents = useMemo(() => {
         return events.map((event) => {
@@ -174,7 +181,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
                     <CalendarGrid
                         events={calenderGridEvents}
-                        timestamp={timestamp}
+                        month={month}
+                        timezone={timezone}
+                        year={year}
                     />
                 </ContentSection.Container>
             </ContentSection.Root>

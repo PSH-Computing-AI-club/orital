@@ -3,7 +3,7 @@ import {SimpleGrid, Span, VStack} from "@chakra-ui/react";
 
 import {useMemo} from "react";
 
-import {useDate, zeroDay} from "~/utils/datetime";
+import {useTimezone, zeroDay} from "~/utils/datetime";
 import {useFormattedCalendarGrid} from "~/utils/locale";
 
 export type ICalenderGridEventTemplate = (
@@ -29,7 +29,11 @@ export interface IEventTemplateContext {
 export interface ICalendarGridProps extends SimpleGridProps {
     readonly events: ICalendarGridEvent[];
 
-    readonly timestamp: number | Date;
+    readonly month: number;
+
+    readonly year: number;
+
+    readonly timezone?: string;
 }
 
 function makeEventDayLookup(
@@ -52,10 +56,13 @@ function makeEventDayLookup(
 }
 
 export function CalendarGrid(props: ICalendarGridProps) {
-    const {events, timestamp} = props;
+    const {events, month, year, timezone = useTimezone()} = props;
 
-    const timestampDate = useDate(timestamp);
-    const calendarGrid = useFormattedCalendarGrid(timestamp);
+    const calendarGrid = useFormattedCalendarGrid({
+        month,
+        year,
+        timezone,
+    });
 
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
@@ -65,16 +72,20 @@ export function CalendarGrid(props: ICalendarGridProps) {
         <SimpleGrid columns={7} gap="2">
             {calendarGrid.flatMap((calendarWeek, _index) => {
                 return calendarWeek.map((calendarDay, _index) => {
-                    const {date, isoTimestamp, textualTimestamp} = calendarDay;
+                    const {isoTimestamp, textualTimestamp, zonedDateTime} =
+                        calendarDay;
 
-                    const isInMonth =
-                        date.getUTCMonth() === timestampDate.getUTCMonth();
+                    const {dayOfWeek, month: dayMonth} = zonedDateTime;
+                    const {epochMilliseconds} = zonedDateTime
+                        .withTimeZone("UTC")
+                        .startOfDay();
 
-                    const isWeekend =
-                        date.getUTCDay() === 0 || date.getUTCDay() === 6;
+                    const isInMonth = dayMonth === month;
+                    const isWeekend = dayOfWeek > 5;
 
-                    const epochMilliseconds = date.getTime();
-                    const events = dayLookup.get(epochMilliseconds) ?? null;
+                    const events = isInMonth
+                        ? (dayLookup.get(epochMilliseconds) ?? null)
+                        : null;
 
                     let backgroundColor: string;
                     let textColor: string;

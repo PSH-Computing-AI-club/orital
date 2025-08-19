@@ -73,7 +73,7 @@ export function CalendarGrid(props: ICalendarGridProps) {
                     const isWeekend =
                         date.getUTCDay() === 0 || date.getUTCDay() === 6;
 
-                    const epochMilliseconds = date.getUTCMilliseconds();
+                    const epochMilliseconds = date.getTime();
                     const events = dayLookup.get(epochMilliseconds) ?? null;
 
                     let backgroundColor: string;

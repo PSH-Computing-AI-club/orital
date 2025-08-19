@@ -10,7 +10,7 @@ export type IPaginationTemplate = (
     context: IPaginationTemplateContext,
 ) => string | URL;
 
-interface IPaginationTemplateContext {
+export interface IPaginationTemplateContext {
     readonly page: number;
 }
 

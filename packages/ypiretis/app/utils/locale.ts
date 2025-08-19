@@ -1,11 +1,6 @@
 import {useMemo} from "react";
 
-import {
-    toLocalISOCalendarString,
-    toLocalISOString,
-    useDate,
-    useTimezone,
-} from "./datetime";
+import {toISOCalendarDayString, useDate, useTimezone} from "./datetime";
 import {NAVIGATOR_LANGUAGE, NAVIGATOR_TIMEZONE} from "./navigator";
 
 export const FORMAT_DETAIL = {
@@ -102,7 +97,7 @@ export function useFormattedCalendarTimestamp(
     const timezone = useTimezone();
 
     const isoTimestamp = useMemo(() => {
-        return toLocalISOCalendarString(date);
+        return toISOCalendarDayString(date);
     }, [date]);
 
     const textualTimestamp = useMemo(() => {
@@ -128,7 +123,7 @@ export function useFormattedTimestamp(
     const timezone = useTimezone();
 
     const isoTimestamp = useMemo(() => {
-        return toLocalISOString(date);
+        return date.toISOString();
     }, [date]);
 
     const textualTimestamp = useMemo(() => {

@@ -27,6 +27,19 @@ export function toLocalISOString(timestamp: Date | number) {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+export function toISOCalendarDayString(timestamp: number | Date): string {
+    // **NOTE:** We are constructing a new `Date` instance here to preserve
+    // immutability.
+    const date = new Date(timestamp);
+
+    date.setUTCHours(0);
+    date.setUTCMinutes(0);
+    date.setUTCSeconds(0);
+    date.setUTCMilliseconds(0);
+
+    return date.toISOString();
+}
+
 export function useDate(timestamp: number | Date): Date {
     return useMemo(() => {
         return typeof timestamp === "number" ? new Date(timestamp) : timestamp;

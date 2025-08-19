@@ -3,7 +3,7 @@ import {Box, SimpleGrid} from "@chakra-ui/react";
 
 import {useMemo} from "react";
 
-import {useGeneratedCalendarGrid, zeroDay} from "~/utils/datetime";
+import {useCalendarGrid, zeroDay} from "~/utils/datetime";
 
 export type IEventTemplate = (context: IEventTemplateContext) => string | URL;
 
@@ -49,7 +49,7 @@ function makeEventDayLookup(events: IEvent[]): Map<number, IEvent[]> {
 export function CalendarGrid(props: ICalendarGridProps) {
     const {events, template, timestamp} = props;
 
-    const calendarGrid = useGeneratedCalendarGrid(timestamp);
+    const calendarGrid = useCalendarGrid(timestamp);
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
     }, [events]);

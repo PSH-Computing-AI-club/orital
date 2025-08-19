@@ -26,7 +26,7 @@ export type ICalendarWeek = [
 
 export type ICalendarDay = Date;
 
-export function generateCalendarGrid(timestamp: number | Date): ICalendarMonth {
+export function makeCalendarGrid(timestamp: number | Date): ICalendarMonth {
     const anchorDate = new Date(timestamp);
 
     const dayOfWeek = anchorDate.getUTCDay();
@@ -62,7 +62,7 @@ export function toDate(timestamp: number | Date): Date {
     return typeof timestamp === "number" ? new Date(timestamp) : timestamp;
 }
 
-export function toLocalISOString(timestamp: Date | number) {
+export function toLocalISOString(timestamp: number | Date): string {
     const date = toDate(timestamp);
 
     const year = date.getFullYear();
@@ -88,11 +88,9 @@ export function useDate(timestamp: number | Date): Date {
     }, [timestamp]);
 }
 
-export function useGeneratedCalendarGrid(
-    timestamp: number | Date,
-): ICalendarMonth {
+export function useCalendarGrid(timestamp: number | Date): ICalendarMonth {
     return useMemo(() => {
-        return generateCalendarGrid(timestamp);
+        return makeCalendarGrid(timestamp);
     }, [timestamp]);
 }
 

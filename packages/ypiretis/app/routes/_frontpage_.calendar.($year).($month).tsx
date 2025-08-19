@@ -4,7 +4,7 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {useEffect, useMemo} from "react";
 
-import {useLocation, useNavigate} from "react-router";
+import {Link, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
@@ -250,9 +250,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                                     size="lg"
                                     asChild
                                 >
-                                    <a href={previousMonthURL.toString()}>
+                                    <Link to={previousMonthURL.toString()}>
                                         <ChevronLeftIcon />
-                                    </a>
+                                    </Link>
                                 </IconButton>
 
                                 <IconButton
@@ -260,9 +260,9 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                                     size="lg"
                                     asChild
                                 >
-                                    <a href={nextMonthURL.toString()}>
+                                    <Link to={nextMonthURL.toString()}>
                                         <ChevronRightIcon />
-                                    </a>
+                                    </Link>
                                 </IconButton>
                             </Group>
                         </ContentSection.Title>

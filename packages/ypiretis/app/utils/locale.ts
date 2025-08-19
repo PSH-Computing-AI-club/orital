@@ -80,18 +80,25 @@ export function formatCalendarTimestamp(
 }
 
 export function formatCalendarWeekdays(
-    options: Omit<IFormatOptions, "timezone">,
+    options: IFormatOptions = {},
 ): [string, string, string, string, string, string, string] {
-    const {locale = NAVIGATOR_LANGUAGE} = options;
+    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
+        options;
 
-    const formatter = new Intl.DateTimeFormat(locale, {
-        weekday: "long",
+    let anchorDate = Temporal.PlainDate.from({
+        year: 1970,
+        month: 1,
+        day: 1,
+    }).toZonedDateTime(timezone);
+
+    anchorDate = anchorDate.subtract({
+        days: anchorDate.dayOfWeek % 7,
     });
 
     return Array.from({length: 7}, (_, dayIndex) => {
-        const date = new Date(Date.UTC(2017, 0, 1 + dayIndex));
-
-        return formatter.format(date);
+        return anchorDate
+            .add({days: dayIndex})
+            .toLocaleString(locale, {weekday: "long"});
     }) as [string, string, string, string, string, string, string];
 }
 
@@ -179,15 +186,16 @@ export function useFormattedCalendarGrid(
 }
 
 export function useFormattedCalendarWeekdays(
-    options: Omit<IFormatOptions, "timezone"> = {},
+    options: IFormatOptions = {},
 ): [string, string, string, string, string, string, string] {
-    const {locale} = options;
+    const {locale, timezone = useTimezone()} = options;
 
     return useMemo(() => {
         return formatCalendarWeekdays({
             locale,
+            timezone,
         });
-    }, [locale]);
+    }, [locale, timezone]);
 }
 
 export function useFormattedCalendarTimestamp(

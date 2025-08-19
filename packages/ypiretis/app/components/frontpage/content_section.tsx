@@ -82,6 +82,8 @@ function ContentSectionTitle(props: IContentSectionTitleProps) {
     return (
         <Heading
             as="h1"
+            display="flex"
+            alignItems="center"
             fontSize={{base: "4xl", lgDown: "3xl"}}
             lineHeight="normal"
         >

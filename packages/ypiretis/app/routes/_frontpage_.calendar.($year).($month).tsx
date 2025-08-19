@@ -1,3 +1,5 @@
+import {Group, IconButton, Spacer} from "@chakra-ui/react";
+
 import {Temporal} from "@js-temporal/polyfill";
 
 import {useEffect, useMemo} from "react";
@@ -20,6 +22,9 @@ import type {
 import {CalendarGrid} from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
+
+import ChevronRightIcon from "~/components/icons/chevron_right_icon";
+import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
 
 import {validateParams, validateSearchParams} from "~/guards/validation";
 
@@ -143,6 +148,23 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const currentURL = buildAppURL(location);
+
+    const nextMonth = (month % 12) + 1;
+    const previousMonth = ((month - 2 + 12) % 12) + 1;
+
+    const isNextYear = nextMonth < month;
+    const isPreviousYear = previousMonth > month;
+
+    const nextYear = isNextYear ? year + 1 : year;
+    const previousYear = isPreviousYear ? year - 1 : year;
+
+    const nextMonthURL = new URL(currentURL);
+    const previousMonthURL = new URL(currentURL);
+
+    nextMonthURL.pathname = `/calendar/${nextYear}/${nextMonth}`;
+    previousMonthURL.pathname = `/calendar/${previousYear}/${previousMonth}`;
+
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
         timestamp,
         {timezone},
@@ -176,12 +198,11 @@ export default function FrontpageNews(props: Route.ComponentProps) {
     }, [events]);
 
     useEffect(() => {
-        const url = buildAppURL(location);
-        const {searchParams} = url;
+        const {searchParams} = currentURL;
 
         if (timezone !== NAVIGATOR_TIMEZONE) {
             searchParams.set("timezone", NAVIGATOR_TIMEZONE);
-            const {hash, pathname, search} = url;
+            const {hash, pathname, search} = currentURL;
 
             navigate(
                 {hash, pathname, search},
@@ -197,10 +218,10 @@ export default function FrontpageNews(props: Route.ComponentProps) {
             if (searchParams.has("timezone")) {
                 searchParams.delete("timezone");
 
-                history.replaceState(history.state, "", url);
+                history.replaceState(history.state, "", currentURL);
             }
         }
-    }, [location, navigate, timezone]);
+    }, [currentURL, navigate, timezone]);
 
     return (
         <>
@@ -219,6 +240,30 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                             <time dateTime={isoTimestamp}>
                                 {textualTimestamp}
                             </time>
+
+                            <Spacer />
+
+                            <Group>
+                                <IconButton
+                                    colorPalette="cyan"
+                                    size="lg"
+                                    asChild
+                                >
+                                    <a href={previousMonthURL.toString()}>
+                                        <ChevronLeftIcon />
+                                    </a>
+                                </IconButton>
+
+                                <IconButton
+                                    colorPalette="cyan"
+                                    size="lg"
+                                    asChild
+                                >
+                                    <a href={nextMonthURL.toString()}>
+                                        <ChevronRightIcon />
+                                    </a>
+                                </IconButton>
+                            </Group>
                         </ContentSection.Title>
                     </ContentSection.Header>
 

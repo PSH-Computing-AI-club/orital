@@ -4,7 +4,7 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {useEffect, useMemo} from "react";
 
-import {Link, useLocation, useNavigate} from "react-router";
+import {Link, redirect, useLocation, useNavigate} from "react-router";
 
 import * as v from "valibot";
 
@@ -50,22 +50,23 @@ const LOADER_SEARCH_PARAMS_SCHEMA = v.object({
 });
 
 export async function loader(loaderArgs: Route.LoaderArgs) {
+    const {timezone = null} = validateSearchParams(
+        LOADER_SEARCH_PARAMS_SCHEMA,
+        loaderArgs,
+    );
+
     let {month = null, year = null} = validateParams(
         LOADER_PARAMS_SCHEMA,
         loaderArgs,
     );
 
-    const {timezone = SERVER_TIMEZONE} = validateSearchParams(
-        LOADER_SEARCH_PARAMS_SCHEMA,
-        loaderArgs,
-    );
-
-    if (month === null || year === null) {
+    if (month === null || year === null || timezone === null) {
         const {month: currentMonth, year: currentYear} =
-            Temporal.Now.zonedDateTimeISO(timezone);
+            Temporal.Now.zonedDateTimeISO(timezone ?? SERVER_TIMEZONE);
 
-        month ??= currentMonth;
-        year ??= currentYear;
+        return redirect(
+            `/calendar/${currentYear}/${currentMonth}?timezone=${SERVER_TIMEZONE}`,
+        );
     }
 
     const startDate = Temporal.PlainDate.from({year, month, day: 1});
@@ -224,15 +225,6 @@ export default function FrontpageNews(props: Route.ComponentProps) {
                     replace: true,
                 },
             );
-        } else if (
-            timezone === NAVIGATOR_TIMEZONE &&
-            timezone === SERVER_TIMEZONE
-        ) {
-            if (searchParams.has("timezone")) {
-                searchParams.delete("timezone");
-
-                history.replaceState(history.state, "", currentURL);
-            }
         }
     }, [calendarZonedDateTime, currentURL, navigate, timezone]);
 

@@ -118,6 +118,12 @@ const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     content: v.string(),
 });
 
+const END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.literal("endAt.update"),
+
+    endAtTimestamp: number,
+});
+
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("publishedAt.update"),
 
@@ -126,6 +132,12 @@ const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 
 const SELF_DELETE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("self.delete"),
+});
+
+const START_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.literal("startAt.update"),
+
+    startAtTimestamp: number,
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -146,8 +158,10 @@ const TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     ATTACHMENT_DELETE_ACTION_FORM_DATA_SCHEMA,
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     SELF_DELETE_ACTION_FORM_DATA_SCHEMA,
+    START_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     STATE_UPDATE_ACTION_FORM_DATA_SCHEMA,
     TITLE_UPDATE_ACTION_FORM_DATA_SCHEMA,
 ]);
@@ -224,6 +238,29 @@ export async function action(actionArgs: Route.ActionArgs) {
             break;
         }
 
+        case "endAt.update": {
+            const {endAtTimestamp} = actionFormData;
+
+            const endAt =
+                Temporal.Instant.fromEpochMilliseconds(endAtTimestamp);
+
+            const event = await updateOne({
+                where: eq("eventID", eventID),
+
+                values: {
+                    endAt,
+                },
+            });
+
+            if (event === null) {
+                throw data("Not Found", {
+                    status: 404,
+                });
+            }
+
+            break;
+        }
+
         case "publishedAt.update": {
             const {publishedAtTimestamp} = actionFormData;
 
@@ -267,6 +304,29 @@ export async function action(actionArgs: Route.ActionArgs) {
             }
 
             return redirect("/admin/news");
+        }
+
+        case "startAt.update": {
+            const {startAtTimestamp} = actionFormData;
+
+            const startAt =
+                Temporal.Instant.fromEpochMilliseconds(startAtTimestamp);
+
+            const event = await updateOne({
+                where: eq("eventID", eventID),
+
+                values: {
+                    startAt,
+                },
+            });
+
+            if (event === null) {
+                throw data("Not Found", {
+                    status: 404,
+                });
+            }
+
+            break;
         }
 
         case "state.update": {

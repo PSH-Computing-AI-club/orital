@@ -64,6 +64,10 @@ interface ICalendarGridContext {
 
 interface IInternalCalendarGridDay {
     readonly date: Date;
+
+    readonly isInMonth: boolean;
+
+    readonly isWeekend: boolean;
 }
 
 interface ICalendarGridItemScheduleHoverCardProps
@@ -96,6 +100,10 @@ export interface IEventTemplateContext {
 }
 
 export interface ICalendarGridDay {
+    readonly isInMonth: boolean;
+
+    readonly isWeekend: boolean;
+
     readonly timestamp: IDateLike;
 }
 
@@ -260,11 +268,8 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
     const {day, ...rest} = props;
     const {dayLookup} = useCalendarGridContext();
 
-    const {date} = day;
+    const {date, isInMonth, isWeekend} = day;
     const timestamp = date.getTime();
-
-    const isInMonth = false;
-    const isWeekend = false;
 
     const events = isInMonth ? (dayLookup.get(timestamp) ?? null) : null;
 
@@ -353,9 +358,12 @@ export default function CalendarGrid(props: ICalendarGridProps) {
     const context = useMemo(() => {
         const mappedWeeks = weeks.map((week) => {
             return week.map((day) => {
-                const {timestamp} = day;
+                const {isInMonth, isWeekend, timestamp} = day;
 
                 return {
+                    isInMonth,
+                    isWeekend,
+
                     date: toDate(timestamp),
                 };
             });

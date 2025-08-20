@@ -150,9 +150,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedWeeks = weeks.map((week) => {
         return week.map((day) => {
-            const {epochMilliseconds} = day;
+            const {dayOfWeek, epochMilliseconds, month: monthOfDay} = day;
+
+            const isInMonth = month === monthOfDay;
+            const isWeekend = dayOfWeek > 5;
 
             return {
+                isInMonth,
+                isWeekend,
                 timestamp: epochMilliseconds,
             } satisfies ICalendarGridDay;
         }) as ICalendarGridWeek;

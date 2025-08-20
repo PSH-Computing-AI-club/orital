@@ -152,7 +152,6 @@ function CalendarGridItemScheduleListing(
                     </Strong>
 
                     <Span
-                        display="inline"
                         whiteSpace="nowrap"
                         overflow="hidden"
                         textOverflow="ellipsis"

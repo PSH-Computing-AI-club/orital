@@ -1,4 +1,5 @@
 import type {
+    ListItemProps,
     ListRootProps,
     HoverCardRootProps,
     SimpleGridProps,
@@ -34,6 +35,11 @@ export type ICalenderGridEventTemplate = (
 
 interface ICalendarGridItemScheduleHoverCardProps
     extends Omit<HoverCardRootProps, "asChild"> {
+    readonly event: ICalendarGridEvent;
+}
+
+interface ICalendarGridItemScheduleListingProps
+    extends Omit<ListItemProps, "asChild" | "children"> {
     readonly event: ICalendarGridEvent;
 }
 
@@ -105,7 +111,6 @@ function CalendarGridItemScheduleHoverCard(
     props: ICalendarGridItemScheduleHoverCardProps,
 ) {
     const {children, event, ...rest} = props;
-
     const {description, title, timestamp} = event;
 
     return (
@@ -125,6 +130,41 @@ function CalendarGridItemScheduleHoverCard(
     );
 }
 
+function CalendarGridItemScheduleListing(
+    props: ICalendarGridItemScheduleListingProps,
+) {
+    const {event, ...rest} = props;
+    const {title, template, timestamp} = event;
+
+    const url = template({event});
+    const textualTimestamp = formatScheduleTime(timestamp);
+
+    return (
+        <List.Item {...rest}>
+            <CalendarGridItemScheduleHoverCard event={event}>
+                <Links.InternalLink
+                    variant="plain"
+                    to={url.toString()}
+                    overflow="hidden"
+                >
+                    <Strong whiteSpace="nowrap" fontSize="2xs">
+                        {textualTimestamp}
+                    </Strong>
+
+                    <Span
+                        display="inline"
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                    >
+                        {title}
+                    </Span>
+                </Links.InternalLink>
+            </CalendarGridItemScheduleHoverCard>
+        </List.Item>
+    );
+}
+
 function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
     const {events, ...rest} = props;
 
@@ -141,34 +181,10 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
             {...rest}
         >
             {events.map((event) => {
-                const {id, title, template, timestamp} = event;
-
-                const url = template({event});
-                const textualTimestamp = formatScheduleTime(timestamp);
+                const {id} = event;
 
                 return (
-                    <List.Item key={id}>
-                        <CalendarGridItemScheduleHoverCard event={event}>
-                            <Links.InternalLink
-                                variant="plain"
-                                to={url.toString()}
-                                overflow="hidden"
-                            >
-                                <Strong whiteSpace="nowrap" fontSize="2xs">
-                                    {textualTimestamp}
-                                </Strong>
-
-                                <Span
-                                    display="inline"
-                                    whiteSpace="nowrap"
-                                    overflow="hidden"
-                                    textOverflow="ellipsis"
-                                >
-                                    {title}
-                                </Span>
-                            </Links.InternalLink>
-                        </CalendarGridItemScheduleHoverCard>
-                    </List.Item>
+                    <CalendarGridItemScheduleListing key={id} event={event} />
                 );
             })}
         </List.Root>

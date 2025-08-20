@@ -104,10 +104,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         events.map(async (event) => {
             const {
                 createdAt,
+                endAt,
                 eventID,
                 poster,
                 publishedAt,
                 slug,
+                startAt,
                 state,
                 title,
                 updatedAt,
@@ -117,12 +119,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
             const {epochMilliseconds: createdAtTimestamp} = createdAt;
             const {epochMilliseconds: updatedAtTimestamp} = updatedAt;
-            const publishedAtTimestamp = publishedAt
-                ? publishedAt.epochMilliseconds
-                : null;
+
+            const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+            const publishedAtTimestamp = publishedAt?.epochMilliseconds ?? null;
+            const startAtTimestamp = startAt?.epochMilliseconds ?? null;
 
             return {
                 createdAtTimestamp,
+                endAtTimestamp,
                 eventID,
 
                 poster: {
@@ -133,6 +137,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
                 publishedAtTimestamp,
                 slug,
+                startAtTimestamp,
                 state,
                 title,
                 updatedAtTimestamp,
@@ -217,6 +222,14 @@ export default function AdminNews(props: Route.ComponentProps) {
                             </Table.ColumnHeader>
 
                             <Table.ColumnHeader fontWeight="bold">
+                                Start Date
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
+                                End Date
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
                                 Published Date
                             </Table.ColumnHeader>
 
@@ -234,9 +247,11 @@ export default function AdminNews(props: Route.ComponentProps) {
                         {events.map((event, _index) => {
                             const {
                                 createdAtTimestamp,
+                                endAtTimestamp,
                                 eventID,
                                 poster,
                                 publishedAtTimestamp,
+                                startAtTimestamp,
                                 state,
                                 title,
                                 updatedAtTimestamp,
@@ -276,6 +291,28 @@ export default function AdminNews(props: Route.ComponentProps) {
                                         {state === "STATE_DRAFT"
                                             ? "draft"
                                             : "published"}
+                                    </Table.Cell>
+
+                                    <Table.Cell>
+                                        {startAtTimestamp ? (
+                                            <DatetimeText
+                                                detail="long"
+                                                timestamp={startAtTimestamp}
+                                            />
+                                        ) : (
+                                            "-"
+                                        )}
+                                    </Table.Cell>
+
+                                    <Table.Cell>
+                                        {endAtTimestamp ? (
+                                            <DatetimeText
+                                                detail="long"
+                                                timestamp={endAtTimestamp}
+                                            />
+                                        ) : (
+                                            "-"
+                                        )}
                                     </Table.Cell>
 
                                     <Table.Cell>

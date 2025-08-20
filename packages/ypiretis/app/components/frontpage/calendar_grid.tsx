@@ -17,7 +17,7 @@ export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
 
-interface ICalenderGridItemEventListProps {
+interface ICalenderGridItemScheduleProps {
     readonly events: ICalendarGridEvent[];
 }
 
@@ -96,7 +96,7 @@ function CalendarGridWeekdayHeaders() {
     });
 }
 
-function CalendarGridItemEventList(props: ICalenderGridItemEventListProps) {
+function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
     const {events} = props;
 
     return (
@@ -192,7 +192,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
         >
             <CalenderGridItemDay calendarDay={calendarDay} />
 
-            {events ? <CalendarGridItemEventList events={events} /> : <></>}
+            {events ? <CalendarGridItemSchedule events={events} /> : <></>}
         </VStack>
     );
 }

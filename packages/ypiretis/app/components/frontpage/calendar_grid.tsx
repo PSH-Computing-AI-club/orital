@@ -1,11 +1,20 @@
 import type {SimpleGridProps} from "@chakra-ui/react";
-import {Box, SimpleGrid, Span, VStack} from "@chakra-ui/react";
+import {
+    Box,
+    List,
+    SimpleGrid,
+    Strong,
+    Span,
+    VStack,
+    Group,
+} from "@chakra-ui/react";
 
 import {memo, useMemo} from "react";
 
 import {useTimezone, zeroDay} from "~/utils/datetime";
 import type {IFormattedCalendarDay} from "~/utils/locale";
 import {
+    formatScheduleTime,
     useFormattedCalendarGrid,
     useFormattedCalendarWeekdays,
 } from "~/utils/locale";
@@ -13,6 +22,10 @@ import {
 export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
+
+interface ICalenderGridItemEventListProps {
+    readonly events: ICalendarGridEvent[];
+}
 
 interface ICalenderGridItemDayProps {
     readonly calendarDay: IFormattedCalendarDay;
@@ -89,6 +102,47 @@ function CalendarGridWeekdayHeaders() {
     });
 }
 
+function CalendarGridItemEventList(props: ICalenderGridItemEventListProps) {
+    const {events} = props;
+
+    return (
+        <List.Root
+            variant="plain"
+            contain="size"
+            flexGrow="1"
+            justifyContent="end"
+            inlineSize="full"
+            fontWeight="normal"
+            fontSize="xs"
+            overflow="hidden"
+        >
+            {events.map((event) => {
+                const {id, title, timestamp} = event;
+
+                const textualTimestamp = formatScheduleTime(timestamp);
+
+                return (
+                    <List.Item key={id}>
+                        <Group gap="1" overflow="hidden">
+                            <Strong whiteSpace="nowrap" fontSize="2xs">
+                                {textualTimestamp}
+                            </Strong>{" "}
+                            <Span
+                                display="inline-block"
+                                whiteSpace="nowrap"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                            >
+                                {title}
+                            </Span>
+                        </Group>
+                    </List.Item>
+                );
+            })}
+        </List.Root>
+    );
+}
+
 function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
     const {calendarDay} = props;
     const {isoTimestamp, textualTimestamp} = calendarDay;
@@ -127,7 +181,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             fontSize="sm"
             fontWeight="bold"
             padding="2"
-            height="2xs"
+            height="3xs"
             alignItems="start"
             bg={isWeekend ? "bg.emphasized" : "bg.panel"}
             color={isWeekend ? "fg.emphasized" : "fg.panel"}
@@ -137,6 +191,8 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             opacity={isInMonth ? "1" : "0.5"}
         >
             <CalenderGridItemDay calendarDay={calendarDay} />
+
+            {events ? <CalendarGridItemEventList events={events} /> : <></>}
         </VStack>
     );
 }

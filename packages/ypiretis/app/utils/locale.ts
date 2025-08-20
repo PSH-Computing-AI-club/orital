@@ -2,7 +2,7 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {useMemo} from "react";
 
-import {toISOCalendarDayString, useDate, useTimezone} from "./datetime";
+import {toDate, toISOCalendarDayString, useDate, useTimezone} from "./datetime";
 import {NAVIGATOR_LANGUAGE, NAVIGATOR_TIMEZONE} from "./navigator";
 import type {IMakeCalendarGridOptions} from "./temporal";
 import {makeCalendarGrid} from "./temporal";
@@ -100,6 +100,24 @@ export function formatCalendarWeekdays(
             .add({days: dayIndex})
             .toLocaleString(locale, {weekday: "long"});
     }) as [string, string, string, string, string, string, string];
+}
+
+export function formatScheduleTime(
+    timestamp: number | Date,
+    options: IFormatOptions = {},
+): string {
+    const {locale = NAVIGATOR_LANGUAGE, timezone = NAVIGATOR_TIMEZONE} =
+        options;
+
+    const date = toDate(timestamp);
+    const formatter = new Intl.DateTimeFormat(locale, {
+        timeZone: timezone,
+
+        hour: "numeric",
+        minute: "numeric",
+    });
+
+    return formatter.format(date);
 }
 
 export function formatTimestamp(
@@ -221,6 +239,22 @@ export function useFormattedCalendarTimestamp(
         isoTimestamp,
         textualTimestamp,
     };
+}
+
+export function useFormattedScheduleTime(
+    timestamp: number | Date,
+    options: IFormatOptions = {},
+): string {
+    const {locale, timezone = useTimezone()} = options;
+
+    const date = useDate(timestamp);
+
+    return useMemo(() => {
+        return formatScheduleTime(date, {
+            locale,
+            timezone,
+        });
+    }, [date, locale, timezone]);
 }
 
 export function useFormattedTimestamp(

@@ -4,7 +4,13 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {useEffect, useMemo} from "react";
 
-import {Link, redirect, useLocation, useNavigate} from "react-router";
+import {
+    Link,
+    redirect,
+    useLoaderData,
+    useLocation,
+    useNavigate,
+} from "react-router";
 
 import * as v from "valibot";
 
@@ -141,43 +147,53 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-export default function FrontpageNews(props: Route.ComponentProps) {
-    const {loaderData} = props;
+function useTimezoneSynchronization(): void {
+    const loaderData = useLoaderData<typeof loader>();
+    const {calendar} = loaderData;
 
-    const {calendar, events} = loaderData;
-    const {month, timestamp, year, timezone} = calendar;
+    const {month, year, timezone} = calendar;
 
     const location = useLocation();
     const navigate = useNavigate();
 
     const currentURL = buildAppURL(location);
-    const calendarZonedDateTime = Temporal.ZonedDateTime.from({
-        year,
-        month,
 
-        day: 1,
-        timeZone: timezone,
-    });
+    useEffect(() => {
+        const {searchParams} = currentURL;
 
-    const {month: nextMonth, year: nextYear} = calendarZonedDateTime.add({
-        months: 1,
-    });
+        if (timezone !== NAVIGATOR_TIMEZONE) {
+            const calendarZonedDateTime = Temporal.ZonedDateTime.from({
+                year,
+                month,
 
-    const {month: previousMonth, year: previousYear} =
-        calendarZonedDateTime.subtract({
-            months: 1,
-        });
+                day: 1,
+                timeZone: timezone,
+            });
 
-    const nextMonthURL = new URL(currentURL);
-    const previousMonthURL = new URL(currentURL);
+            const {month: localizedMonth, year: localizedYear} =
+                calendarZonedDateTime.withTimeZone(NAVIGATOR_TIMEZONE);
 
-    nextMonthURL.pathname = `/calendar/${nextYear}/${nextMonth}`;
-    previousMonthURL.pathname = `/calendar/${previousYear}/${previousMonth}`;
+            currentURL.pathname = `/calendar/${localizedYear}/${localizedMonth}`;
+            searchParams.set("timezone", NAVIGATOR_TIMEZONE);
 
-    const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
-        timestamp,
-        {timezone},
-    );
+            const {hash, pathname, search} = currentURL;
+
+            navigate(
+                {hash, pathname, search},
+
+                {
+                    replace: true,
+                },
+            );
+        }
+    }, [currentURL, month, navigate, timezone, year]);
+}
+
+function EventCalendar() {
+    const loaderData = useLoaderData<typeof loader>();
+    const {calendar, events} = loaderData;
+
+    const {month, year, timezone} = calendar;
 
     const calenderGridEvents = useMemo(() => {
         return events.map((event) => {
@@ -206,27 +222,85 @@ export default function FrontpageNews(props: Route.ComponentProps) {
         });
     }, [events]);
 
-    useEffect(() => {
-        const {searchParams} = currentURL;
+    return (
+        <CalendarGrid
+            events={calenderGridEvents}
+            month={month}
+            timezone={timezone}
+            year={year}
+        />
+    );
+}
 
-        if (timezone !== NAVIGATOR_TIMEZONE) {
-            const {month: localizedMonth, year: localizedYear} =
-                calendarZonedDateTime.withTimeZone(NAVIGATOR_TIMEZONE);
+function MonthNavigationGroup() {
+    const loaderData = useLoaderData<typeof loader>();
+    const {calendar} = loaderData;
 
-            currentURL.pathname = `/calendar/${localizedMonth}/${localizedYear}`;
-            searchParams.set("timezone", NAVIGATOR_TIMEZONE);
+    const {month, year, timezone} = calendar;
 
-            const {hash, pathname, search} = currentURL;
+    const location = useLocation();
+    const currentURL = buildAppURL(location);
 
-            navigate(
-                {hash, pathname, search},
+    const calendarZonedDateTime = Temporal.ZonedDateTime.from({
+        year,
+        month,
 
-                {
-                    replace: true,
-                },
-            );
-        }
-    }, [calendarZonedDateTime, currentURL, navigate, timezone]);
+        day: 1,
+        timeZone: timezone,
+    });
+
+    const {month: nextMonth, year: nextYear} = calendarZonedDateTime.add({
+        months: 1,
+    });
+
+    const {month: previousMonth, year: previousYear} =
+        calendarZonedDateTime.subtract({
+            months: 1,
+        });
+
+    const nextMonthURL = new URL(currentURL);
+    const previousMonthURL = new URL(currentURL);
+
+    nextMonthURL.pathname = `/calendar/${nextYear}/${nextMonth}`;
+    previousMonthURL.pathname = `/calendar/${previousYear}/${previousMonth}`;
+
+    return (
+        <Group>
+            <IconButton
+                colorPalette="cyan"
+                size={{base: "lg", lgDown: "md"}}
+                asChild
+            >
+                <Link to={previousMonthURL.toString()}>
+                    <ChevronLeftIcon />
+                </Link>
+            </IconButton>
+
+            <IconButton
+                colorPalette="cyan"
+                size={{base: "lg", lgDown: "md"}}
+                asChild
+            >
+                <Link to={nextMonthURL.toString()}>
+                    <ChevronRightIcon />
+                </Link>
+            </IconButton>
+        </Group>
+    );
+}
+
+export default function FrontpageCalendar(props: Route.ComponentProps) {
+    const {loaderData} = props;
+
+    const {calendar, events} = loaderData;
+    const {timestamp, timezone} = calendar;
+
+    const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
+        timestamp,
+        {timezone},
+    );
+
+    useTimezoneSynchronization();
 
     return (
         <>
@@ -248,36 +322,11 @@ export default function FrontpageNews(props: Route.ComponentProps) {
 
                             <Spacer />
 
-                            <Group>
-                                <IconButton
-                                    colorPalette="cyan"
-                                    size={{base: "lg", lgDown: "md"}}
-                                    asChild
-                                >
-                                    <Link to={previousMonthURL.toString()}>
-                                        <ChevronLeftIcon />
-                                    </Link>
-                                </IconButton>
-
-                                <IconButton
-                                    colorPalette="cyan"
-                                    size={{base: "lg", lgDown: "md"}}
-                                    asChild
-                                >
-                                    <Link to={nextMonthURL.toString()}>
-                                        <ChevronRightIcon />
-                                    </Link>
-                                </IconButton>
-                            </Group>
+                            <MonthNavigationGroup />
                         </ContentSection.Title>
                     </ContentSection.Header>
 
-                    <CalendarGrid
-                        events={calenderGridEvents}
-                        month={month}
-                        timezone={timezone}
-                        year={year}
-                    />
+                    <EventCalendar />
                 </ContentSection.Container>
             </ContentSection.Root>
         </>

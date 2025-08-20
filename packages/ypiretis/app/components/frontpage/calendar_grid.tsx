@@ -14,6 +14,7 @@ import {
     SimpleGrid,
     Span,
     Strong,
+    Text,
     VStack,
 } from "@chakra-ui/react";
 
@@ -120,9 +121,12 @@ function CalendarGridItemScheduleHoverCard(
             <Portal>
                 <HoverCard.Positioner>
                     <HoverCard.Content>
-                        {title}
-                        {timestamp}
-                        {description}
+                        <Strong>{title}</Strong>
+                        <Span color="fg.muted" fontSize="2xs">
+                            {timestamp}
+                        </Span>
+
+                        <Text marginBlockStart="2">{description}</Text>
                     </HoverCard.Content>
                 </HoverCard.Positioner>
             </Portal>

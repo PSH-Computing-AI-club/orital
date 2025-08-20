@@ -25,8 +25,8 @@ import Links from "~/components/common/links";
 import {useTimezone, zeroDay} from "~/utils/datetime";
 import type {IFormattedCalendarDay} from "~/utils/locale";
 import {
-    formatScheduleTime,
     useFormattedCalendarGrid,
+    useFormattedScheduleTime,
     useFormattedCalendarWeekdays,
 } from "~/utils/locale";
 
@@ -141,7 +141,7 @@ function CalendarGridItemScheduleListing(
     const {title, template, timestamp} = event;
 
     const url = template({event});
-    const textualTimestamp = formatScheduleTime(timestamp);
+    const textualTimestamp = useFormattedScheduleTime(timestamp);
 
     return (
         <List.Item {...rest}>

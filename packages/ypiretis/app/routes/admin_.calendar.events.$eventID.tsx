@@ -331,9 +331,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {
         content,
         createdAt,
+        endAt,
         id: internalID,
         poster,
         publishedAt,
+        startAt,
         state,
         title,
         updatedAt,
@@ -355,9 +357,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const {epochMilliseconds: createdAtTimestamp} = createdAt;
     const {epochMilliseconds: updatedAtTimestamp} = updatedAt;
-    const publishedAtTimestamp = publishedAt
-        ? publishedAt.epochMilliseconds
-        : null;
+
+    const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+    const publishedAtTimestamp = publishedAt?.epochMilliseconds ?? null;
+    const startAtTimestamp = startAt?.epochMilliseconds ?? null;
 
     return {
         attachments,
@@ -365,8 +368,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         event: {
             content,
             createdAtTimestamp,
+            endAtTimestamp,
             eventID,
             publishedAtTimestamp,
+            startAtTimestamp,
             state,
             title,
             updatedAtTimestamp,

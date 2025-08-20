@@ -198,6 +198,7 @@ function EventCalendar() {
     const calenderGridEvents = useMemo(() => {
         return events.map((event) => {
             const {
+                day,
                 description,
                 eventID,
                 month,
@@ -208,7 +209,7 @@ function EventCalendar() {
             } = event;
 
             const template = ((_context) => {
-                return `/calendar/events/${eventID}/${year}/${month}/${slug}`;
+                return `/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`;
             }) satisfies ICalenderGridEventTemplate;
 
             return {
@@ -292,7 +293,7 @@ function MonthNavigationGroup() {
 export default function FrontpageCalendar(props: Route.ComponentProps) {
     const {loaderData} = props;
 
-    const {calendar, events} = loaderData;
+    const {calendar} = loaderData;
     const {timestamp, timezone} = calendar;
 
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(

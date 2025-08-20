@@ -1,15 +1,9 @@
 import type {SimpleGridProps} from "@chakra-ui/react";
-import {
-    Box,
-    List,
-    SimpleGrid,
-    Strong,
-    Span,
-    VStack,
-    Group,
-} from "@chakra-ui/react";
+import {Box, List, SimpleGrid, Span, Strong, VStack} from "@chakra-ui/react";
 
 import {memo, useMemo} from "react";
+
+import Links from "~/components/common/links";
 
 import {useTimezone, zeroDay} from "~/utils/datetime";
 import type {IFormattedCalendarDay} from "~/utils/locale";
@@ -117,25 +111,31 @@ function CalendarGridItemEventList(props: ICalenderGridItemEventListProps) {
             overflow="hidden"
         >
             {events.map((event) => {
-                const {id, title, timestamp} = event;
+                const {id, title, template, timestamp} = event;
 
+                const url = template({event});
                 const textualTimestamp = formatScheduleTime(timestamp);
 
                 return (
                     <List.Item key={id}>
-                        <Group gap="1" overflow="hidden">
+                        <Links.InternalLink
+                            variant="plain"
+                            to={url.toString()}
+                            overflow="hidden"
+                        >
                             <Strong whiteSpace="nowrap" fontSize="2xs">
                                 {textualTimestamp}
-                            </Strong>{" "}
+                            </Strong>
+
                             <Span
-                                display="inline-block"
+                                display="inline"
                                 whiteSpace="nowrap"
                                 overflow="hidden"
                                 textOverflow="ellipsis"
                             >
                                 {title}
                             </Span>
-                        </Group>
+                        </Links.InternalLink>
                     </List.Item>
                 );
             })}

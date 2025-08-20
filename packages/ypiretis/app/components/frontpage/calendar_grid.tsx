@@ -131,7 +131,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             alignItems="start"
             bg={isWeekend ? "bg.emphasized" : "bg.panel"}
             color={isWeekend ? "fg.emphasized" : "fg.panel"}
-            borderColor="border"
+            borderColor={isWeekend ? "border.emphasized" : "border"}
             borderWidth="thin"
             borderStyle="solid"
             opacity={isInMonth ? "1" : "0.5"}

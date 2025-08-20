@@ -78,24 +78,6 @@ function makeEventDayLookup(
     return dayLookup;
 }
 
-function CalendarGridWeekdayHeaders() {
-    const weekdays = useFormattedCalendarWeekdays();
-
-    return weekdays.map((weekday, index) => {
-        return (
-            <Box
-                key={index}
-                padding="2"
-                bg="bg.inverted"
-                color="fg.inverted"
-                textAlign="center"
-            >
-                {weekday}
-            </Box>
-        );
-    });
-}
-
 function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
     const {events} = props;
 
@@ -198,6 +180,24 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
 }
 
 const MemoizedCalenderGridItem = memo(CalendarGridItem);
+
+function CalendarGridWeekdayHeaders() {
+    const weekdays = useFormattedCalendarWeekdays();
+
+    return weekdays.map((weekday, index) => {
+        return (
+            <Box
+                key={index}
+                padding="2"
+                bg="bg.inverted"
+                color="fg.inverted"
+                textAlign="center"
+            >
+                {weekday}
+            </Box>
+        );
+    });
+}
 
 export default function CalendarGrid(props: ICalendarGridProps) {
     const {events, month, year, timezone = useTimezone()} = props;

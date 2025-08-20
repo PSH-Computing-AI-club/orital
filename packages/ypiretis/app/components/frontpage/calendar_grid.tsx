@@ -112,9 +112,11 @@ export interface ICalendarGridEvent {
 
     readonly description: string;
 
-    readonly timestamp: IDateLike;
+    readonly endAt: IDateLike;
 
     readonly title: string;
+
+    readonly startAt: IDateLike;
 
     readonly template: ICalenderGridEventTemplate;
 }
@@ -133,8 +135,8 @@ function makeEventDayLookup(
     const dayLookup = new Map<number, ICalendarGridEvent[]>();
 
     for (const event of events) {
-        const {timestamp} = event;
-        const date = zeroDay(timestamp);
+        const {startAt} = event;
+        const date = zeroDay(startAt);
 
         const epochMilliseconds = date.getTime();
         const events = dayLookup.get(epochMilliseconds) ?? [];
@@ -162,7 +164,7 @@ function CalendarGridItemScheduleHoverCard(
     props: ICalendarGridItemScheduleHoverCardProps,
 ) {
     const {children, event, ...rest} = props;
-    const {description, title, timestamp} = event;
+    const {description, endAt, title, startAt} = event;
 
     return (
         <HoverCard.Root {...rest}>
@@ -173,7 +175,7 @@ function CalendarGridItemScheduleHoverCard(
                     <HoverCard.Content>
                         <Strong>{title}</Strong>
                         <Span color="fg.muted" fontSize="2xs">
-                            {timestamp}
+                            {startAt}
                         </Span>
 
                         <Text marginBlockStart="2">{description}</Text>
@@ -188,10 +190,10 @@ function CalendarGridItemScheduleListing(
     props: ICalendarGridItemScheduleListingProps,
 ) {
     const {event, ...rest} = props;
-    const {title, template, timestamp} = event;
+    const {title, template, startAt} = event;
 
     const url = template({event});
-    const textualTimestamp = useFormattedScheduleTime(timestamp);
+    const textualTimestamp = useFormattedScheduleTime(startAt);
 
     return (
         <List.Item {...rest}>

@@ -119,10 +119,17 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedEvents = await Promise.all(
         events.map(async (event) => {
-            const {content, eventID, slug, publishedAt, title} = event;
+            const {
+                content,
+                eventID,
+                slug,
+                startAt,
+                title,
+                endAt = startAt,
+            } = event;
 
             const zonedPublishedAt =
-                publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+                startAt!.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(
@@ -132,15 +139,18 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 ),
             );
 
-            const {epochMilliseconds: publishedAtTimestamp} = publishedAt;
+            const {epochMilliseconds: endAtTimestamp} = endAt!;
+            const {epochMilliseconds: startAtTimestamp} = startAt!;
+
             const {year, month, day} = zonedPublishedAt;
 
             return {
                 day,
                 description,
+                endAtTimestamp,
                 eventID,
                 month,
-                publishedAtTimestamp,
+                startAtTimestamp,
                 slug,
                 title,
                 year,
@@ -231,10 +241,11 @@ function EventCalendar() {
             const {
                 day,
                 description,
+                endAtTimestamp,
                 eventID,
                 month,
-                publishedAtTimestamp,
                 slug,
+                startAtTimestamp,
                 title,
                 year,
             } = event;
@@ -248,8 +259,9 @@ function EventCalendar() {
                 template,
                 title,
 
+                endAt: endAtTimestamp,
                 id: eventID,
-                timestamp: publishedAtTimestamp,
+                startAt: startAtTimestamp,
             } satisfies ICalendarGridEvent;
         });
     }, [events]);

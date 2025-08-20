@@ -19,10 +19,15 @@ import {SORT_MODES} from "~/.server/services/crud_service";
 import {and, gte, lt} from "~/.server/services/crud_service.filters";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
+import {makeZonedCalendarGrid} from "~/.server/utils/locale";
+
 import Title from "~/components/common/title";
 
 import type {
+    ICalendarGridDay,
     ICalendarGridEvent,
+    ICalendarGridMonth,
+    ICalendarGridWeek,
     ICalenderGridEventTemplate,
 } from "~/components/frontpage/calendar_grid";
 import CalendarGrid from "~/components/frontpage/calendar_grid";
@@ -75,20 +80,30 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         );
     }
 
-    const startDate = Temporal.PlainDate.from({year, month, day: 1});
-    const endDate = startDate.add({months: 1});
+    const weeks = makeZonedCalendarGrid({
+        month,
+        year,
+        timezone,
+    });
 
-    const zonedStartDate = startDate
-        .toZonedDateTime({
-            timeZone: timezone,
+    const firstWeek = weeks[0];
+    const lastWeek = weeks.at(-1)!;
+
+    const firstSunday = firstWeek[0];
+    const lastSaturday = lastWeek.at(-1)!;
+
+    const minimumInstant = firstSunday.toInstant();
+    const maximumInstant = lastSaturday
+        .add({
+            days: 1,
         })
         .toInstant();
 
-    const zonedEndDate = endDate
-        .toZonedDateTime({
-            timeZone: timezone,
-        })
-        .toInstant();
+    const firstDay = firstWeek.find((day) => {
+        const {day: dayOfMonth} = day;
+
+        return dayOfMonth === 1;
+    })!;
 
     const events = await findAllPublished({
         sort: {
@@ -97,8 +112,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         },
 
         where: and(
-            gte("publishedAt", zonedStartDate),
-            lt("publishedAt", zonedEndDate),
+            gte("publishedAt", minimumInstant),
+            lt("publishedAt", maximumInstant),
         ),
     });
 
@@ -133,13 +148,24 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         }),
     );
 
-    const {epochMilliseconds: timestamp} = zonedStartDate;
+    const mappedWeeks = weeks.map((week) => {
+        return week.map((day) => {
+            const {epochMilliseconds} = day;
+
+            return {
+                timestamp: epochMilliseconds,
+            } satisfies ICalendarGridDay;
+        }) as ICalendarGridWeek;
+    }) as ICalendarGridMonth;
+
+    const {epochMilliseconds: timestamp} = firstDay;
 
     return {
         calendar: {
             month,
             timestamp,
             timezone,
+            weeks: mappedWeeks,
             year,
         },
 
@@ -193,7 +219,7 @@ function EventCalendar() {
     const loaderData = useLoaderData<typeof loader>();
     const {calendar, events} = loaderData;
 
-    const {month, year, timezone} = calendar;
+    const {timezone, weeks} = calendar;
 
     const calenderGridEvents = useMemo(() => {
         return events.map((event) => {
@@ -226,9 +252,8 @@ function EventCalendar() {
     return (
         <CalendarGrid
             events={calenderGridEvents}
-            month={month}
             timezone={timezone}
-            year={year}
+            weeks={weeks}
         />
     );
 }

@@ -5,11 +5,13 @@ import {useHydrated} from "remix-utils/use-hydrated";
 import {SERVER_TIMEZONE} from "./constants";
 import {NAVIGATOR_TIMEZONE} from "./navigator";
 
-export function toDate(timestamp: number | Date): Date {
+export type IDateLike = number | Date;
+
+export function toDate(timestamp: IDateLike): Date {
     return typeof timestamp === "number" ? new Date(timestamp) : timestamp;
 }
 
-export function toLocalISOString(timestamp: number | Date): string {
+export function toLocalISOString(timestamp: IDateLike): string {
     const date = toDate(timestamp);
 
     const year = date.getFullYear();
@@ -22,14 +24,14 @@ export function toLocalISOString(timestamp: number | Date): string {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-export function toISOCalendarDayString(timestamp: number | Date): string {
+export function toISOCalendarDayString(timestamp: IDateLike): string {
     // **NOTE:** We are constructing a new `Date` instance here to preserve
     // immutability.
 
     return zeroDay(timestamp).toISOString();
 }
 
-export function useDate(timestamp: number | Date): Date {
+export function useDate(timestamp: IDateLike): Date {
     return useMemo(() => {
         return toDate(timestamp);
     }, [timestamp]);
@@ -39,7 +41,7 @@ export function useTimezone(): string {
     return useHydrated() ? NAVIGATOR_TIMEZONE : SERVER_TIMEZONE;
 }
 
-export function zeroDay(timestamp: number | Date): Date {
+export function zeroDay(timestamp: IDateLike): Date {
     const date = new Date(timestamp);
 
     date.setUTCHours(0);

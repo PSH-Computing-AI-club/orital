@@ -1,10 +1,11 @@
+import type {IDateLike} from "~/utils/datetime";
 import type {IFormatDetail} from "~/utils/locale";
 import {useFormattedTimestamp} from "~/utils/locale";
 
 export interface IDatetimeTextProps {
     readonly detail?: IFormatDetail;
 
-    readonly timestamp: number | Date;
+    readonly timestamp: IDateLike;
 }
 
 export default function DatetimeText(props: IDatetimeTextProps) {

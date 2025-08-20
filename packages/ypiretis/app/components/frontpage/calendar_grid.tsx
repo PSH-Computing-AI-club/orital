@@ -18,21 +18,53 @@ import {
     VStack,
 } from "@chakra-ui/react";
 
-import {memo, useMemo} from "react";
+import {createContext, memo, useContext, useMemo} from "react";
 
+import CalendarDayText from "~/components/common/calendar_day_text";
 import Links from "~/components/common/links";
 
-import {useTimezone, zeroDay} from "~/utils/datetime";
-import type {IFormattedCalendarDay} from "~/utils/locale";
-import {
-    useFormattedCalendarGrid,
-    useFormattedScheduleTime,
-    useFormattedCalendarWeekdays,
-} from "~/utils/locale";
+import type {IDateLike} from "~/utils/datetime";
+import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
+import {formatCalendarWeekdays, useFormattedScheduleTime} from "~/utils/locale";
+
+const CONTEXT_CALENDAR_GRID = createContext<ICalendarGridContext | null>(null);
+
+type ICalendarGridDayLookup = Map<number, ICalendarGridEvent[]>;
+
+export type ICalendarGridMonth = [
+    ICalendarGridWeek,
+    ICalendarGridWeek,
+    ICalendarGridWeek,
+    ICalendarGridWeek,
+    ICalendarGridWeek,
+    ICalendarGridWeek,
+];
+
+export type ICalendarGridWeek = [
+    ICalendarGridDay,
+    ICalendarGridDay,
+    ICalendarGridDay,
+    ICalendarGridDay,
+    ICalendarGridDay,
+    ICalendarGridDay,
+    ICalendarGridDay,
+];
 
 export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
+
+interface ICalendarGridContext {
+    readonly dayLookup: ICalendarGridDayLookup;
+
+    readonly timezone: string;
+
+    readonly weeks: IInternalCalendarGridDay[][];
+}
+
+interface IInternalCalendarGridDay {
+    readonly date: Date;
+}
 
 interface ICalendarGridItemScheduleHoverCardProps
     extends Omit<HoverCardRootProps, "asChild"> {
@@ -51,16 +83,20 @@ interface ICalenderGridItemScheduleProps
 
 interface ICalenderGridItemDayProps
     extends Omit<SpanProps, "asChild" | "children"> {
-    readonly calendarDay: IFormattedCalendarDay;
+    readonly day: IInternalCalendarGridDay;
 }
 
 interface ICalenderGridItemProps
     extends Omit<StackProps, "asChild" | "children"> {
-    readonly calendarDay: IFormattedCalendarDay;
+    readonly day: IInternalCalendarGridDay;
+}
 
-    readonly dayLookup: Map<number, ICalendarGridEvent[]>;
+export interface IEventTemplateContext {
+    readonly event: ICalendarGridEvent;
+}
 
-    readonly month: number;
+export interface ICalendarGridDay {
+    readonly timestamp: IDateLike;
 }
 
 export interface ICalendarGridEvent {
@@ -68,25 +104,19 @@ export interface ICalendarGridEvent {
 
     readonly description: string;
 
-    readonly timestamp: number | Date;
+    readonly timestamp: IDateLike;
 
     readonly title: string;
 
     readonly template: ICalenderGridEventTemplate;
 }
 
-export interface IEventTemplateContext {
-    readonly event: ICalendarGridEvent;
-}
-
 export interface ICalendarGridProps extends SimpleGridProps {
     readonly events: ICalendarGridEvent[];
 
-    readonly month: number;
-
     readonly timezone?: string;
 
-    readonly year: number;
+    readonly weeks: ICalendarGridMonth;
 }
 
 function makeEventDayLookup(
@@ -106,6 +136,18 @@ function makeEventDayLookup(
     }
 
     return dayLookup;
+}
+
+function useCalendarGridContext(): ICalendarGridContext {
+    const context = useContext(CONTEXT_CALENDAR_GRID);
+
+    if (context === null) {
+        throw new ReferenceError(
+            `bad dispatch to 'useCalendarGridContext' (not a child of 'CONTEXT_CALENDAR_GRID.Provider')`,
+        );
+    }
+
+    return context;
 }
 
 function CalendarGridItemScheduleHoverCard(
@@ -195,8 +237,8 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
 }
 
 function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
-    const {calendarDay, ...rest} = props;
-    const {isoTimestamp, textualTimestamp} = calendarDay;
+    const {day, ...rest} = props;
+    const {date} = day;
 
     return (
         <Span
@@ -209,24 +251,22 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
             asChild
             {...rest}
         >
-            <time dateTime={isoTimestamp}>{textualTimestamp}</time>
+            <CalendarDayText timestamp={date} />
         </Span>
     );
 }
 
 function CalendarGridItem(props: ICalenderGridItemProps) {
-    const {calendarDay, dayLookup, month, ...rest} = props;
-    const {zonedDateTime} = calendarDay;
+    const {day, ...rest} = props;
+    const {dayLookup} = useCalendarGridContext();
 
-    const {dayOfWeek, month: dayMonth} = zonedDateTime;
-    const {epochMilliseconds} = zonedDateTime.withTimeZone("UTC").startOfDay();
+    const {date} = day;
+    const timestamp = date.getTime();
 
-    const isInMonth = dayMonth === month;
-    const isWeekend = dayOfWeek > 5;
+    const isInMonth = false;
+    const isWeekend = false;
 
-    const events = isInMonth
-        ? (dayLookup.get(epochMilliseconds) ?? null)
-        : null;
+    const events = isInMonth ? (dayLookup.get(timestamp) ?? null) : null;
 
     return (
         <VStack
@@ -243,7 +283,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             opacity={isInMonth ? "1" : "0.5"}
             {...rest}
         >
-            <CalenderGridItemDay calendarDay={calendarDay} />
+            <CalenderGridItemDay day={day} />
 
             {events ? <CalendarGridItemSchedule events={events} /> : <></>}
         </VStack>
@@ -253,12 +293,24 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
 const MemoizedCalenderGridItem = memo(CalendarGridItem);
 
 function CalendarGridWeekdayHeaders() {
-    const weekdays = useFormattedCalendarWeekdays();
+    const {weeks} = useCalendarGridContext();
 
-    return weekdays.map((weekday, index) => {
+    const [firstWeek] = weeks;
+
+    const weekdays = useMemo(() => {
+        return formatCalendarWeekdays(
+            firstWeek.map((day) => {
+                const {date} = day;
+
+                return date.getTime();
+            }) as [number, number, number, number, number, number, number],
+        );
+    }, [firstWeek]);
+
+    return weekdays.map((weekday) => {
         return (
             <Box
-                key={index}
+                key={weekday}
                 padding="2"
                 bg="bg.inverted"
                 color="fg.inverted"
@@ -270,37 +322,58 @@ function CalendarGridWeekdayHeaders() {
     });
 }
 
-export default function CalendarGrid(props: ICalendarGridProps) {
-    const {events, month, year, timezone = useTimezone()} = props;
+function CalendarGridWeeks() {
+    const {weeks} = useCalendarGridContext();
 
-    const calendarGrid = useFormattedCalendarGrid({
-        month,
-        year,
-        timezone,
-    });
+    return (
+        <>
+            {weeks.flatMap((week) => {
+                return week.map((day) => {
+                    const {date} = day;
+
+                    return (
+                        <MemoizedCalenderGridItem
+                            key={date.getTime()}
+                            day={day}
+                        />
+                    );
+                });
+            })}
+        </>
+    );
+}
+
+export default function CalendarGrid(props: ICalendarGridProps) {
+    const {events, timezone = useTimezone(), weeks} = props;
 
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
     }, [events]);
 
+    const context = useMemo(() => {
+        const mappedWeeks = weeks.map((week) => {
+            return week.map((day) => {
+                const {timestamp} = day;
+
+                return {
+                    date: toDate(timestamp),
+                };
+            });
+        });
+
+        return {
+            dayLookup,
+            timezone,
+            weeks: mappedWeeks,
+        } satisfies ICalendarGridContext;
+    }, [dayLookup, timezone, weeks]);
+
     return (
-        <SimpleGrid columns={7} gap="2">
-            <CalendarGridWeekdayHeaders />
-
-            {calendarGrid.flatMap((calendarWeek, _index) => {
-                return calendarWeek.map((calendarDay, _index) => {
-                    const {isoTimestamp} = calendarDay;
-
-                    return (
-                        <MemoizedCalenderGridItem
-                            key={isoTimestamp}
-                            calendarDay={calendarDay}
-                            dayLookup={dayLookup}
-                            month={month}
-                        />
-                    );
-                });
-            })}
-        </SimpleGrid>
+        <CONTEXT_CALENDAR_GRID.Provider value={context}>
+            <SimpleGrid columns={7} gap="2">
+                <CalendarGridWeekdayHeaders />
+                <CalendarGridWeeks />
+            </SimpleGrid>
+        </CONTEXT_CALENDAR_GRID.Provider>
     );
 }

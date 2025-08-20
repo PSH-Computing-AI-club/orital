@@ -842,6 +842,203 @@ function SettingsCardPublishingView() {
     );
 }
 
+function SettingsCardSchedulingView() {
+    const {event} = useLoaderData<typeof loader>();
+
+    const {endAtTimestamp, startAtTimestamp} = event;
+
+    const startAtInputRef = useRef<HTMLInputElement | null>(null);
+    const endAtInputRef = useRef<HTMLInputElement | null>(null);
+
+    const startAtUpdateFetcher = useFetcher();
+    const endAtUpdateFetcher = useFetcher();
+
+    const {displayToast} = useToastsContext();
+
+    const localEndAt = endAtTimestamp ? new Date(endAtTimestamp) : null;
+    const localStartAt = startAtTimestamp ? new Date(startAtTimestamp) : null;
+
+    const localEndAtDateTime = localEndAt ? toLocalISOString(localEndAt) : null;
+    const localStartAtDateTime = localStartAt
+        ? toLocalISOString(localStartAt)
+        : null;
+
+    const isEndAtUpdateFetcherIdle = endAtUpdateFetcher.state === "idle";
+    const isStartAtUpdateFetcherIdle = startAtUpdateFetcher.state === "idle";
+
+    const [liveLocalEndAt, setLiveLocalEndAt] = useState<Date | null>(
+        localEndAt,
+    );
+    const [liveLocalStartAt, setLiveLocalStartAt] = useState<Date | null>(
+        localStartAt,
+    );
+
+    const isLiveLocalEndAtDirty =
+        liveLocalEndAt?.getTime() !== localEndAt?.getTime();
+    const isLiveLocalStartAtDirty =
+        liveLocalStartAt?.getTime() !== localStartAt?.getTime();
+
+    const isEndAtFieldDisabled = !isEndAtUpdateFetcherIdle;
+    const isStartAtFieldDisabled = !isStartAtUpdateFetcherIdle;
+
+    const isEndAtUpdateDisabled =
+        !isEndAtUpdateFetcherIdle || !isLiveLocalEndAtDirty;
+    const isStartAtUpdateDisabled =
+        !isStartAtUpdateFetcherIdle || !isLiveLocalStartAtDirty;
+
+    const onEndAtChange = useCallback(
+        ((event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
+
+            setLiveLocalEndAt(new Date(value));
+        }) satisfies FormEventHandler<HTMLInputElement>,
+
+        [setLiveLocalEndAt],
+    );
+
+    const onStartAtChange = useCallback(
+        ((event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
+
+            setLiveLocalStartAt(new Date(value));
+        }) satisfies FormEventHandler<HTMLInputElement>,
+
+        [setLiveLocalStartAt],
+    );
+
+    const onUpdateEnddAt = useCallback(
+        (async (_event) => {
+            if (!liveLocalEndAt) {
+                return;
+            }
+
+            await endAtUpdateFetcher.submit(
+                {
+                    action: "endAt.update",
+                    endAtTimestamp: liveLocalEndAt?.getTime(),
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Updated the event's end timestamp`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [liveLocalEndAt, endAtUpdateFetcher, displayToast],
+    );
+
+    const onUpdateStartdAt = useCallback(
+        (async (_event) => {
+            if (!liveLocalStartAt) {
+                return;
+            }
+
+            await startAtUpdateFetcher.submit(
+                {
+                    action: "startAt.update",
+                    startAtTimestamp: liveLocalStartAt?.getTime(),
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Updated the event's start timestamp`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [liveLocalStartAt, startAtUpdateFetcher, displayToast],
+    );
+
+    useEffect(() => {
+        const {current: inputElement} = endAtInputRef;
+
+        if (!inputElement || endAtTimestamp === null) {
+            return;
+        }
+
+        const localEndAt = new Date(endAtTimestamp);
+        const localEndAtDateTime = toLocalISOString(localEndAt);
+
+        inputElement.value = localEndAtDateTime;
+        setLiveLocalEndAt(localEndAt);
+    }, [endAtInputRef, endAtTimestamp, setLiveLocalEndAt]);
+
+    useEffect(() => {
+        const {current: inputElement} = startAtInputRef;
+
+        if (!inputElement || startAtTimestamp === null) {
+            return;
+        }
+
+        const localStartAt = new Date(startAtTimestamp);
+        const localStartAtDateTime = toLocalISOString(localStartAt);
+
+        inputElement.value = localStartAtDateTime;
+        setLiveLocalStartAt(localStartAt);
+    }, [startAtInputRef, startAtTimestamp, setLiveLocalStartAt]);
+
+    return (
+        <TabbedSectionCard.View label="Scheduling">
+            <Field.Root>
+                <Field.Label>Start At</Field.Label>
+
+                <Group alignSelf="stretch">
+                    <Input
+                        ref={startAtInputRef}
+                        disabled={isStartAtFieldDisabled}
+                        type="datetime-local"
+                        defaultValue={localStartAtDateTime ?? ""}
+                        flexGrow="1"
+                        onChange={onStartAtChange}
+                    />
+
+                    <Button
+                        disabled={isStartAtUpdateDisabled}
+                        colorPalette="green"
+                        onClick={onUpdateStartdAt}
+                    >
+                        Update Timestamp
+                    </Button>
+                </Group>
+            </Field.Root>
+
+            <Field.Root>
+                <Field.Label>End At</Field.Label>
+
+                <Group alignSelf="stretch">
+                    <Input
+                        ref={endAtInputRef}
+                        disabled={isEndAtFieldDisabled}
+                        type="datetime-local"
+                        defaultValue={localEndAtDateTime ?? ""}
+                        flexGrow="1"
+                        onChange={onEndAtChange}
+                    />
+
+                    <Button
+                        disabled={isEndAtUpdateDisabled}
+                        colorPalette="green"
+                        onClick={onUpdateEnddAt}
+                    >
+                        Update Timestamp
+                    </Button>
+                </Group>
+            </Field.Root>
+        </TabbedSectionCard.View>
+    );
+}
+
 function SettingsCard() {
     return (
         <TabbedSectionCard.Root flexGrow="1">
@@ -853,6 +1050,7 @@ function SettingsCard() {
                     <SlidersIcon />
                 </TabbedSectionCard.Title>
 
+                <SettingsCardSchedulingView />
                 <SettingsCardPublishingView />
                 <SettingsCardAttachmentsView />
             </TabbedSectionCard.Body>

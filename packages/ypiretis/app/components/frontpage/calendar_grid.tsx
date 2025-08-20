@@ -271,7 +271,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
     const {date, isInMonth, isWeekend} = day;
 
     const dayTimestamp = zeroDay(date).getTime();
-    const events = isInMonth ? (dayLookup.get(dayTimestamp) ?? null) : null;
+    const events = dayLookup.get(dayTimestamp) ?? null;
 
     return (
         <VStack

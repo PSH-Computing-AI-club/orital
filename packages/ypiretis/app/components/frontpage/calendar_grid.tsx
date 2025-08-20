@@ -1,5 +1,20 @@
-import type {SimpleGridProps} from "@chakra-ui/react";
-import {Box, List, SimpleGrid, Span, Strong, VStack} from "@chakra-ui/react";
+import type {
+    ListRootProps,
+    HoverCardRootProps,
+    SimpleGridProps,
+    SpanProps,
+    StackProps,
+} from "@chakra-ui/react";
+import {
+    Box,
+    HoverCard,
+    List,
+    Portal,
+    SimpleGrid,
+    Span,
+    Strong,
+    VStack,
+} from "@chakra-ui/react";
 
 import {memo, useMemo} from "react";
 
@@ -17,15 +32,23 @@ export type ICalenderGridEventTemplate = (
     context: IEventTemplateContext,
 ) => string | URL;
 
-interface ICalenderGridItemScheduleProps {
+interface ICalendarGridItemScheduleHoverCardProps
+    extends Omit<HoverCardRootProps, "asChild"> {
+    readonly event: ICalendarGridEvent;
+}
+
+interface ICalenderGridItemScheduleProps
+    extends Omit<ListRootProps, "asChild" | "children"> {
     readonly events: ICalendarGridEvent[];
 }
 
-interface ICalenderGridItemDayProps {
+interface ICalenderGridItemDayProps
+    extends Omit<SpanProps, "asChild" | "children"> {
     readonly calendarDay: IFormattedCalendarDay;
 }
 
-interface ICalenderGridItemProps {
+interface ICalenderGridItemProps
+    extends Omit<StackProps, "asChild" | "children"> {
     readonly calendarDay: IFormattedCalendarDay;
 
     readonly dayLookup: Map<number, ICalendarGridEvent[]>;
@@ -78,8 +101,32 @@ function makeEventDayLookup(
     return dayLookup;
 }
 
+function CalendarGridItemScheduleHoverCard(
+    props: ICalendarGridItemScheduleHoverCardProps,
+) {
+    const {children, event, ...rest} = props;
+
+    const {description, title, timestamp} = event;
+
+    return (
+        <HoverCard.Root {...rest}>
+            <HoverCard.Trigger>{children}</HoverCard.Trigger>
+
+            <Portal>
+                <HoverCard.Positioner>
+                    <HoverCard.Content>
+                        {title}
+                        {timestamp}
+                        {description}
+                    </HoverCard.Content>
+                </HoverCard.Positioner>
+            </Portal>
+        </HoverCard.Root>
+    );
+}
+
 function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
-    const {events} = props;
+    const {events, ...rest} = props;
 
     return (
         <List.Root
@@ -91,6 +138,7 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
             fontWeight="normal"
             fontSize="xs"
             overflow="hidden"
+            {...rest}
         >
             {events.map((event) => {
                 const {id, title, template, timestamp} = event;
@@ -100,24 +148,26 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
 
                 return (
                     <List.Item key={id}>
-                        <Links.InternalLink
-                            variant="plain"
-                            to={url.toString()}
-                            overflow="hidden"
-                        >
-                            <Strong whiteSpace="nowrap" fontSize="2xs">
-                                {textualTimestamp}
-                            </Strong>
-
-                            <Span
-                                display="inline"
-                                whiteSpace="nowrap"
+                        <CalendarGridItemScheduleHoverCard event={event}>
+                            <Links.InternalLink
+                                variant="plain"
+                                to={url.toString()}
                                 overflow="hidden"
-                                textOverflow="ellipsis"
                             >
-                                {title}
-                            </Span>
-                        </Links.InternalLink>
+                                <Strong whiteSpace="nowrap" fontSize="2xs">
+                                    {textualTimestamp}
+                                </Strong>
+
+                                <Span
+                                    display="inline"
+                                    whiteSpace="nowrap"
+                                    overflow="hidden"
+                                    textOverflow="ellipsis"
+                                >
+                                    {title}
+                                </Span>
+                            </Links.InternalLink>
+                        </CalendarGridItemScheduleHoverCard>
                     </List.Item>
                 );
             })}
@@ -126,7 +176,7 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
 }
 
 function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
-    const {calendarDay} = props;
+    const {calendarDay, ...rest} = props;
     const {isoTimestamp, textualTimestamp} = calendarDay;
 
     return (
@@ -138,6 +188,7 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
             bg="bg.inverted"
             color="fg.inverted"
             asChild
+            {...rest}
         >
             <time dateTime={isoTimestamp}>{textualTimestamp}</time>
         </Span>
@@ -145,7 +196,7 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
 }
 
 function CalendarGridItem(props: ICalenderGridItemProps) {
-    const {calendarDay, dayLookup, month} = props;
+    const {calendarDay, dayLookup, month, ...rest} = props;
     const {zonedDateTime} = calendarDay;
 
     const {dayOfWeek, month: dayMonth} = zonedDateTime;
@@ -171,6 +222,7 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
             borderWidth="thin"
             borderStyle="solid"
             opacity={isInMonth ? "1" : "0.5"}
+            {...rest}
         >
             <CalenderGridItemDay calendarDay={calendarDay} />
 

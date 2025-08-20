@@ -355,8 +355,8 @@ export default function CalendarGrid(props: ICalendarGridProps) {
         return makeEventDayLookup(events);
     }, [events]);
 
-    const context = useMemo(() => {
-        const mappedWeeks = weeks.map((week) => {
+    const mappedWeeks = useMemo(() => {
+        return weeks.map((week) => {
             return week.map((day) => {
                 const {isInMonth, isWeekend, timestamp} = day;
 
@@ -368,13 +368,15 @@ export default function CalendarGrid(props: ICalendarGridProps) {
                 };
             });
         });
+    }, [weeks]);
 
+    const context = useMemo(() => {
         return {
             dayLookup,
             timezone,
             weeks: mappedWeeks,
         } satisfies ICalendarGridContext;
-    }, [dayLookup, timezone, weeks]);
+    }, [dayLookup, mappedWeeks, timezone]);
 
     return (
         <CONTEXT_CALENDAR_GRID.Provider value={context}>

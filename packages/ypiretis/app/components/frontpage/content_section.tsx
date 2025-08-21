@@ -66,8 +66,8 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
     return (
         <Box
             display="flex"
-            alignItems="center"
             flexWrap="wrap"
+            alignItems="center"
             color="fg.muted"
             fontSize={{base: "lg", lgDown: "md"}}
         >

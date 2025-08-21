@@ -141,16 +141,15 @@ function Byline() {
                     {email}
                 </Links.MailToLink>
             </address>
-            &nbsp;
+
             <Span whiteSpace="pre">
-                • Published{" "}
+                &nbsp;• Published{" "}
                 <DatetimeText detail="long" timestamp={publishedAtTimestamp} />
             </Span>
             {updatedAtTimestamp ? (
                 <>
-                    &nbsp;
                     <Span whiteSpace="pre">
-                        • Updated{" "}
+                        &nbsp;• Updated{" "}
                         <DatetimeText
                             detail="long"
                             timestamp={updatedAtTimestamp}

@@ -43,6 +43,8 @@ const EVENTS_TABLE = sqliteTable(
 
         endAt: temporalInstant("end_at"),
 
+        location: text("location", {length: 128}),
+
         createdAt: temporalInstant("created_at")
             .notNull()
             .default(DEFAULT_TEMPORAL_INSTANT),
@@ -59,6 +61,7 @@ const EVENTS_TABLE = sqliteTable(
         return [
             index("events_created_at_idx").on(table.createdAt),
             index("events_end_at_idx").on(table.endAt),
+            index("events_location_idx").on(table.location),
             index("events_published_at_idx").on(table.publishedAt),
             index("events_start_at_idx").on(table.startAt),
             index("events_state_idx").on(table.state),

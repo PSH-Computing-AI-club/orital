@@ -106,21 +106,17 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         },
 
         where: and(
-            gte("publishedAt", minimumInstant),
-            lt("publishedAt", maximumInstant),
+            gte("startAt", minimumInstant),
+            lt("startAt", maximumInstant),
         ),
     });
 
     const mappedEvents = await Promise.all(
         events.map(async (event) => {
-            const {
-                content,
-                eventID,
-                slug,
-                startAt,
-                title,
-                endAt = startAt,
-            } = event;
+            const {content, eventID, slug, startAt, title} = event;
+
+            const endAt =
+                event.endAt instanceof Temporal.Instant ? event.endAt : startAt;
 
             const zonedPublishedAt =
                 startAt!.toZonedDateTimeISO(SERVER_TIMEZONE);

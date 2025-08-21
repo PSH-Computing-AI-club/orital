@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1754526369492,
-      "tag": "0000_peaceful_leopardon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1755588681525,
-      "tag": "0001_ambiguous_adam_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1755713864712,
-      "tag": "0002_harsh_gargoyle",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1755789390325,
-      "tag": "0003_robust_molten_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1755790162160,
-      "tag": "0004_violet_killraven",
+      "when": 1755815949986,
+      "tag": "0000_swift_triton",
       "breakpoints": true
     }
   ]

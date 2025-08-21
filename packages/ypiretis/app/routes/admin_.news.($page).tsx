@@ -265,7 +265,14 @@ export default function AdminNews(props: Route.ComponentProps) {
                                         <Code>{articleID}</Code>
                                     </Table.Cell>
 
-                                    <Table.Cell>{title}</Table.Cell>
+                                    <Table.Cell
+                                        maxInlineSize="24ch"
+                                        minInlineSize="24ch"
+                                        overflow="hidden"
+                                        textOverflow="ellipsis"
+                                    >
+                                        {title}
+                                    </Table.Cell>
 
                                     <Table.Cell>
                                         {lastName}, {firstName} (

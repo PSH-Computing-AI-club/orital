@@ -287,7 +287,14 @@ export default function AdminNews(props: Route.ComponentProps) {
                                         <Code>{eventID}</Code>
                                     </Table.Cell>
 
-                                    <Table.Cell>{title}</Table.Cell>
+                                    <Table.Cell
+                                        maxInlineSize="24ch"
+                                        minInlineSize="24ch"
+                                        overflow="hidden"
+                                        textOverflow="ellipsis"
+                                    >
+                                        {title}
+                                    </Table.Cell>
 
                                     <Table.Cell>
                                         {lastName}, {firstName} (
@@ -322,7 +329,12 @@ export default function AdminNews(props: Route.ComponentProps) {
                                         )}
                                     </Table.Cell>
 
-                                    <Table.Cell>
+                                    <Table.Cell
+                                        maxInlineSize="24ch"
+                                        minInlineSize="24ch"
+                                        overflow="hidden"
+                                        textOverflow="ellipsis"
+                                    >
                                         {<>{location ?? "-"}</>}
                                     </Table.Cell>
 

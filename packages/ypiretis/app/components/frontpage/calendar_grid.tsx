@@ -115,9 +115,9 @@ export interface ICalendarGridEvent {
 
     readonly endAtTimestamp: IDateLike;
 
-    readonly title: string;
-
     readonly startAtTimestamp: IDateLike;
+
+    readonly title: string;
 
     readonly template: ICalenderGridEventTemplate;
 }

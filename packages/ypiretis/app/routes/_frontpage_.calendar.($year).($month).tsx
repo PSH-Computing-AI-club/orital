@@ -165,13 +165,36 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const {epochMilliseconds: timestamp} = firstDay;
 
+    const currentMonth = Temporal.PlainYearMonth.from({
+        year,
+        month,
+    });
+
+    const {month: nextMonth, year: nextYear} = currentMonth.add({
+        months: 1,
+    });
+
+    const {month: previousMonth, year: previousYear} = currentMonth.subtract({
+        months: 1,
+    });
+
     return {
         calendar: {
-            month,
             timestamp,
             timezone,
             weeks: mappedWeeks,
-            year,
+        },
+
+        navigation: {
+            next: {
+                month: nextMonth,
+                year: nextYear,
+            },
+
+            previous: {
+                month: previousMonth,
+                year: previousYear,
+            },
         },
 
         events: mappedEvents,
@@ -244,29 +267,15 @@ function EventCalendar() {
 
 function MonthNavigationGroup() {
     const loaderData = useLoaderData<typeof loader>();
-    const {calendar} = loaderData;
+    const {navigation} = loaderData;
 
-    const {month, year, timezone} = calendar;
+    const {next, previous} = navigation;
+
+    const {month: nextMonth, year: nextYear} = next;
+    const {month: previousMonth, year: previousYear} = previous;
 
     const location = useLocation();
     const currentURL = buildAppURL(location);
-
-    const calendarZonedDateTime = Temporal.ZonedDateTime.from({
-        year,
-        month,
-
-        day: 1,
-        timeZone: timezone,
-    });
-
-    const {month: nextMonth, year: nextYear} = calendarZonedDateTime.add({
-        months: 1,
-    });
-
-    const {month: previousMonth, year: previousYear} =
-        calendarZonedDateTime.subtract({
-            months: 1,
-        });
 
     const nextMonthURL = new URL(currentURL);
     const previousMonthURL = new URL(currentURL);

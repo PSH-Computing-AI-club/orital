@@ -37,9 +37,9 @@ import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 
 import type {Route} from "./+types/_frontpage_._index";
 
-const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
+const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 160;
 
-const EVENT_DESCRIPTION_CHARACTER_LIMIT = 192;
+const EVENT_DESCRIPTION_CHARACTER_LIMIT = 160;
 
 const ARTICLES_TO_DISPLAY = 3;
 

@@ -89,6 +89,8 @@ function FeedSectionGrid(props: IFeedSectionGridProps) {
             }}
             gap="4"
             marginBlockStart="4"
+            maxBlockSize="3xs"
+            minBlockSize="3xs"
         >
             {children}
         </Grid>

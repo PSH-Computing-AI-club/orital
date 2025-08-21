@@ -124,7 +124,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 event.endAt instanceof Temporal.Instant ? event.endAt : startAt;
 
             const zonedPublishedAt =
-                startAt!.toZonedDateTimeISO(SERVER_TIMEZONE);
+                startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(
@@ -134,8 +134,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 ),
             );
 
-            const {epochMilliseconds: endAtTimestamp} = endAt!;
-            const {epochMilliseconds: startAtTimestamp} = startAt!;
+            const {epochMilliseconds: endAtTimestamp} = endAt;
+            const {epochMilliseconds: startAtTimestamp} = startAt;
 
             const {year, month, day} = zonedPublishedAt;
 

@@ -30,6 +30,15 @@ export interface IUseFormatted {
     readonly textualTimestamp: string;
 }
 
+export interface IUseFormattedRange
+    extends Omit<IUseFormatted, "isoTimestamp"> {
+    readonly endAtISOTimestamp: string;
+
+    readonly startAtISOTimestamp: string;
+
+    readonly textualTimestamp: string;
+}
+
 export function formatCalendarDay(
     timestamp: IDateLike,
     options: IFormatOptions = {},
@@ -149,6 +158,49 @@ export function formatTimestamp(
     return formatter.format(timestamp);
 }
 
+export function formatTimestampRange(
+    startAtTimestamp: IDateLike,
+    endtAtTimestamp: IDateLike,
+    options: IFormatTimestampOptions = {},
+): string {
+    const {
+        detail = FORMAT_DETAIL.long,
+        locale = NAVIGATOR_LANGUAGE,
+        timezone = NAVIGATOR_TIMEZONE,
+    } = options;
+
+    let formatter: Intl.DateTimeFormat;
+
+    switch (detail) {
+        case FORMAT_DETAIL.long:
+            formatter = new Intl.DateTimeFormat(locale, {
+                timeZone: timezone,
+                timeZoneName: "short",
+
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+            });
+
+            break;
+
+        case FORMAT_DETAIL.short:
+            formatter = new Intl.DateTimeFormat(locale, {
+                timeZone: timezone,
+
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+            });
+
+            break;
+    }
+
+    return formatter.formatRange(startAtTimestamp, endtAtTimestamp);
+}
+
 export function useFormattedCalendarDay(
     timestamp: IDateLike,
     options: IFormatOptions = {},
@@ -259,6 +311,39 @@ export function useFormattedTimestamp(
 
     return {
         isoTimestamp,
+        textualTimestamp,
+    };
+}
+
+export function useFormattedTimestampRange(
+    startAtTimestamp: IDateLike,
+    endAtTimestamp: IDateLike,
+    options: IFormatTimestampOptions = {},
+): IUseFormattedRange {
+    const {detail, locale, timezone = useTimezone()} = options;
+
+    const startAtDate = useDate(startAtTimestamp);
+    const endAtDate = useDate(endAtTimestamp);
+
+    const endAtISOTimestamp = useMemo(() => {
+        return endAtDate.toISOString();
+    }, [endAtDate]);
+
+    const startAtISOTimestamp = useMemo(() => {
+        return startAtDate.toISOString();
+    }, [startAtDate]);
+
+    const textualTimestamp = useMemo(() => {
+        return formatTimestampRange(startAtDate, endAtDate, {
+            detail,
+            locale,
+            timezone,
+        });
+    }, [detail, endAtDate, locale, startAtDate, timezone]);
+
+    return {
+        endAtISOTimestamp,
+        startAtISOTimestamp,
         textualTimestamp,
     };
 }

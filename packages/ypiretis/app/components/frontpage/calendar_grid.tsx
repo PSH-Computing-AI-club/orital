@@ -26,6 +26,7 @@ import Links from "~/components/common/links";
 import type {IDateLike} from "~/utils/datetime";
 import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
 import {formatCalendarWeekdays, useFormattedScheduleTime} from "~/utils/locale";
+import DatetimeRangeText from "../common/datetime_range_text";
 
 const CONTEXT_CALENDAR_GRID = createContext<ICalendarGridContext | null>(null);
 
@@ -164,12 +165,7 @@ function CalendarGridItemScheduleHoverCard(
     props: ICalendarGridItemScheduleHoverCardProps,
 ) {
     const {children, event, ...rest} = props;
-    const {
-        description,
-        endAtTimestamp: endAt,
-        title,
-        startAtTimestamp: startAt,
-    } = event;
+    const {description, endAtTimestamp, title, startAtTimestamp} = event;
 
     return (
         <HoverCard.Root {...rest}>
@@ -179,8 +175,11 @@ function CalendarGridItemScheduleHoverCard(
                 <HoverCard.Positioner>
                     <HoverCard.Content>
                         <Strong>{title}</Strong>
-                        <Span color="fg.muted" fontSize="2xs">
-                            {startAt}
+                        <Span color="fg.muted" fontSize="2xs" asChild>
+                            <DatetimeRangeText
+                                startAtTimestamp={startAtTimestamp}
+                                endAtTimestamp={endAtTimestamp}
+                            />
                         </Span>
 
                         <Text marginBlockStart="2">{description}</Text>

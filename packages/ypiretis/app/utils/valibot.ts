@@ -17,23 +17,6 @@ export const EXPRESSION_PIN = /^[0-9A-NP-Z]*$/u;
 
 export const EXPRESSION_TITLE = /^[0-9A-Za-z !-/:-@[-`{-~]*$/u;
 
-export const list = v.pipe(
-    v.string(),
-    v.nonEmpty(),
-    v.transform((value) =>
-        value.split(",").map((substring) => substring.trim()),
-    ),
-);
-
-export const number = v.pipe(
-    v.string(),
-    v.nonEmpty(),
-    v.regex(EXPRESSION_NUMERIC, "Invalid numeric format."),
-    v.transform((value) => {
-        return Number(value);
-    }),
-);
-
 export const alphabetic = v.pipe(
     v.string(),
     v.nonEmpty(),
@@ -54,7 +37,27 @@ export const identifier = v.pipe(
 
 export const email = v.pipe(v.string(), v.nonEmpty(), v.rfcEmail());
 
-export const identifierList = v.pipe(list, v.array(identifier));
+export const list = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.transform((value) =>
+        value.split(",").map((substring) => substring.trim()),
+    ),
+);
+
+export const number = v.pipe(
+    v.string(),
+    v.nonEmpty(),
+    v.regex(EXPRESSION_NUMERIC, "Invalid numeric format."),
+    v.transform((value) => {
+        return Number(value);
+    }),
+);
+
+export const nullv = v.pipe(
+    v.literal("null"),
+    v.transform((_value) => null),
+);
 
 export const pin = v.pipe(
     v.string(),
@@ -126,3 +129,5 @@ export const urlComponents = v.pipe(
         };
     }),
 );
+
+export const identifierList = v.pipe(list, v.array(identifier));

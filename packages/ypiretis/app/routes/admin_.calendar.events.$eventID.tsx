@@ -90,7 +90,7 @@ import {toLocalISOString} from "~/utils/datetime";
 import {buildFormData} from "~/utils/forms";
 import {truncateTextMiddle} from "~/utils/string";
 import {buildAppURL} from "~/utils/url";
-import {number, title} from "~/utils/valibot";
+import {nullv, number, title} from "~/utils/valibot";
 
 import type {IActionFormData as IUploadActionFormData} from "./admin_.calendar_.events_.$eventID_.actions_.upload";
 
@@ -121,7 +121,7 @@ const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 const END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("endAt.update"),
 
-    endAtTimestamp: v.union([number, v.null()]),
+    endAtTimestamp: v.union([number, nullv]),
 });
 
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -137,7 +137,7 @@ const SELF_DELETE_ACTION_FORM_DATA_SCHEMA = v.object({
 const START_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("startAt.update"),
 
-    startAtTimestamp: v.union([number, v.null()]),
+    startAtTimestamp: v.union([number, nullv]),
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({

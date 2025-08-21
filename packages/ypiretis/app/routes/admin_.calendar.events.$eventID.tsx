@@ -914,7 +914,9 @@ function SettingsCardSchedulingView() {
     const endAtInputRef = useRef<HTMLInputElement | null>(null);
     const startAtInputRef = useRef<HTMLInputElement | null>(null);
 
+    const endAtClearFetcher = useFetcher();
     const endAtUpdateFetcher = useFetcher();
+    const startAtClearFetcher = useFetcher();
     const startAtUpdateFetcher = useFetcher();
 
     const {displayToast} = useToastsContext();
@@ -939,16 +941,30 @@ function SettingsCardSchedulingView() {
     const isLiveLocalStartAtDirty =
         liveLocalStartAt?.getTime() !== localStartAt?.getTime();
 
+    const isEndAtClearFetcherIdle = endAtClearFetcher.state === "idle";
     const isEndAtUpdateFetcherIdle = endAtUpdateFetcher.state === "idle";
+    const isStartAtClearFetcherIdle = startAtClearFetcher.state === "idle";
     const isStartAtUpdateFetcherIdle = startAtUpdateFetcher.state === "idle";
 
     const isEndAtFieldDisabled = !isEndAtUpdateFetcherIdle;
     const isStartAtFieldDisabled = !isStartAtUpdateFetcherIdle;
 
+    const isEndAtClearDisabled =
+        !isEndAtClearFetcherIdle ||
+        !isEndAtUpdateFetcherIdle ||
+        (endAtTimestamp === null && liveLocalEndAt === null);
     const isEndAtUpdateDisabled =
-        !isEndAtUpdateFetcherIdle || !isLiveLocalEndAtDirty;
+        !isEndAtClearFetcherIdle ||
+        !isEndAtUpdateFetcherIdle ||
+        !isLiveLocalEndAtDirty;
+    const isStartAtClearDisabled =
+        !isStartAtClearFetcherIdle ||
+        !isStartAtUpdateFetcherIdle ||
+        (startAtTimestamp === null && liveLocalStartAt === null);
     const isStartAtUpdateDisabled =
-        !isStartAtUpdateFetcherIdle || !isLiveLocalStartAtDirty;
+        !isStartAtClearFetcherIdle ||
+        !isStartAtUpdateFetcherIdle ||
+        !isLiveLocalStartAtDirty;
 
     const onEndAtChange = useCallback(
         ((event) => {
@@ -970,6 +986,82 @@ function SettingsCardSchedulingView() {
         }) satisfies FormEventHandler<HTMLInputElement>,
 
         [setLiveLocalStartAt],
+    );
+
+    const onClearEndAt = useCallback(
+        (async (_event) => {
+            const {current: inputElement} = endAtInputRef;
+
+            if (inputElement) {
+                inputElement.value = "";
+            }
+
+            if (endAtTimestamp !== null) {
+                await endAtUpdateFetcher.submit(
+                    {
+                        action: "endAt.update",
+                        endAtTimestamp: null,
+                    } satisfies IActionFormDataSchema,
+
+                    {
+                        method: "POST",
+                    },
+                );
+            }
+
+            setLiveLocalEndAt(null);
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Cleared the event's end timestamp`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [
+            displayToast,
+            endAtInputRef,
+            endAtTimestamp,
+            endAtUpdateFetcher,
+            setLiveLocalEndAt,
+        ],
+    );
+
+    const onClearStartAt = useCallback(
+        (async (_event) => {
+            const {current: inputElement} = startAtInputRef;
+
+            if (inputElement) {
+                inputElement.value = "";
+            }
+
+            if (startAtTimestamp !== null) {
+                await startAtUpdateFetcher.submit(
+                    {
+                        action: "startAt.update",
+                        startAtTimestamp: null,
+                    } satisfies IActionFormDataSchema,
+
+                    {
+                        method: "POST",
+                    },
+                );
+            }
+
+            setLiveLocalStartAt(null);
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Cleared the event's start timestamp`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [
+            displayToast,
+            setLiveLocalStartAt,
+            startAtInputRef,
+            startAtTimestamp,
+            startAtUpdateFetcher,
+        ],
     );
 
     const onUpdateEndAt = useCallback(
@@ -1067,6 +1159,14 @@ function SettingsCardSchedulingView() {
                         onChange={onStartAtChange}
                     />
 
+                    <IconButton
+                        colorPalette="red"
+                        disabled={isStartAtClearDisabled}
+                        onClick={onClearStartAt}
+                    >
+                        <TrashIcon />
+                    </IconButton>
+
                     <Button
                         disabled={isStartAtUpdateDisabled}
                         colorPalette="green"
@@ -1089,6 +1189,14 @@ function SettingsCardSchedulingView() {
                         flexGrow="1"
                         onChange={onEndAtChange}
                     />
+
+                    <IconButton
+                        colorPalette="red"
+                        disabled={isEndAtClearDisabled}
+                        onClick={onClearEndAt}
+                    >
+                        <TrashIcon />
+                    </IconButton>
 
                     <Button
                         disabled={isEndAtUpdateDisabled}

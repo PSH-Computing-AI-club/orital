@@ -1,4 +1,4 @@
-import {Container, Span, VisuallyHidden} from "@chakra-ui/react";
+import {Container, Span, VisuallyHidden, VStack} from "@chakra-ui/react";
 
 import {Suspense, lazy} from "react";
 
@@ -22,6 +22,9 @@ import PeopleCard from "~/components/frontpage/people_card";
 import PeopleSection from "~/components/frontpage/people_section";
 
 import ArrowRightIcon from "~/components/icons/arrow_right_icon";
+import CalendarTextIcon from "~/components/icons/calendar_text_icon";
+import DatetimeRangeText from "~/components/common/datetime_range_text";
+import PinIcon from "~/components/icons/pin_icon";
 
 import {
     ACCOUNT_PROVIDER_DOMAIN,
@@ -33,6 +36,8 @@ import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 import type {Route} from "./+types/_frontpage_._index";
 
 const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 192;
+
+const EVENT_DESCRIPTION_CHARACTER_LIMIT = 192;
 
 const ARTICLES_TO_DISPLAY = 3;
 
@@ -109,15 +114,52 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
         }),
     );
 
+    const mappedEvents = await Promise.all(
+        events.map(async (event) => {
+            const {content, endAt, eventID, location, slug, startAt, title} =
+                event;
+
+            const zonedPublishedAt =
+                startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+
+            const plaintextContent = await renderMarkdownForPlaintext(content);
+            const description = normalizeSpacing(
+                truncateTextRight(
+                    plaintextContent,
+                    EVENT_DESCRIPTION_CHARACTER_LIMIT,
+                ),
+            );
+
+            const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+            const {epochMilliseconds: startAtTimestamp} = startAt;
+
+            const {year, month, day} = zonedPublishedAt;
+
+            return {
+                day,
+                description,
+                endAtTimestamp,
+                eventID,
+                location,
+                month,
+                startAtTimestamp,
+                slug,
+                title,
+                year,
+            };
+        }),
+    );
+
     return {
         articles: mappedArticles,
+        events: mappedEvents,
         people: PEOPLE_TO_DISPLAY,
     };
 }
 
 export default function FrontpageIndex(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {articles, people} = loaderData;
+    const {articles, events, people} = loaderData;
 
     return (
         <>
@@ -225,67 +267,81 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                         </FeedSection.Description>
 
                         <FeedSection.Grid>
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>
-                                            AI Injection Competition
-                                        </FeedCard.Title>
+                            {events.map((event) => {
+                                const {
+                                    day,
+                                    description,
+                                    endAtTimestamp,
+                                    eventID,
+                                    location,
+                                    month,
+                                    title,
+                                    slug,
+                                    startAtTimestamp,
+                                    year,
+                                } = event;
 
-                                        <FeedCard.Description>
-                                            November 20th, 2025
-                                        </FeedCard.Description>
+                                return (
+                                    <FeedSection.GridItem key={eventID}>
+                                        <FeedCard.Root>
+                                            <FeedCard.Body>
+                                                <FeedCard.Title
+                                                    to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
+                                                >
+                                                    {title}
+                                                </FeedCard.Title>
 
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
+                                                <FeedCard.Description>
+                                                    <VStack
+                                                        gap="1"
+                                                        alignItems="start"
+                                                    >
+                                                        <Span display="inline-flex">
+                                                            <CalendarTextIcon />
+                                                            &nbsp;
+                                                            {endAtTimestamp ? (
+                                                                <DatetimeRangeText
+                                                                    startAtTimestamp={
+                                                                        startAtTimestamp
+                                                                    }
+                                                                    endAtTimestamp={
+                                                                        endAtTimestamp
+                                                                    }
+                                                                    detail="long"
+                                                                />
+                                                            ) : (
+                                                                <DatetimeText
+                                                                    timestamp={
+                                                                        startAtTimestamp
+                                                                    }
+                                                                    detail="long"
+                                                                />
+                                                            )}
+                                                        </Span>
 
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>Event 2</FeedCard.Title>
+                                                        {location ? (
+                                                            <Span
+                                                                display="inline-flex"
+                                                                alignItems="center"
+                                                            >
+                                                                <PinIcon />
+                                                                &nbsp;
+                                                                {location}
+                                                            </Span>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </VStack>
+                                                </FeedCard.Description>
 
-                                        <FeedCard.Description>
-                                            November ??th, 2025
-                                        </FeedCard.Description>
-
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
-
-                            <FeedSection.GridItem>
-                                <FeedCard.Root>
-                                    <FeedCard.Body>
-                                        <FeedCard.Title>Event 3</FeedCard.Title>
-
-                                        <FeedCard.Description>
-                                            November ??th, 2025
-                                        </FeedCard.Description>
-
-                                        <FeedCard.Text>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit, sed do
-                                            eiusmod tempor incididunt ut labore
-                                            et dolore magnam aliquam quaerat
-                                            voluptatem.
-                                        </FeedCard.Text>
-                                    </FeedCard.Body>
-                                </FeedCard.Root>
-                            </FeedSection.GridItem>
+                                                <FeedCard.Text>
+                                                    {description}
+                                                </FeedCard.Text>
+                                            </FeedCard.Body>
+                                        </FeedCard.Root>
+                                    </FeedSection.GridItem>
+                                );
+                            })}
 
                             <FeedSection.GridItem variant="action">
                                 <ActionCard.Root>

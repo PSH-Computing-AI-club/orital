@@ -1,6 +1,6 @@
 import {Avatar, Span} from "@chakra-ui/react";
 
-import {data, redirect} from "react-router";
+import {data, redirect, useLoaderData} from "react-router";
 
 import * as v from "valibot";
 
@@ -113,18 +113,60 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-export default function FrontpageNewsArticle(props: Route.ComponentProps) {
-    const {loaderData} = props;
+function Byline() {
+    const loaderData = useLoaderData<typeof loader>();
     const {article, poster} = loaderData;
 
-    const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
-        article;
+    const {publishedAtTimestamp, updatedAtTimestamp} = article;
 
     const {accountID, firstName, lastName} = poster;
 
     const avatarSrc = `/images/avatars.${accountID}.webp`;
     const fullName = `${firstName} ${lastName}`;
     const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
+
+    return (
+        <>
+            <Avatar.Root blockSize="1.75em" inlineSize="1.75em">
+                <Avatar.Fallback name={fullName} />
+
+                <Avatar.Image
+                    src={avatarSrc}
+                    alt={`Avatar that represents ${fullName}.`}
+                />
+            </Avatar.Root>
+            <address>
+                <Span whiteSpace="pre"> {fullName} </Span>
+                <Links.MailToLink variant="prose" to={email} fontSize="sm">
+                    {email}
+                </Links.MailToLink>
+            </address>
+            &nbsp;
+            <Span whiteSpace="pre">
+                • Published{" "}
+                <DatetimeText detail="long" timestamp={publishedAtTimestamp} />
+            </Span>
+            {updatedAtTimestamp ? (
+                <>
+                    &nbsp;
+                    <Span whiteSpace="pre">
+                        • Updated{" "}
+                        <DatetimeText
+                            detail="long"
+                            timestamp={updatedAtTimestamp}
+                        />
+                    </Span>
+                </>
+            ) : undefined}
+        </>
+    );
+}
+
+export default function FrontpageNewsArticle(props: Route.ComponentProps) {
+    const {loaderData} = props;
+    const {article} = loaderData;
+
+    const {renderedContent, title} = article;
 
     return (
         <>
@@ -142,44 +184,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                         <ContentSection.Title>{title}</ContentSection.Title>
 
                         <ContentSection.Description>
-                            <Avatar.Root blockSize="1.75em" inlineSize="1.75em">
-                                <Avatar.Fallback name={fullName} />
-
-                                <Avatar.Image
-                                    src={avatarSrc}
-                                    alt={`Avatar that represents ${fullName}.`}
-                                />
-                            </Avatar.Root>
-                            <address>
-                                <Span whiteSpace="pre"> {fullName} </Span>
-                                <Links.MailToLink
-                                    variant="prose"
-                                    to={email}
-                                    fontSize="sm"
-                                >
-                                    {email}
-                                </Links.MailToLink>
-                            </address>
-                            &nbsp;
-                            <Span whiteSpace="pre">
-                                • Published{" "}
-                                <DatetimeText
-                                    detail="long"
-                                    timestamp={publishedAtTimestamp}
-                                />
-                            </Span>
-                            {updatedAtTimestamp ? (
-                                <>
-                                    &nbsp;
-                                    <Span whiteSpace="pre">
-                                        • Updated{" "}
-                                        <DatetimeText
-                                            detail="long"
-                                            timestamp={updatedAtTimestamp}
-                                        />
-                                    </Span>
-                                </>
-                            ) : undefined}
+                            <Byline />
                         </ContentSection.Description>
                     </ContentSection.Header>
 

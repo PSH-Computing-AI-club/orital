@@ -276,17 +276,26 @@ export function useFormattedCalendarTimestamp(
 export function useFormattedScheduleTime(
     timestamp: IDateLike,
     options: IFormatOptions = {},
-): string {
+): IUseFormatted {
     const {locale, timezone = useTimezone()} = options;
 
     const date = useDate(timestamp);
 
-    return useMemo(() => {
+    const isoTimestamp = useMemo(() => {
+        return date.toISOString();
+    }, [date]);
+
+    const textualTimestamp = useMemo(() => {
         return formatScheduleTime(date, {
             locale,
             timezone,
         });
     }, [date, locale, timezone]);
+
+    return {
+        isoTimestamp,
+        textualTimestamp,
+    };
 }
 
 export function useFormattedTimestamp(

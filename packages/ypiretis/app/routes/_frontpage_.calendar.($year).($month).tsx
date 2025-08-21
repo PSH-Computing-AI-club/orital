@@ -258,10 +258,10 @@ function EventCalendar() {
                 description,
                 template,
                 title,
+                endAtTimestamp,
+                startAtTimestamp,
 
-                endAt: endAtTimestamp,
                 id: eventID,
-                startAt: startAtTimestamp,
             } satisfies ICalendarGridEvent;
         });
     }, [events]);

@@ -1,4 +1,4 @@
-import {Group, IconButton, Spacer} from "@chakra-ui/react";
+import {Group, IconButton, Spacer, Span, VStack} from "@chakra-ui/react";
 
 import {Temporal} from "@js-temporal/polyfill";
 
@@ -34,8 +34,10 @@ import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
 
 import CalendarRemoveIcon from "~/components/icons/calendar_remove_icon";
+import CalendarTextIcon from "~/components/icons/calendar_text_icon";
 import ChevronRightIcon from "~/components/icons/chevron_right_icon";
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
+import PinIcon from "~/components/icons/pin_icon";
 
 import {validateParams, validateSearchParams} from "~/guards/validation";
 
@@ -257,6 +259,7 @@ function EventAgendaFeed() {
                     description,
                     endAtTimestamp,
                     eventID,
+                    location,
                     month,
                     title,
                     slug,
@@ -275,20 +278,46 @@ function EventAgendaFeed() {
                                 </FeedCard.Title>
 
                                 <FeedCard.Description>
-                                    {endAtTimestamp ? (
-                                        <DatetimeRangeText
-                                            timezone={timezone}
-                                            startAtTimestamp={startAtTimestamp}
-                                            endAtTimestamp={endAtTimestamp}
-                                            detail="long"
-                                        />
-                                    ) : (
-                                        <DatetimeText
-                                            timezone={timezone}
-                                            timestamp={startAtTimestamp}
-                                            detail="long"
-                                        />
-                                    )}
+                                    <VStack gap="1" alignItems="start">
+                                        <Span
+                                            display="inline-flex"
+                                            alignItems="center"
+                                        >
+                                            <CalendarTextIcon />
+                                            &nbsp;
+                                            {endAtTimestamp ? (
+                                                <DatetimeRangeText
+                                                    timezone={timezone}
+                                                    startAtTimestamp={
+                                                        startAtTimestamp
+                                                    }
+                                                    endAtTimestamp={
+                                                        endAtTimestamp
+                                                    }
+                                                    detail="long"
+                                                />
+                                            ) : (
+                                                <DatetimeText
+                                                    timezone={timezone}
+                                                    timestamp={startAtTimestamp}
+                                                    detail="long"
+                                                />
+                                            )}
+                                        </Span>
+
+                                        {location ? (
+                                            <Span
+                                                display="inline-flex"
+                                                alignItems="center"
+                                            >
+                                                <PinIcon />
+                                                &nbsp;
+                                                {location}
+                                            </Span>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </VStack>
                                 </FeedCard.Description>
 
                                 <FeedCard.Text>{description}</FeedCard.Text>

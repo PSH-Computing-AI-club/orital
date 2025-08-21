@@ -65,8 +65,7 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
 
     return (
         <HStack
-            gapX="1"
-            gapY="0"
+            gap="1"
             flexWrap="wrap"
             alignItems="center"
             color="fg.muted"

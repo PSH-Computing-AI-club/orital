@@ -169,7 +169,7 @@ function CalendarGridItemScheduleHoverCard(
 
     return (
         <HoverCard.Root {...rest}>
-            <HoverCard.Trigger>{children}</HoverCard.Trigger>
+            <HoverCard.Trigger asChild>{children}</HoverCard.Trigger>
 
             <Portal>
                 <HoverCard.Positioner>

@@ -106,6 +106,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 createdAt,
                 endAt,
                 eventID,
+                location,
                 poster,
                 publishedAt,
                 slug,
@@ -128,6 +129,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 createdAtTimestamp,
                 endAtTimestamp,
                 eventID,
+                location,
 
                 poster: {
                     accountID,
@@ -230,6 +232,10 @@ export default function AdminNews(props: Route.ComponentProps) {
                             </Table.ColumnHeader>
 
                             <Table.ColumnHeader fontWeight="bold">
+                                Location
+                            </Table.ColumnHeader>
+
+                            <Table.ColumnHeader fontWeight="bold">
                                 Published Date
                             </Table.ColumnHeader>
 
@@ -249,6 +255,7 @@ export default function AdminNews(props: Route.ComponentProps) {
                                 createdAtTimestamp,
                                 endAtTimestamp,
                                 eventID,
+                                location,
                                 poster,
                                 publishedAtTimestamp,
                                 startAtTimestamp,
@@ -313,6 +320,10 @@ export default function AdminNews(props: Route.ComponentProps) {
                                         ) : (
                                             "-"
                                         )}
+                                    </Table.Cell>
+
+                                    <Table.Cell>
+                                        {<>{location ?? "-"}</>}
                                     </Table.Cell>
 
                                     <Table.Cell>

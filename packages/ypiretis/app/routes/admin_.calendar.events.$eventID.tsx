@@ -124,6 +124,12 @@ const END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     endAtTimestamp: v.union([number, nullv]),
 });
 
+const LOCATION_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
+    action: v.literal("location.update"),
+
+    location: v.union([nullv, v.pipe(v.string(), v.maxLength(128))]),
+});
+
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("publishedAt.update"),
 
@@ -159,6 +165,7 @@ const ACTION_FORM_DATA_SCHEMA = v.variant("action", [
     ATTACHMENT_DELETE_ACTION_FORM_DATA_SCHEMA,
     CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
+    LOCATION_UPDATE_ACTION_FORM_DATA_SCHEMA,
     PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
     SELF_DELETE_ACTION_FORM_DATA_SCHEMA,
     START_AT_UPDATE_ACTION_FORM_DATA_SCHEMA,
@@ -251,6 +258,31 @@ export async function action(actionArgs: Route.ActionArgs) {
 
                 values: {
                     endAt,
+                },
+            });
+
+            if (event === null) {
+                throw data("Not Found", {
+                    status: 404,
+                });
+            }
+
+            break;
+        }
+
+        case "location.update": {
+            const {location} = actionFormData;
+
+            console.log({
+                location,
+                typeof: typeof location,
+            });
+
+            const event = await updateOne({
+                where: eq("eventID", eventID),
+
+                values: {
+                    location,
                 },
             });
 
@@ -397,6 +429,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         createdAt,
         endAt,
         id: internalID,
+        location,
         poster,
         publishedAt,
         startAt,
@@ -434,6 +467,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             createdAtTimestamp,
             endAtTimestamp,
             eventID,
+            location,
             publishedAtTimestamp,
             startAtTimestamp,
             state,
@@ -909,13 +943,16 @@ function SettingsCardPublishView() {
 function SettingsCardScheduleView() {
     const {event} = useLoaderData<typeof loader>();
 
-    const {endAtTimestamp, startAtTimestamp} = event;
+    const {endAtTimestamp, location, startAtTimestamp} = event;
 
     const endAtInputRef = useRef<HTMLInputElement | null>(null);
+    const locationInputRef = useRef<HTMLInputElement | null>(null);
     const startAtInputRef = useRef<HTMLInputElement | null>(null);
 
     const endAtClearFetcher = useFetcher();
     const endAtUpdateFetcher = useFetcher();
+    const locationClearFetcher = useFetcher();
+    const locationUpdateFetcher = useFetcher();
     const startAtClearFetcher = useFetcher();
     const startAtUpdateFetcher = useFetcher();
 
@@ -935,18 +972,23 @@ function SettingsCardScheduleView() {
     const [liveLocalStartAt, setLiveLocalStartAt] = useState<Date | null>(
         localStartAt,
     );
+    const [liveLocation, setLiveLocation] = useState<string | null>(location);
 
     const isLiveLocalEndAtDirty =
         liveLocalEndAt?.getTime() !== localEndAt?.getTime();
+    const isLiveLocationDirty = liveLocation !== location;
     const isLiveLocalStartAtDirty =
         liveLocalStartAt?.getTime() !== localStartAt?.getTime();
 
     const isEndAtClearFetcherIdle = endAtClearFetcher.state === "idle";
     const isEndAtUpdateFetcherIdle = endAtUpdateFetcher.state === "idle";
+    const isLocationClearFetcherIdle = locationClearFetcher.state === "idle";
+    const isLocationUpdateFetcherIdle = locationUpdateFetcher.state === "idle";
     const isStartAtClearFetcherIdle = startAtClearFetcher.state === "idle";
     const isStartAtUpdateFetcherIdle = startAtUpdateFetcher.state === "idle";
 
     const isEndAtFieldDisabled = !isEndAtUpdateFetcherIdle;
+    const isLocationFieldDisabled = !isLocationUpdateFetcherIdle;
     const isStartAtFieldDisabled = !isStartAtUpdateFetcherIdle;
 
     const isEndAtClearDisabled =
@@ -957,6 +999,14 @@ function SettingsCardScheduleView() {
         !isEndAtClearFetcherIdle ||
         !isEndAtUpdateFetcherIdle ||
         !isLiveLocalEndAtDirty;
+    const isLocationClearDisabled =
+        !isLocationClearFetcherIdle ||
+        !isLocationUpdateFetcherIdle ||
+        (location === null && liveLocation === null);
+    const isLocationUpdateDisabled =
+        !isLocationClearFetcherIdle ||
+        !isLocationUpdateFetcherIdle ||
+        !isLiveLocationDirty;
     const isStartAtClearDisabled =
         !isStartAtClearFetcherIdle ||
         !isStartAtUpdateFetcherIdle ||
@@ -975,6 +1025,17 @@ function SettingsCardScheduleView() {
         }) satisfies FormEventHandler<HTMLInputElement>,
 
         [setLiveLocalEndAt],
+    );
+
+    const onLocationChange = useCallback(
+        ((event) => {
+            const {target} = event;
+            const {value} = target as HTMLInputElement;
+
+            setLiveLocation(value);
+        }) satisfies FormEventHandler<HTMLInputElement>,
+
+        [setLiveLocation],
     );
 
     const onStartAtChange = useCallback(
@@ -1023,6 +1084,44 @@ function SettingsCardScheduleView() {
             endAtTimestamp,
             endAtUpdateFetcher,
             setLiveLocalEndAt,
+        ],
+    );
+
+    const onClearLocation = useCallback(
+        (async (_event) => {
+            const {current: inputElement} = locationInputRef;
+
+            if (inputElement) {
+                inputElement.value = "";
+            }
+
+            if (location !== null) {
+                await locationUpdateFetcher.submit(
+                    {
+                        action: "location.update",
+                        location: null,
+                    } satisfies IActionFormDataSchema,
+
+                    {
+                        method: "POST",
+                    },
+                );
+            }
+
+            setLiveLocation(null);
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Cleared the event's location`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [
+            displayToast,
+            location,
+            locationInputRef,
+            locationUpdateFetcher,
+            setLiveLocation,
         ],
     );
 
@@ -1088,6 +1187,32 @@ function SettingsCardScheduleView() {
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
         [displayToast, endAtUpdateFetcher, liveLocalEndAt],
+    );
+
+    const onUpdateLocation = useCallback(
+        (async (_event) => {
+            if (!liveLocation) {
+                return;
+            }
+
+            await locationUpdateFetcher.submit(
+                {
+                    action: "location.update",
+                    location: liveLocation,
+                } satisfies IActionFormDataSchema,
+
+                {
+                    method: "POST",
+                },
+            );
+
+            displayToast({
+                status: TOAST_STATUS.success,
+                title: `Updated the event's location`,
+            });
+        }) satisfies MouseEventHandler<HTMLButtonElement>,
+
+        [displayToast, liveLocation, locationUpdateFetcher],
     );
 
     const onUpdateStartAt = useCallback(
@@ -1204,6 +1329,36 @@ function SettingsCardScheduleView() {
                         onClick={onUpdateEndAt}
                     >
                         Update Timestamp
+                    </Button>
+                </Group>
+            </Field.Root>
+
+            <Field.Root>
+                <Field.Label>Location</Field.Label>
+
+                <Group alignSelf="stretch">
+                    <Input
+                        ref={locationInputRef}
+                        disabled={isLocationFieldDisabled}
+                        defaultValue={location ?? ""}
+                        flexGrow="1"
+                        onChange={onLocationChange}
+                    />
+
+                    <IconButton
+                        colorPalette="red"
+                        disabled={isLocationClearDisabled}
+                        onClick={onClearLocation}
+                    >
+                        <TrashIcon />
+                    </IconButton>
+
+                    <Button
+                        disabled={isLocationUpdateDisabled}
+                        colorPalette="green"
+                        onClick={onUpdateLocation}
+                    >
+                        Update Location
                     </Button>
                 </Group>
             </Field.Root>

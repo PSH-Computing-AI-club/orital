@@ -61,7 +61,12 @@ function EmptyStateRoot(props: IEmptyStateRootProps) {
     const {children, ...rest} = props;
 
     return (
-        <_EmptyState.Root size="lg" marginBlock="auto" {...rest}>
+        <_EmptyState.Root
+            size="lg"
+            justifyContent="center"
+            marginBlock="auto"
+            {...rest}
+        >
             {children}
         </_EmptyState.Root>
     );

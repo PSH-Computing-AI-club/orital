@@ -114,9 +114,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 }
 
 function Byline() {
-    const loaderData = useLoaderData<typeof loader>();
-    const {article, poster} = loaderData;
-
+    const {article, poster} = useLoaderData<typeof loader>();
     const {publishedAtTimestamp, updatedAtTimestamp} = article;
 
     const {accountID, firstName, lastName} = poster;

@@ -246,9 +246,7 @@ function EventAgendaEmptyState() {
 }
 
 function EventAgendaFeed() {
-    const loaderData = useLoaderData<typeof loader>();
-    const {calendar, events} = loaderData;
-
+    const {calendar, events} = useLoaderData<typeof loader>();
     const {timezone} = calendar;
 
     return (
@@ -296,16 +294,13 @@ function EventAgendaFeed() {
 }
 
 function EventAgenda() {
-    const loaderData = useLoaderData<typeof loader>();
-    const {events} = loaderData;
+    const {events} = useLoaderData<typeof loader>();
 
     return events.length > 0 ? <EventAgendaFeed /> : <EventAgendaEmptyState />;
 }
 
 function EventCalendar() {
-    const loaderData = useLoaderData<typeof loader>();
-    const {calendar, events} = loaderData;
-
+    const {calendar, events} = useLoaderData<typeof loader>();
     const {timezone, weeks} = calendar;
 
     const calenderGridEvents = useMemo(() => {
@@ -349,9 +344,7 @@ function EventCalendar() {
 }
 
 function MonthNavigationGroup() {
-    const loaderData = useLoaderData<typeof loader>();
-    const {navigation} = loaderData;
-
+    const {navigation} = useLoaderData<typeof loader>();
     const {next, previous} = navigation;
 
     const {month: nextMonth, year: nextYear} = next;
@@ -393,10 +386,9 @@ function MonthNavigationGroup() {
 
 export default function FrontpageCalendar(props: Route.ComponentProps) {
     const {loaderData} = props;
-
     const {calendar} = loaderData;
-    const {timestamp, timezone} = calendar;
 
+    const {timestamp, timezone} = calendar;
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
         timestamp,
         {timezone},

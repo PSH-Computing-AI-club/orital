@@ -121,7 +121,7 @@ const CONTENT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
 const END_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("endAt.update"),
 
-    endAtTimestamp: number,
+    endAtTimestamp: v.union([number, v.null()]),
 });
 
 const PUBLISHED_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -137,7 +137,7 @@ const SELF_DELETE_ACTION_FORM_DATA_SCHEMA = v.object({
 const START_AT_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
     action: v.literal("startAt.update"),
 
-    startAtTimestamp: number,
+    startAtTimestamp: v.union([number, v.null()]),
 });
 
 const STATE_UPDATE_ACTION_FORM_DATA_SCHEMA = v.object({
@@ -242,7 +242,9 @@ export async function action(actionArgs: Route.ActionArgs) {
             const {endAtTimestamp} = actionFormData;
 
             const endAt =
-                Temporal.Instant.fromEpochMilliseconds(endAtTimestamp);
+                endAtTimestamp !== null
+                    ? Temporal.Instant.fromEpochMilliseconds(endAtTimestamp)
+                    : null;
 
             const event = await updateOne({
                 where: eq("eventID", eventID),
@@ -310,7 +312,9 @@ export async function action(actionArgs: Route.ActionArgs) {
             const {startAtTimestamp} = actionFormData;
 
             const startAt =
-                Temporal.Instant.fromEpochMilliseconds(startAtTimestamp);
+                startAtTimestamp !== null
+                    ? Temporal.Instant.fromEpochMilliseconds(startAtTimestamp)
+                    : null;
 
             const event = await updateOne({
                 where: eq("eventID", eventID),

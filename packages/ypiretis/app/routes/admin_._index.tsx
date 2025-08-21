@@ -1,7 +1,8 @@
-import DownasaurIcon from "~/components/icons/downasaur_icon";
+import EmptyState from "~/components/common/empty_state";
 
-import EmptyState from "~/components/controlpanel/empty_state";
 import Layout from "~/components/controlpanel/layout";
+
+import DownasaurIcon from "~/components/icons/downasaur_icon";
 
 import {Route} from "./+types/admin_._index";
 

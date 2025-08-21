@@ -1,6 +1,6 @@
+import EmptyState from "~/components/common/empty_state";
 import Title from "~/components/common/title";
 
-import EmptyState from "~/components/controlpanel/empty_state";
 import Layout from "~/components/controlpanel/layout";
 
 import ClipboardIcon from "~/components/icons/clipboard_icon";

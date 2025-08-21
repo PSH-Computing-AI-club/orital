@@ -100,7 +100,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             articleID,
             publishedAtTimestamp,
             renderedContent,
-            slug: articleSlug,
             title,
             updatedAtTimestamp,
         },

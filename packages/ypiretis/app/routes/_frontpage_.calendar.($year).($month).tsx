@@ -271,7 +271,7 @@ function EventAgendaFeed() {
                         <FeedCard.Root>
                             <FeedCard.Body>
                                 <FeedCard.Title
-                                    to={`/calendar/events/${event}/${year}/${month}/${day}/${slug}`}
+                                    to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
                                 >
                                     {title}
                                 </FeedCard.Title>

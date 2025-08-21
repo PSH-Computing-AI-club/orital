@@ -21,9 +21,13 @@ import {
 import {createContext, memo, useContext, useMemo} from "react";
 
 import CalendarDayText from "~/components/common/calendar_day_text";
+import DatetimeText from "~/components/common/datetime_text";
 import DatetimeRangeText from "~/components/common/datetime_range_text";
 import ScheduleTimeText from "~/components/common/schedule_time_text";
 import Links from "~/components/common/links";
+
+import CalendarTextIcon from "~/components/icons/calendar_text_icon";
+import PinIcon from "~/components/icons/pin_icon";
 
 import type {IDateLike} from "~/utils/datetime";
 import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
@@ -114,7 +118,9 @@ export interface ICalendarGridEvent {
 
     readonly description: string;
 
-    readonly endAtTimestamp: IDateLike;
+    readonly endAtTimestamp?: IDateLike;
+
+    readonly location?: string;
 
     readonly startAtTimestamp: IDateLike;
 
@@ -166,7 +172,8 @@ function CalendarGridItemScheduleHoverCard(
     props: ICalendarGridItemScheduleHoverCardProps,
 ) {
     const {children, event, ...rest} = props;
-    const {description, endAtTimestamp, title, startAtTimestamp} = event;
+    const {description, endAtTimestamp, location, title, startAtTimestamp} =
+        event;
 
     const {timezone} = useCalendarGridContext();
 
@@ -176,15 +183,49 @@ function CalendarGridItemScheduleHoverCard(
 
             <Portal>
                 <HoverCard.Positioner>
-                    <HoverCard.Content>
+                    <HoverCard.Content inlineSize="2xs">
                         <Strong>{title}</Strong>
-                        <Span color="fg.muted" fontSize="2xs" asChild>
-                            <DatetimeRangeText
-                                timezone={timezone}
-                                startAtTimestamp={startAtTimestamp}
-                                endAtTimestamp={endAtTimestamp}
-                            />
-                        </Span>
+
+                        <VStack
+                            gap="0"
+                            flexWrap="1"
+                            alignItems="start"
+                            color="fg.muted"
+                            fontSize="2xs"
+                        >
+                            <Span
+                                textIndent="-1.6em"
+                                paddingInlineStart="1.6em"
+                            >
+                                <CalendarTextIcon />
+                                &nbsp;
+                                {endAtTimestamp ? (
+                                    <DatetimeRangeText
+                                        timezone={timezone}
+                                        startAtTimestamp={startAtTimestamp}
+                                        endAtTimestamp={endAtTimestamp}
+                                    />
+                                ) : (
+                                    <DatetimeText
+                                        timezone={timezone}
+                                        timestamp={startAtTimestamp}
+                                    />
+                                )}
+                            </Span>
+
+                            {location ? (
+                                <Span
+                                    textIndent="-1.6em"
+                                    paddingInlineStart="1.6em"
+                                >
+                                    <PinIcon />
+                                    &nbsp;
+                                    {location ?? "TBD"}
+                                </Span>
+                            ) : (
+                                <></>
+                            )}
+                        </VStack>
 
                         <Text marginBlockStart="2">{description}</Text>
                     </HoverCard.Content>

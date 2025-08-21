@@ -15,6 +15,7 @@ import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {makeZonedCalendarGrid} from "~/.server/utils/locale";
 
+import DatetimeText from "~/components/common/datetime_text";
 import DatetimeRangeText from "~/components/common/datetime_range_text";
 import EmptyState from "~/components/common/empty_state";
 import Title from "~/components/common/title";
@@ -118,10 +119,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedEvents = await Promise.all(
         events.map(async (event) => {
-            const {content, eventID, slug, startAt, title} = event;
-
-            const endAt =
-                event.endAt instanceof Temporal.Instant ? event.endAt : startAt;
+            const {content, endAt, eventID, location, slug, startAt, title} =
+                event;
 
             const zonedPublishedAt =
                 startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
@@ -134,7 +133,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 ),
             );
 
-            const {epochMilliseconds: endAtTimestamp} = endAt;
+            const endAtTimestamp = endAt?.epochMilliseconds ?? null;
             const {epochMilliseconds: startAtTimestamp} = startAt;
 
             const {year, month, day} = zonedPublishedAt;
@@ -144,6 +143,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 description,
                 endAtTimestamp,
                 eventID,
+                location,
                 month,
                 startAtTimestamp,
                 slug,
@@ -275,12 +275,20 @@ function EventAgendaFeed() {
                                 </FeedCard.Title>
 
                                 <FeedCard.Description>
-                                    <DatetimeRangeText
-                                        timezone={timezone}
-                                        startAtTimestamp={startAtTimestamp}
-                                        endAtTimestamp={endAtTimestamp}
-                                        detail="long"
-                                    />
+                                    {endAtTimestamp ? (
+                                        <DatetimeRangeText
+                                            timezone={timezone}
+                                            startAtTimestamp={startAtTimestamp}
+                                            endAtTimestamp={endAtTimestamp}
+                                            detail="long"
+                                        />
+                                    ) : (
+                                        <DatetimeText
+                                            timezone={timezone}
+                                            timestamp={startAtTimestamp}
+                                            detail="long"
+                                        />
+                                    )}
                                 </FeedCard.Description>
 
                                 <FeedCard.Text>{description}</FeedCard.Text>
@@ -310,6 +318,7 @@ function EventCalendar() {
                 description,
                 endAtTimestamp,
                 eventID,
+                location,
                 month,
                 slug,
                 startAtTimestamp,
@@ -325,10 +334,12 @@ function EventCalendar() {
                 description,
                 template,
                 title,
-                endAtTimestamp,
                 startAtTimestamp,
 
                 id: eventID,
+
+                ...(endAtTimestamp ? {endAtTimestamp} : {}),
+                ...(location ? {location} : {}),
             } satisfies ICalendarGridEvent;
         });
     }, [events]);

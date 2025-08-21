@@ -1,4 +1,4 @@
-import {Card, LinkOverlay, Text} from "@chakra-ui/react";
+import {Card, LinkOverlay, Span, Text} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -33,17 +33,27 @@ function FeedCardDescription(props: IFeedCardDescriptionProps) {
 function FeedCardTitle(props: IFeedCardTitleProps) {
     const {children, to} = props;
 
-    if (to) {
-        return (
-            <Card.Title>
-                <LinkOverlay asChild>
-                    <Links.InternalLink to={to}>{children}</Links.InternalLink>
-                </LinkOverlay>
-            </Card.Title>
-        );
-    }
-
-    return <Card.Title>{children}</Card.Title>;
+    return (
+        <Card.Title>
+            <Span
+                display="block"
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                asChild
+            >
+                {to ? (
+                    <LinkOverlay asChild>
+                        <Links.InternalLink to={to}>
+                            {children}
+                        </Links.InternalLink>
+                    </LinkOverlay>
+                ) : (
+                    <Span>{children}</Span>
+                )}
+            </Span>
+        </Card.Title>
+    );
 }
 
 function FeedCardBody(props: IFeedCardBodyProps) {

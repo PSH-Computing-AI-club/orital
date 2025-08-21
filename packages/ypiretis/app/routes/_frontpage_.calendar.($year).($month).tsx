@@ -16,6 +16,7 @@ import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 import {makeZonedCalendarGrid} from "~/.server/utils/locale";
 
 import DatetimeRangeText from "~/components/common/datetime_range_text";
+import EmptyState from "~/components/common/empty_state";
 import Title from "~/components/common/title";
 
 import type {
@@ -31,6 +32,7 @@ import FeedCard from "~/components/frontpage/feed_card";
 import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
 
+import CalendarRemoveIcon from "~/components/icons/calendar_remove_icon";
 import ChevronRightIcon from "~/components/icons/chevron_right_icon";
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
 
@@ -223,7 +225,27 @@ export async function clientLoader(clientLoaderArgs: Route.ClientLoaderArgs) {
 
 clientLoader.hydrate = true as const;
 
-function EventAgenda() {
+function EventAgendaEmptyState() {
+    return (
+        <EmptyState.Root display={{base: "flex", xl: "none"}}>
+            <EmptyState.Container>
+                <EmptyState.Icon>
+                    <CalendarRemoveIcon />
+                </EmptyState.Icon>
+
+                <EmptyState.Body>
+                    <EmptyState.Title>No events scheduled.</EmptyState.Title>
+
+                    <EmptyState.Description>
+                        Events have not been scheduled for this month.
+                    </EmptyState.Description>
+                </EmptyState.Body>
+            </EmptyState.Container>
+        </EmptyState.Root>
+    );
+}
+
+function EventAgendaFeed() {
     const loaderData = useLoaderData<typeof loader>();
     const {calendar, events} = loaderData;
 
@@ -271,6 +293,13 @@ function EventAgenda() {
             })}
         </FeedStack.Root>
     );
+}
+
+function EventAgenda() {
+    const loaderData = useLoaderData<typeof loader>();
+    const {events} = loaderData;
+
+    return events.length > 0 ? <EventAgendaFeed /> : <EventAgendaEmptyState />;
 }
 
 function EventCalendar() {

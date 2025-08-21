@@ -1,7 +1,7 @@
 import type {Temporal} from "@js-temporal/polyfill";
 
 import type {InferSelectViewModel} from "drizzle-orm";
-import {and, eq, getTableColumns, lte} from "drizzle-orm";
+import {and, eq, getTableColumns, isNotNull, lte} from "drizzle-orm";
 
 import {sqliteView} from "drizzle-orm/sqlite-core";
 
@@ -19,6 +19,7 @@ const PUBLISHED_EVENTS_VIEW = sqliteView("published_events").as((query) => {
             and(
                 eq(EVENTS_TABLE.state, EVENT_STATES.published),
                 lte(EVENTS_TABLE.publishedAt, DEFAULT_TEMPORAL_INSTANT),
+                isNotNull(EVENTS_TABLE.startAt),
             ),
         );
 });
@@ -27,9 +28,11 @@ export type IPublishedEventsView = typeof PUBLISHED_EVENTS_VIEW;
 
 export type ISelectPublishedEvent = Omit<
     InferSelectViewModel<IPublishedEventsView>,
-    "publishedAt" | "state"
+    "publishedAt" | "startAt" | "state"
 > & {
     publishedAt: Temporal.Instant;
+
+    startAt: Temporal.Instant;
 
     state: (typeof EVENT_STATES)["published"];
 };

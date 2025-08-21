@@ -55,7 +55,11 @@ function FeedCardBody(props: IFeedCardBodyProps) {
 function FeedCardRoot(props: IFeedCardRootProps) {
     const {children} = props;
 
-    return <Card.Root as="article">{children}</Card.Root>;
+    return (
+        <Card.Root as="article" flexGrow="1">
+            {children}
+        </Card.Root>
+    );
 }
 
 const FeedCard = {

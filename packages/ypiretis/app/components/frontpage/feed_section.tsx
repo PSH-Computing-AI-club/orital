@@ -62,7 +62,7 @@ function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
     if (Variant) {
         return (
             <Variant>
-                <GridItem as="li" display="inline-flex">
+                <GridItem as="li" display="flex">
                     {children}
                 </GridItem>
             </Variant>
@@ -70,7 +70,7 @@ function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
     }
 
     return (
-        <GridItem as="li" display="inline-flex">
+        <GridItem as="li" display="flex">
             {children}
         </GridItem>
     );
@@ -87,7 +87,7 @@ function FeedSectionGrid(props: IFeedSectionGridProps) {
                 xlDown: "repeat(2, minmax(0, 1fr))",
                 mdDown: "repeat(1, minmax(0, 1fr))",
             }}
-            gap="8"
+            gap="4"
             marginBlockStart="4"
         >
             {children}

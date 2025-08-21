@@ -741,9 +741,6 @@ function SettingsCardPublishingView() {
     const publishedAtUpdateFetcher = useFetcher();
     const {displayToast} = useToastsContext();
 
-    const isDraft = state === "STATE_DRAFT";
-    const isPublished = state === "STATE_PUBLISHED";
-
     const localPublishedAt = publishedAtTimestamp
         ? new Date(publishedAtTimestamp)
         : null;
@@ -752,15 +749,18 @@ function SettingsCardPublishingView() {
         ? toLocalISOString(localPublishedAt)
         : null;
 
-    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
-    const isPublishedAtUpdateFetcherIdle =
-        publishedAtUpdateFetcher.state === "idle";
-
     const [liveLocalPublishedAt, setLiveLocalPublishedAt] =
         useState<Date | null>(localPublishedAt);
 
     const isLiveLocalPublishedAtDirty =
         liveLocalPublishedAt?.getTime() !== localPublishedAt?.getTime();
+
+    const isDraft = state === "STATE_DRAFT";
+    const isPublished = state === "STATE_PUBLISHED";
+
+    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
+    const isPublishedAtUpdateFetcherIdle =
+        publishedAtUpdateFetcher.state === "idle";
 
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
     const isPublishedAtFieldDisabled = !isPublishedAtUpdateFetcherIdle;
@@ -907,11 +907,11 @@ function SettingsCardSchedulingView() {
 
     const {endAtTimestamp, startAtTimestamp} = event;
 
-    const startAtInputRef = useRef<HTMLInputElement | null>(null);
     const endAtInputRef = useRef<HTMLInputElement | null>(null);
+    const startAtInputRef = useRef<HTMLInputElement | null>(null);
 
-    const startAtUpdateFetcher = useFetcher();
     const endAtUpdateFetcher = useFetcher();
+    const startAtUpdateFetcher = useFetcher();
 
     const {displayToast} = useToastsContext();
 
@@ -922,9 +922,6 @@ function SettingsCardSchedulingView() {
     const localStartAtDateTime = localStartAt
         ? toLocalISOString(localStartAt)
         : null;
-
-    const isEndAtUpdateFetcherIdle = endAtUpdateFetcher.state === "idle";
-    const isStartAtUpdateFetcherIdle = startAtUpdateFetcher.state === "idle";
 
     const [liveLocalEndAt, setLiveLocalEndAt] = useState<Date | null>(
         localEndAt,
@@ -937,6 +934,9 @@ function SettingsCardSchedulingView() {
         liveLocalEndAt?.getTime() !== localEndAt?.getTime();
     const isLiveLocalStartAtDirty =
         liveLocalStartAt?.getTime() !== localStartAt?.getTime();
+
+    const isEndAtUpdateFetcherIdle = endAtUpdateFetcher.state === "idle";
+    const isStartAtUpdateFetcherIdle = startAtUpdateFetcher.state === "idle";
 
     const isEndAtFieldDisabled = !isEndAtUpdateFetcherIdle;
     const isStartAtFieldDisabled = !isStartAtUpdateFetcherIdle;
@@ -968,7 +968,7 @@ function SettingsCardSchedulingView() {
         [setLiveLocalStartAt],
     );
 
-    const onUpdateEnddAt = useCallback(
+    const onUpdateEndAt = useCallback(
         (async (_event) => {
             if (!liveLocalEndAt) {
                 return;
@@ -991,10 +991,10 @@ function SettingsCardSchedulingView() {
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [liveLocalEndAt, endAtUpdateFetcher, displayToast],
+        [displayToast, endAtUpdateFetcher, liveLocalEndAt],
     );
 
-    const onUpdateStartdAt = useCallback(
+    const onUpdateStartAt = useCallback(
         (async (_event) => {
             if (!liveLocalStartAt) {
                 return;
@@ -1017,7 +1017,7 @@ function SettingsCardSchedulingView() {
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [liveLocalStartAt, startAtUpdateFetcher, displayToast],
+        [displayToast, liveLocalStartAt, startAtUpdateFetcher],
     );
 
     useEffect(() => {
@@ -1046,7 +1046,7 @@ function SettingsCardSchedulingView() {
 
         inputElement.value = localStartAtDateTime;
         setLiveLocalStartAt(localStartAt);
-    }, [startAtInputRef, startAtTimestamp, setLiveLocalStartAt]);
+    }, [setLiveLocalStartAt, startAtInputRef, startAtTimestamp]);
 
     return (
         <TabbedSectionCard.View label="Scheduling">
@@ -1066,7 +1066,7 @@ function SettingsCardSchedulingView() {
                     <Button
                         disabled={isStartAtUpdateDisabled}
                         colorPalette="green"
-                        onClick={onUpdateStartdAt}
+                        onClick={onUpdateStartAt}
                     >
                         Update Timestamp
                     </Button>
@@ -1089,7 +1089,7 @@ function SettingsCardSchedulingView() {
                     <Button
                         disabled={isEndAtUpdateDisabled}
                         colorPalette="green"
-                        onClick={onUpdateEnddAt}
+                        onClick={onUpdateEndAt}
                     >
                         Update Timestamp
                     </Button>

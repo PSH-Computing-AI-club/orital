@@ -676,9 +676,6 @@ function SettingsCardPublishingView() {
     const publishedAtUpdateFetcher = useFetcher();
     const {displayToast} = useToastsContext();
 
-    const isDraft = state === "STATE_DRAFT";
-    const isPublished = state === "STATE_PUBLISHED";
-
     const localPublishedAt = publishedAtTimestamp
         ? new Date(publishedAtTimestamp)
         : null;
@@ -687,15 +684,18 @@ function SettingsCardPublishingView() {
         ? toLocalISOString(localPublishedAt)
         : null;
 
-    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
-    const isPublishedAtUpdateFetcherIdle =
-        publishedAtUpdateFetcher.state === "idle";
-
     const [liveLocalPublishedAt, setLiveLocalPublishedAt] =
         useState<Date | null>(localPublishedAt);
 
     const isLiveLocalPublishedAtDirty =
         liveLocalPublishedAt?.getTime() !== localPublishedAt?.getTime();
+
+    const isDraft = state === "STATE_DRAFT";
+    const isPublished = state === "STATE_PUBLISHED";
+
+    const isStateUpdateFetcherIdle = stateUpdateFetcher.state === "idle";
+    const isPublishedAtUpdateFetcherIdle =
+        publishedAtUpdateFetcher.state === "idle";
 
     const isStateUpdateDisabled = !isStateUpdateFetcherIdle;
     const isPublishedAtFieldDisabled = !isPublishedAtUpdateFetcherIdle;
@@ -725,7 +725,7 @@ function SettingsCardPublishingView() {
             });
         }) satisfies (details: RadioCardValueChangeDetails) => Promise<void>,
 
-        [stateUpdateFetcher, displayToast],
+        [displayToast, stateUpdateFetcher],
     );
 
     const onPublishedAtChange = useCallback(
@@ -762,7 +762,7 @@ function SettingsCardPublishingView() {
             });
         }) satisfies MouseEventHandler<HTMLButtonElement>,
 
-        [liveLocalPublishedAt, publishedAtUpdateFetcher, displayToast],
+        [displayToast, liveLocalPublishedAt, publishedAtUpdateFetcher],
     );
 
     useEffect(() => {

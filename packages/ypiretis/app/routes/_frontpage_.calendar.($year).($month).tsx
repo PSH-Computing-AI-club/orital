@@ -15,6 +15,7 @@ import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {makeZonedCalendarGrid} from "~/.server/utils/locale";
 
+import DatetimeRangeText from "~/components/common/datetime_range_text";
 import Title from "~/components/common/title";
 
 import type {
@@ -26,6 +27,8 @@ import type {
 } from "~/components/frontpage/calendar_grid";
 import CalendarGrid from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
+import FeedCard from "~/components/frontpage/feed_card";
+import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
 
 import ChevronRightIcon from "~/components/icons/chevron_right_icon";
@@ -220,6 +223,56 @@ export async function clientLoader(clientLoaderArgs: Route.ClientLoaderArgs) {
 
 clientLoader.hydrate = true as const;
 
+function EventAgenda() {
+    const loaderData = useLoaderData<typeof loader>();
+    const {calendar, events} = loaderData;
+
+    const {timezone} = calendar;
+
+    return (
+        <FeedStack.Root>
+            {events.map((event) => {
+                const {
+                    day,
+                    description,
+                    endAtTimestamp,
+                    eventID,
+                    month,
+                    title,
+                    slug,
+                    startAtTimestamp,
+                    year,
+                } = event;
+
+                return (
+                    <FeedStack.Item key={eventID}>
+                        <FeedCard.Root>
+                            <FeedCard.Body>
+                                <FeedCard.Title
+                                    to={`/calendar/events/${event}/${year}/${month}/${day}/${slug}`}
+                                >
+                                    {title}
+                                </FeedCard.Title>
+
+                                <FeedCard.Description>
+                                    <DatetimeRangeText
+                                        timezone={timezone}
+                                        startAtTimestamp={startAtTimestamp}
+                                        endAtTimestamp={endAtTimestamp}
+                                        detail="long"
+                                    />
+                                </FeedCard.Description>
+
+                                <FeedCard.Text>{description}</FeedCard.Text>
+                            </FeedCard.Body>
+                        </FeedCard.Root>
+                    </FeedStack.Item>
+                );
+            })}
+        </FeedStack.Root>
+    );
+}
+
 function EventCalendar() {
     const loaderData = useLoaderData<typeof loader>();
     const {calendar, events} = loaderData;
@@ -343,6 +396,7 @@ export default function FrontpageCalendar(props: Route.ComponentProps) {
                         </ContentSection.Title>
                     </ContentSection.Header>
 
+                    <EventAgenda />
                     <EventCalendar />
                 </ContentSection.Container>
             </ContentSection.Root>

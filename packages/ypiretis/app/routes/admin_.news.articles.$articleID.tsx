@@ -453,7 +453,7 @@ function ContentCard() {
                     <Button
                         disabled={isContentUpdateDisabled}
                         colorPalette="green"
-                        size="sm"
+                        size="xs"
                         onClick={onContentUpdateClick}
                     >
                         Update Content

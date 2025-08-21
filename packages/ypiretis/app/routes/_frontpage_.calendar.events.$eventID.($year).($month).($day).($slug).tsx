@@ -114,7 +114,7 @@ function DateAndTimeDetails() {
     const {endAtTimestamp, startAtTimestamp} = event;
 
     return (
-        <Flex alignItems="center" whiteSpace="nowrap">
+        <Flex lineHeight="shorter">
             <CalendarTextIcon />
             &nbsp;
             {endAtTimestamp ? (
@@ -134,7 +134,7 @@ function LocationDetails() {
     const {location} = event;
 
     return (
-        <Flex alignItems="center" whiteSpace="nowrap">
+        <Flex lineHeight="shorter">
             <PinIcon />
             &nbsp;
             {location ?? "TBD"}

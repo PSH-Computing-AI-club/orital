@@ -1,4 +1,4 @@
-import {Container, Span, VisuallyHidden, VStack} from "@chakra-ui/react";
+import {Container, Flex, Span, VisuallyHidden, VStack} from "@chakra-ui/react";
 
 import {Suspense, lazy} from "react";
 
@@ -296,7 +296,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                         gap="1"
                                                         alignItems="start"
                                                     >
-                                                        <Span display="inline-flex">
+                                                        <Flex lineHeight="short">
                                                             <CalendarTextIcon />
                                                             &nbsp;
                                                             {endAtTimestamp ? (
@@ -307,27 +307,24 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                                                                     endAtTimestamp={
                                                                         endAtTimestamp
                                                                     }
-                                                                    detail="long"
+                                                                    detail="short"
                                                                 />
                                                             ) : (
                                                                 <DatetimeText
                                                                     timestamp={
                                                                         startAtTimestamp
                                                                     }
-                                                                    detail="long"
+                                                                    detail="short"
                                                                 />
                                                             )}
-                                                        </Span>
+                                                        </Flex>
 
                                                         {location ? (
-                                                            <Span
-                                                                display="inline-flex"
-                                                                alignItems="center"
-                                                            >
+                                                            <Flex lineHeight="short">
                                                                 <PinIcon />
                                                                 &nbsp;
                                                                 {location}
-                                                            </Span>
+                                                            </Flex>
                                                         ) : (
                                                             <></>
                                                         )}

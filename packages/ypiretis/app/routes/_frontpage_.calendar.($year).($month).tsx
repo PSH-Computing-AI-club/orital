@@ -1,4 +1,4 @@
-import {Group, IconButton, Spacer, Span, VStack} from "@chakra-ui/react";
+import {Flex, Group, IconButton, Spacer, VStack} from "@chakra-ui/react";
 
 import {Temporal} from "@js-temporal/polyfill";
 
@@ -279,10 +279,7 @@ function EventAgendaFeed() {
 
                                 <FeedCard.Description>
                                     <VStack gap="1" alignItems="start">
-                                        <Span
-                                            display="inline-flex"
-                                            alignItems="center"
-                                        >
+                                        <Flex lineHeight="short">
                                             <CalendarTextIcon />
                                             &nbsp;
                                             {endAtTimestamp ? (
@@ -303,17 +300,14 @@ function EventAgendaFeed() {
                                                     detail="long"
                                                 />
                                             )}
-                                        </Span>
+                                        </Flex>
 
                                         {location ? (
-                                            <Span
-                                                display="inline-flex"
-                                                alignItems="center"
-                                            >
+                                            <Flex lineHeight="short">
                                                 <PinIcon />
                                                 &nbsp;
                                                 {location}
-                                            </Span>
+                                            </Flex>
                                         ) : (
                                             <></>
                                         )}

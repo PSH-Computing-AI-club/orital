@@ -309,7 +309,7 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                             To promote club camaraderie, the Computing and AI
                             Club hosts bi-weekly meetings every XYZday @{" "}
                             <Span whiteSpace="pre">common hour</Span> in{" "}
-                            <Span whiteSpace="pre">Olmsted XYZ W</Span>.
+                            <Span whiteSpace="pre">Olmsted W212</Span>.
                         </FeatureSection.Description>
                     </FeatureSection.Body>
 

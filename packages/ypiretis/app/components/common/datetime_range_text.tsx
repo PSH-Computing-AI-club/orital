@@ -6,7 +6,7 @@ import {useTimezone} from "~/utils/datetime";
 import type {IFormatDetail} from "~/utils/locale";
 import {useFormattedTimestampRange} from "~/utils/locale";
 
-export interface IDatetimeTextProps extends BoxProps {
+export interface IDatetimeRangeTextProps extends BoxProps {
     readonly detail?: IFormatDetail;
 
     readonly endAtTimestamp: IDateLike;
@@ -16,7 +16,7 @@ export interface IDatetimeTextProps extends BoxProps {
     readonly timezone?: string;
 }
 
-export default function DatetimeRangeText(props: IDatetimeTextProps) {
+export default function DatetimeRangeText(props: IDatetimeRangeTextProps) {
     const {
         detail,
         endAtTimestamp,

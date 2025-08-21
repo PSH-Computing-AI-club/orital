@@ -5,13 +5,13 @@ import {type IDateLike} from "~/utils/datetime";
 import {useTimezone} from "~/utils/datetime";
 import {useFormattedCalendarDay} from "~/utils/locale";
 
-export interface IDatetimeTextProps extends BoxProps {
+export interface ICalendarDayTextProps extends BoxProps {
     readonly timestamp: IDateLike;
 
     readonly timezone?: string;
 }
 
-export default function CalendarDayText(props: IDatetimeTextProps) {
+export default function CalendarDayText(props: ICalendarDayTextProps) {
     const {timestamp, timezone = useTimezone(), ...rest} = props;
 
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarDay(

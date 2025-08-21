@@ -21,12 +21,13 @@ import {
 import {createContext, memo, useContext, useMemo} from "react";
 
 import CalendarDayText from "~/components/common/calendar_day_text";
+import DatetimeRangeText from "~/components/common/datetime_range_text";
+import ScheduleTimeText from "~/components/common/schedule_time_text";
 import Links from "~/components/common/links";
 
 import type {IDateLike} from "~/utils/datetime";
 import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
-import {formatCalendarWeekdays, useFormattedScheduleTime} from "~/utils/locale";
-import DatetimeRangeText from "../common/datetime_range_text";
+import {formatCalendarWeekdays} from "~/utils/locale";
 
 const CONTEXT_CALENDAR_GRID = createContext<ICalendarGridContext | null>(null);
 
@@ -167,6 +168,8 @@ function CalendarGridItemScheduleHoverCard(
     const {children, event, ...rest} = props;
     const {description, endAtTimestamp, title, startAtTimestamp} = event;
 
+    const {timezone} = useCalendarGridContext();
+
     return (
         <HoverCard.Root {...rest}>
             <HoverCard.Trigger asChild>{children}</HoverCard.Trigger>
@@ -177,6 +180,7 @@ function CalendarGridItemScheduleHoverCard(
                         <Strong>{title}</Strong>
                         <Span color="fg.muted" fontSize="2xs" asChild>
                             <DatetimeRangeText
+                                timezone={timezone}
                                 startAtTimestamp={startAtTimestamp}
                                 endAtTimestamp={endAtTimestamp}
                             />
@@ -194,10 +198,10 @@ function CalendarGridItemScheduleListing(
     props: ICalendarGridItemScheduleListingProps,
 ) {
     const {event, ...rest} = props;
-    const {title, template, startAtTimestamp: startAt} = event;
+    const {title, template, startAtTimestamp} = event;
 
+    const {timezone} = useCalendarGridContext();
     const url = template({event});
-    const textualTimestamp = useFormattedScheduleTime(startAt);
 
     return (
         <List.Item {...rest}>
@@ -207,9 +211,13 @@ function CalendarGridItemScheduleListing(
                     to={url.toString()}
                     overflow="hidden"
                 >
-                    <Strong whiteSpace="nowrap" fontSize="2xs">
-                        {textualTimestamp}
-                    </Strong>
+                    <ScheduleTimeText
+                        timezone={timezone}
+                        timestamp={startAtTimestamp}
+                        whiteSpace="nowrap"
+                        fontSize="2xs"
+                        fontWeight="bold"
+                    />
 
                     <Span
                         whiteSpace="nowrap"
@@ -254,6 +262,8 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
     const {day, ...rest} = props;
     const {date} = day;
 
+    const {timezone} = useCalendarGridContext();
+
     return (
         <Span
             padding="2"
@@ -262,10 +272,11 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
             marginBlockStart="-2"
             bg="bg.inverted"
             color="fg.inverted"
+            fontWeight="bold"
             asChild
             {...rest}
         >
-            <CalendarDayText timestamp={date} />
+            <CalendarDayText timezone={timezone} timestamp={date} />
         </Span>
     );
 }
@@ -282,7 +293,6 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
     return (
         <VStack
             fontSize="sm"
-            fontWeight="bold"
             padding="2"
             height="3xs"
             alignItems="start"

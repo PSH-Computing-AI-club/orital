@@ -1,7 +1,8 @@
 import type {BoxProps} from "@chakra-ui/react";
 import {Box} from "@chakra-ui/react";
 
-import type {IDateLike} from "~/utils/datetime";
+import {type IDateLike} from "~/utils/datetime";
+import {useTimezone} from "~/utils/datetime";
 import type {IFormatDetail} from "~/utils/locale";
 import {useFormattedTimestampRange} from "~/utils/locale";
 
@@ -11,10 +12,18 @@ export interface IDatetimeTextProps extends BoxProps {
     readonly endAtTimestamp: IDateLike;
 
     readonly startAtTimestamp: IDateLike;
+
+    readonly timezone?: string;
 }
 
 export default function DatetimeRangeText(props: IDatetimeTextProps) {
-    const {detail, endAtTimestamp, startAtTimestamp, ...rest} = props;
+    const {
+        detail,
+        endAtTimestamp,
+        startAtTimestamp,
+        timezone = useTimezone(),
+        ...rest
+    } = props;
 
     const {startAtISOTimestamp, textualTimestamp} = useFormattedTimestampRange(
         startAtTimestamp,
@@ -22,6 +31,7 @@ export default function DatetimeRangeText(props: IDatetimeTextProps) {
 
         {
             detail,
+            timezone,
         },
     );
 

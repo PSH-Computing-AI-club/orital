@@ -1,0 +1,2 @@
+DROP VIEW `published_events`;--> statement-breakpoint
+CREATE VIEW `published_events` AS select "id", "event_id", "poster_user_id", "state", "title", "content", "start_at", "end_at", "created_at", "updated_at", "published_at" from "events" where ("events"."state" = 'STATE_PUBLISHED' and "events"."published_at" <= (UNIXEPOCH('now', 'subsec') * 1000) and "events"."start_at" is not null);

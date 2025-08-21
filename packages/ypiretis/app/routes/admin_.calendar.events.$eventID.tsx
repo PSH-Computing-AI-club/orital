@@ -558,7 +558,7 @@ function ContentCard() {
     );
 }
 
-function SettingsCardAttachmentsView() {
+function SettingsCardUploadsView() {
     const {attachments, event} = useLoaderData<typeof loader>();
 
     const deleteFetcher = useFetcher();
@@ -717,7 +717,7 @@ function SettingsCardAttachmentsView() {
     );
 
     return (
-        <TabbedSectionCard.View label="Attachments">
+        <TabbedSectionCard.View label="Uploads">
             <FileUploadDropbox
                 completedFileUploads={completeFileUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
@@ -734,7 +734,7 @@ function SettingsCardAttachmentsView() {
     );
 }
 
-function SettingsCardPublishingView() {
+function SettingsCardPublishView() {
     const {event} = useLoaderData<typeof loader>();
 
     const {publishedAtTimestamp, state} = event;
@@ -854,7 +854,7 @@ function SettingsCardPublishingView() {
     ]);
 
     return (
-        <TabbedSectionCard.View label="Publishing">
+        <TabbedSectionCard.View label="Publish">
             <Field.Root flexGrow="1">
                 <Field.Label>Published At</Field.Label>
 
@@ -906,7 +906,7 @@ function SettingsCardPublishingView() {
     );
 }
 
-function SettingsCardSchedulingView() {
+function SettingsCardScheduleView() {
     const {event} = useLoaderData<typeof loader>();
 
     const {endAtTimestamp, startAtTimestamp} = event;
@@ -1145,7 +1145,7 @@ function SettingsCardSchedulingView() {
     }, [setLiveLocalStartAt, startAtInputRef, startAtTimestamp]);
 
     return (
-        <TabbedSectionCard.View label="Scheduling">
+        <TabbedSectionCard.View label="Schedule">
             <Field.Root>
                 <Field.Label>Start At</Field.Label>
 
@@ -1222,9 +1222,9 @@ function SettingsCard() {
                     <SlidersIcon />
                 </TabbedSectionCard.Title>
 
-                <SettingsCardSchedulingView />
-                <SettingsCardPublishingView />
-                <SettingsCardAttachmentsView />
+                <SettingsCardScheduleView />
+                <SettingsCardPublishView />
+                <SettingsCardUploadsView />
             </TabbedSectionCard.Body>
         </TabbedSectionCard.Root>
     );

@@ -489,7 +489,7 @@ function ContentCard() {
     );
 }
 
-function SettingsCardAttachmentsView() {
+function SettingsCardUploadsView() {
     const {attachments, article} = useLoaderData<typeof loader>();
 
     const deleteFetcher = useFetcher();
@@ -648,7 +648,7 @@ function SettingsCardAttachmentsView() {
     );
 
     return (
-        <TabbedSectionCard.View label="Attachments">
+        <TabbedSectionCard.View label="Uploads">
             <FileUploadDropbox
                 completedFileUploads={completeFileUploads}
                 helpText={`max file size ${MAX_FILE_SIZE_TEXT}`}
@@ -665,7 +665,7 @@ function SettingsCardAttachmentsView() {
     );
 }
 
-function SettingsCardPublishingView() {
+function SettingsCardPublishView() {
     const {article} = useLoaderData<typeof loader>();
 
     const {publishedAtTimestamp, state} = article;
@@ -785,7 +785,7 @@ function SettingsCardPublishingView() {
     ]);
 
     return (
-        <TabbedSectionCard.View label="Publishing">
+        <TabbedSectionCard.View label="Publish">
             <Field.Root flexGrow="1">
                 <Field.Label>Published At</Field.Label>
 
@@ -848,8 +848,8 @@ function SettingsCard() {
                     <SlidersIcon />
                 </TabbedSectionCard.Title>
 
-                <SettingsCardPublishingView />
-                <SettingsCardAttachmentsView />
+                <SettingsCardPublishView />
+                <SettingsCardUploadsView />
             </TabbedSectionCard.Body>
         </TabbedSectionCard.Root>
     );

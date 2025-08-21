@@ -230,7 +230,7 @@ function EventAgenda() {
     const {timezone} = calendar;
 
     return (
-        <FeedStack.Root>
+        <FeedStack.Root display={{base: "flex", xl: "none"}}>
             {events.map((event) => {
                 const {
                     day,
@@ -314,6 +314,7 @@ function EventCalendar() {
             events={calenderGridEvents}
             timezone={timezone}
             weeks={weeks}
+            display={{base: "grid", xlDown: "none"}}
         />
     );
 }

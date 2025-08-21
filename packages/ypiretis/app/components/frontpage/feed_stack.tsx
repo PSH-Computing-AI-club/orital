@@ -1,22 +1,25 @@
-import {VStack} from "@chakra-ui/react";
+import type {BoxProps, StackProps} from "@chakra-ui/react";
+import {Box, VStack} from "@chakra-ui/react";
 
-import type {PropsWithChildren} from "react";
+export interface IFeedStackItemProps extends BoxProps {}
 
-export interface IFeedStackItemProps extends PropsWithChildren {}
-
-export interface IFeedStackRootProps extends PropsWithChildren {}
+export interface IFeedStackRootProps extends StackProps {}
 
 function FeedStackItem(props: IFeedStackRootProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
-    return <li>{children}</li>;
+    return (
+        <Box as="li" {...rest}>
+            {children}
+        </Box>
+    );
 }
 
 function FeedStackRoot(props: IFeedStackRootProps) {
-    const {children} = props;
+    const {children, ...rest} = props;
 
     return (
-        <VStack as="ol" gap="4" alignItems="stretch">
+        <VStack as="ol" gap="4" alignItems="stretch" {...rest}>
             {children}
         </VStack>
     );

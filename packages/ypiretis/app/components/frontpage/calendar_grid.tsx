@@ -365,7 +365,7 @@ function CalendarGridWeeks() {
 }
 
 export default function CalendarGrid(props: ICalendarGridProps) {
-    const {events, timezone = useTimezone(), weeks} = props;
+    const {events, timezone = useTimezone(), weeks, ...rest} = props;
 
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
@@ -396,7 +396,7 @@ export default function CalendarGrid(props: ICalendarGridProps) {
 
     return (
         <CONTEXT_CALENDAR_GRID.Provider value={context}>
-            <SimpleGrid columns={7} gap="2">
+            <SimpleGrid columns={7} gap="2" {...rest}>
                 <CalendarGridWeekdayHeaders />
                 <CalendarGridWeeks />
             </SimpleGrid>

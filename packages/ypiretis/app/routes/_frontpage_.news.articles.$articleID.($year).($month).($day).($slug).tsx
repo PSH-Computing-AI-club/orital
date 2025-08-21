@@ -140,13 +140,13 @@ function Byline() {
             </address>
 
             <Span whiteSpace="pre">
-                &nbsp;• Published{" "}
+                • Published{" "}
                 <DatetimeText detail="long" timestamp={publishedAtTimestamp} />
             </Span>
             {updatedAtTimestamp ? (
                 <>
                     <Span whiteSpace="pre">
-                        &nbsp;• Updated{" "}
+                        • Updated{" "}
                         <DatetimeText
                             detail="long"
                             timestamp={updatedAtTimestamp}

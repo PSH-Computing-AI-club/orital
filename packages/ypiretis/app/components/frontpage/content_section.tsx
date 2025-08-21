@@ -1,5 +1,5 @@
 import type {ContainerProps} from "@chakra-ui/react";
-import {Box, Container, Heading, Spacer} from "@chakra-ui/react";
+import {Box, Container, Flex, Heading, Spacer} from "@chakra-ui/react";
 
 import type {PropsWithChildren} from "react";
 
@@ -64,15 +64,15 @@ function ContentSectionDescription(props: IContentSectionDescriptionProps) {
     const {children} = props;
 
     return (
-        <Box
-            display="flex"
+        <Flex
+            gap="1"
             flexWrap="wrap"
             alignItems="center"
             color="fg.muted"
             fontSize={{base: "lg", lgDown: "md"}}
         >
             {children}
-        </Box>
+        </Flex>
     );
 }
 

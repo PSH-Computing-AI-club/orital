@@ -1,6 +1,6 @@
-import {Span} from "@chakra-ui/react";
+import {Flex} from "@chakra-ui/react";
 
-import {data, redirect} from "react-router";
+import {data, redirect, useLoaderData} from "react-router";
 
 import * as v from "valibot";
 
@@ -11,10 +11,14 @@ import {renderMarkdownForWeb} from "~/.server/services/markdown";
 import {slug, ulid} from "~/.server/utils/valibot";
 
 import DatetimeText from "~/components/common/datetime_text";
+import DatetimeRangeText from "~/components/common/datetime_range_text";
 import Title from "~/components/common/title";
 
 import ContentSection from "~/components/frontpage/content_section";
 import PageHero from "~/components/frontpage/page_hero";
+
+import CalendarTextIcon from "~/components/icons/calendar_text_icon";
+import PinIcon from "~/components/icons/pin_icon";
 
 import {validateParams} from "~/guards/validation";
 
@@ -57,35 +61,35 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const {
         content,
         hasBeenEdited,
-        publishedAt,
+        endAt,
+        location,
         slug: articleSlug,
+        startAt,
         title,
         updatedAt,
     } = event;
 
-    const zonedPublishedAt = publishedAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+    const zonedStartAt = startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
 
-    const {
-        day: publishedDay,
-        month: publishedMonth,
-        year: publishedYear,
-    } = zonedPublishedAt;
+    const {day: startDay, month: startMonth, year: startYear} = zonedStartAt;
 
     if (
         articleSlug !== inputSlug ||
-        publishedDay !== inputDay ||
-        publishedMonth !== inputMonth ||
-        publishedYear !== inputYear
+        startDay !== inputDay ||
+        startMonth !== inputMonth ||
+        startYear !== inputYear
     ) {
         return redirect(
-            `/calendar/events/${eventID}/${publishedYear}/${publishedMonth}/${publishedDay}/${articleSlug}`,
+            `/calendar/events/${eventID}/${startYear}/${startMonth}/${startDay}/${articleSlug}`,
             {
                 status: 301,
             },
         );
     }
 
-    const {epochMilliseconds: publishedAtTimestamp} = publishedAt;
+    const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+    const {epochMilliseconds: startAtTimestamp} = startAt;
+
     const updatedAtTimestamp = hasBeenEdited
         ? updatedAt.epochMilliseconds
         : null;
@@ -95,21 +99,63 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     return {
         event: {
             eventID,
-            publishedAtTimestamp,
+            endAtTimestamp,
+            location,
             renderedContent,
-            slug: articleSlug,
+            startAtTimestamp,
             title,
             updatedAtTimestamp,
         },
     };
 }
 
+function DateAndTimeDetails() {
+    const {event} = useLoaderData<typeof loader>();
+    const {endAtTimestamp, startAtTimestamp} = event;
+
+    return (
+        <Flex alignItems="center" whiteSpace="nowrap">
+            <CalendarTextIcon />
+            &nbsp;
+            {endAtTimestamp ? (
+                <DatetimeRangeText
+                    startAtTimestamp={startAtTimestamp}
+                    endAtTimestamp={endAtTimestamp}
+                />
+            ) : (
+                <DatetimeText timestamp={startAtTimestamp} />
+            )}
+        </Flex>
+    );
+}
+
+function LocationDetails() {
+    const {event} = useLoaderData<typeof loader>();
+    const {location} = event;
+
+    return (
+        <Flex alignItems="center" whiteSpace="nowrap">
+            <PinIcon />
+            &nbsp;
+            {location ?? "TBD"}
+        </Flex>
+    );
+}
+
+function EventDetails() {
+    return (
+        <>
+            <DateAndTimeDetails />
+            <LocationDetails />
+        </>
+    );
+}
+
 export default function FrontpageNewsArticle(props: Route.ComponentProps) {
     const {loaderData} = props;
     const {event} = loaderData;
 
-    const {publishedAtTimestamp, renderedContent, title, updatedAtTimestamp} =
-        event;
+    const {renderedContent, title} = event;
 
     return (
         <>
@@ -127,25 +173,7 @@ export default function FrontpageNewsArticle(props: Route.ComponentProps) {
                         <ContentSection.Title>{title}</ContentSection.Title>
 
                         <ContentSection.Description>
-                            <Span whiteSpace="pre">
-                                • Published{" "}
-                                <DatetimeText
-                                    detail="long"
-                                    timestamp={publishedAtTimestamp}
-                                />
-                            </Span>
-                            {updatedAtTimestamp ? (
-                                <>
-                                    &nbsp;
-                                    <Span whiteSpace="pre">
-                                        • Updated{" "}
-                                        <DatetimeText
-                                            detail="long"
-                                            timestamp={updatedAtTimestamp}
-                                        />
-                                    </Span>
-                                </>
-                            ) : undefined}
+                            <EventDetails />
                         </ContentSection.Description>
                     </ContentSection.Header>
 

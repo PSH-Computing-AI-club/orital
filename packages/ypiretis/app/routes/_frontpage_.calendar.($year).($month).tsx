@@ -2,15 +2,9 @@ import {Group, IconButton, Spacer} from "@chakra-ui/react";
 
 import {Temporal} from "@js-temporal/polyfill";
 
-import {useEffect, useMemo} from "react";
+import {useMemo} from "react";
 
-import {
-    Link,
-    redirect,
-    useLoaderData,
-    useLocation,
-    useNavigate,
-} from "react-router";
+import {Link, redirect, useLoaderData, useLocation} from "react-router";
 
 import * as v from "valibot";
 
@@ -188,47 +182,24 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     };
 }
 
-function useTimezoneSynchronization(): void {
-    const loaderData = useLoaderData<typeof loader>();
+export async function clientLoader(clientLoaderArgs: Route.ClientLoaderArgs) {
+    const {request, serverLoader} = clientLoaderArgs;
+    const loaderData = await serverLoader();
+
     const {calendar} = loaderData;
+    const {timezone} = calendar;
 
-    const {month, year, timezone} = calendar;
+    if (timezone !== NAVIGATOR_TIMEZONE) {
+        const url = new URL(request.url);
 
-    const location = useLocation();
-    const navigate = useNavigate();
+        url.searchParams.set("timezone", NAVIGATOR_TIMEZONE);
+        return redirect(url.toString());
+    }
 
-    const currentURL = buildAppURL(location);
-
-    useEffect(() => {
-        const {searchParams} = currentURL;
-
-        if (timezone !== NAVIGATOR_TIMEZONE) {
-            const calendarZonedDateTime = Temporal.ZonedDateTime.from({
-                year,
-                month,
-
-                day: 1,
-                timeZone: timezone,
-            });
-
-            const {month: localizedMonth, year: localizedYear} =
-                calendarZonedDateTime.withTimeZone(NAVIGATOR_TIMEZONE);
-
-            currentURL.pathname = `/calendar/${localizedYear}/${localizedMonth}`;
-            searchParams.set("timezone", NAVIGATOR_TIMEZONE);
-
-            const {hash, pathname, search} = currentURL;
-
-            navigate(
-                {hash, pathname, search},
-
-                {
-                    replace: true,
-                },
-            );
-        }
-    }, [currentURL, month, navigate, timezone, year]);
+    return loaderData;
 }
+
+clientLoader.hydrate = true as const;
 
 function EventCalendar() {
     const loaderData = useLoaderData<typeof loader>();
@@ -342,8 +313,6 @@ export default function FrontpageCalendar(props: Route.ComponentProps) {
         timestamp,
         {timezone},
     );
-
-    useTimezoneSynchronization();
 
     return (
         <>

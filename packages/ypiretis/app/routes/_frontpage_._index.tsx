@@ -323,15 +323,11 @@ function EventsFeed() {
                                                         )}
                                                     </Flex>
 
-                                                    {location ? (
-                                                        <Flex lineHeight="short">
-                                                            <PinIcon />
-                                                            &nbsp;
-                                                            {location}
-                                                        </Flex>
-                                                    ) : (
-                                                        <></>
-                                                    )}
+                                                    <Flex lineHeight="short">
+                                                        <PinIcon />
+                                                        &nbsp;
+                                                        {location ?? "TBD"}
+                                                    </Flex>
                                                 </VStack>
                                             </FeedCard.Description>
 

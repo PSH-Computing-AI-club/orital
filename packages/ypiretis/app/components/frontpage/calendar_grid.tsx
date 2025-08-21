@@ -213,18 +213,14 @@ function CalendarGridItemScheduleHoverCard(
                                 )}
                             </Span>
 
-                            {location ? (
-                                <Span
-                                    textIndent="-1.6em"
-                                    paddingInlineStart="1.6em"
-                                >
-                                    <PinIcon />
-                                    &nbsp;
-                                    {location ?? "TBD"}
-                                </Span>
-                            ) : (
-                                <></>
-                            )}
+                            <Span
+                                textIndent="-1.6em"
+                                paddingInlineStart="1.6em"
+                            >
+                                <PinIcon />
+                                &nbsp;
+                                {location ?? "TBD"}
+                            </Span>
                         </VStack>
 
                         <Text marginBlockStart="2">{description}</Text>

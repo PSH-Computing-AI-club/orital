@@ -2,6 +2,8 @@ import {Container, Flex, Span, VisuallyHidden, VStack} from "@chakra-ui/react";
 
 import {Suspense, lazy} from "react";
 
+import {useLoaderData} from "react-router";
+
 import {ClientOnly} from "remix-utils/client-only";
 
 import {findAllPublished as findAllArticlesPublished} from "~/.server/services/articles_service";
@@ -157,10 +159,311 @@ export async function loader(_loaderArgs: Route.LoaderArgs) {
     };
 }
 
-export default function FrontpageIndex(props: Route.ComponentProps) {
-    const {loaderData} = props;
-    const {articles, events, people} = loaderData;
+function NewsFeed() {
+    const {articles} = useLoaderData<typeof loader>();
 
+    return (
+        <FeedSection.Root>
+            <FeedSection.Container>
+                <FeedSection.Body>
+                    <FeedSection.Title>News?</FeedSection.Title>
+
+                    <FeedSection.Description>
+                        Sure, we have our ramblings available.
+                    </FeedSection.Description>
+
+                    <FeedSection.Grid>
+                        {articles.map((article) => {
+                            const {
+                                articleID,
+                                day,
+                                description,
+                                month,
+                                publishedAtTimestamp,
+                                title,
+                                slug,
+                                year,
+                            } = article;
+
+                            return (
+                                <FeedSection.GridItem key={articleID}>
+                                    <FeedCard.Root>
+                                        <FeedCard.Body>
+                                            <FeedCard.Title
+                                                to={`/news/articles/${articleID}/${year}/${month}/${day}/${slug}`}
+                                            >
+                                                {title}
+                                            </FeedCard.Title>
+
+                                            <FeedCard.Description>
+                                                <DatetimeText
+                                                    detail="short"
+                                                    timestamp={
+                                                        publishedAtTimestamp
+                                                    }
+                                                />
+                                            </FeedCard.Description>
+
+                                            <FeedCard.Text>
+                                                {description}
+                                            </FeedCard.Text>
+                                        </FeedCard.Body>
+                                    </FeedCard.Root>
+                                </FeedSection.GridItem>
+                            );
+                        })}
+
+                        <FeedSection.GridItem variant="action">
+                            <ActionCard.Root>
+                                <ActionCard.Icon>
+                                    <ArrowRightIcon />
+                                </ActionCard.Icon>
+
+                                <ActionCard.Link to="/news">
+                                    View More
+                                </ActionCard.Link>
+                            </ActionCard.Root>
+                        </FeedSection.GridItem>
+                    </FeedSection.Grid>
+                </FeedSection.Body>
+            </FeedSection.Container>
+        </FeedSection.Root>
+    );
+}
+
+function MeetingsDetails() {
+    return (
+        <FeatureSection.Root>
+            <FeatureSection.Container>
+                <FeatureSection.Body>
+                    <FeatureSection.Title>
+                        Bi-Weekly Meetings
+                    </FeatureSection.Title>
+
+                    <FeatureSection.Description>
+                        To promote club camaraderie, the Computing and AI Club
+                        hosts bi-weekly meetings every XYZday @{" "}
+                        <Span whiteSpace="pre">common hour</Span> in{" "}
+                        <Span whiteSpace="pre">Olmsted W212</Span>.
+                    </FeatureSection.Description>
+                </FeatureSection.Body>
+
+                <FeatureSection.Image
+                    src="/images/landing.calendar.webp"
+                    alt="3D voxel art of a calendar."
+                />
+            </FeatureSection.Container>
+        </FeatureSection.Root>
+    );
+}
+
+function EventsFeed() {
+    const {events} = useLoaderData<typeof loader>();
+
+    return (
+        <FeedSection.Root>
+            <FeedSection.Container>
+                <FeedSection.Body>
+                    <FeedSection.Title>Events?</FeedSection.Title>
+
+                    <FeedSection.Description>
+                        We got some of those.
+                    </FeedSection.Description>
+
+                    <FeedSection.Grid>
+                        {events.map((event) => {
+                            const {
+                                day,
+                                description,
+                                endAtTimestamp,
+                                eventID,
+                                location,
+                                month,
+                                title,
+                                slug,
+                                startAtTimestamp,
+                                year,
+                            } = event;
+
+                            return (
+                                <FeedSection.GridItem key={eventID}>
+                                    <FeedCard.Root>
+                                        <FeedCard.Body>
+                                            <FeedCard.Title
+                                                to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
+                                            >
+                                                {title}
+                                            </FeedCard.Title>
+
+                                            <FeedCard.Description>
+                                                <VStack
+                                                    gap="1"
+                                                    alignItems="start"
+                                                >
+                                                    <Flex lineHeight="short">
+                                                        <CalendarTextIcon />
+                                                        &nbsp;
+                                                        {endAtTimestamp ? (
+                                                            <DatetimeRangeText
+                                                                startAtTimestamp={
+                                                                    startAtTimestamp
+                                                                }
+                                                                endAtTimestamp={
+                                                                    endAtTimestamp
+                                                                }
+                                                                detail="short"
+                                                            />
+                                                        ) : (
+                                                            <DatetimeText
+                                                                timestamp={
+                                                                    startAtTimestamp
+                                                                }
+                                                                detail="short"
+                                                            />
+                                                        )}
+                                                    </Flex>
+
+                                                    {location ? (
+                                                        <Flex lineHeight="short">
+                                                            <PinIcon />
+                                                            &nbsp;
+                                                            {location}
+                                                        </Flex>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </VStack>
+                                            </FeedCard.Description>
+
+                                            <FeedCard.Text>
+                                                {description}
+                                            </FeedCard.Text>
+                                        </FeedCard.Body>
+                                    </FeedCard.Root>
+                                </FeedSection.GridItem>
+                            );
+                        })}
+
+                        <FeedSection.GridItem variant="action">
+                            <ActionCard.Root>
+                                <ActionCard.Icon>
+                                    <ArrowRightIcon />
+                                </ActionCard.Icon>
+
+                                <ActionCard.Link to="/calendar">
+                                    View More
+                                </ActionCard.Link>
+                            </ActionCard.Root>
+                        </FeedSection.GridItem>
+                    </FeedSection.Grid>
+                </FeedSection.Body>
+            </FeedSection.Container>
+        </FeedSection.Root>
+    );
+}
+
+function ClubOfficerList() {
+    const {people} = useLoaderData<typeof loader>();
+
+    return (
+        <PeopleSection.Root>
+            <PeopleSection.Container>
+                <PeopleSection.Body>
+                    <PeopleSection.Title>Club Officers</PeopleSection.Title>
+
+                    <PeopleSection.Description>
+                        We are also ourselves!
+                    </PeopleSection.Description>
+
+                    <PeopleSection.Grid>
+                        {people.map((person) => {
+                            const {accountID, fullName, role} = person;
+
+                            const avatarSrc = `/images/avatars.${accountID}.webp`;
+                            const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
+
+                            return (
+                                <PeopleSection.GridItem key={accountID}>
+                                    <PeopleCard.Root>
+                                        <PeopleCard.Body>
+                                            <PeopleCard.Avatar
+                                                name={fullName}
+                                                src={avatarSrc}
+                                            />
+
+                                            <address>
+                                                <PeopleCard.Title>
+                                                    {fullName}
+                                                </PeopleCard.Title>
+
+                                                <PeopleCard.Email
+                                                    email={email}
+                                                />
+
+                                                <PeopleCard.Text>
+                                                    {role}
+                                                </PeopleCard.Text>
+                                            </address>
+                                        </PeopleCard.Body>
+                                    </PeopleCard.Root>
+                                </PeopleSection.GridItem>
+                            );
+                        })}
+                    </PeopleSection.Grid>
+                </PeopleSection.Body>
+            </PeopleSection.Container>
+        </PeopleSection.Root>
+    );
+}
+
+function ClubBio() {
+    return (
+        <FeatureSection.Root>
+            <FeatureSection.Container>
+                <FeatureSection.Image
+                    src="/images/landing.psh.webp"
+                    alt="3D voxel art of the Penn State Harrisburg logo."
+                />
+
+                <FeatureSection.Body>
+                    <FeatureSection.Title>
+                        We Are{" "}
+                        <Span>
+                            <Span whiteSpace="pre">Penn State</Span> Harrisburg!
+                        </Span>
+                    </FeatureSection.Title>
+
+                    <FeatureSection.Description>
+                        The Computing and AI Club provides a friendly atmosphere
+                        for all PSH students to network, hone their skills, and
+                        to have fun all things computing.
+                    </FeatureSection.Description>
+                </FeatureSection.Body>
+            </FeatureSection.Container>
+        </FeatureSection.Root>
+    );
+}
+
+function AnimatedBanner() {
+    return (
+        <FullscreenHero.Root>
+            <Background3DGrid.Root>
+                <Container flexGrow="1">
+                    <ClientOnly>
+                        {() => (
+                            <Suspense>
+                                <Background3DGrid.Scene />
+                                <AnimatedLogo />
+                            </Suspense>
+                        )}
+                    </ClientOnly>
+                </Container>
+            </Background3DGrid.Root>
+        </FullscreenHero.Root>
+    );
+}
+
+export default function FrontpageIndex() {
     return (
         <>
             <Title />
@@ -169,280 +472,12 @@ export default function FrontpageIndex(props: Route.ComponentProps) {
                 <h1>{APP_NAME}</h1>
             </VisuallyHidden>
 
-            <FullscreenHero.Root>
-                <Background3DGrid.Root>
-                    <Container flexGrow="1">
-                        <ClientOnly>
-                            {() => (
-                                <Suspense>
-                                    <Background3DGrid.Scene />
-                                    <AnimatedLogo />
-                                </Suspense>
-                            )}
-                        </ClientOnly>
-                    </Container>
-                </Background3DGrid.Root>
-            </FullscreenHero.Root>
-
-            <FeatureSection.Root>
-                <FeatureSection.Container>
-                    <FeatureSection.Image
-                        src="/images/landing.psh.webp"
-                        alt="3D voxel art of the Penn State Harrisburg logo."
-                    />
-
-                    <FeatureSection.Body>
-                        <FeatureSection.Title>
-                            We Are{" "}
-                            <Span>
-                                <Span whiteSpace="pre">Penn State</Span>{" "}
-                                Harrisburg!
-                            </Span>
-                        </FeatureSection.Title>
-
-                        <FeatureSection.Description>
-                            The Computing and AI Club provides a friendly
-                            atmosphere for all PSH students to network, hone
-                            their skills, and to have fun all things computing.
-                        </FeatureSection.Description>
-                    </FeatureSection.Body>
-                </FeatureSection.Container>
-            </FeatureSection.Root>
-
-            <PeopleSection.Root>
-                <PeopleSection.Container>
-                    <PeopleSection.Body>
-                        <PeopleSection.Title>Club Officers</PeopleSection.Title>
-
-                        <PeopleSection.Description>
-                            We are also ourselves!
-                        </PeopleSection.Description>
-
-                        <PeopleSection.Grid>
-                            {people.map((person) => {
-                                const {accountID, fullName, role} = person;
-
-                                const avatarSrc = `/images/avatars.${accountID}.webp`;
-                                const email = `${accountID}@${ACCOUNT_PROVIDER_DOMAIN}`;
-
-                                return (
-                                    <PeopleSection.GridItem key={accountID}>
-                                        <PeopleCard.Root>
-                                            <PeopleCard.Body>
-                                                <PeopleCard.Avatar
-                                                    name={fullName}
-                                                    src={avatarSrc}
-                                                />
-
-                                                <address>
-                                                    <PeopleCard.Title>
-                                                        {fullName}
-                                                    </PeopleCard.Title>
-
-                                                    <PeopleCard.Email
-                                                        email={email}
-                                                    />
-
-                                                    <PeopleCard.Text>
-                                                        {role}
-                                                    </PeopleCard.Text>
-                                                </address>
-                                            </PeopleCard.Body>
-                                        </PeopleCard.Root>
-                                    </PeopleSection.GridItem>
-                                );
-                            })}
-                        </PeopleSection.Grid>
-                    </PeopleSection.Body>
-                </PeopleSection.Container>
-            </PeopleSection.Root>
-
-            <FeedSection.Root>
-                <FeedSection.Container>
-                    <FeedSection.Body>
-                        <FeedSection.Title>Events?</FeedSection.Title>
-
-                        <FeedSection.Description>
-                            We got some of those.
-                        </FeedSection.Description>
-
-                        <FeedSection.Grid>
-                            {events.map((event) => {
-                                const {
-                                    day,
-                                    description,
-                                    endAtTimestamp,
-                                    eventID,
-                                    location,
-                                    month,
-                                    title,
-                                    slug,
-                                    startAtTimestamp,
-                                    year,
-                                } = event;
-
-                                return (
-                                    <FeedSection.GridItem key={eventID}>
-                                        <FeedCard.Root>
-                                            <FeedCard.Body>
-                                                <FeedCard.Title
-                                                    to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
-                                                >
-                                                    {title}
-                                                </FeedCard.Title>
-
-                                                <FeedCard.Description>
-                                                    <VStack
-                                                        gap="1"
-                                                        alignItems="start"
-                                                    >
-                                                        <Flex lineHeight="short">
-                                                            <CalendarTextIcon />
-                                                            &nbsp;
-                                                            {endAtTimestamp ? (
-                                                                <DatetimeRangeText
-                                                                    startAtTimestamp={
-                                                                        startAtTimestamp
-                                                                    }
-                                                                    endAtTimestamp={
-                                                                        endAtTimestamp
-                                                                    }
-                                                                    detail="short"
-                                                                />
-                                                            ) : (
-                                                                <DatetimeText
-                                                                    timestamp={
-                                                                        startAtTimestamp
-                                                                    }
-                                                                    detail="short"
-                                                                />
-                                                            )}
-                                                        </Flex>
-
-                                                        {location ? (
-                                                            <Flex lineHeight="short">
-                                                                <PinIcon />
-                                                                &nbsp;
-                                                                {location}
-                                                            </Flex>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                    </VStack>
-                                                </FeedCard.Description>
-
-                                                <FeedCard.Text>
-                                                    {description}
-                                                </FeedCard.Text>
-                                            </FeedCard.Body>
-                                        </FeedCard.Root>
-                                    </FeedSection.GridItem>
-                                );
-                            })}
-
-                            <FeedSection.GridItem variant="action">
-                                <ActionCard.Root>
-                                    <ActionCard.Icon>
-                                        <ArrowRightIcon />
-                                    </ActionCard.Icon>
-
-                                    <ActionCard.Link to="/calendar">
-                                        View More
-                                    </ActionCard.Link>
-                                </ActionCard.Root>
-                            </FeedSection.GridItem>
-                        </FeedSection.Grid>
-                    </FeedSection.Body>
-                </FeedSection.Container>
-            </FeedSection.Root>
-
-            <FeatureSection.Root>
-                <FeatureSection.Container>
-                    <FeatureSection.Body>
-                        <FeatureSection.Title>
-                            Bi-Weekly Meetings
-                        </FeatureSection.Title>
-
-                        <FeatureSection.Description>
-                            To promote club camaraderie, the Computing and AI
-                            Club hosts bi-weekly meetings every XYZday @{" "}
-                            <Span whiteSpace="pre">common hour</Span> in{" "}
-                            <Span whiteSpace="pre">Olmsted W212</Span>.
-                        </FeatureSection.Description>
-                    </FeatureSection.Body>
-
-                    <FeatureSection.Image
-                        src="/images/landing.calendar.webp"
-                        alt="3D voxel art of a calendar."
-                    />
-                </FeatureSection.Container>
-            </FeatureSection.Root>
-
-            <FeedSection.Root>
-                <FeedSection.Container>
-                    <FeedSection.Body>
-                        <FeedSection.Title>News?</FeedSection.Title>
-
-                        <FeedSection.Description>
-                            Sure, we have our ramblings available.
-                        </FeedSection.Description>
-
-                        <FeedSection.Grid>
-                            {articles.map((article) => {
-                                const {
-                                    articleID,
-                                    day,
-                                    description,
-                                    month,
-                                    publishedAtTimestamp,
-                                    title,
-                                    slug,
-                                    year,
-                                } = article;
-
-                                return (
-                                    <FeedSection.GridItem key={articleID}>
-                                        <FeedCard.Root>
-                                            <FeedCard.Body>
-                                                <FeedCard.Title
-                                                    to={`/news/articles/${articleID}/${year}/${month}/${day}/${slug}`}
-                                                >
-                                                    {title}
-                                                </FeedCard.Title>
-
-                                                <FeedCard.Description>
-                                                    <DatetimeText
-                                                        detail="short"
-                                                        timestamp={
-                                                            publishedAtTimestamp
-                                                        }
-                                                    />
-                                                </FeedCard.Description>
-
-                                                <FeedCard.Text>
-                                                    {description}
-                                                </FeedCard.Text>
-                                            </FeedCard.Body>
-                                        </FeedCard.Root>
-                                    </FeedSection.GridItem>
-                                );
-                            })}
-
-                            <FeedSection.GridItem variant="action">
-                                <ActionCard.Root>
-                                    <ActionCard.Icon>
-                                        <ArrowRightIcon />
-                                    </ActionCard.Icon>
-
-                                    <ActionCard.Link to="/news">
-                                        View More
-                                    </ActionCard.Link>
-                                </ActionCard.Root>
-                            </FeedSection.GridItem>
-                        </FeedSection.Grid>
-                    </FeedSection.Body>
-                </FeedSection.Container>
-            </FeedSection.Root>
+            <AnimatedBanner />
+            <ClubBio />
+            <ClubOfficerList />
+            <EventsFeed />
+            <MeetingsDetails />
+            <NewsFeed />
         </>
     );
 }

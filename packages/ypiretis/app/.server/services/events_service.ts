@@ -1,5 +1,7 @@
 import {Temporal} from "@js-temporal/polyfill";
 
+import {getViewSelectedFields, gte, lt, sql} from "drizzle-orm";
+
 import {slug as slugify} from "github-slugger";
 
 import {
@@ -24,6 +26,8 @@ import type {
     ISelectPublishedEvent as _ISelectPublishedEvent,
 } from "../database/views/published_events_view";
 import PUBLISHED_EVENTS_VIEW from "../database/views/published_events_view";
+
+import {useTransaction} from "../state/transaction";
 
 import makeAttachmentsService from "./attachments_service";
 import {makeReadableCRUDService, makeWritableCRUDService} from "./crud_service";
@@ -154,4 +158,42 @@ export function mapEventWithPoster<
 
         poster: mapUser(poster),
     };
+}
+
+export async function findAllPublishedFeed(): Promise<IPublishedEvent[]> {
+    const transaction = useTransaction();
+    const now = Temporal.Now.instant();
+
+    const upcomingEvents = transaction
+        .select({
+            ...getViewSelectedFields(PUBLISHED_EVENTS_VIEW),
+
+            _eventPriority: sql<number>`1`.as("_event_priority"),
+        })
+        .from(PUBLISHED_EVENTS_VIEW)
+        .where(gte(PUBLISHED_EVENTS_VIEW.startAt, now));
+
+    const pastEvents = transaction
+        .select({
+            ...getViewSelectedFields(PUBLISHED_EVENTS_VIEW),
+
+            _eventPriority: sql<number>`2`.as("_event_priority"),
+        })
+        .from(PUBLISHED_EVENTS_VIEW)
+        .where(lt(PUBLISHED_EVENTS_VIEW.startAt, now));
+
+    const combinedEvents = upcomingEvents.unionAll(pastEvents);
+    const rows = await transaction
+        .select()
+        .from(combinedEvents.as("prioritized_events"))
+        .orderBy(
+            sql`_event_priority ASC,
+                 CASE WHEN _event_priority = 1 THEN start_at END ASC,
+                 CASE WHEN _event_priority = 2 THEN start_at END DESC`,
+        )
+        .limit(3);
+
+    return rows.map((row) => {
+        return mapEvent(row);
+    });
 }

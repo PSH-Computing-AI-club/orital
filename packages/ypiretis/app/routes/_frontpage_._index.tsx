@@ -6,6 +6,7 @@ import {ClientOnly} from "remix-utils/client-only";
 
 import {findAllPublished as findAllArticlesPublished} from "~/.server/services/articles_service";
 import {SORT_MODES} from "~/.server/services/crud_service";
+import {findAllPublishedFeed as findAllEventsPublishedFeed} from "~/.server/services/events_service";
 import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import DatetimeText from "~/components/common/datetime_text";
@@ -64,14 +65,18 @@ const PEOPLE_TO_DISPLAY = [
 const AnimatedLogo = lazy(() => import("~/components/frontpage/animated_logo"));
 
 export async function loader(_loaderArgs: Route.LoaderArgs) {
-    const articles = await findAllArticlesPublished({
-        limit: ARTICLES_TO_DISPLAY,
+    const [articles, events] = await Promise.all([
+        findAllArticlesPublished({
+            limit: ARTICLES_TO_DISPLAY,
 
-        sort: {
-            by: "publishedAt",
-            mode: SORT_MODES.descending,
-        },
-    });
+            sort: {
+                by: "publishedAt",
+                mode: SORT_MODES.descending,
+            },
+        }),
+
+        findAllEventsPublishedFeed(),
+    ]);
 
     const mappedArticles = await Promise.all(
         articles.map(async (article) => {

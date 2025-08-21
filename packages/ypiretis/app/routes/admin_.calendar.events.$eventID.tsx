@@ -1341,6 +1341,7 @@ function SettingsCardScheduleView() {
                         ref={locationInputRef}
                         disabled={isLocationFieldDisabled}
                         defaultValue={location ?? ""}
+                        maxLength={128}
                         flexGrow="1"
                         onChange={onLocationChange}
                     />

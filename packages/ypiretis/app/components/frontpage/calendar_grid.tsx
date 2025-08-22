@@ -30,7 +30,7 @@ import CalendarTextIcon from "~/components/icons/calendar_text_icon";
 import PinIcon from "~/components/icons/pin_icon";
 
 import type {IDateLike} from "~/utils/datetime";
-import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
+import {toDate, useTimezone} from "~/utils/datetime";
 import {formatCalendarWeekdays} from "~/utils/locale";
 
 const CONTEXT_CALENDAR_GRID = createContext<ICalendarGridContext | null>(null);

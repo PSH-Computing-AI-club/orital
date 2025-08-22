@@ -109,7 +109,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const events = await findAllPublished({
         sort: {
-            by: "publishedAt",
+            by: "startAt",
             mode: SORT_MODES.descending,
         },
 

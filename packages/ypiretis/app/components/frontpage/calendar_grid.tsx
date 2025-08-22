@@ -30,7 +30,7 @@ import CalendarTextIcon from "~/components/icons/calendar_text_icon";
 import PinIcon from "~/components/icons/pin_icon";
 
 import type {IDateLike} from "~/utils/datetime";
-import {toDate, useTimezone, zeroDay} from "~/utils/datetime";
+import {toDate, useTimezone} from "~/utils/datetime";
 import {formatCalendarWeekdays} from "~/utils/locale";
 
 const CONTEXT_CALENDAR_GRID = createContext<ICalendarGridContext | null>(null);
@@ -114,11 +114,13 @@ export interface ICalendarGridDay {
 }
 
 export interface ICalendarGridEvent {
-    readonly id: string;
+    readonly dayTimestamp: IDateLike;
 
     readonly description: string;
 
     readonly endAtTimestamp?: IDateLike;
+
+    readonly id: string;
 
     readonly location?: string;
 
@@ -143,13 +145,14 @@ function makeEventDayLookup(
     const dayLookup = new Map<number, ICalendarGridEvent[]>();
 
     for (const event of events) {
-        const {startAtTimestamp: startAt} = event;
-        const date = zeroDay(startAt);
+        const {dayTimestamp} = event;
 
+        const date = toDate(dayTimestamp);
         const epochMilliseconds = date.getTime();
-        const events = dayLookup.get(epochMilliseconds) ?? [];
 
+        const events = dayLookup.get(epochMilliseconds) ?? [];
         events.push(event);
+
         dayLookup.set(epochMilliseconds, events);
     }
 
@@ -324,8 +327,8 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
 
     const {date, isInMonth, isWeekend} = day;
 
-    const dayTimestamp = zeroDay(date).getTime();
-    const events = dayLookup.get(dayTimestamp) ?? null;
+    const epochMilliseconds = date.getTime();
+    const events = dayLookup.get(epochMilliseconds) ?? null;
 
     return (
         <VStack

@@ -1,0 +1,45 @@
+version: "3"
+
+x-runtime-environment: &runtime-environment
+    BUCKET_SQLITE3_TAG: sqlite3
+    BUCKET_UPLOADS_TAG: uploads
+    DATA_SQLITE3_FILE: /var/lib/orital-ypiretis/database/db.sqlite
+    DATA_UPLOADS_DIRECTORY: /var/lib/orital-ypiretis/uploads
+    SNAPSHOT_SQLITE3_DIRECTORY: /tmp/snapshots/sqlite3
+    SCRIPTS_DIRECTORY: /usr/local/bin
+
+x-secrets-environment: &secrets-environment
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    BUCKET_REPOSITORY: ${BUCKET_REPOSITORY}
+    RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+
+volumes:
+    working-snapshots:
+
+services:
+    backup-orital-ypiretis:
+        container_name: backup-orital-ypiretis
+        restart: unless-stopped
+
+        build:
+            context: .
+            dockerfile: Dockerfile.backup
+
+        command: tail -f /dev/null
+
+        volumes:
+            - ./scripts/backup-all.sh:/usr/local/bin/backup-all.sh:ro
+            - ./scripts/backup-sqlite3.sh:/usr/local/bin/backup-sqlite3.sh:ro
+            - ./scripts/backup-uploads.sh:/usr/local/bin/backup-uploads.sh:ro
+            - ./scripts/init-restic.sh:/usr/local/bin/init-restic.sh:ro
+            - ./scripts/init-restic-sqlite3.sh:/usr/local/bin/init-restic-sqlite3.sh:ro
+            - ./scripts/init-restic-uploads.sh:/usr/local/bin/init-restic-uploads.sh:ro
+
+            - /var/lib/orital-ypiretis/database:/var/lib/orital-ypiretis/database
+            - /var/lib/orital-ypiretis/uploads:/var/lib/orital-ypiretis/uploads:ro
+
+            - working-snapshots:/tmp/snapshots
+
+        environment:
+            <<: [*runtime-environment, *secrets-environment]

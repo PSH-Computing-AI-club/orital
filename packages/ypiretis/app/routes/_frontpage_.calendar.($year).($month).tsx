@@ -124,8 +124,15 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {content, endAt, eventID, location, slug, startAt, title} =
                 event;
 
-            const zonedPublishedAt =
-                startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+            const zonedStartAt = startAt.toZonedDateTimeISO(SERVER_TIMEZONE);
+            const zonedDay = zonedStartAt.with({
+                hour: 0,
+                minute: 0,
+                second: 0,
+                microsecond: 0,
+                millisecond: 0,
+                nanosecond: 0,
+            });
 
             const plaintextContent = await renderMarkdownForPlaintext(content);
             const description = normalizeSpacing(
@@ -136,12 +143,14 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             );
 
             const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+            const {epochMilliseconds: dayTimestamp} = zonedDay;
             const {epochMilliseconds: startAtTimestamp} = startAt;
 
-            const {year, month, day} = zonedPublishedAt;
+            const {year, month, day} = zonedStartAt;
 
             return {
                 day,
+                dayTimestamp,
                 description,
                 endAtTimestamp,
                 eventID,
@@ -334,6 +343,7 @@ function EventCalendar() {
         return events.map((event) => {
             const {
                 day,
+                dayTimestamp,
                 description,
                 endAtTimestamp,
                 eventID,
@@ -350,6 +360,7 @@ function EventCalendar() {
             }) satisfies ICalenderGridEventTemplate;
 
             return {
+                dayTimestamp,
                 description,
                 template,
                 title,

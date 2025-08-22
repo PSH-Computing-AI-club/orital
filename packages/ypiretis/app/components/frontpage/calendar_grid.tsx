@@ -114,11 +114,13 @@ export interface ICalendarGridDay {
 }
 
 export interface ICalendarGridEvent {
-    readonly id: string;
+    readonly dayTimestamp: IDateLike;
 
     readonly description: string;
 
     readonly endAtTimestamp?: IDateLike;
+
+    readonly id: string;
 
     readonly location?: string;
 
@@ -143,13 +145,14 @@ function makeEventDayLookup(
     const dayLookup = new Map<number, ICalendarGridEvent[]>();
 
     for (const event of events) {
-        const {startAtTimestamp: startAt} = event;
-        const date = zeroDay(startAt);
+        const {dayTimestamp} = event;
 
+        const date = toDate(dayTimestamp);
         const epochMilliseconds = date.getTime();
-        const events = dayLookup.get(epochMilliseconds) ?? [];
 
+        const events = dayLookup.get(epochMilliseconds) ?? [];
         events.push(event);
+
         dayLookup.set(epochMilliseconds, events);
     }
 
@@ -324,8 +327,8 @@ function CalendarGridItem(props: ICalenderGridItemProps) {
 
     const {date, isInMonth, isWeekend} = day;
 
-    const dayTimestamp = zeroDay(date).getTime();
-    const events = dayLookup.get(dayTimestamp) ?? null;
+    const epochMilliseconds = date.getTime();
+    const events = dayLookup.get(epochMilliseconds) ?? null;
 
     return (
         <VStack

@@ -337,7 +337,7 @@ export async function action(actionArgs: Route.ActionArgs) {
                 throw error;
             }
 
-            return redirect("/admin/news");
+            return redirect("/admin/calendar");
         }
 
         case "startAt.update": {

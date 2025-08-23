@@ -266,99 +266,103 @@ function EventAgendaEmptyState() {
     );
 }
 
-function EventAgendaFeed() {
-    const {calendar, events, month} = useLoaderData<typeof loader>();
+function EventAgendaFeed(props: {events: any}) {
+    const {events} = props;
+    const {calendar} = useLoaderData<typeof loader>();
 
     const {timezone} = calendar;
-    const {
-        endAtTimestamp: monthEndAtTimestamp,
-        startAtTimestamp: monthStartAtTimestamp,
-    } = month;
 
     return (
         <FeedStack.Root display={{base: "flex", xl: "none"}}>
-            {events
-                .filter((event) => {
-                    const {startAtTimestamp: eventStartAtTimestamp} = event;
+            {events.map((event) => {
+                const {
+                    day,
+                    description,
+                    endAtTimestamp,
+                    eventID,
+                    location,
+                    month,
+                    title,
+                    slug,
+                    startAtTimestamp,
+                    year,
+                } = event;
 
-                    return (
-                        monthStartAtTimestamp <= eventStartAtTimestamp &&
-                        eventStartAtTimestamp < monthEndAtTimestamp
-                    );
-                })
-                .map((event) => {
-                    const {
-                        day,
-                        description,
-                        endAtTimestamp,
-                        eventID,
-                        location,
-                        month,
-                        title,
-                        slug,
-                        startAtTimestamp,
-                        year,
-                    } = event;
+                return (
+                    <FeedStack.Item key={eventID}>
+                        <FeedCard.Root>
+                            <FeedCard.Body>
+                                <FeedCard.Title
+                                    to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
+                                >
+                                    {title}
+                                </FeedCard.Title>
 
-                    return (
-                        <FeedStack.Item key={eventID}>
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title
-                                        to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
-                                    >
-                                        {title}
-                                    </FeedCard.Title>
+                                <FeedCard.Description>
+                                    <VStack gap="1" alignItems="start">
+                                        <Flex lineHeight="short">
+                                            <CalendarTextIcon />
+                                            &nbsp;
+                                            {endAtTimestamp ? (
+                                                <DatetimeRangeText
+                                                    timezone={timezone}
+                                                    startAtTimestamp={
+                                                        startAtTimestamp
+                                                    }
+                                                    endAtTimestamp={
+                                                        endAtTimestamp
+                                                    }
+                                                    detail="long"
+                                                />
+                                            ) : (
+                                                <DatetimeText
+                                                    timezone={timezone}
+                                                    timestamp={startAtTimestamp}
+                                                    detail="long"
+                                                />
+                                            )}
+                                        </Flex>
 
-                                    <FeedCard.Description>
-                                        <VStack gap="1" alignItems="start">
-                                            <Flex lineHeight="short">
-                                                <CalendarTextIcon />
-                                                &nbsp;
-                                                {endAtTimestamp ? (
-                                                    <DatetimeRangeText
-                                                        timezone={timezone}
-                                                        startAtTimestamp={
-                                                            startAtTimestamp
-                                                        }
-                                                        endAtTimestamp={
-                                                            endAtTimestamp
-                                                        }
-                                                        detail="long"
-                                                    />
-                                                ) : (
-                                                    <DatetimeText
-                                                        timezone={timezone}
-                                                        timestamp={
-                                                            startAtTimestamp
-                                                        }
-                                                        detail="long"
-                                                    />
-                                                )}
-                                            </Flex>
+                                        <Flex lineHeight="short">
+                                            <PinIcon />
+                                            &nbsp;
+                                            {location ?? "TBD"}
+                                        </Flex>
+                                    </VStack>
+                                </FeedCard.Description>
 
-                                            <Flex lineHeight="short">
-                                                <PinIcon />
-                                                &nbsp;
-                                                {location ?? "TBD"}
-                                            </Flex>
-                                        </VStack>
-                                    </FeedCard.Description>
-
-                                    <FeedCard.Text>{description}</FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
-                        </FeedStack.Item>
-                    );
-                })}
+                                <FeedCard.Text>{description}</FeedCard.Text>
+                            </FeedCard.Body>
+                        </FeedCard.Root>
+                    </FeedStack.Item>
+                );
+            })}
         </FeedStack.Root>
     );
 }
 
 function EventAgenda() {
-    const {events} = useLoaderData<typeof loader>();
+    const {events, month} = useLoaderData<typeof loader>();
 
-    return events.length > 0 ? <EventAgendaFeed /> : <EventAgendaEmptyState />;
+    const {
+        endAtTimestamp: monthEndAtTimestamp,
+        startAtTimestamp: monthStartAtTimestamp,
+    } = month;
+
+    const mappedEvents = events.filter((event) => {
+        const {startAtTimestamp: eventStartAtTimestamp} = event;
+
+        return (
+            monthStartAtTimestamp <= eventStartAtTimestamp &&
+            eventStartAtTimestamp < monthEndAtTimestamp
+        );
+    });
+
+    return mappedEvents.length > 0 ? (
+        <EventAgendaFeed events={mappedEvents} />
+    ) : (
+        <EventAgendaEmptyState />
+    );
 }
 
 function EventCalendar() {

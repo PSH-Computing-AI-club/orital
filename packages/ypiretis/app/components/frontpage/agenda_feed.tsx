@@ -1,7 +1,7 @@
 import type {StackProps} from "@chakra-ui/react";
 import {Flex, VStack} from "@chakra-ui/react";
 
-import {createContext, useContext, useMemo} from "react";
+import {createContext, memo, useContext, useMemo} from "react";
 
 import type {IDateLike} from "~/utils/datetime";
 
@@ -18,6 +18,11 @@ interface IAgendaFeedContext {
     readonly events: IAgendaFeedEvent[];
 
     readonly timezone: string;
+}
+
+interface IAgendaFeedItemProps
+    extends Omit<StackProps, "asChild" | "children"> {
+    readonly event: IAgendaFeedEvent;
 }
 
 export interface IEventTemplateContext {
@@ -46,7 +51,8 @@ export interface IAgendaFeedEvent {
     readonly template: IAgendaFeedEventTemplate;
 }
 
-export interface IAgendaFeedProps extends StackProps {
+export interface IAgendaFeedProps
+    extends Omit<StackProps, "asChild" | "children"> {
     readonly events: IAgendaFeedEvent[];
 
     readonly timezone: string;
@@ -64,62 +70,72 @@ function useAgendaFeedContext(): IAgendaFeedContext {
     return context;
 }
 
+function AgendaFeedItem(props: IAgendaFeedItemProps) {
+    const {event} = props;
+
+    const {
+        description,
+        endAtTimestamp,
+        location,
+        template,
+        title,
+        startAtTimestamp,
+    } = event;
+
+    const url = template({event});
+    const {timezone} = useAgendaFeedContext();
+
+    return (
+        <FeedCard.Root>
+            <FeedCard.Body>
+                <FeedCard.Title to={url.toString()}>{title}</FeedCard.Title>
+
+                <FeedCard.Description>
+                    <VStack gap="1" alignItems="start">
+                        <Flex lineHeight="short">
+                            <CalendarTextIcon />
+                            &nbsp;
+                            {endAtTimestamp ? (
+                                <DatetimeRangeText
+                                    timezone={timezone}
+                                    startAtTimestamp={startAtTimestamp}
+                                    endAtTimestamp={endAtTimestamp}
+                                    detail="long"
+                                />
+                            ) : (
+                                <DatetimeText
+                                    timezone={timezone}
+                                    timestamp={startAtTimestamp}
+                                    detail="long"
+                                />
+                            )}
+                        </Flex>
+
+                        <Flex lineHeight="short">
+                            <PinIcon />
+                            &nbsp;
+                            {location ?? "TBD"}
+                        </Flex>
+                    </VStack>
+                </FeedCard.Description>
+
+                <FeedCard.Text>{description}</FeedCard.Text>
+            </FeedCard.Body>
+        </FeedCard.Root>
+    );
+}
+
+const MemoizedCalenderGridItem = memo(AgendaFeedItem);
+
 function AgendaFeedEvents() {
-    const {events, timezone} = useAgendaFeedContext();
+    const {events} = useAgendaFeedContext();
 
     return events.map((event) => {
-        const {
-            description,
-            endAtTimestamp,
-            id,
-            location,
-            template,
-            title,
-            startAtTimestamp,
-        } = event;
-
-        const url = template({event});
+        const {id} = event;
 
         return (
             <FeedStack.Item key={id}>
-                <FeedCard.Root>
-                    <FeedCard.Body>
-                        <FeedCard.Title to={url.toString()}>
-                            {title}
-                        </FeedCard.Title>
-
-                        <FeedCard.Description>
-                            <VStack gap="1" alignItems="start">
-                                <Flex lineHeight="short">
-                                    <CalendarTextIcon />
-                                    &nbsp;
-                                    {endAtTimestamp ? (
-                                        <DatetimeRangeText
-                                            timezone={timezone}
-                                            startAtTimestamp={startAtTimestamp}
-                                            endAtTimestamp={endAtTimestamp}
-                                            detail="long"
-                                        />
-                                    ) : (
-                                        <DatetimeText
-                                            timezone={timezone}
-                                            timestamp={startAtTimestamp}
-                                            detail="long"
-                                        />
-                                    )}
-                                </Flex>
-
-                                <Flex lineHeight="short">
-                                    <PinIcon />
-                                    &nbsp;
-                                    {location ?? "TBD"}
-                                </Flex>
-                            </VStack>
-                        </FeedCard.Description>
-
-                        <FeedCard.Text>{description}</FeedCard.Text>
-                    </FeedCard.Body>
-                </FeedCard.Root>
+                <MemoizedCalenderGridItem event={event} />
             </FeedStack.Item>
         );
     });

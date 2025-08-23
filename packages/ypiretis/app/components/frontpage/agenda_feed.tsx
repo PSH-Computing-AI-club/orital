@@ -4,6 +4,7 @@ import {Flex, VStack} from "@chakra-ui/react";
 import {createContext, memo, useContext, useMemo} from "react";
 
 import type {IDateLike} from "~/utils/datetime";
+import {useTimezone} from "~/utils/datetime";
 
 import FeedStack from "./feed_stack";
 import FeedCard from "./feed_card";
@@ -144,7 +145,7 @@ function AgendaFeedEvents() {
 }
 
 export default function AgendaFeed(props: IAgendaFeedProps) {
-    const {events, timezone, ...rest} = props;
+    const {events, timezone = useTimezone(), ...rest} = props;
 
     const context = useMemo(() => {
         return {

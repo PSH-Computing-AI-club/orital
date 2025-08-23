@@ -320,7 +320,11 @@ function EventAgenda() {
     }, [events, monthEndAtTimestamp, monthStartAtTimestamp]);
 
     return mappedEvents.length > 0 ? (
-        <AgendaFeed timezone={timezone} events={mappedEvents} />
+        <AgendaFeed
+            timezone={timezone}
+            events={mappedEvents}
+            display={{base: "flex", xl: "none"}}
+        />
     ) : (
         <EventAgendaEmptyState />
     );

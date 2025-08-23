@@ -1,7 +1,5 @@
 import {Temporal} from "@js-temporal/polyfill";
 
-import {slug as slugify} from "github-slugger";
-
 import {
     IArticlesTable,
     IArticleStates as _IArticleStates,
@@ -29,6 +27,8 @@ import type {
     ISelectPublishedArticleWithPoster as _ISelectPublishedArticleWithPoster,
 } from "../database/views/published_articles_with_poster_view";
 import PUBLISHED_ARTICLES_WITH_POSTER_VIEW from "../database/views/published_articles_with_poster_view";
+
+import {toSlug} from "../utils/string";
 
 import makeAttachmentsService from "./attachments_service";
 import {makeReadableCRUDService, makeWritableCRUDService} from "./crud_service";
@@ -156,7 +156,7 @@ export function mapArticle<T extends _ISelectArticle, R extends IArticle>(
           })
         : false;
 
-    const slug = slugify(title, false);
+    const slug = toSlug(title);
 
     return {
         ...article,

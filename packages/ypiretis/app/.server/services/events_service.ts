@@ -2,8 +2,6 @@ import {Temporal} from "@js-temporal/polyfill";
 
 import {getViewSelectedFields, gte, lt, sql} from "drizzle-orm";
 
-import {slug as slugify} from "github-slugger";
-
 import {
     IEventsTable,
     IEventStates as _IEventStates,
@@ -28,6 +26,8 @@ import type {
 import PUBLISHED_EVENTS_VIEW from "../database/views/published_events_view";
 
 import {useTransaction} from "../state/transaction";
+
+import {toSlug} from "../utils/string";
 
 import makeAttachmentsService from "./attachments_service";
 import {makeReadableCRUDService, makeWritableCRUDService} from "./crud_service";
@@ -137,7 +137,7 @@ export function mapEvent<T extends _ISelectEvent, R extends IEvent>(
           })
         : false;
 
-    const slug = slugify(title, false);
+    const slug = toSlug(title);
 
     return {
         ...event,

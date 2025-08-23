@@ -131,7 +131,8 @@ export interface ICalendarGridEvent {
     readonly template: ICalenderGridEventTemplate;
 }
 
-export interface ICalendarGridProps extends SimpleGridProps {
+export interface ICalendarGridProps
+    extends Omit<SimpleGridProps, "asChild" | "children"> {
     readonly events: ICalendarGridEvent[];
 
     readonly timezone?: string;

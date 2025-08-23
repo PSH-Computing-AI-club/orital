@@ -107,6 +107,10 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         return dayOfMonth === 1;
     })!;
 
+    const lastDay = firstDay.add({
+        months: 1,
+    });
+
     const events = await findAllPublished({
         sort: {
             by: "startAt",
@@ -145,9 +149,9 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
             const {epochMilliseconds: dayTimestamp} = zonedDay;
             const {epochMilliseconds: startAtTimestamp} = startAt;
 
-            const {year, month, day} = zonedStartAt;
-
             const endAtTimestamp = endAt?.epochMilliseconds ?? null;
+
+            const {year, month, day} = zonedStartAt;
 
             return {
                 day,
@@ -180,7 +184,8 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
         }) as ICalendarGridWeek;
     }) as ICalendarGridMonth;
 
-    const {epochMilliseconds: timestamp} = firstDay;
+    const {epochMilliseconds: startAtTimestamp} = firstDay;
+    const {epochMilliseconds: endAtTimestamp} = lastDay;
 
     const currentMonth = Temporal.PlainYearMonth.from({
         year,
@@ -197,9 +202,15 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     return {
         calendar: {
-            timestamp,
             timezone,
             weeks: mappedWeeks,
+        },
+
+        events: mappedEvents,
+
+        month: {
+            endAtTimestamp,
+            startAtTimestamp,
         },
 
         navigation: {
@@ -213,8 +224,6 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 year: previousYear,
             },
         },
-
-        events: mappedEvents,
     };
 }
 
@@ -377,9 +386,9 @@ function EventCalendar() {
 
     return (
         <CalendarGrid
-            events={calenderGridEvents}
             timezone={timezone}
             weeks={weeks}
+            events={calenderGridEvents}
             display={{base: "grid", xlDown: "none"}}
         />
     );
@@ -428,11 +437,13 @@ function MonthNavigationGroup() {
 
 export default function FrontpageCalendar(props: Route.ComponentProps) {
     const {loaderData} = props;
-    const {calendar} = loaderData;
+    const {calendar, month} = loaderData;
 
-    const {timestamp, timezone} = calendar;
+    const {timezone} = calendar;
+    const {startAtTimestamp} = month;
+
     const {isoTimestamp, textualTimestamp} = useFormattedCalendarTimestamp(
-        timestamp,
+        startAtTimestamp,
         {timezone},
     );
 

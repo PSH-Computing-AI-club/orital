@@ -1,4 +1,4 @@
-import {Flex, Group, IconButton, Spacer, VStack} from "@chakra-ui/react";
+import {Group, IconButton, Spacer} from "@chakra-ui/react";
 
 import {Temporal} from "@js-temporal/polyfill";
 
@@ -15,11 +15,14 @@ import {renderMarkdownForPlaintext} from "~/.server/services/markdown";
 
 import {makeZonedCalendarGrid} from "~/.server/utils/locale";
 
-import DatetimeText from "~/components/common/datetime_text";
-import DatetimeRangeText from "~/components/common/datetime_range_text";
 import EmptyState from "~/components/common/empty_state";
 import Title from "~/components/common/title";
 
+import type {
+    IAgendaFeedEvent,
+    IAgendaFeedEventTemplate,
+} from "~/components/frontpage/agenda_feed";
+import AgendaFeed from "~/components/frontpage/agenda_feed";
 import type {
     ICalendarGridDay,
     ICalendarGridEvent,
@@ -29,15 +32,11 @@ import type {
 } from "~/components/frontpage/calendar_grid";
 import CalendarGrid from "~/components/frontpage/calendar_grid";
 import ContentSection from "~/components/frontpage/content_section";
-import FeedCard from "~/components/frontpage/feed_card";
-import FeedStack from "~/components/frontpage/feed_stack";
 import PageHero from "~/components/frontpage/page_hero";
 
 import CalendarRemoveIcon from "~/components/icons/calendar_remove_icon";
-import CalendarTextIcon from "~/components/icons/calendar_text_icon";
 import ChevronRightIcon from "~/components/icons/chevron_right_icon";
 import ChevronLeftIcon from "~/components/icons/chevron_left_icon";
-import PinIcon from "~/components/icons/pin_icon";
 
 import {validateParams, validateSearchParams} from "~/guards/validation";
 
@@ -266,100 +265,62 @@ function EventAgendaEmptyState() {
     );
 }
 
-function EventAgendaFeed(props: {events: any}) {
-    const {events} = props;
-    const {calendar} = useLoaderData<typeof loader>();
+function EventAgenda() {
+    const {calendar, events, month} = useLoaderData<typeof loader>();
 
     const {timezone} = calendar;
-
-    return (
-        <FeedStack.Root display={{base: "flex", xl: "none"}}>
-            {events.map((event) => {
-                const {
-                    day,
-                    description,
-                    endAtTimestamp,
-                    eventID,
-                    location,
-                    month,
-                    title,
-                    slug,
-                    startAtTimestamp,
-                    year,
-                } = event;
-
-                return (
-                    <FeedStack.Item key={eventID}>
-                        <FeedCard.Root>
-                            <FeedCard.Body>
-                                <FeedCard.Title
-                                    to={`/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`}
-                                >
-                                    {title}
-                                </FeedCard.Title>
-
-                                <FeedCard.Description>
-                                    <VStack gap="1" alignItems="start">
-                                        <Flex lineHeight="short">
-                                            <CalendarTextIcon />
-                                            &nbsp;
-                                            {endAtTimestamp ? (
-                                                <DatetimeRangeText
-                                                    timezone={timezone}
-                                                    startAtTimestamp={
-                                                        startAtTimestamp
-                                                    }
-                                                    endAtTimestamp={
-                                                        endAtTimestamp
-                                                    }
-                                                    detail="long"
-                                                />
-                                            ) : (
-                                                <DatetimeText
-                                                    timezone={timezone}
-                                                    timestamp={startAtTimestamp}
-                                                    detail="long"
-                                                />
-                                            )}
-                                        </Flex>
-
-                                        <Flex lineHeight="short">
-                                            <PinIcon />
-                                            &nbsp;
-                                            {location ?? "TBD"}
-                                        </Flex>
-                                    </VStack>
-                                </FeedCard.Description>
-
-                                <FeedCard.Text>{description}</FeedCard.Text>
-                            </FeedCard.Body>
-                        </FeedCard.Root>
-                    </FeedStack.Item>
-                );
-            })}
-        </FeedStack.Root>
-    );
-}
-
-function EventAgenda() {
-    const {events, month} = useLoaderData<typeof loader>();
 
     const {
         endAtTimestamp: monthEndAtTimestamp,
         startAtTimestamp: monthStartAtTimestamp,
     } = month;
 
-    const mappedEvents = events.filter((event) => {
-        const {startAtTimestamp: eventStartAtTimestamp} = event;
+    const mappedEvents = useMemo(() => {
+        return events
+            .filter((event) => {
+                const {startAtTimestamp: eventStartAtTimestamp} = event;
 
-        return (
-            monthStartAtTimestamp <= eventStartAtTimestamp &&
-            eventStartAtTimestamp < monthEndAtTimestamp
-        );
-    });
+                return (
+                    monthStartAtTimestamp <= eventStartAtTimestamp &&
+                    eventStartAtTimestamp < monthEndAtTimestamp
+                );
+            })
+            .map((event) => {
+                const {
+                    day,
+                    dayTimestamp,
+                    description,
+                    endAtTimestamp,
+                    eventID,
+                    location,
+                    month,
+                    slug,
+                    startAtTimestamp,
+                    title,
+                    year,
+                } = event;
+
+                const template = ((_context) => {
+                    return `/calendar/events/${eventID}/${year}/${month}/${day}/${slug}`;
+                }) satisfies IAgendaFeedEventTemplate;
+
+                return {
+                    dayTimestamp,
+                    description,
+                    template,
+                    title,
+                    startAtTimestamp,
+
+                    id: eventID,
+
+                    ...(endAtTimestamp ? {endAtTimestamp} : {}),
+                    ...(location ? {location} : {}),
+                } satisfies IAgendaFeedEvent;
+            });
+    }, [events, monthEndAtTimestamp, monthStartAtTimestamp]);
 
     return mappedEvents.length > 0 ? (
-        <EventAgendaFeed events={mappedEvents} />
+        <AgendaFeed timezone={timezone} events={mappedEvents} />
     ) : (
         <EventAgendaEmptyState />
     );

@@ -63,6 +63,10 @@ export type ICalenderGridEventTemplate = (
 interface ICalendarGridContext {
     readonly dayLookup: ICalendarGridDayLookup;
 
+    readonly endAtTimestamp: number;
+
+    readonly startAtTimestamp: number;
+
     readonly timezone: string;
 
     readonly weeks: IInternalCalendarGridDay[][];
@@ -70,8 +74,6 @@ interface ICalendarGridContext {
 
 interface IInternalCalendarGridDay {
     readonly date: Date;
-
-    readonly isInMonth: boolean;
 
     readonly isWeekend: boolean;
 }
@@ -106,8 +108,6 @@ export interface IEventTemplateContext {
 }
 
 export interface ICalendarGridDay {
-    readonly isInMonth: boolean;
-
     readonly isWeekend: boolean;
 
     readonly timestamp: IDateLike;
@@ -131,10 +131,15 @@ export interface ICalendarGridEvent {
     readonly template: ICalenderGridEventTemplate;
 }
 
-export interface ICalendarGridProps extends SimpleGridProps {
+export interface ICalendarGridProps
+    extends Omit<SimpleGridProps, "asChild" | "children"> {
+    readonly endAtTimestamp: number;
+
     readonly events: ICalendarGridEvent[];
 
     readonly timezone?: string;
+
+    readonly startAtTimestamp: number;
 
     readonly weeks: ICalendarGridMonth;
 }
@@ -275,6 +280,14 @@ function CalendarGridItemScheduleListing(
 function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
     const {events, ...rest} = props;
 
+    const scheduleListings = useMemo(() => {
+        return events.map((event) => {
+            const {id} = event;
+
+            return <CalendarGridItemScheduleListing key={id} event={event} />;
+        });
+    }, [events]);
+
     return (
         <List.Root
             variant="plain"
@@ -287,13 +300,7 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
             overflow="hidden"
             {...rest}
         >
-            {events.map((event) => {
-                const {id} = event;
-
-                return (
-                    <CalendarGridItemScheduleListing key={id} event={event} />
-                );
-            })}
+            {scheduleListings}
         </List.Root>
     );
 }
@@ -323,12 +330,20 @@ function CalenderGridItemDay(props: ICalenderGridItemDayProps) {
 
 function CalendarGridItem(props: ICalenderGridItemProps) {
     const {day, ...rest} = props;
-    const {dayLookup} = useCalendarGridContext();
+    const {
+        dayLookup,
+        endAtTimestamp: monthEndAtTimestamp,
+        startAtTimestamp: monthStartAtTimestamp,
+    } = useCalendarGridContext();
 
-    const {date, isInMonth, isWeekend} = day;
+    const {date, isWeekend} = day;
 
-    const epochMilliseconds = date.getTime();
-    const events = dayLookup.get(epochMilliseconds) ?? null;
+    const dayStartAtTimestamp = date.getTime();
+    const events = dayLookup.get(dayStartAtTimestamp) ?? null;
+
+    const isInMonth =
+        monthStartAtTimestamp <= dayStartAtTimestamp &&
+        dayStartAtTimestamp < monthEndAtTimestamp;
 
     return (
         <VStack
@@ -368,44 +383,48 @@ function CalendarGridWeekdayHeaders() {
         );
     }, [firstWeek]);
 
-    return weekdays.map((weekday) => {
-        return (
-            <Box
-                key={weekday}
-                padding="2"
-                bg="bg.inverted"
-                color="fg.inverted"
-                textAlign="center"
-            >
-                {weekday}
-            </Box>
-        );
-    });
+    return useMemo(() => {
+        return weekdays.map((weekday) => {
+            return (
+                <Box
+                    key={weekday}
+                    padding="2"
+                    bg="bg.inverted"
+                    color="fg.inverted"
+                    textAlign="center"
+                >
+                    {weekday}
+                </Box>
+            );
+        });
+    }, [weekdays]);
 }
 
 function CalendarGridWeeks() {
     const {weeks} = useCalendarGridContext();
 
-    return (
-        <>
-            {weeks.flatMap((week) => {
-                return week.map((day) => {
-                    const {date} = day;
+    return useMemo(() => {
+        return weeks.flatMap((week) => {
+            return week.map((day) => {
+                const {date} = day;
 
-                    return (
-                        <MemoizedCalenderGridItem
-                            key={date.getTime()}
-                            day={day}
-                        />
-                    );
-                });
-            })}
-        </>
-    );
+                return (
+                    <MemoizedCalenderGridItem key={date.getTime()} day={day} />
+                );
+            });
+        });
+    }, [weeks]);
 }
 
 export default function CalendarGrid(props: ICalendarGridProps) {
-    const {events, timezone = useTimezone(), weeks, ...rest} = props;
+    const {
+        endAtTimestamp,
+        events,
+        startAtTimestamp,
+        timezone = useTimezone(),
+        weeks,
+        ...rest
+    } = props;
 
     const dayLookup = useMemo(() => {
         return makeEventDayLookup(events);
@@ -414,10 +433,9 @@ export default function CalendarGrid(props: ICalendarGridProps) {
     const mappedWeeks = useMemo(() => {
         return weeks.map((week) => {
             return week.map((day) => {
-                const {isInMonth, isWeekend, timestamp} = day;
+                const {isWeekend, timestamp} = day;
 
                 return {
-                    isInMonth,
                     isWeekend,
 
                     date: toDate(timestamp),
@@ -429,10 +447,12 @@ export default function CalendarGrid(props: ICalendarGridProps) {
     const context = useMemo(() => {
         return {
             dayLookup,
+            endAtTimestamp,
+            startAtTimestamp,
             timezone,
             weeks: mappedWeeks,
         } satisfies ICalendarGridContext;
-    }, [dayLookup, mappedWeeks, timezone]);
+    }, [dayLookup, endAtTimestamp, mappedWeeks, startAtTimestamp, timezone]);
 
     return (
         <CONTEXT_CALENDAR_GRID.Provider value={context}>

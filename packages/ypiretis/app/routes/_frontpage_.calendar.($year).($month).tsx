@@ -170,13 +170,11 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
 
     const mappedWeeks = weeks.map((week) => {
         return week.map((day) => {
-            const {dayOfWeek, epochMilliseconds, month: monthOfDay} = day;
+            const {dayOfWeek, epochMilliseconds} = day;
 
-            const isInMonth = month === monthOfDay;
             const isWeekend = dayOfWeek > 5;
 
             return {
-                isInMonth,
                 isWeekend,
                 timestamp: epochMilliseconds,
             } satisfies ICalendarGridDay;
@@ -331,8 +329,10 @@ function EventAgenda() {
 }
 
 function EventCalendar() {
-    const {calendar, events} = useLoaderData<typeof loader>();
+    const {calendar, month, events} = useLoaderData<typeof loader>();
+
     const {timezone, weeks} = calendar;
+    const {endAtTimestamp, startAtTimestamp} = month;
 
     const calenderGridEvents = useMemo(() => {
         return events.map((event) => {
@@ -373,6 +373,8 @@ function EventCalendar() {
         <CalendarGrid
             timezone={timezone}
             weeks={weeks}
+            endAtTimestamp={endAtTimestamp}
+            startAtTimestamp={startAtTimestamp}
             events={calenderGridEvents}
             display={{base: "grid", xlDown: "none"}}
         />

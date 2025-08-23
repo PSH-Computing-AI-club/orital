@@ -15,6 +15,8 @@ import PinIcon from "../icons/pin_icon";
 const CONTEXT_AGENDA_FEED = createContext<IAgendaFeedContext | null>(null);
 
 interface IAgendaFeedContext {
+    readonly events: IAgendaFeedEvent[];
+
     readonly timezone: string;
 }
 
@@ -45,7 +47,7 @@ export interface IAgendaFeedEvent {
 }
 
 export interface IAgendaFeedProps extends StackProps {
-    readonly events: any;
+    readonly events: IAgendaFeedEvent[];
 
     readonly timezone: string;
 }
@@ -62,80 +64,81 @@ function useAgendaFeedContext(): IAgendaFeedContext {
     return context;
 }
 
+function AgendaFeedEvents() {
+    const {events, timezone} = useAgendaFeedContext();
+
+    return events.map((event) => {
+        const {
+            description,
+            endAtTimestamp,
+            id,
+            location,
+            template,
+            title,
+            startAtTimestamp,
+        } = event;
+
+        const url = template({event});
+
+        return (
+            <FeedStack.Item key={id}>
+                <FeedCard.Root>
+                    <FeedCard.Body>
+                        <FeedCard.Title to={url.toString()}>
+                            {title}
+                        </FeedCard.Title>
+
+                        <FeedCard.Description>
+                            <VStack gap="1" alignItems="start">
+                                <Flex lineHeight="short">
+                                    <CalendarTextIcon />
+                                    &nbsp;
+                                    {endAtTimestamp ? (
+                                        <DatetimeRangeText
+                                            timezone={timezone}
+                                            startAtTimestamp={startAtTimestamp}
+                                            endAtTimestamp={endAtTimestamp}
+                                            detail="long"
+                                        />
+                                    ) : (
+                                        <DatetimeText
+                                            timezone={timezone}
+                                            timestamp={startAtTimestamp}
+                                            detail="long"
+                                        />
+                                    )}
+                                </Flex>
+
+                                <Flex lineHeight="short">
+                                    <PinIcon />
+                                    &nbsp;
+                                    {location ?? "TBD"}
+                                </Flex>
+                            </VStack>
+                        </FeedCard.Description>
+
+                        <FeedCard.Text>{description}</FeedCard.Text>
+                    </FeedCard.Body>
+                </FeedCard.Root>
+            </FeedStack.Item>
+        );
+    });
+}
+
 export default function AgendaFeed(props: IAgendaFeedProps) {
     const {events, timezone, ...rest} = props;
 
     const context = useMemo(() => {
         return {
+            events,
             timezone,
         } satisfies IAgendaFeedContext;
-    }, [timezone]);
+    }, [events, timezone]);
 
     return (
         <CONTEXT_AGENDA_FEED.Provider value={context}>
             <FeedStack.Root {...rest}>
-                {events.map((event) => {
-                    const {
-                        description,
-                        endAtTimestamp,
-                        eventID,
-                        location,
-                        template,
-                        title,
-                        startAtTimestamp,
-                    } = event;
-
-                    const url = template({event});
-
-                    return (
-                        <FeedStack.Item key={eventID}>
-                            <FeedCard.Root>
-                                <FeedCard.Body>
-                                    <FeedCard.Title to={url.toString()}>
-                                        {title}
-                                    </FeedCard.Title>
-
-                                    <FeedCard.Description>
-                                        <VStack gap="1" alignItems="start">
-                                            <Flex lineHeight="short">
-                                                <CalendarTextIcon />
-                                                &nbsp;
-                                                {endAtTimestamp ? (
-                                                    <DatetimeRangeText
-                                                        timezone={timezone}
-                                                        startAtTimestamp={
-                                                            startAtTimestamp
-                                                        }
-                                                        endAtTimestamp={
-                                                            endAtTimestamp
-                                                        }
-                                                        detail="long"
-                                                    />
-                                                ) : (
-                                                    <DatetimeText
-                                                        timezone={timezone}
-                                                        timestamp={
-                                                            startAtTimestamp
-                                                        }
-                                                        detail="long"
-                                                    />
-                                                )}
-                                            </Flex>
-
-                                            <Flex lineHeight="short">
-                                                <PinIcon />
-                                                &nbsp;
-                                                {location ?? "TBD"}
-                                            </Flex>
-                                        </VStack>
-                                    </FeedCard.Description>
-
-                                    <FeedCard.Text>{description}</FeedCard.Text>
-                                </FeedCard.Body>
-                            </FeedCard.Root>
-                        </FeedStack.Item>
-                    );
-                })}
+                <AgendaFeedEvents />
             </FeedStack.Root>
         </CONTEXT_AGENDA_FEED.Provider>
     );

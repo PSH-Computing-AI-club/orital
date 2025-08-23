@@ -110,7 +110,7 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
     const events = await findAllPublished({
         sort: {
             by: "startAt",
-            mode: SORT_MODES.descending,
+            mode: SORT_MODES.ascending,
         },
 
         where: and(
@@ -142,11 +142,12 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
                 ),
             );
 
-            const endAtTimestamp = endAt?.epochMilliseconds ?? null;
             const {epochMilliseconds: dayTimestamp} = zonedDay;
             const {epochMilliseconds: startAtTimestamp} = startAt;
 
             const {year, month, day} = zonedStartAt;
+
+            const endAtTimestamp = endAt?.epochMilliseconds ?? null;
 
             return {
                 day,

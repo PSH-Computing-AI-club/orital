@@ -3,15 +3,17 @@ import {Flex, VStack} from "@chakra-ui/react";
 
 import {createContext, memo, useContext, useMemo} from "react";
 
+import DatetimeText from "~/components/common/datetime_text";
+import DatetimeRangeText from "~/components/common/datetime_range_text";
+
+import CalendarTextIcon from "~/components/icons/calendar_text_icon";
+import PinIcon from "~/components/icons/pin_icon";
+
 import type {IDateLike} from "~/utils/datetime";
 import {useTimezone} from "~/utils/datetime";
 
 import FeedStack from "./feed_stack";
 import FeedCard from "./feed_card";
-import CalendarTextIcon from "../icons/calendar_text_icon";
-import DatetimeRangeText from "../common/datetime_range_text";
-import DatetimeText from "../common/datetime_text";
-import PinIcon from "../icons/pin_icon";
 
 const CONTEXT_AGENDA_FEED = createContext<IAgendaFeedContext | null>(null);
 

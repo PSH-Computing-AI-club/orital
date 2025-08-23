@@ -130,15 +130,17 @@ const MemoizedCalenderGridItem = memo(AgendaFeedItem);
 function AgendaFeedEvents() {
     const {events} = useAgendaFeedContext();
 
-    return events.map((event) => {
-        const {id} = event;
+    return useMemo(() => {
+        return events.map((event) => {
+            const {id} = event;
 
-        return (
-            <FeedStack.Item key={id}>
-                <MemoizedCalenderGridItem event={event} />
-            </FeedStack.Item>
-        );
-    });
+            return (
+                <FeedStack.Item key={id}>
+                    <MemoizedCalenderGridItem event={event} />
+                </FeedStack.Item>
+            );
+        });
+    }, [events]);
 }
 
 export default function AgendaFeed(props: IAgendaFeedProps) {

@@ -275,6 +275,14 @@ function CalendarGridItemScheduleListing(
 function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
     const {events, ...rest} = props;
 
+    const scheduleListings = useMemo(() => {
+        return events.map((event) => {
+            const {id} = event;
+
+            return <CalendarGridItemScheduleListing key={id} event={event} />;
+        });
+    }, [events]);
+
     return (
         <List.Root
             variant="plain"
@@ -287,13 +295,7 @@ function CalendarGridItemSchedule(props: ICalenderGridItemScheduleProps) {
             overflow="hidden"
             {...rest}
         >
-            {events.map((event) => {
-                const {id} = event;
-
-                return (
-                    <CalendarGridItemScheduleListing key={id} event={event} />
-                );
-            })}
+            {scheduleListings}
         </List.Root>
     );
 }
@@ -368,40 +370,37 @@ function CalendarGridWeekdayHeaders() {
         );
     }, [firstWeek]);
 
-    return weekdays.map((weekday) => {
-        return (
-            <Box
-                key={weekday}
-                padding="2"
-                bg="bg.inverted"
-                color="fg.inverted"
-                textAlign="center"
-            >
-                {weekday}
-            </Box>
-        );
-    });
+    return useMemo(() => {
+        return weekdays.map((weekday) => {
+            return (
+                <Box
+                    key={weekday}
+                    padding="2"
+                    bg="bg.inverted"
+                    color="fg.inverted"
+                    textAlign="center"
+                >
+                    {weekday}
+                </Box>
+            );
+        });
+    }, [weekdays]);
 }
 
 function CalendarGridWeeks() {
     const {weeks} = useCalendarGridContext();
 
-    return (
-        <>
-            {weeks.flatMap((week) => {
-                return week.map((day) => {
-                    const {date} = day;
+    return useMemo(() => {
+        return weeks.flatMap((week) => {
+            return week.map((day) => {
+                const {date} = day;
 
-                    return (
-                        <MemoizedCalenderGridItem
-                            key={date.getTime()}
-                            day={day}
-                        />
-                    );
-                });
-            })}
-        </>
-    );
+                return (
+                    <MemoizedCalenderGridItem key={date.getTime()} day={day} />
+                );
+            });
+        });
+    }, [weeks]);
 }
 
 export default function CalendarGrid(props: ICalendarGridProps) {

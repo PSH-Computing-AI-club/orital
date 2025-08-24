@@ -6,7 +6,9 @@ import type {To} from "react-router";
 
 import Links from "~/components/common/links";
 
-export interface IFeedCardTextProps extends PropsWithChildren {}
+export interface IFeedCardTextProps extends PropsWithChildren {
+    readonly lineClamp?: number;
+}
 
 export interface IFeedCardDescriptionProps extends PropsWithChildren {}
 
@@ -19,9 +21,21 @@ export interface IFeedCardBodyProps extends PropsWithChildren {}
 export interface IFeedCardRootProps extends PropsWithChildren {}
 
 function FeedCardText(props: IFeedCardTextProps) {
-    const {children} = props;
+    const {children, lineClamp = 5} = props;
 
-    return <Text marginBlockStart="4">{children}</Text>;
+    return (
+        <Text
+            marginBlockStart="4"
+            overflow="hidden"
+            style={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: lineClamp,
+            }}
+        >
+            {children}
+        </Text>
+    );
 }
 
 function FeedCardDescription(props: IFeedCardDescriptionProps) {

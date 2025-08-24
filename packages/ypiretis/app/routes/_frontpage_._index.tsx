@@ -332,7 +332,7 @@ function EventsFeed() {
                                                 </VStack>
                                             </FeedCard.Description>
 
-                                            <FeedCard.Text>
+                                            <FeedCard.Text lineClamp={4}>
                                                 {description}
                                             </FeedCard.Text>
                                         </FeedCard.Body>

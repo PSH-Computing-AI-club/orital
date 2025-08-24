@@ -126,7 +126,7 @@ function FeedSectionBody(props: IFeedSectionBodyProps) {
     const {children} = props;
 
     return (
-        <Card.Body gap="4" padding="unset">
+        <Card.Body gap="4" paddingInline="unset">
             {children}
         </Card.Body>
     );

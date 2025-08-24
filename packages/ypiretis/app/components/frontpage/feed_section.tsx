@@ -62,7 +62,7 @@ function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
     if (Variant) {
         return (
             <Variant>
-                <GridItem as="li" display="flex">
+                <GridItem as="li" display="flex" blockSize="3xs">
                     {children}
                 </GridItem>
             </Variant>
@@ -70,7 +70,7 @@ function FeedSectionGridItem(props: IFeedSectionGridItemProps) {
     }
 
     return (
-        <GridItem as="li" display="flex">
+        <GridItem as="li" display="flex" blockSize="3xs">
             {children}
         </GridItem>
     );
@@ -89,8 +89,6 @@ function FeedSectionGrid(props: IFeedSectionGridProps) {
             }}
             gap="4"
             marginBlockStart="4"
-            maxBlockSize="3xs"
-            minBlockSize="3xs"
         >
             {children}
         </Grid>

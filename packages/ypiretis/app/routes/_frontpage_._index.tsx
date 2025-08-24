@@ -37,9 +37,9 @@ import {normalizeSpacing, truncateTextRight} from "~/utils/string";
 
 import type {Route} from "./+types/_frontpage_._index";
 
-const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 160;
+const ARTICLE_DESCRIPTION_CHARACTER_LIMIT = 256;
 
-const EVENT_DESCRIPTION_CHARACTER_LIMIT = 160;
+const EVENT_DESCRIPTION_CHARACTER_LIMIT = 256;
 
 const ARTICLES_TO_DISPLAY = 3;
 
@@ -332,7 +332,7 @@ function EventsFeed() {
                                                 </VStack>
                                             </FeedCard.Description>
 
-                                            <FeedCard.Text>
+                                            <FeedCard.Text lineClamp={4}>
                                                 {description}
                                             </FeedCard.Text>
                                         </FeedCard.Body>

@@ -242,8 +242,8 @@ function MeetingsDetails() {
 
                     <FeatureSection.Description>
                         To promote club camaraderie, the Computing and AI Club
-                        hosts bi-weekly meetings every Monday @{" "}
-                        <Span whiteSpace="pre">11:15 AM</Span> in{" "}
+                        hosts bi-weekly meetings on Mondays @{" "}
+                        <Span whiteSpace="pre">12:15 AM</Span> in{" "}
                         <Span whiteSpace="pre">Olmsted W209</Span> starting from
                         September 8th.
                     </FeatureSection.Description>
